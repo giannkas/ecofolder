@@ -1,0 +1,124 @@
+These are the sources for Mole, version 1.1.0 (28.04.2014).
+
+Copyright (C) 1993-2014 Stefan Römer, Stefan Schwoon
+
+############################################################################
+
+This program is free software; you can redistribute it and/or modify
+it under the terms of the GNU General Public License as published by
+the Free Software Foundation; either version 2 of the License, or
+(at your option) any later version.
+
+This program is distributed in the hope that it will be useful,
+but WITHOUT ANY WARRANTY; without even the implied warranty of
+MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+GNU General Public License for more details.
+
+You should have received a copy of the GNU General Public License
+along with this program; if not, write to the Free Software
+Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA 02111-1307, USA
+
+############################################################################
+
+The homepage of Mole is at
+<http://www.fmi.uni-stuttgart.de/szs/tools/mole>.
+
+Installation: Typing "make" in the directory with the sources should
+do the trick. You can place the resulting executable in whichever
+directory you want.
+
+############################################################################
+
+This program implements the Esparza/Römer/Vogler unfolding algorithm for
+low-level Petri nets (see [ERV02]). It is designed to be compatible with
+the tools in the PEP project [Ste01] and with the Model-Checking Kit [SSE03]
+- its input is a low level Petri net in PEP's .ll_net format, and its output
+is the resulting unfolding in the .mci format also used in the PEP tools.
+
+This tool represents an overhaul of Stefan Römer's ERVunfold tool (which,
+in turn, was an enhancement of the EVunfold tool from PEP). It is much
+smaller and does not have the vast set of options that ERVunfold has;
+in exchange, this tool is usually somewhat faster than ERVunfold. The
+default set of options is to use the Esparza/Römer/Vogler unfolding and
+not to compute global configurations, i.e. running
+
+	mole some.ll_net
+
+should be equivalent to
+
+	ERVunfold some.ll_net -m=some.mci -c -n=1 -@@
+
+Calling Mole without any argument yields a usage summary.
+Currently, there are just two options:
+
+-m <some.filename>
+	Normally, if the input net is some.ll_net, then the resulting
+	unfolding will be written to some.mci. This option allows the
+	result to be written to some other file.
+
+-d <some.number>
+	Unfolding is performed up to the given depth, i.e. the generated
+	prefix contains all events whose local configuration size does
+	not exceed some.number. No cutoff events will be generated.
+
+-T <some_transition_name>
+	The unfolding process will abort as soon as an event is found
+	which is related to the named transition.
+
+-i	The program outputs verbose information about the discovered
+	events and conditions and allows the user to choose among the
+	potential extensions. (Cutoffs are added immediately without
+	asking because adding them at any other time would not change
+	the result.)
+
+As of version 1.0.5, the distribution contains an additional utility
+called mci2dot. The input of this tool is an .mci file (as produced
+by mole), and its output can be processed by the dot tool from the
+Graphviz package (http://www.research.att.com/sw/tools/graphviz/) in
+order to visualise the unfolding. Calling
+
+	mci2dot some.mci
+
+will cause mci2dot to read the file some.mci and print the results
+to standard output.
+
+############################################################################
+
+Related publications:
+
+[ERV02] Javier Esparza, Stefan Römer, and Walter Vogler. An improvement of
+	McMillan's unfolding algorithm. Formal Methods in System Design,
+	20:285-310, 2002.
+
+[SSE03] Claus Schröter, Stefan Schwoon, and Javier Esparza. The Model-Checking
+	Kit. In Wil van der Aalst and Eike Best, editors, Applications and
+	Theory of Petri Nets 2003, volume 2679 of Lecture Notes in Computer
+	Science, pages 463-472. Springer, June 2003. See also
+	<http://www.fmi.uni-stuttgart.de/szs/tools/mckit/>
+
+[Ste01] C. Stehno. PEP Version 2.0. Tool demonstration ICATPN 2001.
+	Newcastle upon Tyne 2001. See also
+	<http://theoretica.informatik.uni-oldenburg.de/~pep/>
+
+############################################################################
+
+History:
+
+Version 1.0.0 (16.03.2004)
+	First public release.
+Version 1.0.1 (17.03.2004)
+	Changed the ordering of events in the resulting .mci file to maintain
+		compatibility with unfolding-based deadlock checkers.
+	Changed the syntax of the -T switch (see above).
+Version 1.0.2 (21.09.2004)
+	Changes to the -T switch: Fixed faulty .mci generation; unfolding now
+		aborts earlier when transition is found.
+Version 1.0.3 (02.02.2005)
+	Fixed a bug in the -T switch (crashed when transitions had no name).
+Version 1.0.4 (06.06.2005)
+	Added -d switch.
+Version 1.0.5 (22.03.2006)
+	Fixed another bug in -T (thanks to Sarah Hickmott for the report).
+	Added -i switch and added mci2dot to the distribution.
+Version 1.0.6 (23.03.2006)
+	Fixed a bug in marking.c (thanks to Sylvie Thiebaux for the report).
