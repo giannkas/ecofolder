@@ -156,7 +156,7 @@ void add_post_conditions (event_t *ev, char cutoff)
 	   the necessary amount of memory. */
 	newarray = coarray_copy(ev->coarray);
 	free(ev->coarray.conds);
-new
+
 	/* Add the reverse half of the concurrency relation. */
 	cocoptr = newarray.conds-1;
 	while (*++cocoptr)

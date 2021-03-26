@@ -82,7 +82,7 @@ void nc_compute_sizes (net_t *net)
 	trans_t *tr;
 	int k;
 
-	net->maxpre = net->maxpost = 0;
+	net->maxpre = net->maxpost = net->maxres = 0;
 	for (tr = net->transitions; tr; tr = tr->next)
 	{
 		nodelist_t *list;

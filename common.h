@@ -8,6 +8,7 @@
 #define __COMMON_H__
 
 #include <stdlib.h>
+#include <assert.h>
 
 #define PROGRAM_NAME "unfold"
 

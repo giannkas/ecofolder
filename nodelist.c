@@ -100,11 +100,16 @@ char nodelist_compare (nodelist_t *list1, nodelist_t *list2)
 
 nodelist_t* nodelist_concatenate(nodelist_t *list1, nodelist_t *list2)
 {	
-	nodelist_t *tmp;
+	assert(list1 != NULL && list2 != NULL);
+	nodelist_t *tmp, *tmp2 = nodelist_alloc();
 	// printf("nodelist_concatenate");
 	tmp = list1;
-	while (tmp && tmp->next != NULL)
-		tmp = tmp->next;
+	tmp->next = tmp2;
+	while (list1 && list1->next != NULL){
+		list1 = list1->next;
+		tmp2 = list1->next;
+	}
+	tmp = list1;
 	tmp->next = list2;
 
 	return list1;
