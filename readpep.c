@@ -437,6 +437,7 @@ t_blockinfo netblocks[] =
 	  { "PTR", TB_OPTIONAL,  TB_BLOCK, transfields+1 },
 	  { "TP",  TB_MANDATORY, TB_BLOCK, arcfields },
 	  { "PT",  TB_MANDATORY, TB_BLOCK, arcfields },
+	  { "RS",  TB_MANDATORY, TB_BLOCK, arcfields },		//*** NEW  ***//
 	  { "PTP", TB_OPTIONAL,  TB_BLOCK, arcfields },
 	  { "PPT", TB_OPTIONAL,  TB_BLOCK, arcfields },
 	  { "TX",  TB_OPTIONAL,  TB_BLOCK, textfields },
@@ -528,7 +529,7 @@ int insert_arc()
 		tp = strcmp(blocktype,"PT") ? rs : 0;		//*** NEW  ***//
 		*blocktype = '\0';
 	}
-		
+	printf("tp %d and rs %d\n", tp, rs);
 	pl = tp? rd_co->y : rd_co->x;
 	tr = tp? rd_co->x : rd_co->y;
 

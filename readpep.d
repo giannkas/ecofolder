@@ -1,1 +1,1 @@
-common.o: common.h
+readpep.o readpep.d: readpep.c readlib.h netconv.h common.h
