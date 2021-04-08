@@ -73,6 +73,26 @@ int main (int argc, char **argv)
 
 	net = read_pep_net(llnet);
 	nc_static_checks(net,stoptr_name);
+
+	place_t *plr = net->places;
+	while (plr){
+		printf("%s -> ", plr->name);
+		plr = plr->next;
+	}
+	printf("\n");
+	
+	trans_t *trr = net->transitions;
+	while (trr){
+		printf("%s ->\n", trr->name);
+		nodelist_t *ptr = trr->reset;
+		while (ptr){			
+			printf("\t%s",((place_t*)(ptr->node))->name);
+			ptr = ptr->next;		
+		}
+		printf("\n");
+		trr = trr->next;
+	}
+	printf("\n");
 	unfold();
 	write_mci_file(mcifile);
 

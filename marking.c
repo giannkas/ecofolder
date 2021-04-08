@@ -90,10 +90,18 @@ int add_marking (nodelist_t *marking, event_t *ev)
 nodelist_t* marking_initial ()
 {
 	place_t *pl;
-	nodelist_t *list = NULL;
+	trans_t *tr;
+	nodelist_t *list = NULL, *respl = NULL;
 
 	for (pl = net->places; pl; pl = pl->next)
 		if (pl->marked) nodelist_insert(&list,pl);
+	
+	for (tr = net->transitions; tr; tr = tr->next){
+		for (respl = tr->reset; respl; respl = respl->next){
+			nodelist_insert(&list,((place_t*)(respl->node)));
+		}
+	}
+	
 	return list;
 }
 

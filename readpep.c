@@ -538,12 +538,26 @@ int insert_arc()
 	if (!pl || (pl > AnzPlNamen) || !PlArray[pl] )
 		nc_error("arc: incorrect place identifier");
 
-	tp? nc_create_arc(&(TrArray[tr]->postset),&(PlArray[pl]->preset),
+	if (tp != 0)
+		nc_create_arc(&(TrArray[tr]->postset),&(PlArray[pl]->preset),
+			  TrArray[tr],PlArray[pl]);
+	else if (rs != 0)
+		nc_create_arc(&(PlArray[pl]->postset),&(TrArray[tr]->preset),
+			  PlArray[pl],TrArray[tr]);
+	else{
+		printf("pl: %d, tr: %d\n", pl, tr);
+		printf("PlArray[pl] name: %s, num: %d, \n", PlArray[pl]->name, PlArray[pl]->num);
+		printf("TrArray[tr] name: %s, num: %d, \n", TrArray[tr]->name, TrArray[tr]->num);
+		nc_create_arc(&(PlArray[pl]->postset),&(TrArray[tr]->reset),
+			  PlArray[pl],TrArray[tr]);
+	}
+	
+	/* tp? nc_create_arc(&(TrArray[tr]->postset),&(PlArray[pl]->preset),
 			  TrArray[tr],PlArray[pl])
 	  : rs? nc_create_arc(&(PlArray[pl]->postset),&(TrArray[tr]->preset),
-			  PlArray[pl],TrArray[tr])				//*** NEW  ***//
-	  : nc_create_arc(&(PlArray[pl]->postset),&(TrArray[tr]->re_set),
-			  PlArray[pl],TrArray[tr]);
+			  PlArray[pl],TrArray[tr])				//### NEW  ###//
+	  : nc_create_arc(&(PlArray[pl]->postset),&(TrArray[tr]->reset),
+			  PlArray[pl],TrArray[tr]); */
 	return 0;
 }
 

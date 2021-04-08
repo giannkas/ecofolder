@@ -1,1 +1,1 @@
-unfold.o: unfold.h netconv.h
+netconv.o netconv.d: netconv.h

@@ -35,8 +35,8 @@ void pe_init (nodelist_t *m0)
 	pe_qsize = 0;
 	pe_queue = MYmalloc((pe_qalloc = PE_ALLOC_STEP) * sizeof(pe_queue_t*));
 	
-	pe_conds = MYmalloc(net->maxpre * sizeof(place_t*));
-	pe_combs = MYmalloc(net->maxpre * sizeof(pe_comb_t));
+	pe_conds = MYmalloc((net->maxpre + net->maxres) * sizeof(place_t*));
+	pe_combs = MYmalloc((net->maxpre + net->maxres) * sizeof(pe_comb_t));
 
 	/* determine size of initial marking */
 	for (i = 0; m0; m0 = m0->next) i++;
@@ -197,7 +197,7 @@ void pe (cond_t *co)
 
 		/* for every other post-place of tr, collect the conditions
 			that are co-related to co in the comb structure */
-		for (tr_pre = nodelist_concatenate(tr->preset, tr->re_set); tr_pre; tr_pre = tr_pre->next) 	//*** NEW  ***//
+		for (tr_pre = nodelist_concatenate(tr->preset, tr->reset); tr_pre; tr_pre = tr_pre->next) 	//*** NEW  ***//
 		{
 			if ((pl2 = tr_pre->node) == pl) continue;
 

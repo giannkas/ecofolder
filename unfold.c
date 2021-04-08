@@ -99,7 +99,7 @@ cond_t* insert_condition (place_t *pl, event_t *ev)
 event_t* insert_event (pe_queue_t *qu)
 {
         event_t *ev = MYmalloc(sizeof(event_t));
-	int sz = qu->trans->preset_size + qu->trans->re_set_size;
+	int sz = qu->trans->preset_size + qu->trans->reset_size;					//*** NEW ***//
 	cond_t **co_ptr;
 
         ev->next = unf->events;
@@ -107,8 +107,8 @@ event_t* insert_event (pe_queue_t *qu)
 	ev->origin = qu->trans;
 	ev->mark = 0;		/* for marking_of */
 	ev->foata_level = find_foata_level(qu);
-	ev->preset_size = qu->trans->preset_size + qu->trans->re_set_size;			//*** NEW ***//
-	ev->postset_size = qu->trans->postset_size + qu->trans->re_set_size;		//*** NEW ***//	
+	ev->preset_size = qu->trans->preset_size + qu->trans->reset_size;			//*** NEW ***//
+	ev->postset_size = qu->trans->postset_size + qu->trans->reset_size;		//*** NEW ***//	
 
 	/* add preset (postset comes later) */
         ev->preset = co_ptr = MYmalloc(sz * sizeof(cond_t*));
@@ -146,7 +146,7 @@ void add_post_conditions (event_t *ev, char cutoff)
 	   that is done by pe() to avoid duplicated new events. */
 	ev->postset = co_ptr
 		= MYmalloc(ev->postset_size * sizeof(cond_t*));
-	for (list = nodelist_concatenate(ev->origin->postset, ev->origin->re_set); list; list = list->next)			//*** NEW ***//
+	for (list = nodelist_concatenate(ev->origin->postset, ev->origin->reset); list; list = list->next)			//*** NEW ***//
 		*co_ptr++ = insert_condition(list->node,ev);
 
 	if (cutoff) return;
@@ -162,12 +162,12 @@ void add_post_conditions (event_t *ev, char cutoff)
 	while (*++cocoptr)
 	{
 		co_ptr = ev->postset;
-		for (list = nodelist_concatenate(ev->origin->postset, ev->origin->re_set); list; list = list->next)		//*** NEW ***//
+		for (list = nodelist_concatenate(ev->origin->postset, ev->origin->reset); list; list = list->next)		//*** NEW ***//
 			addto_coarray(&((*cocoptr)->co_private),*co_ptr++);
 	}
 
 	co_ptr = ev->postset;
-	for (list = nodelist_concatenate(ev->origin->postset, ev->origin->re_set); list; list = list->next)			//*** NEW ***//
+	for (list = nodelist_concatenate(ev->origin->postset, ev->origin->reset); list; list = list->next)			//*** NEW ***//
 	{
 		/* record co-relation between new conditions */
 		(*co_ptr)->co_common = newarray;
@@ -333,13 +333,15 @@ void unfold ()
 	marking_init(); unf->m0 = NULL;
 	add_marking(list = marking_initial(),NULL);
 
-	if (interactive)
-	{
+	if (interactive){
 		printf("Initial marking:");
 		print_marking(list);
 		printf("\n");
 	}
 
+	print_marking(list);
+	printf("\n");
+	
 	/* initialize PE computation */
 	pe_init(list);
 	parikh_init();

@@ -5,6 +5,7 @@
 /****************************************************************************/
 
 #include <string.h>
+#include <stdio.h>
 #include "common.h"
 #include "netconv.h"
 #include "unfold.h"
@@ -51,8 +52,8 @@ trans_t* nc_create_transition (net_t *net)
 	trans_t *tr = MYmalloc(sizeof(trans_t));
 	tr->next = net->transitions;
 	net->transitions = tr;
-	tr->preset = tr->postset = tr->re_set = NULL;
-	tr->preset_size = tr->re_set_size = 0;		//*** NEW ***//
+	tr->preset = tr->postset = tr->reset = NULL;
+	tr->preset_size = tr->reset_size = 0;		//*** NEW ***//
 	tr->num = ++net->numtr;
 	return tr;
 }
@@ -75,7 +76,7 @@ void nc_create_arc (nodelist_t **fromlist, nodelist_t **tolist,
 
 /****************************************************************************/
 /* nc_compute_sizes							    */
-/* compute (maximal) sizes of transition presets/postsets/re_sets		    */
+/* compute (maximal) sizes of transition presets/postsets/resets		    */
 
 void nc_compute_sizes (net_t *net)
 {
@@ -89,16 +90,22 @@ void nc_compute_sizes (net_t *net)
 
 		for (k = 0, list = tr->preset; list; k++, list = list->next);
 		tr->preset_size = k;
+		printf("Transition %s, preset size: %d\n", tr->name, k);
 		if (net->maxpre < k) net->maxpre = k;
 
 		for (k = 0, list = tr->postset; list; k++, list = list->next);
 		tr->postset_size = k;
+		printf("Transition %s, postset size: %d\n", tr->name, k);
 		if (net->maxpost < k) net->maxpost = k;
 
-		for (k = 0, list = tr->re_set; list; k++, list = list->next); //*** NEW ***//
-		tr->re_set_size = k; 										  //*** NEW ***//
+		for (k = 0, list = tr->reset; list; k++, list = list->next); //*** NEW ***//
+		tr->reset_size = k; 										  //*** NEW ***//
+		printf("Transition %s, reset size: %d\n", tr->name, k);
 		if (net->maxres < k) net->maxres = k; 						  //*** NEW ***//
 	}
+	printf("maxpre: %d\n", net->maxpre);
+	printf("maxpost: %d\n", net->maxpost);
+	printf("maxres: %d\n", net->maxres);
 }
 
 /*****************************************************************************/

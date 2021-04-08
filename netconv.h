@@ -35,8 +35,8 @@ typedef struct trans_t
 	int    num;		    /* number				    */
 	struct nodelist_t *preset;  /* unordered list of preset		    */
 	struct nodelist_t *postset; /* unordered list of postset	    */
-	struct nodelist_t *re_set; /* unordered list of re_set	    */			//*** NEW  ***//
-	short  preset_size, postset_size, re_set_size;							//*** NEW  ***//
+	struct nodelist_t *reset; /* unordered list of reset	    */			//*** NEW  ***//
+	short  preset_size, postset_size, reset_size;							//*** NEW  ***//
 } trans_t;
 
 typedef struct coa_t {
@@ -78,7 +78,7 @@ typedef struct
 	place_t *places;	/* pointer to first place		*/
 	trans_t *transitions;	/* pointer to first transition		*/ 
 	int numpl, numtr;	/* number of places/transitions in net	*/
-	int maxpre, maxpost, maxres;	/* maximal size of a t-pre/postset,re_set	*/
+	int maxpre, maxpost, maxres;	/* maximal size of a t-pre/postset,reset	*/
 } net_t;
 
 typedef struct
