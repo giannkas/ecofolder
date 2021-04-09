@@ -1,1 +1,1 @@
-netconv.o: netconv.h
+common.o: common.h

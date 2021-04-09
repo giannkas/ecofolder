@@ -192,6 +192,7 @@ void pe (cond_t *co)
 	/* check the transitions in pl's postset */
 	for (pl_post = pl->postset; pl_post; pl_post = pl_post->next)
 	{
+		printf("%s\n",((trans_t*)(pl_post->node))->name);
 		tr = pl_post->node;
 		(curr_comb = pe_combs)->start = NULL;
 

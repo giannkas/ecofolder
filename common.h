@@ -9,6 +9,7 @@
 
 #include <stdlib.h>
 #include <assert.h>
+#include <stdio.h>
 
 #define PROGRAM_NAME "unfold"
 

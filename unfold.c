@@ -48,6 +48,7 @@ void addto_coarray (coa_t *coa, cond_t *co)
 		coa->conds = MYrealloc(coa->conds,(nsz+1) * sizeof(cond_t*));
 		coa->size = nsz;
 	}
+	//printf("name: %s\n",co->origin->name);
 	coa->conds[coa->inuse++] = co;
 	coa->conds[coa->inuse] = NULL;
 }
@@ -148,7 +149,7 @@ void add_post_conditions (event_t *ev, char cutoff)
 		= MYmalloc(ev->postset_size * sizeof(cond_t*));
 	for (list = nodelist_concatenate(ev->origin->postset, ev->origin->reset); list; list = list->next)			//*** NEW ***//
 		*co_ptr++ = insert_condition(list->node,ev);
-
+	
 	if (cutoff) return;
 
 	/* Having computed the common part of the co-relation for all
@@ -156,16 +157,19 @@ void add_post_conditions (event_t *ev, char cutoff)
 	   the necessary amount of memory. */
 	newarray = coarray_copy(ev->coarray);
 	free(ev->coarray.conds);
-
+	
 	/* Add the reverse half of the concurrency relation. */
 	cocoptr = newarray.conds-1;
 	while (*++cocoptr)
 	{
 		co_ptr = ev->postset;
-		for (list = nodelist_concatenate(ev->origin->postset, ev->origin->reset); list; list = list->next)		//*** NEW ***//
+		
+		for (list = nodelist_concatenate(ev->origin->postset, ev->origin->reset); list; list = list->next){		//*** NEW ***//
 			addto_coarray(&((*cocoptr)->co_private),*co_ptr++);
+			
+		}
 	}
-
+	
 	co_ptr = ev->postset;
 	for (list = nodelist_concatenate(ev->origin->postset, ev->origin->reset); list; list = list->next)			//*** NEW ***//
 	{
@@ -355,6 +359,7 @@ void unfold ()
 		nodelist_push(&(unf->m0),co);
 	}
 	recursive_pe(unf->m0);
+	//printf("hola1\n");
 
 	/* take the next event from the queue */
 	while (pe_qsize)
@@ -383,10 +388,10 @@ void unfold ()
 		}
 		else
 			qu = pe_pop(1);
-
 		/* add event to the unfolding */
 		ev = insert_event(qu);
 		cutoff = add_marking(qu->marking,ev);
+		
 
 		if (interactive && !cutoff)
 		{
@@ -405,18 +410,18 @@ void unfold ()
 			unf->events = unf->events->next;
 			break;
 		}
-
+		
 		/* if the marking was already represented in the unfolding,
 		   we have a cut-off event */
 		if (!cutoff) { unf->events = unf->events->next; continue; }
-
+		
 		/* compute the co-relation for ev and post-conditions */
 		co_relation(ev);
-
+		
 		/* add post-conditions, compute possible extensions */
 		add_post_conditions(ev,CUTOFF_NO);
 	}
-
+	
 	/* add post-conditions for cut-off events */
 	for (list = cutoff_list; list; list = list->next)
 	{
