@@ -122,3 +122,7 @@ nodelist_t* nodelist_concatenate(nodelist_t *list1, nodelist_t *list2)
 
 	return head;
 }
+
+/*****************************************************************************/ 	//*** NEW FUNCTION ***//
+/* Find an element two lists and return the join    */
+

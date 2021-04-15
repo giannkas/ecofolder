@@ -48,7 +48,7 @@ void addto_coarray (coa_t *coa, cond_t *co)
 		coa->conds = MYrealloc(coa->conds,(nsz+1) * sizeof(cond_t*));
 		coa->size = nsz;
 	}
-	//printf("name: %s\n",co->origin->name);
+	printf("name: %s\n",co->origin->name);
 	coa->conds[coa->inuse++] = co;
 	coa->conds[coa->inuse] = NULL;
 }

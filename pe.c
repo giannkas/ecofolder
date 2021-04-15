@@ -41,6 +41,7 @@ void pe_init (nodelist_t *m0)
 	/* determine size of initial marking */
 	for (i = 0; m0; m0 = m0->next) i++;
 	pe0_conflicts = MYcalloc((i + 8) / 8);
+	//printf("%u, %d\n", *pe0_conflicts, i);
 }
 
 void pe_free (pe_queue_t *qu)
@@ -192,7 +193,7 @@ void pe (cond_t *co)
 	/* check the transitions in pl's postset */
 	for (pl_post = pl->postset; pl_post; pl_post = pl_post->next)
 	{
-		printf("%s\n",((trans_t*)(pl_post->node))->name);
+		printf("%s -> %s\n",pl->name,((trans_t*)(pl_post->node))->name);
 		tr = pl_post->node;
 		(curr_comb = pe_combs)->start = NULL;
 
@@ -200,6 +201,13 @@ void pe (cond_t *co)
 			that are co-related to co in the comb structure */
 		for (tr_pre = nodelist_concatenate(tr->preset, tr->reset); tr_pre; tr_pre = tr_pre->next) 	//*** NEW  ***//
 		{
+			nodelist_t *ptr = tr_pre;
+			printf("List of conditions in the preset or reset set of transition %s: \n", ((trans_t*)(pl_post->node))->name);
+			while (ptr) {
+				printf("%s, ", ((place_t*)(ptr->node))->name);
+				ptr = ptr->next;
+			}
+			printf("\n");
 			if ((pl2 = tr_pre->node) == pl) continue;
 
 			compat_conds = &(curr_comb->start);
@@ -220,6 +228,8 @@ void pe (cond_t *co)
 
 		/* find all non-conflicting combinations in the comb */
 		curr_comb = pe_combs;
+		/* printf("curr_comb->start: %s\n",((cond_t*)(curr_comb->start->node))->origin->name);
+		printf("curr_comb->current: %s\n",((cond_t*)(curr_comb->current->node))->origin->name); */
 		if (!tr_pre) while (curr_comb >= pe_combs)
 		{
 			if (!curr_comb->start)
