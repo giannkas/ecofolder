@@ -48,7 +48,7 @@ void addto_coarray (coa_t *coa, cond_t *co)
 		coa->conds = MYrealloc(coa->conds,(nsz+1) * sizeof(cond_t*));
 		coa->size = nsz;
 	}
-	printf("name: %s\n",co->origin->name);
+	//printf("name: %s\n",co->origin->name);
 	coa->conds[coa->inuse++] = co;
 	coa->conds[coa->inuse] = NULL;
 }
@@ -99,6 +99,15 @@ cond_t* insert_condition (place_t *pl, event_t *ev)
 
 event_t* insert_event (pe_queue_t *qu)
 {
+	printf("Transition in queue: %s\n", qu->trans->name);
+	//printf("Condition in queue: %s", qu->conds[1]->origin->name);	
+	//cond_t *pco = qu->conds[1];
+	/* for (int i = 0; pco != NULL;)
+	{
+		printf("Condition in the queue: %s, ", pco->origin->name);
+		pco = qu->conds[i];
+		i++;
+	} */
         event_t *ev = MYmalloc(sizeof(event_t));
 	int sz = qu->trans->preset_size + qu->trans->reset_size;					//*** NEW ***//
 	cond_t **co_ptr;
@@ -112,7 +121,7 @@ event_t* insert_event (pe_queue_t *qu)
 	ev->postset_size = qu->trans->postset_size + qu->trans->reset_size;		//*** NEW ***//	
 
 	/* add preset (postset comes later) */
-        ev->preset = co_ptr = MYmalloc(sz * sizeof(cond_t*));
+    ev->preset = co_ptr = MYmalloc(sz * sizeof(cond_t*));
 	memcpy(ev->preset,qu->conds,sz * sizeof(cond_t*));
 	while (sz--) nodelist_push(&((*co_ptr++)->postset),ev);
 
@@ -343,6 +352,7 @@ void unfold ()
 		printf("\n");
 	}
 
+	printf("Print marking\n");
 	print_marking(list);
 	printf("\n");
 	
@@ -362,6 +372,7 @@ void unfold ()
 	//printf("hola1\n");
 
 	/* take the next event from the queue */
+	printf("pe_qsize: %d\n", pe_qsize);
 	while (pe_qsize)
 	{
 		int i, e;
@@ -389,6 +400,8 @@ void unfold ()
 		else
 			qu = pe_pop(1);
 		/* add event to the unfolding */
+		for (i = 1; i <= pe_qsize; i++)
+			printf(" E%d ",pe_queue[i]->id);
 		ev = insert_event(qu);
 		cutoff = add_marking(qu->marking,ev);
 		

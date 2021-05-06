@@ -191,9 +191,9 @@ void pe (cond_t *co)
 	nodelist_push(&(pl->conds),co);
 
 	/* check the transitions in pl's postset */
-	for (pl_post = pl->postset; pl_post; pl_post = pl_post->next)
+	for (pl_post = pl->postset; pl_post; pl_post = pl_post->next) // add here reset set for a place?
 	{
-		printf("%s -> %s\n",pl->name,((trans_t*)(pl_post->node))->name);
+		printf("Transitions in pl's postset: %s -> %s\n",pl->name,((trans_t*)(pl_post->node))->name);
 		tr = pl_post->node;
 		(curr_comb = pe_combs)->start = NULL;
 
@@ -228,8 +228,11 @@ void pe (cond_t *co)
 
 		/* find all non-conflicting combinations in the comb */
 		curr_comb = pe_combs;
-		/* printf("curr_comb->start: %s\n",((cond_t*)(curr_comb->start->node))->origin->name);
-		printf("curr_comb->current: %s\n",((cond_t*)(curr_comb->current->node))->origin->name); */
+		if (curr_comb->start && curr_comb->current)
+		{
+			printf("curr_comb->start: %s\n",((cond_t*)(curr_comb->start->node))->origin->name);
+			printf("curr_comb->current: %s\n",((cond_t*)(curr_comb->current->node))->origin->name);
+		}
 		if (!tr_pre) while (curr_comb >= pe_combs)
 		{
 			if (!curr_comb->start)

@@ -24,6 +24,7 @@ typedef struct place_t
 	int    num;		    /* number				    */
 	struct nodelist_t *preset;  /* unordered list of preset		    */
 	struct nodelist_t *postset; /* unordered list of postset	    */
+	struct nodelist_t *reset; /* unordered list of reset transitions	    */			//*** NEW  ***//
 	struct nodelist_t *conds;   /* conditions derived from this place   */
 	char marked;		    /* non-zero if place is marked	    */
 } place_t;
@@ -35,7 +36,7 @@ typedef struct trans_t
 	int    num;		    /* number				    */
 	struct nodelist_t *preset;  /* unordered list of preset		    */
 	struct nodelist_t *postset; /* unordered list of postset	    */
-	struct nodelist_t *reset; /* unordered list of reset	    */			//*** NEW  ***//
+	struct nodelist_t *reset; /* unordered list of reset places	    */			//*** NEW  ***//
 	short  preset_size, postset_size, reset_size;							//*** NEW  ***//
 } trans_t;
 

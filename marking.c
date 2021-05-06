@@ -111,5 +111,5 @@ void print_marking (nodelist_t* list)
 {
 	if (!list) return;
 	print_marking(list->next);
-	printf(" %s",((place_t*)(list->node))->name);
+	printf("%s ",((place_t*)(list->node))->name);
 }
