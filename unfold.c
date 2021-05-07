@@ -343,9 +343,9 @@ void unfold ()
 		printf("\n");
 	}
 
-	printf("Print marking\n");
-	print_marking(list);
-	printf("\n");
+	//printf("Print marking\n");
+	//print_marking(list);
+	//printf("\n");
 	
 	/* initialize PE computation */
 	pe_init(list);
@@ -363,7 +363,7 @@ void unfold ()
 	//printf("hola1\n");
 
 	/* take the next event from the queue */
-	printf("pe_qsize: %d\n", pe_qsize);
+	//printf("pe_qsize: %d\n", pe_qsize);
 	while (pe_qsize)
 	{
 		int i, e;
@@ -391,8 +391,8 @@ void unfold ()
 		else
 			qu = pe_pop(1);
 		/* add event to the unfolding */
-		for (i = 1; i <= pe_qsize; i++)
-			printf(" E%d ",pe_queue[i]->id);
+		/* for (i = 1; i <= pe_qsize; i++)
+			printf(" E%d ",pe_queue[i]->id); */
 		ev = insert_event(qu);
 		cutoff = add_marking(qu->marking,ev);
 		

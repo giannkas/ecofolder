@@ -529,7 +529,7 @@ int insert_arc()
 		tp = strcmp(blocktype,"PT") ? rs : 0;		//*** NEW  ***//
 		*blocktype = '\0';
 	}
-	printf("tp %d and rs %d\n", tp, rs);
+	//printf("tp %d and rs %d\n", tp, rs);
 	pl = tp? rd_co->y : rd_co->x;
 	tr = tp? rd_co->x : rd_co->y;
 
@@ -545,9 +545,9 @@ int insert_arc()
 		nc_create_arc(&(PlArray[pl]->postset),&(TrArray[tr]->preset),
 			  PlArray[pl],TrArray[tr]);
 	else{
-		printf("pl: %d, tr: %d\n", pl, tr);
-		printf("PlArray[pl] name: %s, num: %d, \n", PlArray[pl]->name, PlArray[pl]->num);
-		printf("TrArray[tr] name: %s, num: %d, \n", TrArray[tr]->name, TrArray[tr]->num);
+		//printf("pl: %d, tr: %d\n", pl, tr);
+		//printf("PlArray[pl] name: %s, num: %d, \n", PlArray[pl]->name, PlArray[pl]->num);
+		//printf("TrArray[tr] name: %s, num: %d, \n", TrArray[tr]->name, TrArray[tr]->num);
 		nc_create_arc(&(PlArray[pl]->postset),&(TrArray[tr]->reset),
 			  PlArray[pl],TrArray[tr]);
 	}

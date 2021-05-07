@@ -91,22 +91,22 @@ void nc_compute_sizes (net_t *net)
 
 		for (k = 0, list = tr->preset; list; k++, list = list->next);
 		tr->preset_size = k;
-		printf("Transition %s, preset size: %d\n", tr->name, k);
+		//printf("Transition %s, preset size: %d\n", tr->name, k);
 		if (net->maxpre < k) net->maxpre = k;
 
 		for (k = 0, list = tr->postset; list; k++, list = list->next);
 		tr->postset_size = k;
-		printf("Transition %s, postset size: %d\n", tr->name, k);
+		//printf("Transition %s, postset size: %d\n", tr->name, k);
 		if (net->maxpost < k) net->maxpost = k;
 
 		for (k = 0, list = tr->reset; list; k++, list = list->next); //*** NEW ***//
 		tr->reset_size = k; 										  //*** NEW ***//
-		printf("Transition %s, reset size: %d\n", tr->name, k);
+		//printf("Transition %s, reset size: %d\n", tr->name, k);
 		if (net->maxres < k) net->maxres = k; 						  //*** NEW ***//
 	}
-	printf("maxpre: %d\n", net->maxpre);
-	printf("maxpost: %d\n", net->maxpost);
-	printf("maxres: %d\n", net->maxres);
+	//printf("maxpre: %d\n", net->maxpre);
+	//printf("maxpost: %d\n", net->maxpost);
+	//printf("maxres: %d\n", net->maxres);
 }
 
 /*****************************************************************************/

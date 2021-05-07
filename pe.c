@@ -193,7 +193,7 @@ void pe (cond_t *co)
 	/* check the transitions in pl's postset */
 	for (pl_post = pl->postset; pl_post; pl_post = pl_post->next)
 	{
-		printf("%s -> %s\n",pl->name,((trans_t*)(pl_post->node))->name);
+		//printf("%s -> %s\n",pl->name,((trans_t*)(pl_post->node))->name);
 		tr = pl_post->node;
 		(curr_comb = pe_combs)->start = NULL;
 
@@ -202,12 +202,12 @@ void pe (cond_t *co)
 		for (tr_pre = nodelist_concatenate(tr->preset, tr->reset); tr_pre; tr_pre = tr_pre->next) 	//*** NEW  ***//
 		{
 			nodelist_t *ptr = tr_pre;
-			printf("List of conditions in the preset or reset set of transition %s: \n", ((trans_t*)(pl_post->node))->name);
+			//printf("List of conditions in the preset or reset set of transition %s: \n", ((trans_t*)(pl_post->node))->name);
 			while (ptr) {
-				printf("%s, ", ((place_t*)(ptr->node))->name);
+				//printf("%s, ", ((place_t*)(ptr->node))->name);
 				ptr = ptr->next;
 			}
-			printf("\n");
+			//printf("\n");
 			if ((pl2 = tr_pre->node) == pl) continue;
 
 			compat_conds = &(curr_comb->start);
