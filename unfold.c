@@ -99,15 +99,6 @@ cond_t* insert_condition (place_t *pl, event_t *ev)
 
 event_t* insert_event (pe_queue_t *qu)
 {
-	printf("Transition in queue: %s\n", qu->trans->name);
-	//printf("Condition in queue: %s", qu->conds[1]->origin->name);	
-	//cond_t *pco = qu->conds[1];
-	/* for (int i = 0; pco != NULL;)
-	{
-		printf("Condition in the queue: %s, ", pco->origin->name);
-		pco = qu->conds[i];
-		i++;
-	} */
         event_t *ev = MYmalloc(sizeof(event_t));
 	int sz = qu->trans->preset_size + qu->trans->reset_size;					//*** NEW ***//
 	cond_t **co_ptr;
@@ -121,7 +112,7 @@ event_t* insert_event (pe_queue_t *qu)
 	ev->postset_size = qu->trans->postset_size + qu->trans->reset_size;		//*** NEW ***//	
 
 	/* add preset (postset comes later) */
-    ev->preset = co_ptr = MYmalloc(sz * sizeof(cond_t*));
+        ev->preset = co_ptr = MYmalloc(sz * sizeof(cond_t*));
 	memcpy(ev->preset,qu->conds,sz * sizeof(cond_t*));
 	while (sz--) nodelist_push(&((*co_ptr++)->postset),ev);
 
