@@ -96,11 +96,11 @@ nodelist_t* marking_initial ()
 	for (pl = net->places; pl; pl = pl->next)
 		if (pl->marked) nodelist_insert(&list,pl);
 	
-	for (tr = net->transitions; tr; tr = tr->next){
+	/* for (tr = net->transitions; tr; tr = tr->next){
 		for (respl = tr->reset; respl; respl = respl->next){
 			nodelist_insert(&list,((place_t*)(respl->node)));
 		}
-	}
+	} */
 	
 	return list;
 }

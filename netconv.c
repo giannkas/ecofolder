@@ -43,7 +43,7 @@ place_t* nc_create_place (net_t *net)
 	pl->next = net->places;
 	net->places = pl;
 	pl->preset = pl->postset = pl->conds = NULL;
-	//pl->preset = pl->postset = pl->conds = pl->reset = NULL;
+	pl->preset = pl->postset = pl->conds = pl->reset = NULL;	//*** NEW ***//
 	pl->num = ++net->numpl;
 	return pl;
 }

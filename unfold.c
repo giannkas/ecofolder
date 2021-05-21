@@ -147,7 +147,8 @@ void add_post_conditions (event_t *ev, char cutoff)
 	   that is done by pe() to avoid duplicated new events. */
 	ev->postset = co_ptr
 		= MYmalloc(ev->postset_size * sizeof(cond_t*));
-	for (list = nodelist_concatenate(ev->origin->postset, ev->origin->reset); list; list = list->next)			//*** NEW ***//
+	//for (list = nodelist_concatenate(ev->origin->postset, ev->origin->reset); list; list = list->next)			//*** NEW ***//
+	for (list = ev->origin->postset; list; list = list->next)			//*** NEW ***//
 		*co_ptr++ = insert_condition(list->node,ev);
 	
 	if (cutoff) return;
@@ -164,14 +165,16 @@ void add_post_conditions (event_t *ev, char cutoff)
 	{
 		co_ptr = ev->postset;
 		
-		for (list = nodelist_concatenate(ev->origin->postset, ev->origin->reset); list; list = list->next){		//*** NEW ***//
+		//for (list = nodelist_concatenate(ev->origin->postset, ev->origin->reset); list; list = list->next){		//*** NEW ***//
+		for (list = ev->origin->postset; list; list = list->next){		//*** NEW ***//
 			addto_coarray(&((*cocoptr)->co_private),*co_ptr++);
 			
 		}
 	}
 	
 	co_ptr = ev->postset;
-	for (list = nodelist_concatenate(ev->origin->postset, ev->origin->reset); list; list = list->next)			//*** NEW ***//
+	//for (list = nodelist_concatenate(ev->origin->postset, ev->origin->reset); list; list = list->next)			//*** NEW ***//
+	for (list = ev->origin->postset; list; list = list->next)			//*** NEW ***//
 	{
 		/* record co-relation between new conditions */
 		(*co_ptr)->co_common = newarray;
@@ -343,9 +346,9 @@ void unfold ()
 		printf("\n");
 	}
 
-	//printf("Print marking\n");
-	//print_marking(list);
-	//printf("\n");
+	printf("Print initial marking\n");
+	print_marking(list);
+	printf("\n");
 	
 	/* initialize PE computation */
 	pe_init(list);
@@ -360,10 +363,10 @@ void unfold ()
 		nodelist_push(&(unf->m0),co);
 	}
 	recursive_pe(unf->m0);
-	//printf("hola1\n");
+	
 
 	/* take the next event from the queue */
-	//printf("pe_qsize: %d\n", pe_qsize);
+	printf("pe_qsize: %d\n", pe_qsize);
 	while (pe_qsize)
 	{
 		int i, e;
@@ -406,7 +409,7 @@ void unfold ()
 					e,((event_t*)(corr_list->node))->id);
 		}
 		pe_free(qu);
-
+		
 		/* if we've found the -T transition, stop immediately */
 		if (stoptr && ev->origin == stoptr)
 		{
@@ -425,15 +428,18 @@ void unfold ()
 		/* add post-conditions, compute possible extensions */
 		add_post_conditions(ev,CUTOFF_NO);
 	}
+	printf("hola1\n");
+	
 	
 	/* add post-conditions for cut-off events */
 	for (list = cutoff_list; list; list = list->next)
 	{
 		ev = list->node;
+		printf("ev name: %s\n", ev->origin->name);
 		ev->next = unf->events; unf->events = ev;
 		add_post_conditions(ev,CUTOFF_YES);
 	}
-
+	
 	/* Make sure that stopev is the last event to ensure compatibility
 	   with Claus Schr�ter's reachability checker (otn). */
 	if (stopev)

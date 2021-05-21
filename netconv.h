@@ -24,7 +24,7 @@ typedef struct place_t
 	int    num;		    /* number				    */
 	struct nodelist_t *preset;  /* unordered list of preset		    */
 	struct nodelist_t *postset; /* unordered list of postset	    */
-	// THIS IS THE CULPRIT: struct nodelist_t *reset; /* unordered list of reset transitions            */                  //*** NEW  ***//
+	struct nodelist_t *reset; /* unordered list of reset transitions            */                  //*** NEW  ***//
 	struct nodelist_t *conds;   /* conditions derived from this place   */
 	char marked;		    /* non-zero if place is marked	    */
 } place_t;

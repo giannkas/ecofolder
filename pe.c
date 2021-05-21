@@ -199,7 +199,8 @@ void pe (cond_t *co)
 
 		/* for every other post-place of tr, collect the conditions
 			that are co-related to co in the comb structure */
-		for (tr_pre = nodelist_concatenate(tr->preset, tr->reset); tr_pre; tr_pre = tr_pre->next) 	//*** NEW  ***//
+		//for (tr_pre = nodelist_concatenate(tr->preset, tr->reset); tr_pre; tr_pre = tr_pre->next) 	//*** NEW  ***//
+		for (tr_pre = tr->preset; tr_pre; tr_pre = tr_pre->next) 	//*** NEW  ***//
 		{
 			nodelist_t *ptr = tr_pre;
 			//printf("List of conditions in the preset or reset set of transition %s: \n", ((trans_t*)(pl_post->node))->name);

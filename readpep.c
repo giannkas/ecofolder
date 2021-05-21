@@ -520,13 +520,14 @@ int insert_trans()
 
 int insert_arc()
 {
-	static int tp, rs = 0;  /* tp = 1 means Place->Trans, 0 is Trans->Place; rs = 1 means reset arc Place->Trans */
+	static int tp, rs = 0;  /* tp = 1 means Place->Trans, 0 is Trans->Place; 
+							rs = 1 means reset arc Place->Trans */
 	int pl, tr;
 
 	if (*blocktype)
 	{
 		rs = strcmp(blocktype,"RS");				//*** NEW  ***//
-		tp = strcmp(blocktype,"PT") ? rs : 0;		//*** NEW  ***//
+		tp = rs == 0 ? -1 : strcmp(blocktype,"PT");		//*** NEW  ***//
 		*blocktype = '\0';
 	}
 	//printf("tp %d and rs %d\n", tp, rs);
@@ -538,17 +539,18 @@ int insert_arc()
 	if (!pl || (pl > AnzPlNamen) || !PlArray[pl] )
 		nc_error("arc: incorrect place identifier");
 
-	if (tp != 0)
+	if (rs == 0){
+		nc_create_arc(&(TrArray[tr]->reset),&(PlArray[pl]->reset),
+			  TrArray[tr],PlArray[pl]);
+	}
+	else if (tp == 1)
 		nc_create_arc(&(TrArray[tr]->postset),&(PlArray[pl]->preset),
 			  TrArray[tr],PlArray[pl]);
-	else if (rs != 0)
-		nc_create_arc(&(PlArray[pl]->postset),&(TrArray[tr]->preset),
-			  PlArray[pl],TrArray[tr]);
 	else{
 		//printf("pl: %d, tr: %d\n", pl, tr);
 		//printf("PlArray[pl] name: %s, num: %d, \n", PlArray[pl]->name, PlArray[pl]->num);
 		//printf("TrArray[tr] name: %s, num: %d, \n", TrArray[tr]->name, TrArray[tr]->num);
-		nc_create_arc(&(PlArray[pl]->postset),&(TrArray[tr]->reset),
+		nc_create_arc(&(PlArray[pl]->postset),&(TrArray[tr]->preset),
 			  PlArray[pl],TrArray[tr]);
 	}
 	
