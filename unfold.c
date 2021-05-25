@@ -194,7 +194,7 @@ void add_post_conditions (event_t *ev, char cutoff)
 
 		/* compute possible extensions for each new condition */
 		pe(*co_ptr++);
-		printf("hola1\n");
+		//printf("hola1\n");
 	}
 }
 
