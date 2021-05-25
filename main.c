@@ -87,16 +87,16 @@ int main (int argc, char **argv)
 	
 	trans_t *trr = net->transitions;
 	while (trr){
-		//printf("%s ->\n", trr->name);
+		printf("%s ->\n", trr->name);
 		nodelist_t *ptr = trr->reset;
 		while (ptr){			
-			//printf("\t%s",((place_t*)(ptr->node))->name);
+			printf("\t%s",((place_t*)(ptr->node))->name);
 			ptr = ptr->next;		
 		}
-		//printf("\n");
+		printf("\n");
 		trr = trr->next;
 	}
-	//printf("\n");
+	printf("\n");
 	unfold();
 	write_mci_file(mcifile);
 

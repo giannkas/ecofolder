@@ -48,7 +48,7 @@ void addto_coarray (coa_t *coa, cond_t *co)
 		coa->conds = MYrealloc(coa->conds,(nsz+1) * sizeof(cond_t*));
 		coa->size = nsz;
 	}
-	//printf("name: %s\n",co->origin->name);
+	//printf("name cond: %s\n",co->origin->name);
 	coa->conds[coa->inuse++] = co;
 	coa->conds[coa->inuse] = NULL;
 }
@@ -100,7 +100,8 @@ cond_t* insert_condition (place_t *pl, event_t *ev)
 event_t* insert_event (pe_queue_t *qu)
 {
         event_t *ev = MYmalloc(sizeof(event_t));
-	int sz = qu->trans->preset_size + qu->trans->reset_size;					//*** NEW ***//
+	//int sz = qu->trans->preset_size + qu->trans->reset_size;					//*** NEW ***//
+	int sz = qu->trans->preset_size;
 	cond_t **co_ptr;
 
         ev->next = unf->events;
@@ -108,8 +109,10 @@ event_t* insert_event (pe_queue_t *qu)
 	ev->origin = qu->trans;
 	ev->mark = 0;		/* for marking_of */
 	ev->foata_level = find_foata_level(qu);
-	ev->preset_size = qu->trans->preset_size + qu->trans->reset_size;			//*** NEW ***//
-	ev->postset_size = qu->trans->postset_size + qu->trans->reset_size;		//*** NEW ***//	
+	//ev->preset_size = qu->trans->preset_size + qu->trans->reset_size;			//*** NEW ***//
+	//ev->postset_size = qu->trans->postset_size + qu->trans->reset_size;		//*** NEW ***//	
+	ev->preset_size = qu->trans->preset_size;
+	ev->postset_size = qu->trans->postset_size;
 
 	/* add preset (postset comes later) */
         ev->preset = co_ptr = MYmalloc(sz * sizeof(cond_t*));
@@ -142,7 +145,6 @@ void add_post_conditions (event_t *ev, char cutoff)
 	cond_t **co_ptr, **cocoptr;
 	nodelist_t *list;
 	coa_t newarray;
-
 	/* First insert the conditions without putting them in pl->conds;
 	   that is done by pe() to avoid duplicated new events. */
 	ev->postset = co_ptr
@@ -167,12 +169,15 @@ void add_post_conditions (event_t *ev, char cutoff)
 		
 		//for (list = nodelist_concatenate(ev->origin->postset, ev->origin->reset); list; list = list->next){		//*** NEW ***//
 		for (list = ev->origin->postset; list; list = list->next){		//*** NEW ***//
+			printf("name trans: %s\n",((trans_t*)(list->node))->name);
 			addto_coarray(&((*cocoptr)->co_private),*co_ptr++);
+			printf("name event: %s\n", ev->origin->name);
 			
 		}
 	}
 	
 	co_ptr = ev->postset;
+	
 	//for (list = nodelist_concatenate(ev->origin->postset, ev->origin->reset); list; list = list->next)			//*** NEW ***//
 	for (list = ev->origin->postset; list; list = list->next)			//*** NEW ***//
 	{
@@ -189,6 +194,7 @@ void add_post_conditions (event_t *ev, char cutoff)
 
 		/* compute possible extensions for each new condition */
 		pe(*co_ptr++);
+		printf("hola1\n");
 	}
 }
 
@@ -427,8 +433,9 @@ void unfold ()
 		
 		/* add post-conditions, compute possible extensions */
 		add_post_conditions(ev,CUTOFF_NO);
+		
 	}
-	printf("hola1\n");
+	
 	
 	
 	/* add post-conditions for cut-off events */
