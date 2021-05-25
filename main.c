@@ -97,6 +97,19 @@ int main (int argc, char **argv)
 		trr = trr->next;
 	}
 	printf("\n");
+
+	place_t *pll = net->places;
+	while (pll){
+		printf("%s ->\n", pll->name);
+		nodelist_t *ptr = pll->reset;
+		while (ptr){			
+			printf("\t%s",((trans_t*)(ptr->node))->name);
+			ptr = ptr->next;		
+		}
+		printf("\n");
+		pll = pll->next;
+	}
+	printf("\n");
 	unfold();
 	write_mci_file(mcifile);
 
