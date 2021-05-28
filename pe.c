@@ -108,6 +108,7 @@ pe_queue_t* pe_pop (int where)
 	pe_queue_t *first = pe_queue[where];
 	printf("Trans associated: %s\n", first->trans->name);
 	int size_preset = first->trans->preset_size;
+	printf("Size preset: %d\n", size_preset);
 	for (int i = 0; i < size_preset; i++)
 		printf("Cond %d associated: %s\n", i, first->conds[i]->origin->name);
 	pe_queue_t *last;

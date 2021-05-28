@@ -123,6 +123,8 @@ int parikh_compare (parikh_t *pv1, parikh_t *pv2)
 /* consists of the size and Parikh vector of [e]; the Foata normal form is   */
 /* computed only when necessary.					     */
 
+// SEE THIS!!!!!!
+
 pe_queue_t* create_queue_entry (trans_t *tr)
 {
 	pe_queue_t *qu_new;
