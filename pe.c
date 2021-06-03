@@ -63,9 +63,9 @@ void pe_finish ()
 void pe_insert (trans_t *tr)
 {
 	pe_queue_t *qu_new = create_queue_entry(tr);
+	
 	int index = ++pe_qsize;
 	static char stoptr_found = 0;
-
 	/* If -d is used, ignore the new event if its size exceeds the limit. */
 	if (unfold_depth && qu_new->lc_size > unfold_depth)
 		{	pe_qsize--; return;	}
@@ -194,18 +194,18 @@ void pe (cond_t *co)
 
 	*pe_conds = co;	/* any new PE contains co */
 	nodelist_push(&(pl->conds),co);
-
+	
 	/* check the transitions in pl's postset */
 	for (pl_post = pl->postset; pl_post; pl_post = pl_post->next)
 	{
-		//printf("%s -> %s\n",pl->name,((trans_t*)(pl_post->node))->name);
+		printf("%s -> %s\n",pl->name,((trans_t*)(pl_post->node))->name);
 		tr = pl_post->node;
 		(curr_comb = pe_combs)->start = NULL;
 
 		/* for every other post-place of tr, collect the conditions
 			that are co-related to co in the comb structure */
-		//for (tr_pre = nodelist_concatenate(tr->preset, tr->reset); tr_pre; tr_pre = tr_pre->next) 	//*** NEW  ***//
-		for (tr_pre = tr->preset; tr_pre; tr_pre = tr_pre->next) 	//*** NEW  ***//
+		//for (tr_pre = tr->preset; tr_pre; tr_pre = tr_pre->next) 	//*** NEW  ***//
+		for (tr_pre = nodelist_concatenate(tr->preset, tr->reset); tr_pre; tr_pre = tr_pre->next) 	//*** NEW  ***//
 		{
 			nodelist_t *ptr = tr_pre;
 			//printf("List of conditions in the preset or reset set of transition %s: \n", ((trans_t*)(pl_post->node))->name);
@@ -231,7 +231,7 @@ void pe (cond_t *co)
 			curr_comb->current = curr_comb->start;
 			(++curr_comb)->start = NULL;
 		}
-
+		
 		/* find all non-conflicting combinations in the comb */
 		curr_comb = pe_combs;
 		/* printf("curr_comb->start: %s\n",((cond_t*)(curr_comb->start->node))->origin->name);
@@ -241,15 +241,18 @@ void pe (cond_t *co)
         	printf("curr_comb->start: %s\n",((cond_t*)(curr_comb->start->node))->origin->name);
         	printf("curr_comb->current: %s\n",((cond_t*)(curr_comb->current->node))->origin->name);
         } */
+		
 		if (!tr_pre) while (curr_comb >= pe_combs)
-		{
+		{	
+			
 			if (!curr_comb->start)
 			{
 				cond_t **co_ptr = pe_conds;
 				for (curr_comb = pe_combs; curr_comb->start;
 						curr_comb++)
 					*++co_ptr = curr_comb->current->node;
-				pe_insert(tr);
+				pe_insert(tr); // CHECK pe_insert!!
+				
 				curr_comb--;
 			}
 			else if (!pe_conflict(curr_comb))
@@ -257,7 +260,7 @@ void pe (cond_t *co)
 				curr_comb++;
 				continue;
 			}
-
+			
 			while (curr_comb >= pe_combs && !(curr_comb->current =
 						curr_comb->current->next))
 			{
@@ -265,7 +268,8 @@ void pe (cond_t *co)
 				curr_comb--;
 			}
 		}
-
+		
+		
 		/* release the comb lists */
 		for (curr_comb = pe_combs; curr_comb->start; curr_comb++)
 			nodelist_delete(curr_comb->start);

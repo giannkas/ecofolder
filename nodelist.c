@@ -102,8 +102,12 @@ nodelist_t* nodelist_concatenate(nodelist_t *list1, nodelist_t *list2)
 {	
 	assert(list1 != NULL);
 	nodelist_t *head = nodelist_alloc();
-	head->node = list1->node;
+	nodelist_t *copy_list1 = list1;
+	nodelist_t *tmp_list1 = list1;
+	int duplicated = 0;
 
+	head->node = list1->node;
+	
 	nodelist_t *tail = head;
 	list1 = list1->next;
 	while (list1 != NULL){
@@ -113,10 +117,19 @@ nodelist_t* nodelist_concatenate(nodelist_t *list1, nodelist_t *list2)
 		list1 = list1->next;
 	}
 	while (list2 != NULL){
-		tail->next = nodelist_alloc();
-		tail = tail->next;
-		tail->node = list2->node;
+		while (copy_list1 != NULL && duplicated == 0){
+			if (copy_list1->node == list2->node)				
+				duplicated = 1;
+			copy_list1 = copy_list1->next;
+		}
+		if (duplicated == 0){
+			tail->next = nodelist_alloc();
+			tail = tail->next;
+			tail->node = list2->node;
+		}
+		duplicated = 0;
 		list2 = list2->next;
+		copy_list1 = tmp_list1;
 	}
 	tail->next = NULL;
 

@@ -42,6 +42,7 @@ void nc_warning (const char* msg, ...)
 
 void* MYmalloc(size_t size)
 {
+	//printf("size: %lu\n", size);
 	void * m;
 	if (!(m = malloc(size))) nc_error("memory allocation rejected!");
 	return m;
