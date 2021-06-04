@@ -199,22 +199,22 @@ pe_queue_t* create_queue_entry (trans_t *tr)
 	{
 		queue--;
 
-		printf("postset_size + reset_size: %d\n", ev->origin->postset_size + ev->origin->reset_size);
+		//printf("postset_size + reset_size: %d\n", ev->origin->postset_size + ev->origin->reset_size);
 		
 		/* check off the postset conditions */
 		//for (sz = ev->origin->postset_size, co_ptr = ev->postset; sz--;)
 		for (sz = ev->origin->postset_size + ev->origin->reset_size,
 			 co_ptr = ev->postset; sz--;){		//*** NEW ***//
-			printf("ev->postset_size: %d\n", ev->postset_size);
-			printf("co_ptr size: %lu\n", (&co_ptr)[1] - co_ptr);
-			printf("ev->postset size: %lu\n", sizeof(ev->postset) / sizeof(ev->postset[0]));
+			//printf("ev->postset_size: %d\n", ev->postset_size);
+			//printf("co_ptr size: %lu\n", (&co_ptr)[1] - co_ptr);
+			//printf("ev->postset size: %lu\n", sizeof(ev->postset) / sizeof(ev->postset[0]));
 			if ((co = *co_ptr++)->mark != ev_mark-1){
-				printf("ev_mark-1: %d\n", ev_mark-1);
+				//printf("ev_mark-1: %d\n", ev_mark-1);
 				nodelist_insert(&(qu_new->marking),co->origin);
 			}
 			//printf("(co = *co_ptr++)->mark: %d\n", (co = *co_ptr++)->mark);
 		}
-		printf("hola1\n");
+		//printf("hola1\n");
 		/* add the immediate predecessor events of ev to the queue */
 		// for (sz = ev->origin->preset_size, co_ptr = ev->preset; sz--; )
 		for (sz = ev->origin->preset_size + ev->origin->reset_size,

@@ -117,8 +117,10 @@ event_t* insert_event (pe_queue_t *qu)
 	/* add preset (postset comes later) */
         ev->preset = co_ptr = MYmalloc(sz * sizeof(cond_t*));
 	memcpy(ev->preset,qu->conds,sz * sizeof(cond_t*));
+	printf("size number: %d\n", sz);
+	printf("event name: %s\n", ev->origin->name);
 	while (sz--) nodelist_push(&((*co_ptr++)->postset),ev);
-
+	
 	/* allocate memory for queue in conco_nt if necessary */
 	if (++unf->numev >= events_size)
 	{
@@ -174,14 +176,16 @@ void add_post_conditions (event_t *ev, char cutoff)
 		
 		//for (list = ev->origin->postset; list; list = list->next){		//*** NEW ***//
 		for (list = nodelist_concatenate(ev->origin->postset, ev->origin->reset); list; list = list->next){		//*** NEW ***//
-			printf("name trans: %s\n",((trans_t*)(list->node))->name);
+			//printf("name trans: %s\n",((trans_t*)(list->node))->name);
 			addto_coarray(&((*cocoptr)->co_private),*co_ptr++);
-			printf("name event: %s\n", ev->origin->name);
+			//printf("name event: %s\n", ev->origin->name);
 			
 		}
 	}
 	
 	co_ptr = ev->postset;
+	size_t co_ptr_size = (&co_ptr)[1] - co_ptr;
+	printf("co_ptr size: %lu\n", co_ptr_size);
 	
 	//for (list = ev->origin->postset; list; list = list->next)			//*** NEW ***//
 	for (list = nodelist_concatenate(ev->origin->postset, ev->origin->reset); list; list = list->next)			//*** NEW ***//
@@ -378,7 +382,7 @@ void unfold ()
 	
 
 	/* take the next event from the queue */
-	printf("pe_qsize: %d\n", pe_qsize);
+	//printf("pe_qsize: %d\n", pe_qsize);
 	while (pe_qsize)
 	{
 		int i, e;
@@ -436,7 +440,6 @@ void unfold ()
 		
 		/* compute the co-relation for ev and post-conditions */
 		co_relation(ev);
-		
 		
 		/* add post-conditions, compute possible extensions */
 		add_post_conditions(ev,CUTOFF_NO);

@@ -530,7 +530,7 @@ int insert_arc()
 		tp = rs == 0 ? -1 : strcmp(blocktype,"PT");		//*** NEW  ***//
 		*blocktype = '\0';
 	}
-	printf("tp %d and rs %d\n", tp, rs);
+	//printf("tp %d and rs %d\n", tp, rs);
 	if (tp == -1){
 		pl = rs? rd_co->y : rd_co->x;
 		tr = rs? rd_co->x : rd_co->y;
@@ -538,7 +538,7 @@ int insert_arc()
 		pl = tp? rd_co->y : rd_co->x;
 		tr = tp? rd_co->x : rd_co->y;
 	}
-	printf("pl %d and tr %d\n", pl, tr);
+	//printf("pl %d and tr %d\n", pl, tr);
 
 	if (!tr || (tr > AnzTrNamen) || !TrArray[tr])
 		nc_error("arc: incorrect transition identifier");

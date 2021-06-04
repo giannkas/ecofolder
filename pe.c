@@ -106,11 +106,11 @@ void pe_insert (trans_t *tr)
 pe_queue_t* pe_pop (int where)
 {
 	pe_queue_t *first = pe_queue[where];
-	printf("Trans associated: %s\n", first->trans->name);
+	/* printf("Trans associated: %s\n", first->trans->name);
 	int size_preset = first->trans->preset_size;
 	printf("Size preset: %d\n", size_preset);
 	for (int i = 0; i < size_preset; i++)
-		printf("Cond %d associated: %s\n", i, first->conds[i]->origin->name);
+		printf("Cond %d associated: %s\n", i, first->conds[i]->origin->name); */
 	pe_queue_t *last;
 	int index = where, newindex;
 
@@ -198,7 +198,7 @@ void pe (cond_t *co)
 	/* check the transitions in pl's postset */
 	for (pl_post = pl->postset; pl_post; pl_post = pl_post->next)
 	{
-		printf("%s -> %s\n",pl->name,((trans_t*)(pl_post->node))->name);
+		//printf("%s -> %s\n",pl->name,((trans_t*)(pl_post->node))->name);
 		tr = pl_post->node;
 		(curr_comb = pe_combs)->start = NULL;
 
