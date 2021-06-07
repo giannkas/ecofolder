@@ -141,7 +141,7 @@ pe_queue_t* create_queue_entry (trans_t *tr)
 
 	/* add the input events of the pre-conditions into the queue */
 	//for (sz = tr->preset_size, co_ptr = pe_conds; sz--; )
-	for (sz = tr->preset_size + tr->reset_size, co_ptr = pe_conds; sz--; ) 			//*** NEW ***//
+	for (sz = tr->prereset_size, co_ptr = pe_conds; sz--; ) 			//*** NEW ***//
 	{
 		(co = *co_ptr++)->mark = ev_mark;
 		if ((ev = co->pre_ev) && ev->mark != ev_mark)
@@ -155,7 +155,7 @@ pe_queue_t* create_queue_entry (trans_t *tr)
 
 		/* add the immediate predecessor events of ev to the queue */
 		//for (sz = ev->origin->preset_size, co_ptr = ev->preset; sz--; )
-		for (sz = ev->origin->preset_size + ev->origin->reset_size, co_ptr = ev->preset; sz--; )	//*** NEW ***//
+		for (sz = ev->origin->prereset_size, co_ptr = ev->preset; sz--; )	//*** NEW ***//
 		{
 			(co = *co_ptr++)->mark = ev_mark;
 			if ((ev = co->pre_ev) && ev->mark != ev_mark)
@@ -170,7 +170,7 @@ pe_queue_t* create_queue_entry (trans_t *tr)
 	if (interactive)
 	{
 		qu_new->id = ++queuecount;
-		int i = tr->preset_size + tr->reset_size;
+		int i = tr->prereset_size;
 		printf("Discovered new extension E%d (%s) [condition%s",
 			qu_new->id, tr->name, i == 1? "" : "s");	//*** NEW ***//
 		while (i) { printf(" C%d",pe_conds[--i]->num); }
@@ -178,8 +178,8 @@ pe_queue_t* create_queue_entry (trans_t *tr)
 	}
 
         /* copy the pre-conditions */
-        qu_new->conds = MYmalloc((tr->preset_size + tr->reset_size) * sizeof(cond_t*));		//*** NEW ***//
-        memcpy(qu_new->conds,pe_conds,(tr->preset_size + tr->reset_size)*sizeof(cond_t*));
+        qu_new->conds = MYmalloc((tr->prereset_size) * sizeof(cond_t*));		//*** NEW ***//
+        memcpy(qu_new->conds,pe_conds,(tr->prereset_size)*sizeof(cond_t*));
 
 	/* copy Parikh vector */
 	qu_new->p_vector = parikh_save();
@@ -190,8 +190,8 @@ pe_queue_t* create_queue_entry (trans_t *tr)
 	*(queue = events) = NULL;
 	qu_new->marking = NULL;
 
-	//for (sz = tr->preset_size + tr->reset_size, co_ptr = pe_conds; sz--; )
-	for (sz = tr->preset_size + tr->reset_size, co_ptr = pe_conds; sz--; )	//*** NEW ***//
+	//for (sz = tr->preset_size, co_ptr = pe_conds; sz--; )
+	for (sz = tr->prereset_size, co_ptr = pe_conds; sz--; )	//*** NEW ***//
 		if ((ev = (*co_ptr++)->pre_ev) && ev->mark != ev_mark)
 			(*++queue = ev)->mark = ev_mark;
 
@@ -199,15 +199,18 @@ pe_queue_t* create_queue_entry (trans_t *tr)
 	{
 		queue--;
 
-		//printf("postset_size + reset_size: %d\n", ev->origin->postset_size + ev->origin->reset_size);
 		
 		/* check off the postset conditions */
 		//for (sz = ev->origin->postset_size, co_ptr = ev->postset; sz--;)
-		for (sz = ev->origin->postset_size + ev->origin->reset_size,
+		for (sz = ev->origin->postreset_size,
 			 co_ptr = ev->postset; sz--;){		//*** NEW ***//
-			//printf("ev->postset_size: %d\n", ev->postset_size);
-			//printf("co_ptr size: %lu\n", (&co_ptr)[1] - co_ptr);
-			//printf("ev->postset size: %lu\n", sizeof(ev->postset) / sizeof(ev->postset[0]));
+			printf("event name: %s\n", ev->origin->name);
+			printf("condition name: %s\n", (*co_ptr)->origin->name);
+			printf("transition name: %s\n", tr->name);
+			printf("ev->postset_size: %d\n", ev->postset_size);
+			printf("postreset_size: %d\n", ev->origin->postreset_size);
+			printf("co_ptr size: %lu\n", (&co_ptr)[1] - co_ptr);
+			printf("ev->postset size: %lu\n", sizeof(ev->postset) / sizeof(ev->postset[0]));
 			if ((co = *co_ptr++)->mark != ev_mark-1){
 				//printf("ev_mark-1: %d\n", ev_mark-1);
 				nodelist_insert(&(qu_new->marking),co->origin);
@@ -217,8 +220,7 @@ pe_queue_t* create_queue_entry (trans_t *tr)
 		//printf("hola1\n");
 		/* add the immediate predecessor events of ev to the queue */
 		// for (sz = ev->origin->preset_size, co_ptr = ev->preset; sz--; )
-		for (sz = ev->origin->preset_size + ev->origin->reset_size,
-			 co_ptr = ev->preset; sz--; )		//*** NEW ***//
+		for (sz = ev->origin->prereset_size, co_ptr = ev->preset; sz--; )		//*** NEW ***//
 			if ((ev = (*co_ptr++)->pre_ev) && ev->mark != ev_mark)
 				(*++queue = ev)->mark = ev_mark;
 	}
@@ -249,7 +251,7 @@ pe_queue_t* create_queue_entry (trans_t *tr)
 int find_foata_level (pe_queue_t *pe)
 {
 	int level = 1;
-	int sz = pe->trans->preset_size + pe->trans->reset_size;	//*** NEW ***//
+	int sz = pe->trans->prereset_size;	//*** NEW ***//
         cond_t **co_ptr = pe->conds;
 	event_t *ev;
 
@@ -277,7 +279,7 @@ nodelist_t** create_foata_lists (pe_queue_t *pe)
 	*(queue = events) = NULL;
 
 	//for (sz = pe->trans->preset_size, co_ptr = pe->conds; sz--; )
-	for (sz = pe->trans->preset_size + pe->trans->reset_size, co_ptr = pe->conds; sz--; )	//*** NEW ***//
+	for (sz = pe->trans->prereset_size, co_ptr = pe->conds; sz--; )	//*** NEW ***//
 		if ((ev = (*co_ptr++)->pre_ev) && ev->mark != ev_mark)
 			(*++queue = ev)->mark = ev_mark;
 
@@ -289,7 +291,7 @@ nodelist_t** create_foata_lists (pe_queue_t *pe)
 		nodelist_push(fo + ev->foata_level, ev->origin);
 
 		//for (sz = ev->origin->preset_size, co_ptr = ev->preset; sz--; )
-		for (sz = ev->origin->preset_size + ev->origin->reset_size, co_ptr = ev->preset; sz--; )	//*** NEW ***//
+		for (sz = ev->origin->prereset_size, co_ptr = ev->preset; sz--; )	//*** NEW ***//
 			if ((ev = (*co_ptr++)->pre_ev) && ev->mark != ev_mark)
 				(*++queue = ev)->mark = ev_mark;
 	}

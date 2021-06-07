@@ -100,7 +100,7 @@ cond_t* insert_condition (place_t *pl, event_t *ev)
 event_t* insert_event (pe_queue_t *qu)
 {
         event_t *ev = MYmalloc(sizeof(event_t));
-	int sz = qu->trans->preset_size + qu->trans->reset_size;					//*** NEW ***//
+	int sz = qu->trans->prereset_size;					//*** NEW ***//
 	//int sz = qu->trans->preset_size;
 	cond_t **co_ptr;
 
@@ -109,16 +109,16 @@ event_t* insert_event (pe_queue_t *qu)
 	ev->origin = qu->trans;
 	ev->mark = 0;		/* for marking_of */
 	ev->foata_level = find_foata_level(qu);
-	ev->preset_size = qu->trans->preset_size + qu->trans->reset_size;			//*** NEW ***//
-	ev->postset_size = qu->trans->postset_size + qu->trans->reset_size;		//*** NEW ***//	
+	ev->preset_size = qu->trans->prereset_size;			//*** NEW ***//
+	ev->postset_size = qu->trans->postreset_size;		//*** NEW ***//	
 	//ev->preset_size = qu->trans->preset_size;
 	//ev->postset_size = qu->trans->postset_size;
 
 	/* add preset (postset comes later) */
         ev->preset = co_ptr = MYmalloc(sz * sizeof(cond_t*));
 	memcpy(ev->preset,qu->conds,sz * sizeof(cond_t*));
-	printf("size number: %d\n", sz);
-	printf("event name: %s\n", ev->origin->name);
+	//printf("size number: %d\n", sz);
+	//printf("event name: %s\n", ev->origin->name);
 	while (sz--) nodelist_push(&((*co_ptr++)->postset),ev);
 	
 	/* allocate memory for queue in conco_nt if necessary */
@@ -184,8 +184,8 @@ void add_post_conditions (event_t *ev, char cutoff)
 	}
 	
 	co_ptr = ev->postset;
-	size_t co_ptr_size = (&co_ptr)[1] - co_ptr;
-	printf("co_ptr size: %lu\n", co_ptr_size);
+	//size_t co_ptr_size = (&co_ptr)[1] - co_ptr;
+	//printf("co_ptr size: %lu\n", co_ptr_size);
 	
 	//for (list = ev->origin->postset; list; list = list->next)			//*** NEW ***//
 	for (list = nodelist_concatenate(ev->origin->postset, ev->origin->reset); list; list = list->next)			//*** NEW ***//

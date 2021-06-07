@@ -54,7 +54,8 @@ trans_t* nc_create_transition (net_t *net)
 	tr->next = net->transitions;
 	net->transitions = tr;
 	tr->preset = tr->postset = tr->reset = NULL;
-	tr->preset_size = tr->reset_size = 0;		//*** NEW ***//
+	tr->preset_size = tr->reset_size = 
+		tr->prereset_size = tr->postreset_size = 0;		//*** NEW ***//
 	tr->num = ++net->numtr;
 	return tr;
 }
@@ -103,6 +104,12 @@ void nc_compute_sizes (net_t *net)
 		tr->reset_size = k; 										  //*** NEW ***//
 		//printf("Transition %s, reset size: %d\n", tr->name, k);
 		if (net->maxres < k) net->maxres = k; 						  //*** NEW ***//
+
+		for (k = 0, list = nodelist_concatenate(tr->preset, tr->reset); list; k++, list = list->next); //*** NEW ***//
+		tr->prereset_size = k; 										  //*** NEW ***//
+
+		for (k = 0, list = nodelist_concatenate(tr->postset, tr->reset); list; k++, list = list->next); //*** NEW ***//
+		tr->postreset_size = k; 										  //*** NEW ***//
 	}
 	//printf("maxpre: %d\n", net->maxpre);
 	//printf("maxpost: %d\n", net->maxpost);

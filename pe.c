@@ -166,10 +166,12 @@ char pe_conflict (pe_comb_t *curr)
 	}
 
 	/* go upwards, try to find two paths converging at some condition */
+	/* Check later how it would work if there is an asymmetric conflict
+	with reset and production arcs */
 	while ((ev = *queue))
 	{
 		queue--;
-		for (sz = ev->origin->preset_size, co_ptr = ev->preset; sz--; )
+		for (sz = ev->origin->prereset_size, co_ptr = ev->preset; sz--; )	//*** NEW  ***//
 		{
 			if ((co = *co_ptr++)->mark == ev_mark) return 1;
 			co->mark = ev_mark;

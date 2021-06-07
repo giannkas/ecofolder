@@ -37,7 +37,8 @@ typedef struct trans_t
 	struct nodelist_t *preset;  /* unordered list of preset		    */
 	struct nodelist_t *postset; /* unordered list of postset	    */
 	struct nodelist_t *reset; /* unordered list of reset	    */			//*** NEW  ***//
-	short  preset_size, postset_size, reset_size;							//*** NEW  ***//
+	short  preset_size, postset_size, reset_size, 
+		prereset_size, postreset_size;							//*** NEW  ***//
 } trans_t;
 
 typedef struct coa_t {

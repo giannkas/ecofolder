@@ -1,21 +1,18 @@
 digraph test {
-  c1 -> e3;
-  c2 -> e2;
+  c1 -> e2;
+  c1 -> e1;
   c3 -> e1;
   e1 -> c4;
-  c4 -> e4;
+  c4 -> e3;
   e2 -> c5;
   e3 -> c6;
-  e4 -> c7;
   c1 [label="P2 (c1)" shape=circle];
   c2 [label="P1 (c2)" shape=circle];
   c3 [label="P0 (c3)" shape=circle];
   c4 [label="P2 (c4)" shape=circle];
-  c5 [label="P3 (c5)" shape=circle];
+  c5 [label="P4 (c5)" shape=circle];
   c6 [label="P4 (c6)" shape=circle];
-  c7 [label="P4 (c7)" shape=circle];
   e1 [label="T0 (e1)" shape=box];
-  e2 [label="T1 (e2)" shape=box];
+  e2 [label="T2 (e2)" shape=box];
   e3 [label="T2 (e3)" shape=box];
-  e4 [label="T2 (e4)" shape=box];
 }

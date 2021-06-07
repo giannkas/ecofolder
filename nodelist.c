@@ -96,6 +96,21 @@ char nodelist_compare (nodelist_t *list1, nodelist_t *list2)
 }
 
 /*****************************************************************************/ 	//*** NEW FUNCTION ***//
+/* calculate the size of an array of pointers    */
+
+int sizeList(nodelist_t *head)
+{
+    nodelist_t *ptr = head;
+	int list_size = 0;
+    while (ptr)
+	{
+		list_size++;
+        ptr = ptr->next;
+    }
+    return list_size;
+}
+
+/*****************************************************************************/ 	//*** NEW FUNCTION ***//
 /* concatenate two lists and return the join    */
 
 nodelist_t* nodelist_concatenate(nodelist_t *list1, nodelist_t *list2)
