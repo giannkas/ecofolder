@@ -382,7 +382,7 @@ void unfold ()
 	
 
 	/* take the next event from the queue */
-	//printf("pe_qsize: %d\n", pe_qsize);
+	printf("pe_qsize: %d\n", pe_qsize);
 	while (pe_qsize)
 	{
 		int i, e;
@@ -413,6 +413,7 @@ void unfold ()
 		/* for (i = 1; i <= pe_qsize; i++)
 			printf(" E%d ",pe_queue[i]->id); */
 		ev = insert_event(qu);
+		//strcmp(ev->origin->name,"T1") == 0 ? printf("yes\n") : printf("no\n");
 		cutoff = add_marking(qu->marking,ev);
 		
 

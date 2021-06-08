@@ -1,5 +1,6 @@
 #include "common.h"
 #include "unfold.h"
+#include <string.h>
 
 /*****************************************************************************/
 
@@ -38,10 +39,11 @@ void pe_init (nodelist_t *m0)
 	pe_conds = MYmalloc((net->maxpre + net->maxres) * sizeof(place_t*));
 	pe_combs = MYmalloc((net->maxpre + net->maxres) * sizeof(pe_comb_t));
 
+	//printf("net->maxpre: %d, net->maxres: %d\n", net->maxpre, net->maxres);
 	/* determine size of initial marking */
 	for (i = 0; m0; m0 = m0->next) i++;
 	pe0_conflicts = MYcalloc((i + 8) / 8);
-	//printf("%u, %d\n", *pe0_conflicts, i);
+	//printf("pe0_conflicts: %u, i: %d\n", *pe0_conflicts, i);
 }
 
 void pe_free (pe_queue_t *qu)
@@ -194,6 +196,7 @@ void pe (cond_t *co)
 	place_t *pl = co->origin, *pl2;
 	trans_t *tr;
 
+	
 	*pe_conds = co;	/* any new PE contains co */
 	nodelist_push(&(pl->conds),co);
 	
@@ -212,23 +215,33 @@ void pe (cond_t *co)
 			nodelist_t *ptr = tr_pre;
 			//printf("List of conditions in the preset or reset set of transition %s: \n", ((trans_t*)(pl_post->node))->name);
 			while (ptr) {
-				//printf("%s, ", ((place_t*)(ptr->node))->name);
+				if (strcmp(pl->name, "P1") == 0)
+					printf("%s, ", ((place_t*)(ptr->node))->name);
 				ptr = ptr->next;
 			}
-			//printf("\n");
+			if (strcmp(pl->name, "P1") == 0) printf("\n");
 			if ((pl2 = tr_pre->node) == pl) continue;
 
 			compat_conds = &(curr_comb->start);
 			cocoptr = co->co_common.conds - 1;
-			while (*++cocoptr)
-				if ((*cocoptr)->origin == pl2)
+			//if (strcmp(pl->name, "P1") == 0) 
+			//	printf("cocoptr->origin: %s\n", (*++cocoptr)->origin->name);
+			//(*cocoptr)->origin == pl2 ? printf("yes\n") : printf("no\n");
+			while (*++cocoptr){
+				if ((*cocoptr)->origin == pl2){
+					printf("hola\n");
 				    nodelist_push(compat_conds,*cocoptr);
+					if (strcmp(pl->name, "P1") == 0) printf("tr_pre->node: %s\n", ((place_t*)(tr_pre->node))->name);
+				}
+			}
 			cocoptr = co->co_private.conds - 1;
 			while (*++cocoptr)
 				if ((*cocoptr)->origin == pl2)
 				    nodelist_push(compat_conds,*cocoptr);
-
+			
+			
 			if (!*compat_conds) break;
+			if (strcmp(pl->name, "P2") == 0) printf("tr_pre->name: %s\n", ((place_t*)(tr_pre->node))->name);
 
 			curr_comb->current = curr_comb->start;
 			(++curr_comb)->start = NULL;
@@ -244,6 +257,7 @@ void pe (cond_t *co)
         	printf("curr_comb->current: %s\n",((cond_t*)(curr_comb->current->node))->origin->name);
         } */
 		
+		//if (strcmp(pl->name, "P1") == 0) printf("tr_pre->node: %s\n", ((place_t*)(tr_pre->node))->name);
 		if (!tr_pre) while (curr_comb >= pe_combs)
 		{	
 			
