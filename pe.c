@@ -214,6 +214,7 @@ void pe (cond_t *co)
 		{
 			nodelist_t *ptr = tr_pre;
 			//printf("List of conditions in the preset or reset set of transition %s: \n", ((trans_t*)(pl_post->node))->name);
+			
 			while (ptr) {
 				if (strcmp(pl->name, "P1") == 0)
 					printf("%s, ", ((place_t*)(ptr->node))->name);
@@ -225,23 +226,26 @@ void pe (cond_t *co)
 			compat_conds = &(curr_comb->start);
 			cocoptr = co->co_common.conds - 1;
 			//if (strcmp(pl->name, "P1") == 0) 
-			//	printf("cocoptr->origin: %s\n", (*++cocoptr)->origin->name);
-			//(*cocoptr)->origin == pl2 ? printf("yes\n") : printf("no\n");
+			//	printf("cocoptr->origin: %s\n", cocoptr[0]->origin->name);
+			if (strcmp(pl->name, "P1") == 0) printf("co->co_common.size: %d\n", co->co_common.size);
+			if (strcmp(pl->name, "P1") == 0) printf("co->co_private.size: %d\n", co->co_common.size);
 			while (*++cocoptr){
+				//printf("hola\n");
 				if ((*cocoptr)->origin == pl2){
-					printf("hola\n");
+					if (strcmp(pl->name, "P1") == 0) printf("common tr_pre->node: %s\n", ((place_t*)(tr_pre->node))->name);
 				    nodelist_push(compat_conds,*cocoptr);
-					if (strcmp(pl->name, "P1") == 0) printf("tr_pre->node: %s\n", ((place_t*)(tr_pre->node))->name);
 				}
 			}
 			cocoptr = co->co_private.conds - 1;
 			while (*++cocoptr)
-				if ((*cocoptr)->origin == pl2)
+				if ((*cocoptr)->origin == pl2){
+					if (strcmp(pl->name, "P1") == 0) printf("private tr_pre->node: %s\n", ((place_t*)(tr_pre->node))->name);
 				    nodelist_push(compat_conds,*cocoptr);
+				}
 			
 			
 			if (!*compat_conds) break;
-			if (strcmp(pl->name, "P2") == 0) printf("tr_pre->name: %s\n", ((place_t*)(tr_pre->node))->name);
+			//if (strcmp(pl->name, "P1") == 0) printf("tr_pre->node: %s\n", ((place_t*)(tr_pre->node))->name);
 
 			curr_comb->current = curr_comb->start;
 			(++curr_comb)->start = NULL;
@@ -256,11 +260,10 @@ void pe (cond_t *co)
         	printf("curr_comb->start: %s\n",((cond_t*)(curr_comb->start->node))->origin->name);
         	printf("curr_comb->current: %s\n",((cond_t*)(curr_comb->current->node))->origin->name);
         } */
-		
-		//if (strcmp(pl->name, "P1") == 0) printf("tr_pre->node: %s\n", ((place_t*)(tr_pre->node))->name);
+				
 		if (!tr_pre) while (curr_comb >= pe_combs)
 		{	
-			
+			//if (strcmp(pl->name, "P1") == 0) printf("tr->preset_size: %d\n", tr->preset_size);
 			if (!curr_comb->start)
 			{
 				cond_t **co_ptr = pe_conds;
