@@ -54,6 +54,17 @@ nodelist_t* nodelist_push (nodelist_t **list, void *node)
 }
 
 /*****************************************************************************/
+/* find and element; return 0 if element is not found, 1 otherwise    */
+
+char nodelist_find (nodelist_t **list, void *node)
+{
+	while (*list && node != (*list)->node)
+		list = &((*list)->next);
+
+	return (*list && (*list)->node == node) ? 1 : 0;
+}
+
+/*****************************************************************************/
 /* add a place to a list; sort by pointer in ascending order		     */
 
 nodelist_t* nodelist_insert (nodelist_t **list, void *node)

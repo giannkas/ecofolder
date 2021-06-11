@@ -378,6 +378,8 @@ void unfold ()
 		co->co_private = alloc_coarray(0);
 		nodelist_push(&(unf->m0),co);
 	}
+	printf("unfolding initial marking\n");
+	print_marking(unf->m0);
 	recursive_pe(unf->m0);
 	
 
