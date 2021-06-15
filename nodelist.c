@@ -126,46 +126,50 @@ int sizeList(nodelist_t *head)
 
 nodelist_t* nodelist_concatenate(nodelist_t *list1, nodelist_t *list2)
 {	
+	nodelist_t *head = nodelist_alloc();
 	nodelist_t *first = list1;
 	nodelist_t *second = list2;
+
 	if (!list1){
 		first = list2; 
 		second = list1;
 	}
 	
-	nodelist_t *head = nodelist_alloc();
-	nodelist_t *copy_first = first;
-	nodelist_t *tmp_first = first;
-	int duplicated = 0;
+	if (first)
+	{
+		nodelist_t *copy_first = first;
+		nodelist_t *tmp_first = first;
+		int duplicated = 0;
 
-	head->node = first->node;
-	
-	nodelist_t *tail = head;
-	first = first->next;
-	while (first != NULL){
-		tail->next = nodelist_alloc();
-		tail = tail->next;
-		tail->node = first->node;
+		head->node = first->node;
+		printf("hola\n");
+		nodelist_t *tail = head;
 		first = first->next;
-	}
-	while (second != NULL){
-		while (copy_first != NULL && duplicated == 0){
-			if (copy_first->node == second->node)				
-				duplicated = 1;
-			copy_first = copy_first->next;
-		}
-		if (duplicated == 0){
+		while (first != NULL){
 			tail->next = nodelist_alloc();
 			tail = tail->next;
-			tail->node = second->node;
+			tail->node = first->node;
+			first = first->next;
 		}
-		duplicated = 0;
-		second = second->next;
-		copy_first = tmp_first;
+		while (second != NULL){
+			while (copy_first != NULL && duplicated == 0){
+				if (copy_first->node == second->node)				
+					duplicated = 1;
+				copy_first = copy_first->next;
+			}
+			if (duplicated == 0){
+				tail->next = nodelist_alloc();
+				tail = tail->next;
+				tail->node = second->node;
+			}
+			duplicated = 0;
+			second = second->next;
+			copy_first = tmp_first;
+		}
+		tail->next = NULL;
 	}
-	tail->next = NULL;
-
-	return head;
+	
+	return head->node ? head : NULL;
 }
 
 /*****************************************************************************/ 	//*** NEW FUNCTION ***//

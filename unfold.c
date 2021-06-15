@@ -151,11 +151,11 @@ void add_post_conditions (event_t *ev, char cutoff)
 	   that is done by pe() to avoid duplicated new events. */
 	ev->postset = co_ptr
 		= MYmalloc(ev->postset_size * sizeof(cond_t*));
-	/* printf("ev->postset_size: %d\n", ev->postset_size);
+	printf("ev->postset_size: %d\n", ev->postset_size);
 	printf("ev->postset_size * sizeof(cond_t*): %lu\n", ev->postset_size * sizeof(cond_t*));
 	size_t co_ptr_size = (&co_ptr)[1] - co_ptr;
-	printf("co_ptr size: %d\n", co_ptr_size);
-	printf("ev->postset size: %lu\n", sizeof(ev->postset)); */
+	printf("co_ptr size: %ld\n", co_ptr_size);
+	printf("ev->postset size: %ld\n", sizeof(ev->postset));
 	//for (list = ev->origin->postset; list; list = list->next)			//*** NEW ***//
 	for (list = nodelist_concatenate(ev->origin->postset, ev->origin->reset); list; list = list->next)			//*** NEW ***//
 		*co_ptr++ = insert_condition(list->node,ev);
@@ -188,7 +188,7 @@ void add_post_conditions (event_t *ev, char cutoff)
 	//printf("co_ptr size: %lu\n", co_ptr_size);
 	
 	//for (list = ev->origin->postset; list; list = list->next)			//*** NEW ***//
-	for (list = nodelist_concatenate(ev->origin->postset, ev->origin->reset); list; list = list->next)			//*** NEW ***//
+	for (list = nodelist_concatenate(ev->origin->reset, ev->origin->postset); list; list = list->next)			//*** NEW ***//
 	{
 		/* record co-relation between new conditions */
 		(*co_ptr)->co_common = newarray;
@@ -202,9 +202,11 @@ void add_post_conditions (event_t *ev, char cutoff)
 		}
 
 		/* compute possible extensions for each new condition */
-		
+		printf("name co_ptr: %s\n", (*co_ptr)->origin->name);
+		//printf("name ++co_ptr: %s\n", (*++co_ptr)->origin->name);
+		//printf("name co_ptr++: %s\n", (*co_ptr++)->origin->name);
 		pe(*co_ptr++);
-		
+		printf("It continues!!\n");
 	}
 }
 
@@ -444,6 +446,7 @@ void unfold ()
 		/* compute the co-relation for ev and post-conditions */
 		co_relation(ev);
 		
+		//printf("Hola\n");
 		/* add post-conditions, compute possible extensions */
 		add_post_conditions(ev,CUTOFF_NO);
 	}

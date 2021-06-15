@@ -1,0 +1,11 @@
+digraph test {
+  c1 -> e1;
+  c2 -> e1;
+  e1 -> c3;
+  e1 -> c4;
+  c1 [label="P1 (c1)" shape=circle];
+  c2 [label="P0 (c2)" shape=circle];
+  c3 [label="P2 (c3)" shape=circle];
+  c4 [label="P0 (c4)" shape=circle];
+  e1 [label="T0 (e1)" shape=box];
+}
