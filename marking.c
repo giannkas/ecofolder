@@ -98,7 +98,8 @@ nodelist_t* marking_initial ()
 	
 	for (tr = net->transitions; tr; tr = tr->next){
 		for (respl = tr->reset; respl; respl = respl->next){
-			nodelist_insert(&list,((place_t*)(respl->node)));
+			//if (((place_t*)(respl->node))->preset == NULL)
+				nodelist_insert(&list,((place_t*)(respl->node)));
 		}
 	}
 	
@@ -110,6 +111,6 @@ nodelist_t* marking_initial ()
 void print_marking (nodelist_t* list)
 {
 	if (!list) return;
-	print_marking(list->next);
 	printf("%s ",((place_t*)(list->node))->name);
+	print_marking(list->next);
 }

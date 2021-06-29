@@ -195,21 +195,44 @@ void pe (cond_t *co)
 	cond_t **cocoptr;
 	place_t *pl = co->origin, *pl2;
 	trans_t *tr;
-
+	event_t *ev = co->pre_ev;
 	
 	*pe_conds = co;	/* any new PE contains co */
 	nodelist_push(&(pl->conds),co);
-	
-	pl_post = nodelist_concatenate(pl->postset, pl->reset);
 	
 	/* check the transitions in pl's postset */
 	//for (pl_post = pl->postset; pl_post && !nodelist_find(&((tr = pl_post->node)->reset),pl); pl_post = pl_post->next)
 	for (pl_post = nodelist_concatenate(pl->postset, pl->reset); pl_post; pl_post = pl_post->next) 		//*** NEW  ***//
 	{
+		if (!ev){
+			printf("pl name forbiden to compute possible extensions: %s\n", pl->name);
+			printf("tr name forbiden to compute possible extensions: %s\n", ((trans_t*)(pl_post->node))->name);
+			print_marking(pl->postset);
+			printf("\n");
+		}else{
+			printf("conditions associated of transition: %s\n", ev->origin->name);
+			cond_t *co2, **co_ptr;
+			int i;
+			for (i = ev->preset_size, co_ptr = ev->preset; i--;)
+			{				
+				printf("c%d\n",(co2 = *co_ptr)->mark);
+				co_ptr++;
+			}			
+		}
+		if ((ev && nodelist_find(pl->postset, pl_post->node) && 
+			nodelist_find(co->pre_ev->origin->reset, pl) &&
+			!nodelist_find(co->pre_ev->origin->postset, pl)) ||
+			(!ev && pl->marked == 0 && nodelist_find(pl->postset, pl_post->node))
+			){
+			// 
+			// Check whether it's marked and the corresponding events belong to 
+			// the postset.
+			break;
+		}
 		//printf("%s -> %s\n",pl->name,((trans_t*)(pl_post->node))->name);
 		//if (strcmp(pl->name, "P2") == 0) printf("\n");
 		tr = pl_post->node;
-		if (strcmp(pl->name, "P2") == 0 && !pl->reset) printf("hola\n");
+		//if (strcmp(pl->name, "P2") == 0 && !pl->reset) printf("hola\n");
 		nodelist_t *ptr0 = tr->reset;
 		while (ptr0) {
 			if (strcmp(tr->name, "T0") == 0)
@@ -220,7 +243,7 @@ void pe (cond_t *co)
 		(curr_comb = pe_combs)->start = NULL;
 
 		/* for every other post-place of tr, collect the conditions
-			that are co-related to co in the comb structure */
+			that are co-related to cbreako in the comb structure */
 		//for (tr_pre = tr->preset; tr_pre; tr_pre = tr_pre->next) 	//*** NEW  ***//
 		for (tr_pre = nodelist_concatenate(tr->reset, tr->preset); tr_pre; tr_pre = tr_pre->next) 	//*** NEW  ***//
 		{
@@ -246,7 +269,7 @@ void pe (cond_t *co)
 				if (strcmp(pl->name, "P2") == 0) printf("common (*cocoptr)->origin->name: %s and pl2->name: %s\n", (*cocoptr)->origin->name, pl2->name);
 				if ((*cocoptr)->origin == pl2){
 					if (strcmp(pl->name, "P2") == 0) printf("common tr_pre->node: %s\n", ((place_t*)(tr_pre->node))->name);
-				    nodelist_push(compat_conds,*cocoptr);
+					nodelist_push(compat_conds,*cocoptr);
 				}
 			}
 			cocoptr = co->co_private.conds - 1;
@@ -254,7 +277,7 @@ void pe (cond_t *co)
 				if (strcmp(pl->name, "P2") == 0) printf("private (*cocoptr)->origin->name: %s and pl2->name: %s\n", (*cocoptr)->origin->name, pl2->name);
 				if ((*cocoptr)->origin == pl2){
 					if (strcmp(pl->name, "P2") == 0) printf("private tr_pre->node: %s\n", ((place_t*)(tr_pre->node))->name);
-				    nodelist_push(compat_conds,*cocoptr);
+					nodelist_push(compat_conds,*cocoptr);
 				}
 			}
 			
@@ -271,9 +294,9 @@ void pe (cond_t *co)
 		printf("curr_comb->current: %s\n",((cond_t*)(curr_comb->current->node))->origin->name); */
 		/* if (curr_comb->start && curr_comb->current)
 		{
-        	printf("curr_comb->start: %s\n",((cond_t*)(curr_comb->start->node))->origin->name);
-        	printf("curr_comb->current: %s\n",((cond_t*)(curr_comb->current->node))->origin->name);
-        } */
+			printf("curr_comb->start: %s\n",((cond_t*)(curr_comb->start->node))->origin->name);
+			printf("curr_comb->current: %s\n",((cond_t*)(curr_comb->current->node))->origin->name);
+		} */
 				
 		if (!tr_pre) while (curr_comb >= pe_combs)
 		{	
@@ -306,6 +329,7 @@ void pe (cond_t *co)
 		/* release the comb lists */
 		for (curr_comb = pe_combs; curr_comb->start; curr_comb++)
 			nodelist_delete(curr_comb->start);
+		
 	}
 	
 }

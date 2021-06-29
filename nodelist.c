@@ -56,12 +56,12 @@ nodelist_t* nodelist_push (nodelist_t **list, void *node)
 /*****************************************************************************/
 /* find and element; return 0 if element is not found, 1 otherwise    */
 
-char nodelist_find (nodelist_t **list, void *node)
+int nodelist_find (nodelist_t *list, void *node)
 {
-	while (*list && node != (*list)->node)
-		list = &((*list)->next);
+	while (list && list->node != node )
+		list = list->next;
 
-	return (*list && (*list)->node == node) ? 1 : 0;
+	return (list && list->node == node) ? 1 : 0;
 }
 
 /*****************************************************************************/
@@ -141,8 +141,7 @@ nodelist_t* nodelist_concatenate(nodelist_t *list1, nodelist_t *list2)
 		nodelist_t *tmp_first = first;
 		int duplicated = 0;
 
-		head->node = first->node;
-		printf("hola\n");
+		head->node = first->node;		
 		nodelist_t *tail = head;
 		first = first->next;
 		while (first != NULL){

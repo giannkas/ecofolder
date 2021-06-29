@@ -382,8 +382,7 @@ void unfold ()
 	}
 	printf("unfolding initial marking\n");
 	print_marking(unf->m0);
-	recursive_pe(unf->m0);
-	
+	recursive_pe(unf->m0);	
 
 	/* take the next event from the queue */
 	printf("pe_qsize: %d\n", pe_qsize);
