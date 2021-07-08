@@ -151,11 +151,11 @@ void add_post_conditions (event_t *ev, char cutoff)
 	   that is done by pe() to avoid duplicated new events. */
 	ev->postset = co_ptr
 		= MYmalloc(ev->postset_size * sizeof(cond_t*));
-	printf("ev->postset_size: %d\n", ev->postset_size);
-	printf("ev->postset_size * sizeof(cond_t*): %lu\n", ev->postset_size * sizeof(cond_t*));
-	size_t co_ptr_size = (&co_ptr)[1] - co_ptr;
-	printf("co_ptr size: %ld\n", co_ptr_size);
-	printf("ev->postset size: %ld\n", sizeof(ev->postset));
+	//printf("ev->postset_size: %d\n", ev->postset_size);
+	//printf("ev->postset_size * sizeof(cond_t*): %lu\n", ev->postset_size * sizeof(cond_t*));
+	//size_t co_ptr_size = (&co_ptr)[1] - co_ptr;
+	//printf("co_ptr size: %ld\n", co_ptr_size);
+	//printf("ev->postset size: %ld\n", sizeof(ev->postset));
 	//for (list = ev->origin->postset; list; list = list->next)			//*** NEW ***//
 	for (list = nodelist_concatenate(ev->origin->postset, ev->origin->reset); list; list = list->next)			//*** NEW ***//
 		*co_ptr++ = insert_condition(list->node,ev);
@@ -385,7 +385,7 @@ void unfold ()
 	recursive_pe(unf->m0);	
 
 	/* take the next event from the queue */
-	printf("pe_qsize: %d\n", pe_qsize);
+	//printf("pe_qsize: %d\n", pe_qsize);
 	while (pe_qsize)
 	{
 		int i, e;
@@ -444,8 +444,7 @@ void unfold ()
 		
 		/* compute the co-relation for ev and post-conditions */
 		co_relation(ev);
-		
-		//printf("Hola\n");
+				
 		/* add post-conditions, compute possible extensions */
 		add_post_conditions(ev,CUTOFF_NO);
 	}
