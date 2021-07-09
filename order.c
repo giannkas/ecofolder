@@ -130,7 +130,7 @@ pe_queue_t* create_queue_entry (trans_t *tr)
 	pe_queue_t *qu_new;
 	event_t *ev, **queue;
 	cond_t  *co, **co_ptr;
-	nodelist_t *list;
+	nodelist_t *list, *resconf;
 	int sz;
 	static int queuecount = 0;
 	
@@ -227,7 +227,12 @@ pe_queue_t* create_queue_entry (trans_t *tr)
 
 	/* add the post-places of tr */
 	//for (list = tr->postset; list; list = list->next)
-	for (list = nodelist_concatenate(tr->postset,tr->reset); list; list = list->next)	//*** NEW ***//
+	for (resconf = tr->preset; resconf; resconf = resconf->next){			//*** NEW ***//
+		if (((place_t*)(resconf))->reset)
+			list = nodelist_concatenate(list, resconf);
+	}
+	list = nodelist_concatenate(list, tr->postset);
+	for (list = nodelist_concatenate(list,tr->reset); list; list = list->next)	//*** NEW ***//
 		nodelist_insert(&(qu_new->marking), list->node);
 
 	/* add the places of unconsumed minimal conditions */

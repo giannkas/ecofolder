@@ -223,14 +223,26 @@ void pe (cond_t *co)
 		if ((ev && nodelist_find(pl->postset, pl_post->node) && 
 			nodelist_find(ev->origin->reset, pl) &&
 			!nodelist_find(ev->origin->postset, pl)) ||
-			//(0)
 			(!ev && pl->marked == 0 && nodelist_find(pl->postset, pl_post->node))
+			){
+			break;
+		}
+		/* if ((ev && nodelist_find(pl->postset, pl_post->node) &&
+			strcmp(pl->name, "P2") != 0 && 
+			strcmp(pl->name, "P3") != 0 &&
+			1 &&
+			1
+			//!nodelist_find(ev->origin->postset, pl)
+			)
+			||
+			(0)
+			//(!ev && pl->marked == 0 && nodelist_find(pl->postset, pl_post->node))
 			){
 			// 
 			// Check whether it's marked and the corresponding events belong to 
 			// the postset.
 			break;
-		}
+		} */
 		
 		tr = pl_post->node;
 		//if (strcmp(pl->name, "P2") == 0 && !pl->reset) printf("hola\n");
@@ -244,7 +256,7 @@ void pe (cond_t *co)
 		(curr_comb = pe_combs)->start = NULL;
 
 		/* for every other post-place of tr, collect the conditions
-			that are co-related to cbreako in the comb structure */
+			that are co-related to co in the comb structure */
 		//for (tr_pre = tr->preset; tr_pre; tr_pre = tr_pre->next) 	//*** NEW  ***//
 		for (tr_pre = nodelist_concatenate(tr->reset, tr->preset); tr_pre; tr_pre = tr_pre->next) 	//*** NEW  ***//
 		{
@@ -279,6 +291,7 @@ void pe (cond_t *co)
 			curr_comb->current = curr_comb->start;
 			(++curr_comb)->start = NULL;
 		}
+		
 		
 		/* find all non-conflicting combinations in the comb */
 		curr_comb = pe_combs;
@@ -315,7 +328,6 @@ void pe (cond_t *co)
 				curr_comb--;
 			}
 		}
-		
 		
 		/* release the comb lists */
 		for (curr_comb = pe_combs; curr_comb->start; curr_comb++)

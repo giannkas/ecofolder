@@ -102,7 +102,7 @@ event_t* insert_event (pe_queue_t *qu)
         event_t *ev = MYmalloc(sizeof(event_t));
 	int sz = qu->trans->prereset_size;					//*** NEW ***//
 	//int sz = qu->trans->preset_size;
-	cond_t **co_ptr;
+	cond_t **co_ptr, **co_ptr2;
 
         ev->next = unf->events;
         unf->events = ev;
@@ -117,6 +117,12 @@ event_t* insert_event (pe_queue_t *qu)
 	/* add preset (postset comes later) */
         ev->preset = co_ptr = MYmalloc(sz * sizeof(cond_t*));
 	memcpy(ev->preset,qu->conds,sz * sizeof(cond_t*));
+	co_ptr2 = ev->preset;
+	printf("event name %s and its preset with size %d: \n", ev->origin->name, sz);
+	while(*co_ptr2){
+		printf("condition name: %s\n",(*co_ptr2)->origin->name);
+		co_ptr2 = &((*co_ptr2)->next);
+	}
 	//printf("size number: %d\n", sz);
 	//printf("event name: %s\n", ev->origin->name);
 	while (sz--) nodelist_push(&((*co_ptr++)->postset),ev);
@@ -144,8 +150,9 @@ enum { CUTOFF_NO, CUTOFF_YES };
 
 void add_post_conditions (event_t *ev, char cutoff)
 {
+	
 	cond_t **co_ptr, **cocoptr;
-	nodelist_t *list;
+	nodelist_t *list = NULL, *resconf;
 	coa_t newarray;
 	/* First insert the conditions without putting them in pl->conds;
 	   that is done by pe() to avoid duplicated new events. */
@@ -156,8 +163,12 @@ void add_post_conditions (event_t *ev, char cutoff)
 	//size_t co_ptr_size = (&co_ptr)[1] - co_ptr;
 	//printf("co_ptr size: %ld\n", co_ptr_size);
 	//printf("ev->postset size: %ld\n", sizeof(ev->postset));
-	//for (list = ev->origin->postset; list; list = list->next)			//*** NEW ***//
-	for (list = nodelist_concatenate(ev->origin->postset, ev->origin->reset); list; list = list->next)			//*** NEW ***//
+	for (resconf = ev->origin->preset; resconf; resconf = resconf->next){			//*** NEW ***//
+		if (((place_t*)(resconf))->reset)
+			list = nodelist_concatenate(list, resconf);
+	}
+	list = nodelist_concatenate(list, ev->origin->postset);
+	for (list = nodelist_concatenate(list, ev->origin->reset); list; list = list->next)			//*** NEW ***//
 		*co_ptr++ = insert_condition(list->node,ev);
 	
 	if (cutoff) return;
@@ -174,8 +185,12 @@ void add_post_conditions (event_t *ev, char cutoff)
 	{
 		co_ptr = ev->postset;
 		
-		//for (list = ev->origin->postset; list; list = list->next){		//*** NEW ***//
-		for (list = nodelist_concatenate(ev->origin->postset, ev->origin->reset); list; list = list->next){		//*** NEW ***//
+		for (resconf = ev->origin->preset; resconf; resconf = resconf->next){			//*** NEW ***//
+			if (((place_t*)(resconf))->reset)
+				list = nodelist_concatenate(list, resconf);
+		}
+		list = nodelist_concatenate(list, ev->origin->postset);
+		for (list = nodelist_concatenate(list, ev->origin->reset); list; list = list->next){		//*** NEW ***//
 			//printf("name trans: %s\n",((trans_t*)(list->node))->name);
 			addto_coarray(&((*cocoptr)->co_private),*co_ptr++);
 			//printf("name event: %s\n", ev->origin->name);
@@ -188,7 +203,12 @@ void add_post_conditions (event_t *ev, char cutoff)
 	//printf("co_ptr size: %lu\n", co_ptr_size);
 	
 	//for (list = ev->origin->postset; list; list = list->next)			//*** NEW ***//
-	for (list = nodelist_concatenate(ev->origin->reset, ev->origin->postset); list; list = list->next)			//*** NEW ***//
+	for (resconf = ev->origin->preset; resconf; resconf = resconf->next){			//*** NEW ***//
+		if (((place_t*)(resconf))->reset)
+			list = nodelist_concatenate(list, resconf);
+	}
+	list = nodelist_concatenate(list, ev->origin->postset);
+	for (list = nodelist_concatenate(list, ev->origin->reset); list; list = list->next)			//*** NEW ***//
 	{
 		/* record co-relation between new conditions */
 		(*co_ptr)->co_common = newarray;
@@ -202,11 +222,11 @@ void add_post_conditions (event_t *ev, char cutoff)
 		}
 
 		/* compute possible extensions for each new condition */
-		printf("name co_ptr: %s\n", (*co_ptr)->origin->name);
+		//printf("name co_ptr: %s\n", (*co_ptr)->origin->name);
 		//printf("name ++co_ptr: %s\n", (*++co_ptr)->origin->name);
 		//printf("name co_ptr++: %s\n", (*co_ptr++)->origin->name);
 		pe(*co_ptr++);
-		printf("It continues!!\n");
+		//printf("It continues!!\n");
 	}
 }
 
@@ -382,7 +402,8 @@ void unfold ()
 	}
 	printf("unfolding initial marking\n");
 	print_marking(unf->m0);
-	recursive_pe(unf->m0);	
+	
+	recursive_pe(unf->m0);
 
 	/* take the next event from the queue */
 	//printf("pe_qsize: %d\n", pe_qsize);

@@ -56,6 +56,8 @@ trans_t* nc_create_transition (net_t *net)
 	tr->preset = tr->postset = tr->reset = NULL;
 	tr->preset_size = tr->reset_size = 
 		tr->prereset_size = tr->postreset_size = 0;		//*** NEW ***//
+		// prereset_size is the sum of preset_size + reset_size
+		// dropping out those in common. Same for postreset_size.
 	tr->num = ++net->numtr;
 	return tr;
 }
