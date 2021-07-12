@@ -66,6 +66,7 @@ void pe_insert (trans_t *tr)
 {
 	pe_queue_t *qu_new = create_queue_entry(tr);
 	
+	
 	int index = ++pe_qsize;
 	static char stoptr_found = 0;
 	/* If -d is used, ignore the new event if its size exceeds the limit. */
@@ -310,7 +311,7 @@ void pe (cond_t *co)
 				cond_t **co_ptr = pe_conds;
 				for (curr_comb = pe_combs; curr_comb->start;
 						curr_comb++)
-					*++co_ptr = curr_comb->current->node;
+					*++co_ptr = curr_comb->current->node;				
 				pe_insert(tr); // CHECK pe_insert!!
 				
 				curr_comb--;
@@ -328,7 +329,6 @@ void pe (cond_t *co)
 				curr_comb--;
 			}
 		}
-		
 		/* release the comb lists */
 		for (curr_comb = pe_combs; curr_comb->start; curr_comb++)
 			nodelist_delete(curr_comb->start);

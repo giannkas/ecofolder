@@ -172,5 +172,24 @@ nodelist_t* nodelist_concatenate(nodelist_t *list1, nodelist_t *list2)
 }
 
 /*****************************************************************************/ 	//*** NEW FUNCTION ***//
-/* Find an element two lists and return the join    */
+/* check if two lists have elements in common. No tested yet.  */
 
+int nodelist_common(nodelist_t *list1, nodelist_t *list2)
+{	
+	int com = 0;
+	nodelist_t *tmp_list1 = list1;
+
+	if (list1 && list2){
+		while (list2 != NULL && !com){
+			while (list1 != NULL && !com){
+				if (list1->node == list2->node)				
+					com = 1;
+				list1 = list1->next;
+			}			
+			list2 = list2->next;
+			list1 = tmp_list1;
+		}
+	}
+
+	return com;
+}

@@ -116,7 +116,8 @@ extern nodelist_t* nodelist_insert (nodelist_t**,void*e);
 extern void nodelist_delete (nodelist_t*);
 extern char nodelist_compare (nodelist_t*, nodelist_t*);
 extern nodelist_t* nodelist_concatenate(nodelist_t *list1, nodelist_t *list2);			//*** NEW  ***//
-extern int nodelist_find (nodelist_t *list, void *);								//*** NEW  ***//
+extern int nodelist_find (nodelist_t *list, void *);
+extern int nodelist_common(nodelist_t *list1, nodelist_t *list2);								//*** NEW  ***//
 
 /****************************************************************************/
 /* declarations for readpep.c						    */

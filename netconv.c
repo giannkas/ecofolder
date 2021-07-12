@@ -84,7 +84,7 @@ void nc_create_arc (nodelist_t **fromlist, nodelist_t **tolist,
 
 void nc_compute_sizes (net_t *net)
 {
-	trans_t *tr;
+	trans_t *tr;	
 	int k;
 
 	net->maxpre = net->maxpost = net->maxres = 0;

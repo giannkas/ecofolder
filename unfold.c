@@ -154,17 +154,22 @@ void add_post_conditions (event_t *ev, char cutoff)
 	cond_t **co_ptr, **cocoptr;
 	nodelist_t *list = NULL, *resconf;
 	coa_t newarray;
+	nodelist_t *tr_prev;
 	/* First insert the conditions without putting them in pl->conds;
 	   that is done by pe() to avoid duplicated new events. */
 	ev->postset = co_ptr
 		= MYmalloc(ev->postset_size * sizeof(cond_t*));
+	
 	//printf("ev->postset_size: %d\n", ev->postset_size);
 	//printf("ev->postset_size * sizeof(cond_t*): %lu\n", ev->postset_size * sizeof(cond_t*));
 	//size_t co_ptr_size = (&co_ptr)[1] - co_ptr;
 	//printf("co_ptr size: %ld\n", co_ptr_size);
 	//printf("ev->postset size: %ld\n", sizeof(ev->postset));
-	for (resconf = ev->origin->preset; resconf; resconf = resconf->next){			//*** NEW ***//
-		if (((place_t*)(resconf))->reset)
+	for (resconf = ev->origin->preset; resconf; resconf = resconf->next){			//*** NEW ***//		
+		tr_prev = ((place_t*)(resconf->node))->preset;
+		if (((place_t*)(resconf->node))->reset &&
+			tr_prev &&
+			!nodelist_find(((trans_t*)(tr_prev->node))->postset, resconf))
 			list = nodelist_concatenate(list, resconf);
 	}
 	list = nodelist_concatenate(list, ev->origin->postset);
@@ -186,7 +191,10 @@ void add_post_conditions (event_t *ev, char cutoff)
 		co_ptr = ev->postset;
 		
 		for (resconf = ev->origin->preset; resconf; resconf = resconf->next){			//*** NEW ***//
-			if (((place_t*)(resconf))->reset)
+			tr_prev = ((place_t*)(resconf->node))->preset;
+			if (((place_t*)(resconf->node))->reset &&
+				tr_prev &&
+				!nodelist_find(((trans_t*)(tr_prev->node))->postset, resconf))
 				list = nodelist_concatenate(list, resconf);
 		}
 		list = nodelist_concatenate(list, ev->origin->postset);
@@ -204,7 +212,10 @@ void add_post_conditions (event_t *ev, char cutoff)
 	
 	//for (list = ev->origin->postset; list; list = list->next)			//*** NEW ***//
 	for (resconf = ev->origin->preset; resconf; resconf = resconf->next){			//*** NEW ***//
-		if (((place_t*)(resconf))->reset)
+		tr_prev = ((place_t*)(resconf->node))->preset;
+		if (((place_t*)(resconf->node))->reset &&
+			tr_prev &&
+			!nodelist_find(((trans_t*)(tr_prev->node))->postset, resconf))
 			list = nodelist_concatenate(list, resconf);
 	}
 	list = nodelist_concatenate(list, ev->origin->postset);
