@@ -118,9 +118,9 @@ event_t* insert_event (pe_queue_t *qu)
         ev->preset = co_ptr = MYmalloc(sz * sizeof(cond_t*));
 	memcpy(ev->preset,qu->conds,sz * sizeof(cond_t*));
 	co_ptr2 = ev->preset;
-	printf("event name %s and its preset with size %d: \n", ev->origin->name, sz);
+	//printf("event name %s and its preset with size %d: \n", ev->origin->name, sz);
 	while(*co_ptr2){
-		printf("condition name: %s\n",(*co_ptr2)->origin->name);
+		//printf("condition name: %s\n",(*co_ptr2)->origin->name);
 		co_ptr2 = &((*co_ptr2)->next);
 	}
 	//printf("size number: %d\n", sz);
@@ -165,11 +165,12 @@ void add_post_conditions (event_t *ev, char cutoff)
 	//size_t co_ptr_size = (&co_ptr)[1] - co_ptr;
 	//printf("co_ptr size: %ld\n", co_ptr_size);
 	//printf("ev->postset size: %ld\n", sizeof(ev->postset));
-	for (resconf = ev->origin->preset; resconf; resconf = resconf->next){			//*** NEW ***//		
+	for (resconf = ev->origin->preset; resconf; resconf = resconf->next){
 		tr_prev = ((place_t*)(resconf->node))->preset;
 		if (((place_t*)(resconf->node))->reset &&
-			tr_prev &&
-			!nodelist_find(((trans_t*)(tr_prev->node))->postset, resconf))
+			(!tr_prev ||
+			(tr_prev &&
+			!nodelist_find(((trans_t*)(tr_prev->node))->postset, resconf->node))))
 			list = nodelist_concatenate(list, resconf);
 	}
 	list = nodelist_concatenate(list, ev->origin->postset);
@@ -186,15 +187,17 @@ void add_post_conditions (event_t *ev, char cutoff)
 	
 	/* Add the reverse half of the concurrency relation. */
 	cocoptr = newarray.conds-1;
+	list = NULL;
 	while (*++cocoptr)
 	{
 		co_ptr = ev->postset;
 		
-		for (resconf = ev->origin->preset; resconf; resconf = resconf->next){			//*** NEW ***//
+		for (resconf = ev->origin->preset; resconf; resconf = resconf->next){
 			tr_prev = ((place_t*)(resconf->node))->preset;
 			if (((place_t*)(resconf->node))->reset &&
-				tr_prev &&
-				!nodelist_find(((trans_t*)(tr_prev->node))->postset, resconf))
+				(!tr_prev ||
+				(tr_prev &&
+				!nodelist_find(((trans_t*)(tr_prev->node))->postset, resconf->node))))
 				list = nodelist_concatenate(list, resconf);
 		}
 		list = nodelist_concatenate(list, ev->origin->postset);
@@ -209,14 +212,23 @@ void add_post_conditions (event_t *ev, char cutoff)
 	co_ptr = ev->postset;
 	//size_t co_ptr_size = (&co_ptr)[1] - co_ptr;
 	//printf("co_ptr size: %lu\n", co_ptr_size);
-	
+	list = NULL;
 	//for (list = ev->origin->postset; list; list = list->next)			//*** NEW ***//
-	for (resconf = ev->origin->preset; resconf; resconf = resconf->next){			//*** NEW ***//
+	for (resconf = ev->origin->preset; resconf; resconf = resconf->next){
 		tr_prev = ((place_t*)(resconf->node))->preset;
 		if (((place_t*)(resconf->node))->reset &&
-			tr_prev &&
-			!nodelist_find(((trans_t*)(tr_prev->node))->postset, resconf))
+			(!tr_prev ||
+			(tr_prev &&
+			!nodelist_find(((trans_t*)(tr_prev->node))->postset, resconf->node))))
 			list = nodelist_concatenate(list, resconf);
+		/* if (((place_t*)(resconf->node))->reset &&
+			tr_prev &&
+			!nodelist_find(((trans_t*)(tr_prev->node))->postset, resconf->node)){
+			printf("resconf: %s\n", ((place_t*)(resconf->node))->name);			
+			printf("resconf preset: ");print_marking(tr_prev);printf("\n");
+			print_marking(((trans_t*)(tr_prev->node))->postset);
+			printf("\n!nodelist_find result: %d\n", !nodelist_find(((trans_t*)(tr_prev->node))->postset, resconf->node));
+		} */
 	}
 	list = nodelist_concatenate(list, ev->origin->postset);
 	for (list = nodelist_concatenate(list, ev->origin->reset); list; list = list->next)			//*** NEW ***//
@@ -487,7 +499,7 @@ void unfold ()
 	for (list = cutoff_list; list; list = list->next)
 	{
 		ev = list->node;
-		printf("ev name: %s\n", ev->origin->name);
+		//printf("ev name: %s\n", ev->origin->name);
 		ev->next = unf->events; unf->events = ev;
 		add_post_conditions(ev,CUTOFF_YES);
 	}

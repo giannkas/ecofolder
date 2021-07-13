@@ -32,7 +32,7 @@ int marking_hash (nodelist_t *marking)
 	unsigned int val = 0, i = 0;
 	while (marking)
 	{
-		printf("marking place: %s\n", ((place_t*)(marking->node))->name);
+		//printf("marking place: %s\n", ((place_t*)(marking->node))->name);
 		val += ((place_t*)(marking->node))->num * ++i;
 		marking = marking->next;
 	}

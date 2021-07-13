@@ -228,15 +228,22 @@ pe_queue_t* create_queue_entry (trans_t *tr)
 	
 	/* add the post-places of tr */
 	//for (list = tr->postset; list; list = list->next)
-	for (resconf = tr->preset; resconf; resconf = resconf->next){			//*** NEW ***//
+	for (resconf = tr->preset; resconf; resconf = resconf->next){
 		tr_prev = ((place_t*)(resconf->node))->preset;
-		printf("hola\n");
 		if (((place_t*)(resconf->node))->reset &&
-			tr_prev &&
-			!nodelist_find(((trans_t*)(tr_prev->node))->postset, resconf)){
+			(!tr_prev ||
+			(tr_prev &&
+			!nodelist_find(((trans_t*)(tr_prev->node))->postset, resconf->node)))){
 			list = nodelist_concatenate(list, resconf);
 			//printf("place name with reset set: %s", ((place_t*)(resconf))->name);
 		}
+		/* if (((place_t*)(resconf->node))->reset &&
+			tr_prev &&
+			!nodelist_find(((trans_t*)(tr_prev->node))->postset, resconf)){
+			print_marking(((trans_t*)(tr_prev->node))->postset);
+			printf("\nresconf: %s\n", ((place_t*)(resconf->node))->name);			
+			printf("!nodelist_find result: %d\n", !nodelist_find(((trans_t*)(tr_prev->node))->postset, resconf));
+		} */
 	}
 	list = nodelist_concatenate(list, tr->postset);
 	for (list = nodelist_concatenate(list,tr->reset); list; list = list->next)	//*** NEW ***//
