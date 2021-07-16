@@ -220,15 +220,7 @@ void add_post_conditions (event_t *ev, char cutoff)
 			(!tr_prev ||
 			(tr_prev &&
 			!nodelist_find(((trans_t*)(tr_prev->node))->postset, resconf->node))))
-			list = nodelist_concatenate(list, resconf);
-		/* if (((place_t*)(resconf->node))->reset &&
-			tr_prev &&
-			!nodelist_find(((trans_t*)(tr_prev->node))->postset, resconf->node)){
-			printf("resconf: %s\n", ((place_t*)(resconf->node))->name);			
-			printf("resconf preset: ");print_marking(tr_prev);printf("\n");
-			print_marking(((trans_t*)(tr_prev->node))->postset);
-			printf("\n!nodelist_find result: %d\n", !nodelist_find(((trans_t*)(tr_prev->node))->postset, resconf->node));
-		} */
+			list = nodelist_concatenate(list, resconf);		
 	}
 	list = nodelist_concatenate(list, ev->origin->postset);
 	for (list = nodelist_concatenate(list, ev->origin->reset); list; list = list->next)			//*** NEW ***//

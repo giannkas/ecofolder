@@ -176,7 +176,16 @@ char pe_conflict (pe_comb_t *curr)
 		queue--;
 		for (sz = ev->origin->prereset_size, co_ptr = ev->preset; sz--; )	//*** NEW  ***//
 		{
-			if ((co = *co_ptr++)->mark == ev_mark) return 1;
+			printf("transition reset: \n");
+			print_marking(ev->origin->reset);
+			printf("place name: %s", co->origin->name);
+			if ((co = *co_ptr++)->mark == ev_mark && 
+				!nodelist_find(ev->origin->reset, co->origin)){
+				printf("transition reset: \n");
+				print_marking(ev->origin->reset);
+				printf("place name: %s", co->origin->name);
+				return 1;
+			}
 			co->mark = ev_mark;
 			if ((ev = co->pre_ev) && ev->mark != ev_mark)
 				 (*++queue = ev)->mark = ev_mark;
@@ -221,25 +230,25 @@ void pe (cond_t *co)
 				co_ptr++;
 			}			
 		} */
+		if ((ev && nodelist_find(pl->postset, pl_post->node) && 
+			nodelist_find(ev->origin->reset, pl) &&
+			!nodelist_find(ev->origin->postset, pl)) ||
+			(!ev && pl->marked == 0 && nodelist_find(pl->postset, pl_post->node)) ||
+			//(0)
+			(ev && !nodelist_find(ev->origin->postset, pl) && !nodelist_find(ev->origin->reset, pl))
+			){
+			break;
+		}
 		/* if ((ev && nodelist_find(pl->postset, pl_post->node) && 
 			nodelist_find(ev->origin->reset, pl) &&
 			!nodelist_find(ev->origin->postset, pl)) ||
 			(!ev && pl->marked == 0 && nodelist_find(pl->postset, pl_post->node))
 			){
-			break;
-		} */
-		if ((ev && nodelist_find(pl->postset, pl_post->node) && 
-			nodelist_find(ev->origin->reset, pl) &&
-			!nodelist_find(ev->origin->postset, pl))
-			||
-			(0)
-			//(!ev && pl->marked == 0 && nodelist_find(pl->postset, pl_post->node))
-			){
 			// 
 			// Check whether it's marked and the corresponding events belong to 
 			// the postset.
 			break;
-		}
+		} */
 		
 		tr = pl_post->node;
 		//if (strcmp(pl->name, "P2") == 0 && !pl->reset) printf("hola\n");
