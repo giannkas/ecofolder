@@ -140,3 +140,14 @@ void nc_static_checks (net_t* net, char *stoptr_name)
 		if (pl->marked) break;
 	if (!pl) nc_error("no initial marking");
 }
+
+/*****************************************************************************/
+/* Check find a place in a list and check whether it is marked or not and  */
+
+/* int nc_marked (nodelist_t *list, place_t *pl)
+{
+	while (list && list->node != pl )
+		list = list->next;	
+	
+	return (pl && pl->marked == 1) ? 1 : 0;
+} */

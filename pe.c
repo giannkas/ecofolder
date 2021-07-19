@@ -214,30 +214,35 @@ void pe (cond_t *co)
 	//for (pl_post = pl->postset; pl_post && !nodelist_find(&((tr = pl_post->node)->reset),pl); pl_post = pl_post->next)
 	for (pl_post = nodelist_concatenate(pl->postset, pl->reset); pl_post; pl_post = pl_post->next) 		//*** NEW  ***//
 	{
-		if (!ev && pl->marked == 0 && nodelist_find(pl->postset, pl_post->node)){
+		/* if (!ev && pl->marked == 0 && nodelist_find(pl->postset, pl_post->node)){
 			printf("pl name forbiden to compute possible extensions: %s\n", pl->name);
 			printf("tr name forbiden to compute possible extensions: %s\n", ((trans_t*)(pl_post->node))->name);
 			print_marking(pl->postset);
 			printf("\n");
-		}
-		/* else{
-			printf("conditions associated of transition: %s\n", ev->origin->name);
-			cond_t *co2, **co_ptr;
-			int i;
-			for (i = ev->preset_size, co_ptr = ev->preset; i--;)
-			{				
-				printf("c%d\n",(co2 = *co_ptr)->mark);
-				co_ptr++;
-			}			
 		} */
+		if (ev && nodelist_common(unf->m0_unmarked->node, ((trans_t*)(pl_post->node))->preset)){
+			printf("element in common: %d\n", nodelist_common(unf->m0_unmarked->node, ((trans_t*)(pl_post->node))->preset));
+			printf("pl: %s\n", pl->name);
+			printf("transition name: %s", ((trans_t*)(pl_post->node))->name);			
+			printf("\n");			
+		}		
+		if ((ev && nodelist_find(ev->origin->reset, pl) && 
+			!nodelist_find(((trans_t*)(pl_post->node))->preset, pl)) ||
+			//(0)
+			(ev && nodelist_common(unf->m0_unmarked->node, ((trans_t*)(pl_post->node))->preset))
+			){
+			/* printf("pl name forbiden to compute possible extensions: %s\n", pl->name);
+			printf("tr source to compute possible extensions that precedes pl: %s\n", ev->origin->name);
+			print_marking(pl->postset);
+			printf("\n"); */
+			continue;
+		}
 		if ((ev && nodelist_find(pl->postset, pl_post->node) && 
 			nodelist_find(ev->origin->reset, pl) &&
 			!nodelist_find(ev->origin->postset, pl)) ||
-			(!ev && pl->marked == 0 && nodelist_find(pl->postset, pl_post->node)) ||
-			//(0)
-			(ev && !nodelist_find(ev->origin->postset, pl) && !nodelist_find(ev->origin->reset, pl))
+			(!ev && pl->marked == 0 && nodelist_find(pl->postset, pl_post->node))
 			){
-			break;
+			continue;
 		}
 		/* if ((ev && nodelist_find(pl->postset, pl_post->node) && 
 			nodelist_find(ev->origin->reset, pl) &&

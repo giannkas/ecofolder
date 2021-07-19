@@ -89,6 +89,7 @@ typedef struct
 	event_t *events;	/* pointer to first event		*/ 
 	int numco, numev;	/* number of conditions/events in net	*/
 	struct nodelist_t *m0;	/* list of minimal conditions		*/
+	struct nodelist_t *m0_unmarked;	/* list of minimal unmarked conditions		*/
 } unf_t;
 
 /****************************************************************************/
@@ -100,6 +101,7 @@ extern trans_t* nc_create_transition (net_t*);
 extern void nc_create_arc (struct nodelist_t**,struct nodelist_t**,void*,void*);
 extern void nc_compute_sizes (net_t*);
 extern void nc_static_checks (net_t*,char*);
+//extern int nc_marked (nodelist_t*, place_t*);
 
 /*****************************************************************************/
 /* declarations from nodelist.c						     */

@@ -180,10 +180,13 @@ int nodelist_common(nodelist_t *list1, nodelist_t *list2)
 	nodelist_t *tmp_list1 = list1;
 
 	if (list1 && list2){
-		while (list2 != NULL && !com){
-			while (list1 != NULL && !com){
-				if (list1->node == list2->node)				
+		while (list2 && !com){
+			while (list1 && !com){				
+				if (list2->node == list1->node){
+					printf("element in common\n");
 					com = 1;
+				}
+				//printf("hola\n");
 				list1 = list1->next;
 			}			
 			list2 = list2->next;

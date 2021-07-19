@@ -414,10 +414,14 @@ void unfold ()
 		co->co_common = alloc_coarray(0);
 		co->co_private = alloc_coarray(0);
 		nodelist_push(&(unf->m0),co);
+		if (co->origin->marked == 0){
+			//printf("unmarked condition: %s\n", co->origin->name);
+			nodelist_push(&(unf->m0_unmarked),co);
+		}
 	}
 	printf("unfolding initial marking\n");
 	print_marking(unf->m0);
-	
+	//printf("unmarked condition: %s\n", ((cond_t*)(unf->m0_unmarked->node))->origin->name);	
 	recursive_pe(unf->m0);
 
 	/* take the next event from the queue */
