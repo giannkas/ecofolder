@@ -209,7 +209,7 @@ void pe (cond_t *co)
 	
 	*pe_conds = co;	/* any new PE contains co */
 	nodelist_push(&(pl->conds),co);
-	
+	//printf("condition number: %d\n", co->num);
 	/* check the transitions in pl's postset */
 	//for (pl_post = pl->postset; pl_post && !nodelist_find(&((tr = pl_post->node)->reset),pl); pl_post = pl_post->next)
 	for (pl_post = nodelist_concatenate(pl->postset, pl->reset); pl_post; pl_post = pl_post->next) 		//*** NEW  ***//
@@ -220,16 +220,18 @@ void pe (cond_t *co)
 			print_marking(pl->postset);
 			printf("\n");
 		} */
-		if (ev && nodelist_common(unf->m0_unmarked->node, ((trans_t*)(pl_post->node))->preset)){
-			printf("element in common: %d\n", nodelist_common(unf->m0_unmarked->node, ((trans_t*)(pl_post->node))->preset));
+		/* if (ev && nodelist_common((cond_t*)(unf->m0_unmarked->node), (place_t*)(((trans_t*)(pl_post->node))->preset))){
+			printf("element in common: %d\n", nodelist_common((cond_t*)(unf->m0_unmarked->node), (place_t*)(((trans_t*)(pl_post->node))->preset)));
 			printf("pl: %s\n", pl->name);
 			printf("transition name: %s", ((trans_t*)(pl_post->node))->name);			
 			printf("\n");			
-		}		
+		} */
 		if ((ev && nodelist_find(ev->origin->reset, pl) && 
 			!nodelist_find(((trans_t*)(pl_post->node))->preset, pl)) ||
 			//(0)
-			(ev && nodelist_common(unf->m0_unmarked->node, ((trans_t*)(pl_post->node))->preset))
+			(ev && nodelist_common((cond_t*)(unf->m0_unmarked->node), 
+				((trans_t*)(pl_post->node))->preset, (trans_t*)(pl_post->node), pl))
+
 			){
 			/* printf("pl name forbiden to compute possible extensions: %s\n", pl->name);
 			printf("tr source to compute possible extensions that precedes pl: %s\n", ev->origin->name);

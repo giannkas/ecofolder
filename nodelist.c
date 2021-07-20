@@ -174,21 +174,30 @@ nodelist_t* nodelist_concatenate(nodelist_t *list1, nodelist_t *list2)
 /*****************************************************************************/ 	//*** NEW FUNCTION ***//
 /* check if two lists have elements in common. No tested yet.  */
 
-int nodelist_common(nodelist_t *list1, nodelist_t *list2)
+int nodelist_common(cond_t *list1, nodelist_t *list2, trans_t* tr, place_t* pl)
 {	
 	int com = 0;
-	nodelist_t *tmp_list1 = list1;
-
+	cond_t *tmp_list1 = list1;
 	if (list1 && list2){
 		while (list2 && !com){
 			while (list1 && !com){				
-				if (list2->node == list1->node){
-					printf("element in common\n");
+				//printf("element in common\n");
+				printf("place source for the preset assessed: %s\n", pl->name);
+				printf("transition source for the preset assessed: %s\n", tr->name);
+				printf("mark condition: %d\n", list1->mark);
+				printf("num place: %d\n", ((place_t*)(list2->node))->num);
+				printf("condition name: %s\n", list1->origin->name);
+				printf("place name: %s\n", ((place_t*)(list2->node))->name);
+				if (list1->pre_ev)
+					printf("pre_event name: %s\n", list1->pre_ev->origin->name);
+				//printf("mark condition: %d", ((cond_t*)(list2->conds->node))->mark);
+				if (list1->origin->name == ((place_t*)(list2->node))->name && 
+					list1->mark == ((place_t*)(list2->node))->marked){
 					com = 1;
 				}
 				//printf("hola\n");
 				list1 = list1->next;
-			}			
+			}
 			list2 = list2->next;
 			list1 = tmp_list1;
 		}
