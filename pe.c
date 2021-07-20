@@ -230,7 +230,7 @@ void pe (cond_t *co)
 			!nodelist_find(((trans_t*)(pl_post->node))->preset, pl)) ||
 			//(0)
 			(ev && nodelist_common((cond_t*)(unf->m0_unmarked->node), 
-				((trans_t*)(pl_post->node))->preset, (trans_t*)(pl_post->node), pl))
+				((trans_t*)(pl_post->node))->preset, co, (trans_t*)(pl_post->node), pl))
 
 			){
 			/* printf("pl name forbiden to compute possible extensions: %s\n", pl->name);

@@ -174,7 +174,7 @@ nodelist_t* nodelist_concatenate(nodelist_t *list1, nodelist_t *list2)
 /*****************************************************************************/ 	//*** NEW FUNCTION ***//
 /* check if two lists have elements in common. No tested yet.  */
 
-int nodelist_common(cond_t *list1, nodelist_t *list2, trans_t* tr, place_t* pl)
+int nodelist_common(cond_t *list1, nodelist_t *list2, cond_t *co, trans_t* tr, place_t* pl)
 {	
 	int com = 0;
 	cond_t *tmp_list1 = list1;
@@ -193,6 +193,7 @@ int nodelist_common(cond_t *list1, nodelist_t *list2, trans_t* tr, place_t* pl)
 				//printf("mark condition: %d", ((cond_t*)(list2->conds->node))->mark);
 				if (list1->origin->name == ((place_t*)(list2->node))->name && 
 					list1->mark == ((place_t*)(list2->node))->marked){
+					//list1->origin->name != co->origin->name
 					com = 1;
 				}
 				//printf("hola\n");
