@@ -144,10 +144,10 @@ void nc_static_checks (net_t* net, char *stoptr_name)
 /*****************************************************************************/
 /* Check find a place in a list and check whether it is marked or not and  */
 
-/* int nc_marked (nodelist_t *list, place_t *pl)
+int nc_same_condition (cond_t *list, int num)
 {
-	while (list && list->node != pl )
-		list = list->next;	
-	
-	return (pl && pl->marked == 1) ? 1 : 0;
-} */
+	while (list && list->num != num )
+		list = list->next;
+
+	return (list && list->num == num) ? 1 : 0;
+}

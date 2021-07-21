@@ -100,10 +100,11 @@ cond_t* insert_condition (place_t *pl, event_t *ev)
 
 event_t* insert_event (pe_queue_t *qu)
 {
-        event_t *ev = MYmalloc(sizeof(event_t));
+    cond_t **co_ptr, **co_ptr2;
+	
+	    event_t *ev = MYmalloc(sizeof(event_t));
 	int sz = qu->trans->prereset_size;					//*** NEW ***//
 	//int sz = qu->trans->preset_size;
-	cond_t **co_ptr, **co_ptr2;
 
         ev->next = unf->events;
         unf->events = ev;
@@ -119,6 +120,7 @@ event_t* insert_event (pe_queue_t *qu)
         ev->preset = co_ptr = MYmalloc(sz * sizeof(cond_t*));
 	memcpy(ev->preset,qu->conds,sz * sizeof(cond_t*));
 	co_ptr2 = ev->preset;
+
 	//printf("event name %s and its preset with size %d: \n", ev->origin->name, sz);
 	while(*co_ptr2){
 		//printf("condition name: %s\n",(*co_ptr2)->origin->name);
@@ -375,8 +377,8 @@ void unfold ()
 	pe_queue_t *qu;
 	place_t *pl;
 	event_t *ev, *stopev = NULL;
-	cond_t  *co;
-	int cutoff;
+	cond_t  *co, *unmarked_cos, **check_conds;
+	int cutoff, no_insert = 0;
 
 	/* create empty unfolding structure */
 	unf = nc_create_unfolding();
@@ -456,6 +458,22 @@ void unfold ()
 		/* add event to the unfolding */
 		/* for (i = 1; i <= pe_qsize; i++)
 			printf(" E%d ",pe_queue[i]->id); */
+		
+		check_conds = qu->conds;
+		unmarked_cos = (cond_t*)(unf->m0_unmarked->node);
+		while(*check_conds && unmarked_cos && !no_insert){
+			no_insert = 0;
+			/* printf("condition name: %s\n",(*check_conds)->origin->name);
+			printf("unmarked condition name: %s\n", unmarked_cos->origin->name);
+			if (nc_same_condition(unmarked_cos, (*check_conds)->num) && !nodelist_find(qu->trans->reset, (*check_conds)->origin)){
+				printf("they are the same conditions: %d\n", (*check_conds)->num);
+				no_insert = 1;
+			} */
+			//	(*check_conds)->origin->reset, qu->trans->reset)
+			check_conds = &((*check_conds)->next);
+		}
+		if(no_insert == 1)
+			continue;
 		ev = insert_event(qu);
 		//strcmp(ev->origin->name,"T1") == 0 ? printf("yes\n") : printf("no\n");
 		cutoff = add_marking(qu->marking,ev);
