@@ -130,8 +130,7 @@ pe_queue_t* create_queue_entry (trans_t *tr)
 	pe_queue_t *qu_new;
 	event_t *ev, **queue;
 	cond_t  *co, **co_ptr;
-	nodelist_t *list = NULL, *resconf;
-	nodelist_t *tr_prev;
+	nodelist_t *list = NULL;	
 	int sz;
 	static int queuecount = 0;
 	
@@ -212,8 +211,9 @@ pe_queue_t* create_queue_entry (trans_t *tr)
 			printf("postreset_size: %d\n", ev->origin->postreset_size);
 			printf("co_ptr size: %lu\n", (&co_ptr)[1] - co_ptr);
 			printf("ev->postset size: %lu\n", sizeof(ev->postset) / sizeof(ev->postset[0])); */
-			if ((co = *co_ptr++)->mark != ev_mark-1){
-				//printf("ev_mark-1: %d\n", ev_mark-1);
+			if ((co = *co_ptr++)->mark != ev_mark-1 && 
+				nodelist_find(ev->origin->postset, co->origin)){
+				printf("ev_mark-1: %d\n", ev_mark-1);
 				nodelist_insert(&(qu_new->marking),co->origin);
 			}
 			//printf("(co = *co_ptr++)->mark: %d\n", (co = *co_ptr++)->mark);
@@ -227,16 +227,6 @@ pe_queue_t* create_queue_entry (trans_t *tr)
 	}
 	
 	/* add the post-places of tr */
-	//for (list = tr->postset; list; list = list->next)
-	/* for (resconf = tr->preset; resconf; resconf = resconf->next){
-		tr_prev = ((place_t*)(resconf->node))->preset;
-		if (((place_t*)(resconf->node))->reset &&
-			(!tr_prev ||
-			(tr_prev &&
-			!nodelist_find(((trans_t*)(tr_prev->node))->postset, resconf->node)))){
-			list = nodelist_concatenate(list, resconf);			
-		}		
-	} */
 	list = nodelist_concatenate(list, tr->postset);
 	for (list = nodelist_concatenate(list,tr->reset); list; list = list->next)	//*** NEW ***//
 		nodelist_insert(&(qu_new->marking), list->node);

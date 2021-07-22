@@ -142,12 +142,14 @@ void nc_static_checks (net_t* net, char *stoptr_name)
 }
 
 /*****************************************************************************/
-/* Check find a place in a list and check whether it is marked or not and  */
+/* Check whether two conditions have the same num.  */
 
 int nc_same_condition (cond_t *list, int num)
 {
+	if (list){
+		printf("unmarked condition number: %d\n", list->num);		
+	}
 	while (list && list->num != num )
 		list = list->next;
-
 	return (list && list->num == num) ? 1 : 0;
 }

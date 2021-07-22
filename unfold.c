@@ -461,51 +461,59 @@ void unfold ()
 		
 		check_conds = qu->conds;
 		unmarked_cos = (cond_t*)(unf->m0_unmarked->node);
-		while(*check_conds && unmarked_cos && !no_insert){
-			no_insert = 0;
-			/* printf("condition name: %s\n",(*check_conds)->origin->name);
-			printf("unmarked condition name: %s\n", unmarked_cos->origin->name);
-			if (nc_same_condition(unmarked_cos, (*check_conds)->num) && !nodelist_find(qu->trans->reset, (*check_conds)->origin)){
-				printf("they are the same conditions: %d\n", (*check_conds)->num);
+		/* while(*check_conds && unmarked_cos && !no_insert){
+			printf("condition name: %s\n",(*check_conds)->origin->name);
+			printf("condition number: %d\n", (*check_conds)->num);
+			printf("unmarked condition name: %s\n", unmarked_cos->origin->name);			
+			if (nc_same_condition(unmarked_cos, (*check_conds)->num) && 
+				!nodelist_find(qu->trans->reset, (*check_conds)->origin) &&
+				nodelist_find(qu->trans->preset, (*check_conds)->origin)
+				){
+				printf("Transition name in which the condition holds: %s\n", qu->trans->name);
+				printf("Future id event: %d\n", qu->id);
+				printf("they have the same condition number: %d\n", (*check_conds)->num);
 				no_insert = 1;
-			} */
+			}
 			//	(*check_conds)->origin->reset, qu->trans->reset)
 			check_conds = &((*check_conds)->next);
-		}
-		if(no_insert == 1)
+		} */
+		if(no_insert == 1){
+			no_insert = 0; 
 			continue;
-		ev = insert_event(qu);
-		//strcmp(ev->origin->name,"T1") == 0 ? printf("yes\n") : printf("no\n");
-		cutoff = add_marking(qu->marking,ev);
-		
+		}else{
+			ev = insert_event(qu);
+			//strcmp(ev->origin->name,"T1") == 0 ? printf("yes\n") : printf("no\n");
+			cutoff = add_marking(qu->marking,ev);
+			
 
-		if (interactive && !cutoff)
-		{
-			if (!corr_list->node)
-				printf("E%d has the initial marking.\n",e);
-			else
-				printf("E%d has the same marking as E%d.\n",
-					e,((event_t*)(corr_list->node))->id);
+			if (interactive && !cutoff)
+			{
+				if (!corr_list->node)
+					printf("E%d has the initial marking.\n",e);
+				else
+					printf("E%d has the same marking as E%d.\n",
+						e,((event_t*)(corr_list->node))->id);
+			}
+			pe_free(qu);
+			
+			/* if we've found the -T transition, stop immediately */
+			if (stoptr && ev->origin == stoptr)
+			{
+				stopev = ev;
+				unf->events = unf->events->next;
+				break;
+			}
+			
+			/* if the marking was already represented in the unfolding,
+			we have a cut-off event */
+			if (!cutoff) { unf->events = unf->events->next; continue; }
+			
+			/* compute the co-relation for ev and post-conditions */
+			co_relation(ev);
+					
+			/* add post-conditions, compute possible extensions */
+			add_post_conditions(ev,CUTOFF_NO);
 		}
-		pe_free(qu);
-		
-		/* if we've found the -T transition, stop immediately */
-		if (stoptr && ev->origin == stoptr)
-		{
-			stopev = ev;
-			unf->events = unf->events->next;
-			break;
-		}
-		
-		/* if the marking was already represented in the unfolding,
-		   we have a cut-off event */
-		if (!cutoff) { unf->events = unf->events->next; continue; }
-		
-		/* compute the co-relation for ev and post-conditions */
-		co_relation(ev);
-				
-		/* add post-conditions, compute possible extensions */
-		add_post_conditions(ev,CUTOFF_NO);
 	}
 	
 	

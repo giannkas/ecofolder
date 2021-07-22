@@ -154,6 +154,7 @@ char pe_conflict (pe_comb_t *curr)
 	cond_t *co, **co_ptr;
 	event_t *ev, **queue;
 
+	//printf("HOLA!\n");
 	/* just one condition - no conflict */
 	if (curr == pe_combs) return 0;
 
@@ -167,7 +168,6 @@ char pe_conflict (pe_comb_t *curr)
 		if ((ev = co->pre_ev) && ev->mark != ev_mark)
 			 (*++queue = ev)->mark = ev_mark;
 	}
-
 	/* go upwards, try to find two paths converging at some condition */
 	/* Check later how it would work if there is an asymmetric conflict
 	with reset and production arcs */
