@@ -153,3 +153,10 @@ int nc_same_condition (cond_t *list, int num)
 		list = list->next;
 	return (list && list->num == num) ? 1 : 0;
 }
+
+int nc_check_unmarked_initial_marking (cond_t *list, char* name)
+{
+	while (list && strcmp(list->origin->name, name) != 0)
+		list = list->next;
+	return (list && strcmp(list->origin->name, name) == 0) ? 1 : 0;
+}

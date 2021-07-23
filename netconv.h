@@ -101,7 +101,8 @@ extern trans_t* nc_create_transition (net_t*);
 extern void nc_create_arc (struct nodelist_t**,struct nodelist_t**,void*,void*);
 extern void nc_compute_sizes (net_t*);
 extern void nc_static_checks (net_t*,char*);
-extern int nc_same_condition (cond_t *list, int num);
+extern int nc_same_condition (cond_t*, int);
+extern int nc_check_unmarked_initial_marking (cond_t*, char*);
 
 /*****************************************************************************/
 /* declarations from nodelist.c						     */

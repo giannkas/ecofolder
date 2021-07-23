@@ -240,9 +240,9 @@ void add_post_conditions (event_t *ev, char cutoff)
 		}
 
 		/* compute possible extensions for each new condition */
-		//printf("name co_ptr: %s\n", (*co_ptr)->origin->name);
-		//printf("name ++co_ptr: %s\n", (*++co_ptr)->origin->name);
-		//printf("name co_ptr++: %s\n", (*co_ptr++)->origin->name);
+		/* printf("name co_ptr: %s\n", (*co_ptr)->origin->name);
+		printf("name ++co_ptr: %s\n", (*++co_ptr)->origin->name);
+		printf("name co_ptr++: %s\n", (*co_ptr++)->origin->name); */
 		pe(*co_ptr++);
 		//printf("It continues!!\n");
 	}
@@ -377,8 +377,8 @@ void unfold ()
 	pe_queue_t *qu;
 	place_t *pl;
 	event_t *ev, *stopev = NULL;
-	cond_t  *co, *unmarked_cos, **check_conds;
-	int cutoff, no_insert = 0;
+	cond_t  *co;
+	int cutoff;
 
 	/* create empty unfolding structure */
 	unf = nc_create_unfolding();
@@ -418,15 +418,15 @@ void unfold ()
 		co->co_private = alloc_coarray(0);
 		nodelist_push(&(unf->m0),co);
 		printf("num condition: %d\n", co->num);
-		if (co->origin->marked == 0){
+		/* if (co->origin->marked == 0){
 			nodelist_push(&(unf->m0_unmarked),co);
-		}
+		} */
 	}
 	printf("unfolding initial marking\n");
 	print_marking(unf->m0);
 	printf("\n");	
 	recursive_pe(unf->m0);
-
+	
 	/* take the next event from the queue */
 	//printf("pe_qsize: %d\n", pe_qsize);
 	while (pe_qsize)
@@ -459,8 +459,8 @@ void unfold ()
 		/* for (i = 1; i <= pe_qsize; i++)
 			printf(" E%d ",pe_queue[i]->id); */
 		
-		check_conds = qu->conds;
-		unmarked_cos = (cond_t*)(unf->m0_unmarked->node);
+		//check_conds = qu->conds;
+		//unmarked_cos = (cond_t*)(unf->m0_unmarked->node);
 		/* while(*check_conds && unmarked_cos && !no_insert){
 			printf("condition name: %s\n",(*check_conds)->origin->name);
 			printf("condition number: %d\n", (*check_conds)->num);
@@ -477,43 +477,40 @@ void unfold ()
 			//	(*check_conds)->origin->reset, qu->trans->reset)
 			check_conds = &((*check_conds)->next);
 		} */
-		if(no_insert == 1){
-			no_insert = 0; 
-			continue;
-		}else{
-			ev = insert_event(qu);
-			//strcmp(ev->origin->name,"T1") == 0 ? printf("yes\n") : printf("no\n");
-			cutoff = add_marking(qu->marking,ev);
-			
-
-			if (interactive && !cutoff)
-			{
-				if (!corr_list->node)
-					printf("E%d has the initial marking.\n",e);
-				else
-					printf("E%d has the same marking as E%d.\n",
-						e,((event_t*)(corr_list->node))->id);
-			}
-			pe_free(qu);
-			
-			/* if we've found the -T transition, stop immediately */
-			if (stoptr && ev->origin == stoptr)
-			{
-				stopev = ev;
-				unf->events = unf->events->next;
-				break;
-			}
-			
-			/* if the marking was already represented in the unfolding,
-			we have a cut-off event */
-			if (!cutoff) { unf->events = unf->events->next; continue; }
-			
-			/* compute the co-relation for ev and post-conditions */
-			co_relation(ev);
-					
-			/* add post-conditions, compute possible extensions */
-			add_post_conditions(ev,CUTOFF_NO);
+		
+		ev = insert_event(qu);
+		
+		//strcmp(ev->origin->name,"T1") == 0 ? printf("yes\n") : printf("no\n");
+		cutoff = add_marking(qu->marking,ev);
+		
+		
+		if (interactive && !cutoff)
+		{
+			if (!corr_list->node)
+				printf("E%d has the initial marking.\n",e);
+			else
+				printf("E%d has the same marking as E%d.\n",
+					e,((event_t*)(corr_list->node))->id);
 		}
+		pe_free(qu);
+		
+		/* if we've found the -T transition, stop immediately */
+		if (stoptr && ev->origin == stoptr)
+		{
+			stopev = ev;
+			unf->events = unf->events->next;
+			break;
+		}
+		
+		/* if the marking was already represented in the unfolding,
+		we have a cut-off event */
+		if (!cutoff) { unf->events = unf->events->next; continue; }
+		
+		/* compute the co-relation for ev and post-conditions */
+		//printf("hola\n");
+		co_relation(ev);
+		/* add post-conditions, compute possible extensions */
+		add_post_conditions(ev,CUTOFF_NO);
 	}
 	
 	

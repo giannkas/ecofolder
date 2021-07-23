@@ -60,7 +60,7 @@ int nodelist_find (nodelist_t *list, void *node)
 {
 	while (list && list->node != node )
 		list = list->next;
-
+	
 	return (list && list->node == node) ? 1 : 0;
 }
 
