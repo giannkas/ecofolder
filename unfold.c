@@ -82,7 +82,7 @@ cond_t* insert_condition (place_t *pl, event_t *ev)
 	co->pre_ev = ev;
 	co->mark = 0;
 	co->num = unf->numco++;
-	//printf("num condition: %d\n", co->num);
+	printf("num condition: %d\n", co->num);
 
 	if (interactive)
 	{
@@ -154,9 +154,9 @@ enum { CUTOFF_NO, CUTOFF_YES };
 void add_post_conditions (event_t *ev, char cutoff)
 {
 	
-	cond_t **co_ptr, **cocoptr;
+	cond_t **co_ptr, **cocoptr, **co_ptr2;
 	nodelist_t *list = NULL, *resconf;
-	coa_t newarray;
+	coa_t newarray;	
 	nodelist_t *tr_prev;
 	/* First insert the conditions without putting them in pl->conds;
 	   that is done by pe() to avoid duplicated new events. */
@@ -185,7 +185,7 @@ void add_post_conditions (event_t *ev, char cutoff)
 	/* Having computed the common part of the co-relation for all
 	   conditions in co_relation(), we create a copy that uses only
 	   the necessary amount of memory. */
-	newarray = coarray_copy(ev->coarray);
+	newarray = coarray_copy(ev->coarray);	
 	free(ev->coarray.conds);
 	
 	/* Add the reverse half of the concurrency relation. */
@@ -240,8 +240,18 @@ void add_post_conditions (event_t *ev, char cutoff)
 		}
 
 		/* compute possible extensions for each new condition */
-		/* printf("name co_ptr: %s\n", (*co_ptr)->origin->name);
-		printf("name ++co_ptr: %s\n", (*++co_ptr)->origin->name);
+		printf("co_ptr->name: %s\n", (*co_ptr)->origin->name);
+		co_ptr2 = (*co_ptr)->co_common.conds;
+		while(*co_ptr2){
+			printf("condition name in co_common: %s\n",(*co_ptr2)->origin->name);
+			co_ptr2 = &((*co_ptr2)->next);
+		}
+		co_ptr2 = (*co_ptr)->co_private.conds;
+		while(*co_ptr2){
+			printf("condition name in co_private: %s\n",(*co_ptr2)->origin->name);
+			co_ptr2 = &((*co_ptr2)->next);
+		}
+		/* printf("name ++co_ptr: %s\n", (*++co_ptr)->origin->name);
 		printf("name co_ptr++: %s\n", (*co_ptr++)->origin->name); */
 		pe(*co_ptr++);
 		//printf("It continues!!\n");
@@ -417,7 +427,7 @@ void unfold ()
 		co->co_common = alloc_coarray(0);
 		co->co_private = alloc_coarray(0);
 		nodelist_push(&(unf->m0),co);
-		printf("num condition: %d\n", co->num);
+		//printf("num condition: %d\n", co->num);
 		/* if (co->origin->marked == 0){
 			nodelist_push(&(unf->m0_unmarked),co);
 		} */
