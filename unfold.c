@@ -51,6 +51,9 @@ void addto_coarray (coa_t *coa, cond_t *co)
 	//printf("name cond: %s\n",co->origin->name);
 	coa->conds[coa->inuse++] = co;
 	coa->conds[coa->inuse] = NULL;
+	if(strcmp(co->origin->name, "P2") == 0){
+		printf("coa inuse when P2 is co: %d\n", coa->inuse);
+	}
 }
 
 /* Copy an array, truncating it to the necessary size. */
@@ -240,15 +243,15 @@ void add_post_conditions (event_t *ev, char cutoff)
 		}
 
 		/* compute possible extensions for each new condition */
-		printf("co_ptr->name: %s\n", (*co_ptr)->origin->name);
+		printf("co_ptr->name and num: %s, %d\n", (*co_ptr)->origin->name, (*co_ptr)->num);
 		co_ptr2 = (*co_ptr)->co_common.conds;
 		while(*co_ptr2){
-			printf("condition name in co_common: %s\n",(*co_ptr2)->origin->name);
+			printf("condition name in co_common: %s, %d\n",(*co_ptr2)->origin->name, (*co_ptr2)->num);
 			co_ptr2 = &((*co_ptr2)->next);
 		}
 		co_ptr2 = (*co_ptr)->co_private.conds;
 		while(*co_ptr2){
-			printf("condition name in co_private: %s\n",(*co_ptr2)->origin->name);
+			printf("condition name in co_private: %s, %d\n",(*co_ptr2)->origin->name, (*co_ptr2)->num);
 			co_ptr2 = &((*co_ptr2)->next);
 		}
 		/* printf("name ++co_ptr: %s\n", (*++co_ptr)->origin->name);
@@ -300,6 +303,11 @@ void co_relation (event_t *ev)
 		if (min > cosize) min = cosize;
 	}
 	ev->coarray = alloc_coarray(min + ev->postset_size);
+	if(strcmp(ev->origin->name, "T0") == 0){
+		printf("size ev->presetsize: %d\n", ev->preset_size);
+		printf("size ev->postsetsize: %d\n", ev->postset_size);
+		printf("size ev->coarray: %d\n", min + ev->postset_size);
+	}
 
 	/* Add first condition in each list to a "priority queue"
 	   ordered by condition numbers. */
