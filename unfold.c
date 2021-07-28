@@ -104,49 +104,55 @@ cond_t* insert_condition (place_t *pl, event_t *ev)
 event_t* insert_event (pe_queue_t *qu)
 {
     cond_t **co_ptr, **co_ptr2;
+	int null_ev = 0;
 	
 	    event_t *ev = MYmalloc(sizeof(event_t));
-	int sz = qu->trans->prereset_size;					//*** NEW ***//
-	//int sz = qu->trans->preset_size;
-
-        ev->next = unf->events;
-        unf->events = ev;
+	int sz = qu->trans->prereset_size;
 	ev->origin = qu->trans;
-	ev->mark = 0;		/* for marking_of */
-	ev->foata_level = find_foata_level(qu);
-	ev->preset_size = qu->trans->prereset_size;			//*** NEW ***//
-	ev->postset_size = qu->trans->postreset_size;		//*** NEW ***//	
-	//ev->preset_size = qu->trans->preset_size;
-	//ev->postset_size = qu->trans->postset_size;
 
 	/* add preset (postset comes later) */
         ev->preset = co_ptr = MYmalloc(sz * sizeof(cond_t*));
 	memcpy(ev->preset,qu->conds,sz * sizeof(cond_t*));
-	co_ptr2 = ev->preset;
-
-	//printf("event name %s and its preset with size %d: \n", ev->origin->name, sz);
-	while(*co_ptr2){
-		//printf("condition name: %s\n",(*co_ptr2)->origin->name);
-		co_ptr2 = &((*co_ptr2)->next);
-	}
-	//printf("size number: %d\n", sz);
-	//printf("event name: %s\n", ev->origin->name);
-	while (sz--) nodelist_push(&((*co_ptr++)->postset),ev);
 	
-	/* allocate memory for queue in conco_nt if necessary */
-	if (++unf->numev >= events_size)
-	{
-		events_size += ce_alloc_step;
-		events = MYrealloc(events,events_size * sizeof(event_t*));
+	co_ptr2 = ev->preset;
+	//printf("event name %s and its preset with size %d: \n", ev->origin->name, sz);
+	while(*co_ptr2 && !null_ev && sz){
+		/* if(nc_same_condition((cond_t*)(unf->m0_unmarked->node),(*co_ptr2)->num) &&
+			!nodelist_find(ev->origin->reset, (*co_ptr2)->origin))
+			null_ev = 1; */
+		/* printf("EVENT %s precondition name: %s, %d\n", ev->origin->name,(*co_ptr2)->origin->name, (*co_ptr2)->num);
+		co_ptr2 = &((*co_ptr2)->next); */		
+		sz--;
 	}
+	sz = qu->trans->prereset_size;
+	if (!null_ev){
+        ev->next = unf->events;
+        unf->events = ev;		
+		ev->mark = 0;		/* for marking_of */
+		ev->foata_level = find_foata_level(qu);
+		ev->preset_size = qu->trans->prereset_size;			//*** NEW ***//
+		ev->postset_size = qu->trans->postreset_size;		//*** NEW ***//	
+		//ev->preset_size = qu->trans->preset_size;
+		//ev->postset_size = qu->trans->postset_size;
 
-	if (interactive)
-	{
-		ev->id = qu->id;
-		printf("Added event E%d.\n",ev->id);
+		//printf("size number: %d\n", sz);
+		//printf("event name: %s\n", ev->origin->name);
+		while (sz--) nodelist_push(&((*co_ptr++)->postset),ev);
+		
+		/* allocate memory for queue in conco_nt if necessary */
+		if (++unf->numev >= events_size)
+		{
+			events_size += ce_alloc_step;
+			events = MYrealloc(events,events_size * sizeof(event_t*));
+		}
+
+		if (interactive)
+		{
+			ev->id = qu->id;
+			printf("Added event E%d.\n",ev->id);
+		}
 	}
-
-	return ev;
+	return !null_ev ? ev : NULL;
 }
 
 /*****************************************************************************/
@@ -498,37 +504,39 @@ void unfold ()
 		
 		ev = insert_event(qu);
 		
-		//strcmp(ev->origin->name,"T1") == 0 ? printf("yes\n") : printf("no\n");
-		cutoff = add_marking(qu->marking,ev);
-		
-		
-		if (interactive && !cutoff)
-		{
-			if (!corr_list->node)
-				printf("E%d has the initial marking.\n",e);
-			else
-				printf("E%d has the same marking as E%d.\n",
-					e,((event_t*)(corr_list->node))->id);
+		if (ev){
+			//strcmp(ev->origin->name,"T1") == 0 ? printf("yes\n") : printf("no\n");
+			cutoff = add_marking(qu->marking,ev);
+			
+			
+			if (interactive && !cutoff)
+			{
+				if (!corr_list->node)
+					printf("E%d has the initial marking.\n",e);
+				else
+					printf("E%d has the same marking as E%d.\n",
+						e,((event_t*)(corr_list->node))->id);
+			}
+			pe_free(qu);
+			
+			/* if we've found the -T transition, stop immediately */
+			if (stoptr && ev->origin == stoptr)
+			{
+				stopev = ev;
+				unf->events = unf->events->next;
+				break;
+			}
+			
+			/* if the marking was already represented in the unfolding,
+			we have a cut-off event */
+			if (!cutoff) { unf->events = unf->events->next; continue; }
+			
+			/* compute the co-relation for ev and post-conditions */
+			//printf("hola\n");
+			co_relation(ev);
+			/* add post-conditions, compute possible extensions */
+			add_post_conditions(ev,CUTOFF_NO);
 		}
-		pe_free(qu);
-		
-		/* if we've found the -T transition, stop immediately */
-		if (stoptr && ev->origin == stoptr)
-		{
-			stopev = ev;
-			unf->events = unf->events->next;
-			break;
-		}
-		
-		/* if the marking was already represented in the unfolding,
-		we have a cut-off event */
-		if (!cutoff) { unf->events = unf->events->next; continue; }
-		
-		/* compute the co-relation for ev and post-conditions */
-		//printf("hola\n");
-		co_relation(ev);
-		/* add post-conditions, compute possible extensions */
-		add_post_conditions(ev,CUTOFF_NO);
 	}
 	
 	
