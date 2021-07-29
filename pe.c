@@ -215,8 +215,7 @@ void pe (cond_t *co)
 	{		
 		if ((ev && nodelist_find(ev->origin->reset, pl) && 
 			!nodelist_find(((trans_t*)(pl_post->node))->preset, pl)) ||
-			(!ev && !pl->marked && nodelist_find(pl->postset, pl_post->node)) ||
-			(0)
+			(!ev && !pl->marked && nodelist_find(pl->postset, pl_post->node))			
 			//(ev && nodelist_common((cond_t*)(unf->m0_unmarked->node), 
 			//	((trans_t*)(pl_post->node))->preset, co, (trans_t*)(pl_post->node), pl))
 
@@ -278,8 +277,7 @@ void pe (cond_t *co)
 			while(*co_ptr2 && strcmp(pl->name, "P3") == 0 && co->num == 5){				
 				printf("co_common condition name: %d\n",(*++co_ptr2)->num);
 				co_ptr2 = &((*co_ptr2)->next);
-			} */
-			//nc_same_condition((cond_t*)(unf->m0_unmarked->node),(*cocoptr)->num)
+			} */			
 			while (*++cocoptr){
 				if ((*cocoptr)->origin == pl2){
 					if (!(*cocoptr)->origin->marked && 
@@ -288,8 +286,7 @@ void pe (cond_t *co)
 							if (!(*cocoptr)->pre_ev)
 							{}
 							else if(nodelist_find((*cocoptr)->pre_ev->origin->postset,(*cocoptr)->origin))
-								nodelist_push(compat_conds,*cocoptr);
-							
+								nodelist_push(compat_conds,*cocoptr);							
 					}
 					else
 						nodelist_push(compat_conds,*cocoptr);					
@@ -309,20 +306,9 @@ void pe (cond_t *co)
 				nodelist_push(compat_conds,co_reset);
 				printf("name of the pushed place: %s\n", co_reset->origin->name);
 			} */
-			
-			printf("condition number: %d\n", co->num);
-			if (!*compat_conds){
-				/* if (nodelist_find(tr->reset, pl) || (ev && 
-					nodelist_find(ev->origin->postset, pl) && 
-					nodelist_find(ev->origin->reset, pl) &&
-					!pl->marked &&
-					nodelist_find(tr->preset, pl))){}
-				else{
-					if (strcmp(pl->name, "P2") == 0)
-						printf("here breaks condition number: %d\n", co->num);
-				} */
-				break;
-			}
+						
+			if (!*compat_conds)
+				break;			
 
 			curr_comb->current = curr_comb->start;
 			(++curr_comb)->start = NULL;

@@ -103,8 +103,7 @@ cond_t* insert_condition (place_t *pl, event_t *ev)
 
 event_t* insert_event (pe_queue_t *qu)
 {
-    cond_t **co_ptr, **co_ptr2;
-	int null_ev = 0;
+    cond_t **co_ptr;	
 	
 	    event_t *ev = MYmalloc(sizeof(event_t));
 	int sz = qu->trans->prereset_size;
@@ -114,45 +113,41 @@ event_t* insert_event (pe_queue_t *qu)
         ev->preset = co_ptr = MYmalloc(sz * sizeof(cond_t*));
 	memcpy(ev->preset,qu->conds,sz * sizeof(cond_t*));
 	
-	co_ptr2 = ev->preset;
+	/* co_ptr2 = ev->preset;
 	//printf("event name %s and its preset with size %d: \n", ev->origin->name, sz);
-	while(*co_ptr2 && !null_ev && sz){
-		/* if(nc_same_condition((cond_t*)(unf->m0_unmarked->node),(*co_ptr2)->num) &&
-			!nodelist_find(ev->origin->reset, (*co_ptr2)->origin))
-			null_ev = 1; */
-		/* printf("EVENT %s precondition name: %s, %d\n", ev->origin->name,(*co_ptr2)->origin->name, (*co_ptr2)->num);
-		co_ptr2 = &((*co_ptr2)->next); */		
-		sz--;
-	}
+	while(*co_ptr2){	
+		printf("EVENT %s precondition name: %s, %d\n", ev->origin->name,(*co_ptr2)->origin->name, (*co_ptr2)->num);
+		co_ptr2 = &((*co_ptr2)->next);
+	} */
 	sz = qu->trans->prereset_size;
-	if (!null_ev){
-        ev->next = unf->events;
-        unf->events = ev;		
-		ev->mark = 0;		/* for marking_of */
-		ev->foata_level = find_foata_level(qu);
-		ev->preset_size = qu->trans->prereset_size;			//*** NEW ***//
-		ev->postset_size = qu->trans->postreset_size;		//*** NEW ***//	
-		//ev->preset_size = qu->trans->preset_size;
-		//ev->postset_size = qu->trans->postset_size;
+	
+	ev->next = unf->events;
+	unf->events = ev;		
+	ev->mark = 0;		/* for marking_of */
+	ev->foata_level = find_foata_level(qu);
+	ev->preset_size = qu->trans->prereset_size;			//*** NEW ***//
+	ev->postset_size = qu->trans->postreset_size;		//*** NEW ***//	
+	//ev->preset_size = qu->trans->preset_size;
+	//ev->postset_size = qu->trans->postset_size;
 
-		//printf("size number: %d\n", sz);
-		//printf("event name: %s\n", ev->origin->name);
-		while (sz--) nodelist_push(&((*co_ptr++)->postset),ev);
-		
-		/* allocate memory for queue in conco_nt if necessary */
-		if (++unf->numev >= events_size)
-		{
-			events_size += ce_alloc_step;
-			events = MYrealloc(events,events_size * sizeof(event_t*));
-		}
-
-		if (interactive)
-		{
-			ev->id = qu->id;
-			printf("Added event E%d.\n",ev->id);
-		}
+	//printf("size number: %d\n", sz);
+	//printf("event name: %s\n", ev->origin->name);
+	while (sz--) nodelist_push(&((*co_ptr++)->postset),ev);
+	
+	/* allocate memory for queue in conco_nt if necessary */
+	if (++unf->numev >= events_size)
+	{
+		events_size += ce_alloc_step;
+		events = MYrealloc(events,events_size * sizeof(event_t*));
 	}
-	return !null_ev ? ev : NULL;
+
+	if (interactive)
+	{
+		ev->id = qu->id;
+		printf("Added event E%d.\n",ev->id);
+	}
+	
+	return ev;
 }
 
 /*****************************************************************************/
@@ -484,23 +479,7 @@ void unfold ()
 			printf(" E%d ",pe_queue[i]->id); */
 		
 		//check_conds = qu->conds;
-		//unmarked_cos = (cond_t*)(unf->m0_unmarked->node);
-		/* while(*check_conds && unmarked_cos && !no_insert){
-			printf("condition name: %s\n",(*check_conds)->origin->name);
-			printf("condition number: %d\n", (*check_conds)->num);
-			printf("unmarked condition name: %s\n", unmarked_cos->origin->name);			
-			if (nc_same_condition(unmarked_cos, (*check_conds)->num) && 
-				!nodelist_find(qu->trans->reset, (*check_conds)->origin) &&
-				nodelist_find(qu->trans->preset, (*check_conds)->origin)
-				){
-				printf("Transition name in which the condition holds: %s\n", qu->trans->name);
-				printf("Future id event: %d\n", qu->id);
-				printf("they have the same condition number: %d\n", (*check_conds)->num);
-				no_insert = 1;
-			}
-			//	(*check_conds)->origin->reset, qu->trans->reset)
-			check_conds = &((*check_conds)->next);
-		} */
+		//unmarked_cos = (cond_t*)(unf->m0_unmarked->node);	
 		
 		ev = insert_event(qu);
 		
