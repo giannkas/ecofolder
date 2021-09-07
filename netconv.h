@@ -55,6 +55,7 @@ typedef struct cond_t
 	struct place_t *origin;	    /* associated place			    */
 	int    num;		    /* number (needed by co_relation)	    */
 	int    mark;		    /* used by marking_of		    */
+	int token; 				/* used by conditions to represent firings */
 	coa_t  co_common;	    /* list of co-conditions		    */
 	coa_t  co_private;	    /* list of co-conditions		    */
 } cond_t;

@@ -8,7 +8,7 @@ void read_mci_file (char *filename)
 	FILE *file;
 	int numco, numev, numpl, numtr, sz, i;
 	int pre_ev, post_ev, cutoff, dummy;
-	int *co2pl, *ev2tr;
+	int *co2pl, *ev2tr, *tokens;
 	char **plname, **trname, *c;
 
 	if (!(file = fopen(filename,"rb")))
@@ -23,6 +23,7 @@ void read_mci_file (char *filename)
 	read_int(numev);
 
 	co2pl = malloc((numco+1) * sizeof(int));
+	tokens = malloc((numco+1) * sizeof(int));
 	ev2tr = malloc((numev+1) * sizeof(int));
 
 	for (i = 1; i <= numev; i++)
@@ -31,6 +32,7 @@ void read_mci_file (char *filename)
 	for (i = 1; i <= numco; i++)
 	{
 		read_int(co2pl[i]);
+		read_int(tokens[i]);
 		read_int(pre_ev);
 		if (pre_ev) printf("  e%d -> c%d;\n",pre_ev,i);
 		do {
@@ -70,8 +72,8 @@ void read_mci_file (char *filename)
 	fread(c,1,1,file);
 
 	for (i = 1; i <= numco; i++)
-		printf("  c%d [label=\"%s (c%d)\" shape=circle];\n",
-				i,plname[co2pl[i]],i);
+		printf("  c%d [label= <%s<FONT COLOR=\"red\"><SUP>%d</SUP></FONT>&nbsp;(c%d)> shape=circle];\n",
+				i,plname[co2pl[i]],tokens[i],i);
 	for (i = 1; i <= numev; i++)
 		printf("  e%d [label=\"%s (e%d)\" shape=box];\n",
 				i,trname[ev2tr[i]],i);
