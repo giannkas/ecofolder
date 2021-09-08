@@ -213,17 +213,10 @@ void pe (cond_t *co)
 	//for (pl_post = pl->postset; pl_post && !nodelist_find(&((tr = pl_post->node)->reset),pl); pl_post = pl_post->next)
 	for (pl_post = nodelist_concatenate(pl->postset, pl->reset); pl_post; pl_post = pl_post->next) 		//*** NEW  ***//
 	{		
-		if ((ev && nodelist_find(ev->origin->reset, pl) && 
+		/* if ((ev && nodelist_find(ev->origin->reset, pl) && 
 			!nodelist_find(((trans_t*)(pl_post->node))->preset, pl)) ||
-			(!ev && !pl->marked && nodelist_find(pl->postset, pl_post->node))			
-			//(ev && nodelist_common((cond_t*)(unf->m0_unmarked->node), 
-			//	((trans_t*)(pl_post->node))->preset, co, (trans_t*)(pl_post->node), pl))
-
+			(!ev && !pl->marked && nodelist_find(pl->postset, pl_post->node))
 			){
-			/* printf("pl name forbiden to compute possible extensions: %s\n", pl->name);
-			printf("tr source to compute possible extensions that precedes pl: %s\n", ev->origin->name);
-			print_marking(pl->postset);
-			printf("\n"); */
 			continue;
 		}
 		if (ev && nodelist_find(pl->postset, pl_post->node) && 
@@ -231,7 +224,10 @@ void pe (cond_t *co)
 			!nodelist_find(ev->origin->postset, pl) 
 			){
 			continue;
-		}
+		} */
+		if (!co->token && nodelist_find(pl->postset, pl_post->node))
+			continue;				
+
 		/* co_ptr2 = pe_conds;
 		printf("FROM place %s transition name %s  and its pe_conds: \n", pl->name, ((trans_t*)(pl_post->node))->name);
 		while(*co_ptr2){
@@ -279,18 +275,24 @@ void pe (cond_t *co)
 				co_ptr2 = &((*co_ptr2)->next);
 			} */			
 			while (*++cocoptr){
+				
 				if ((*cocoptr)->origin == pl2){
-					if (!(*cocoptr)->origin->marked && 
+					/* if (!(*cocoptr)->origin->marked && 
 						!nodelist_find(tr->reset, (*cocoptr)->origin)
 						){
 							if (!(*cocoptr)->pre_ev)
 							{}
 							else if(nodelist_find((*cocoptr)->pre_ev->origin->postset,(*cocoptr)->origin))
-								nodelist_push(compat_conds,*cocoptr);							
+								nodelist_push(compat_conds,*cocoptr);
 					}
 					else
-						nodelist_push(compat_conds,*cocoptr);					
-				}			
+						nodelist_push(compat_conds,*cocoptr); */
+					
+					if (((*cocoptr)->token && nodelist_find(tr->preset, (*cocoptr)->origin)) ||
+						(nodelist_find(tr->reset, (*cocoptr)->origin))
+					)
+						nodelist_push(compat_conds,*cocoptr);
+				}
 			}
 			/* if (co_reset && !nodelist_find(*compat_conds, co_reset)){
 				nodelist_push(compat_conds,co_reset);
@@ -298,8 +300,11 @@ void pe (cond_t *co)
 			} */
 			cocoptr = co->co_private.conds - 1;
 			while (*++cocoptr){
-				if ((*cocoptr)->origin == pl2){
-					nodelist_push(compat_conds,*cocoptr);
+				if ((*cocoptr)->origin == pl2){					
+					if (((*cocoptr)->token && nodelist_find(tr->preset, (*cocoptr)->origin)) ||
+						(nodelist_find(tr->reset, (*cocoptr)->origin))
+					)
+						nodelist_push(compat_conds,*cocoptr);					
 				}
 			}
 			/* if (co_reset && !nodelist_find(*compat_conds, co_reset)){
