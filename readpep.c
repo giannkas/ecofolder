@@ -438,6 +438,7 @@ t_blockinfo netblocks[] =
 	  { "TP",  TB_MANDATORY, TB_BLOCK, arcfields },
 	  { "PT",  TB_MANDATORY, TB_BLOCK, arcfields },
 	  { "RS",  TB_OPTIONAL, TB_BLOCK, arcfields },		//*** NEW  ***//
+	  { "RD",  TB_OPTIONAL, TB_BLOCK, arcfields },		//*** NEW  ***//
 	  { "PTP", TB_OPTIONAL,  TB_BLOCK, arcfields },
 	  { "PPT", TB_OPTIONAL,  TB_BLOCK, arcfields },
 	  { "TX",  TB_OPTIONAL,  TB_BLOCK, textfields },
@@ -520,24 +521,34 @@ int insert_trans()
 
 int insert_arc()
 {
-	static int tp, rs = 0;  /* tp = 1 means Place->Trans, 0 is Trans->Place; 
-							rs = 1 means reset arc Place->Trans */
+	static int tp, rs = 0, rd = 0;  /* tp = 1 means Place->Trans, 0 is Trans->Place; 
+							rs = 1 means reset arc Place->Trans 
+							rd = 1 means read arc Place->Trans */
 	int pl, tr;
 
 	if (*blocktype)
 	{
-		rs = strcmp(blocktype,"RS");				//*** NEW  ***//
-		tp = rs == 0 ? -1 : strcmp(blocktype,"PT");		//*** NEW  ***//
+		rs = strcmp(blocktype,"RS");
+		if (rs == 0)
+			tp = -1;
+		else{
+			rd = strcmp(blocktype, "RD");
+			tp = rd == 0 ? -2 : strcmp(blocktype,"PT");
+		}	
 		*blocktype = '\0';
+		/* rs = strcmp(blocktype,"RS");
+		tp = rs == 0 ? -1 : strcmp(blocktype,"PT");
+		*blocktype = '\0'; */
 	}
 	//printf("tp %d and rs %d\n", tp, rs);
-	if (tp == -1){
-		pl = rs? rd_co->y : rd_co->x;
-		tr = rs? rd_co->x : rd_co->y;
-	}else{
-		pl = tp? rd_co->y : rd_co->x;
-		tr = tp? rd_co->x : rd_co->y;
-	}
+
+	if (tp == -1)
+		tp = rs;
+	else if(tp == -2)
+		tp = rd;
+	pl = tp? rd_co->y : rd_co->x;
+	tr = tp? rd_co->x : rd_co->y;
+	
 	//printf("pl %d and tr %d\n", pl, tr);
 
 	if (!tr || (tr > AnzTrNamen) || !TrArray[tr])
@@ -545,9 +556,16 @@ int insert_arc()
 	if (!pl || (pl > AnzPlNamen) || !PlArray[pl] )
 		nc_error("arc: incorrect place identifier");
 
-	if (rs == 0){
+	if (rs == 0)
 		nc_create_arc(&(TrArray[tr]->reset),&(PlArray[pl]->reset),
 			  TrArray[tr],PlArray[pl]);
+	else if (rd == 0){
+		/* nc_create_arc(&(TrArray[tr]->ctxset),&(PlArray[pl]->ctxset),
+			  TrArray[tr],PlArray[pl]); */
+		nc_create_arc(&(TrArray[tr]->postset),&(PlArray[pl]->preset),
+			  TrArray[tr],PlArray[pl]);
+		nc_create_arc(&(PlArray[pl]->postset),&(TrArray[tr]->preset),
+			  PlArray[pl],TrArray[tr]);
 	}
 	else if (tp == 1)
 		nc_create_arc(&(TrArray[tr]->postset),&(PlArray[pl]->preset),
@@ -604,6 +622,7 @@ net_t* read_pep_net(char *PEPfilename)
 		  { "TP",  insert_arc,   NULL, arc_dest },
 		  { "PT",  insert_arc,   NULL, arc_dest },
 		  { "RS",  insert_arc,   NULL, arc_dest},			//*** NEW  ***//
+		  { "RD",  insert_arc,   NULL, arc_dest},			//*** NEW  ***//
 		  { NULL, NULL, NULL, NULL } };
 
 	int count;

@@ -176,14 +176,15 @@ char pe_conflict (pe_comb_t *curr)
 		queue--;
 		for (sz = ev->origin->prereset_size, co_ptr = ev->preset; sz--; )	//*** NEW  ***//
 		{
-			printf("transition reset: \n");
+			/* printf("transition reset: \n");
 			print_marking(ev->origin->reset);
-			printf("place name: %s", co->origin->name);
+			printf("place name: %s", co->origin->name); */
 			if ((co = *co_ptr++)->mark == ev_mark && 
 				!nodelist_find(ev->origin->reset, co->origin)){
-				printf("transition reset: \n");
+				/* printf("transition reset: \n");
 				print_marking(ev->origin->reset);
-				printf("place name: %s", co->origin->name);
+				printf("hola\n");
+				printf("place name: %s", co->origin->name); */
 				return 1;
 			}
 			co->mark = ev_mark;

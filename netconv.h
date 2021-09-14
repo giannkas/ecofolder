@@ -25,6 +25,7 @@ typedef struct place_t
 	struct nodelist_t *preset;  /* unordered list of preset		    */
 	struct nodelist_t *postset; /* unordered list of postset	    */
 	struct nodelist_t *reset; /* unordered list of reset transitions            */                  //*** NEW  ***//
+	struct nodelist_t *ctxset; /* unordered list of context transitions            */                  //*** NEW  ***//
 	struct nodelist_t *conds;   /* conditions derived from this place   */
 	char marked;		    /* non-zero if place is marked	    */
 } place_t;
@@ -37,8 +38,9 @@ typedef struct trans_t
 	struct nodelist_t *preset;  /* unordered list of preset		    */
 	struct nodelist_t *postset; /* unordered list of postset	    */
 	struct nodelist_t *reset; /* unordered list of reset	    */			//*** NEW  ***//
+	struct nodelist_t *ctxset; /* unordered list of context transitions            */                  //*** NEW  ***//
 	short  preset_size, postset_size, reset_size, 
-		prereset_size, postreset_size;							//*** NEW  ***//
+		prereset_size, postreset_size, ctxset_size;							//*** NEW  ***//
 } trans_t;
 
 typedef struct coa_t {
@@ -81,7 +83,7 @@ typedef struct
 	place_t *places;	/* pointer to first place		*/
 	trans_t *transitions;	/* pointer to first transition		*/ 
 	int numpl, numtr;	/* number of places/transitions in net	*/
-	int maxpre, maxpost, maxres;	/* maximal size of a t-pre/postset,reset	*/
+	int maxpre, maxpost, maxres, maxctx;	/* maximal size of a t-pre/postset,reset	*/
 } net_t;
 
 typedef struct
