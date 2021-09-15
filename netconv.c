@@ -43,7 +43,7 @@ place_t* nc_create_place (net_t *net)
 	pl->next = net->places;
 	net->places = pl;
 	//pl->preset = pl->postset = pl->conds = NULL;
-	pl->preset = pl->postset = pl->ctxset =
+	pl->preset = pl->postset =
 		pl->conds = pl->reset = NULL;	//*** NEW ***//
 	pl->num = ++net->numpl;
 	return pl;
@@ -55,7 +55,7 @@ trans_t* nc_create_transition (net_t *net)
 	tr->next = net->transitions;
 	net->transitions = tr;
 	tr->preset = tr->postset = tr->reset = NULL;
-	tr->preset_size = tr->reset_size = tr->ctxset_size =
+	tr->preset_size = tr->reset_size =
 		tr->prereset_size = tr->postreset_size = 0;		//*** NEW ***//
 		// prereset_size is the sum of preset_size + reset_size
 		// dropping out those in common. Same for postreset_size.
@@ -88,7 +88,7 @@ void nc_compute_sizes (net_t *net)
 	trans_t *tr;	
 	int k;
 
-	net->maxpre = net->maxpost = net->maxres = net->maxctx = 0;
+	net->maxpre = net->maxpost = net->maxres = 0;
 	for (tr = net->transitions; tr; tr = tr->next)
 	{
 		nodelist_t *list;
