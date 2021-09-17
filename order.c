@@ -218,7 +218,6 @@ pe_queue_t* create_queue_entry (trans_t *tr)
 			}
 			//printf("(co = *co_ptr++)->mark: %d\n", (co = *co_ptr++)->mark);
 		}
-		//printf("hola1\n");
 		/* add the immediate predecessor events of ev to the queue */
 		// for (sz = ev->origin->preset_size, co_ptr = ev->preset; sz--; )
 		for (sz = ev->origin->prereset_size, co_ptr = ev->preset; sz--; )		//*** NEW ***//
@@ -242,6 +241,7 @@ pe_queue_t* create_queue_entry (trans_t *tr)
 		printf("\n");
 	}
 
+	
 	return qu_new;
 }
 

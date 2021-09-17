@@ -43,8 +43,8 @@ place_t* nc_create_place (net_t *net)
 	pl->next = net->places;
 	net->places = pl;
 	//pl->preset = pl->postset = pl->conds = NULL;
-	pl->preset = pl->postset =
-		pl->conds = pl->reset = NULL;	//*** NEW ***//
+	pl->preset = pl->postset = pl->conds =
+		pl->reset = pl->ctxset = NULL;
 	pl->num = ++net->numpl;
 	return pl;
 }
@@ -54,9 +54,9 @@ trans_t* nc_create_transition (net_t *net)
 	trans_t *tr = MYmalloc(sizeof(trans_t));
 	tr->next = net->transitions;
 	net->transitions = tr;
-	tr->preset = tr->postset = tr->reset = NULL;
-	tr->preset_size = tr->reset_size =
-		tr->prereset_size = tr->postreset_size = 0;		//*** NEW ***//
+	tr->preset = tr->postset = tr->reset = tr->ctxset = NULL;
+	tr->preset_size = tr->reset_size = tr->ctxset_size =
+		tr->prereset_size = tr->postreset_size = 0;
 		// prereset_size is the sum of preset_size + reset_size
 		// dropping out those in common. Same for postreset_size.
 	tr->num = ++net->numtr;
@@ -88,7 +88,7 @@ void nc_compute_sizes (net_t *net)
 	trans_t *tr;	
 	int k;
 
-	net->maxpre = net->maxpost = net->maxres = 0;
+	net->maxpre = net->maxpost = net->maxres = net->maxctx = 0;
 	for (tr = net->transitions; tr; tr = tr->next)
 	{
 		nodelist_t *list;
@@ -103,16 +103,20 @@ void nc_compute_sizes (net_t *net)
 		//printf("Transition %s, postset size: %d\n", tr->name, k);
 		if (net->maxpost < k) net->maxpost = k;
 
-		for (k = 0, list = tr->reset; list; k++, list = list->next); //*** NEW ***//
-		tr->reset_size = k; 										  //*** NEW ***//
+		for (k = 0, list = tr->reset; list; k++, list = list->next);
+		tr->reset_size = k;
 		//printf("Transition %s, reset size: %d\n", tr->name, k);
-		if (net->maxres < k) net->maxres = k; 						  //*** NEW ***//
+		if (net->maxres < k) net->maxres = k;
 
-		for (k = 0, list = nodelist_concatenate(tr->preset, tr->reset); list; k++, list = list->next); //*** NEW ***//
-		tr->prereset_size = k; 										  //*** NEW ***//
+		for (k = 0, list = tr->ctxset; list; k++, list = list->next);
+		tr->ctxset_size = k;
+		if (net->maxctx < k) net->maxctx = k;
 
-		for (k = 0, list = nodelist_concatenate(tr->postset, tr->reset); list; k++, list = list->next); //*** NEW ***//
-		tr->postreset_size = k; 										  //*** NEW ***//
+		for (k = 0, list = nodelist_concatenate(tr->preset, tr->reset); list; k++, list = list->next);
+		tr->prereset_size = k;
+
+		for (k = 0, list = nodelist_concatenate(tr->postset, tr->reset); list; k++, list = list->next);
+		tr->postreset_size = k;
 	}
 	//printf("maxpre: %d\n", net->maxpre);
 	//printf("maxpost: %d\n", net->maxpost);

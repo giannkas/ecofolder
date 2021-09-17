@@ -237,6 +237,7 @@ void add_post_conditions (event_t *ev, char cutoff)
 			list = nodelist_concatenate(list, resconf);		
 	}
 	list = nodelist_concatenate(list, ev->origin->postset);
+	
 	for (list = nodelist_concatenate(list, ev->origin->reset); list; list = list->next)			//*** NEW ***//
 	{
 		/* record co-relation between new conditions */
@@ -264,9 +265,12 @@ void add_post_conditions (event_t *ev, char cutoff)
 		} */
 		/* printf("name ++co_ptr: %s\n", (*++co_ptr)->origin->name);
 		printf("name co_ptr++: %s\n", (*co_ptr++)->origin->name); */
+		
+		
 		pe(*co_ptr++);
 		//printf("It continues!!\n");
 	}
+	
 }
 
 /*****************************************************************************/
@@ -393,6 +397,7 @@ void recursive_pe (nodelist_t *list)
 	recursive_pe(list->next);
 	recursive_add(list->next,list);
 	pe(list->node);
+	
 }
 
 /*****************************************************************************/
@@ -450,9 +455,8 @@ void unfold ()
 	}
 	printf("unfolding initial marking\n");
 	print_marking(unf->m0);
-	printf("\n");	
+	printf("\n");
 	recursive_pe(unf->m0);
-	
 	/* take the next event from the queue */
 	//printf("pe_qsize: %d\n", pe_qsize);
 	while (pe_qsize)
@@ -513,6 +517,7 @@ void unfold ()
 				break;
 			}
 			
+			
 			/* if the marking was already represented in the unfolding,
 			we have a cut-off event */
 			if (!cutoff) { unf->events = unf->events->next; continue; }
@@ -521,12 +526,13 @@ void unfold ()
 			//printf("hola\n");
 			co_relation(ev);
 			/* add post-conditions, compute possible extensions */
+			
 			add_post_conditions(ev,CUTOFF_NO);
 		}
 	}
 	
 	
-	
+	printf("HOLA\n");
 	/* add post-conditions for cut-off events */
 	for (list = cutoff_list; list; list = list->next)
 	{
@@ -549,7 +555,7 @@ void unfold ()
 	pe_finish();
 	parikh_finish();
 	free(events);
-
 	for (pl = net->places; pl; pl = pl->next)
 		nodelist_delete(pl->conds);
+	
 }

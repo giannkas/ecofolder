@@ -560,12 +560,12 @@ int insert_arc()
 		nc_create_arc(&(TrArray[tr]->reset),&(PlArray[pl]->reset),
 			  TrArray[tr],PlArray[pl]);
 	else if (rd == 0){
-		/* nc_create_arc(&(TrArray[tr]->ctxset),&(PlArray[pl]->ctxset),
-			  TrArray[tr],PlArray[pl]); */
-		nc_create_arc(&(TrArray[tr]->postset),&(PlArray[pl]->preset),
+		nc_create_arc(&(TrArray[tr]->ctxset),&(PlArray[pl]->ctxset),
+			  TrArray[tr],PlArray[pl]);
+		/* nc_create_arc(&(TrArray[tr]->postset),&(PlArray[pl]->preset),
 			  TrArray[tr],PlArray[pl]);
 		nc_create_arc(&(PlArray[pl]->postset),&(TrArray[tr]->preset),
-			  PlArray[pl],TrArray[tr]);
+			  PlArray[pl],TrArray[tr]); */
 	}
 	else if (tp == 1)
 		nc_create_arc(&(TrArray[tr]->postset),&(PlArray[pl]->preset),
@@ -650,4 +650,54 @@ net_t* read_pep_net(char *PEPfilename)
 	nc_compute_sizes(rd_net);
 
 	return rd_net;
+}
+
+net_t* pr_encoding(net_t *net){
+
+	place_t *pl, *pl2;
+	nodelist_t *list;
+	nodelist_t *ctxtr = NULL;
+	int n_ctxtr = 0, buffer_num = 0;
+
+	printf("hola\n");
+	for (pl = net->places; pl; pl=pl->next)
+	{
+		for (ctxtr = pl->ctxset; ctxtr; ctxtr = ctxtr->next){
+			n_ctxtr++;
+			if(n_ctxtr > 1){
+				pl2 = nc_create_place(net);
+				pl2->name = strdup(pl->name);
+				for (list = pl->preset; list; list = list->next)
+					nc_create_arc(&(pl2->preset),&(((trans_t*)(list->node))->postset),
+			  			pl2,((trans_t*)(list->node)));
+				for (list = pl->postset; list; list = list->next)
+					nc_create_arc(&(((trans_t*)(list->node))->preset), &(pl2->postset),
+						((trans_t*)(list->node)),pl2);
+				for (list = pl->reset; list; list = list->next)
+					nc_create_arc(&(((trans_t*)(list->node))->reset), &(pl2->reset),
+						((trans_t*)(list->node)),pl2);
+				buffer_num = snprintf(NULL, 0,"%d", n_ctxtr+2);
+				char buffer[buffer_num];
+				sprintf(buffer, "_%d", n_ctxtr);				
+				pl2->name = strcat(pl2->name, buffer);
+				nc_create_arc(&(((trans_t*)(ctxtr->node))->postset),&(pl2->preset),
+			  		((trans_t*)(ctxtr->node)),pl2);
+				nc_create_arc(&(pl2->postset),&(((trans_t*)(ctxtr->node))->preset),
+					pl2,((trans_t*)(ctxtr->node)));
+			}
+		}
+		if(pl->ctxset){
+			pl->name = n_ctxtr > 1 ? strcat(pl->name, "_1") : pl->name;
+			nc_create_arc(&(((trans_t*)(pl->ctxset->node))->postset),&(pl->preset),
+			  ((trans_t*)(pl->ctxset->node)),pl);
+			nc_create_arc(&(pl->postset),&(((trans_t*)(pl->ctxset->node))->preset),
+				pl,((trans_t*)(pl->ctxset->node)));
+		}
+
+		n_ctxtr = 0;
+	}
+
+	nc_compute_sizes(net);
+	
+	return net;
 }

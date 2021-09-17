@@ -101,6 +101,7 @@ void pe_insert (trans_t *tr)
 		pe_queue[index] = pe_queue[index/2]; /* move parent downwards */
 	}
 	pe_queue[index] = qu_new;
+	
 }
 
 /*****************************************************************************/
@@ -358,6 +359,7 @@ void pe (cond_t *co)
 				curr_comb--;
 			}
 		}
+		
 		/* release the comb lists */
 		for (curr_comb = pe_combs; curr_comb->start; curr_comb++)
 			nodelist_delete(curr_comb->start);
