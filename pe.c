@@ -202,17 +202,20 @@ char pe_conflict (pe_comb_t *curr)
 
 void pe (cond_t *co)
 {
-	nodelist_t *pl_post, *tr_pre, **compat_conds;
+	nodelist_t *pl_post = nodelist_alloc(), *tr_pre, **compat_conds;
 	pe_comb_t *curr_comb;
-	cond_t **cocoptr, **co_ptr2, *co_reset = NULL;
+	cond_t **cocoptr;
 	place_t *pl = co->origin, *pl2;
 	trans_t *tr;
-	event_t *ev = co->pre_ev;
+	//event_t *ev = co->pre_ev;
+	//cond_t  **co_ptr2, *co_reset = NULL;
 	
 	*pe_conds = co;	/* any new PE contains co */
 	nodelist_push(&(pl->conds),co);
 	/* check the transitions in pl's postset */
 	//for (pl_post = pl->postset; pl_post && !nodelist_find(&((tr = pl_post->node)->reset),pl); pl_post = pl_post->next)
+	//pl_post = nodelist_concatenate(pl->postset, pl->reset);
+	//!pl_post ? printf("@@@@@@pl_post size: %d\n", sizeList(pl_post)) : printf("no\n");
 	for (pl_post = nodelist_concatenate(pl->postset, pl->reset); pl_post; pl_post = pl_post->next) 		//*** NEW  ***//
 	{		
 		/* if ((ev && nodelist_find(ev->origin->reset, pl) && 
@@ -242,8 +245,8 @@ void pe (cond_t *co)
 
 		/* for every other post-place of tr, collect the conditions
 			that are co-related to co in the comb structure */
-		/* if (strcmp(pl->name, "P0") == 0 && co->num == 3){
-			printf("Concurrent conditions with P0 the comes from the same event\n");
+		/* if (strcmp(pl->name, "7") == 0 && co->num == 8){
+			printf("Concurrent conditions with P0 the comes from the same event\n");			
 			tr_pre = nodelist_concatenate(tr->reset, tr->preset);
 			print_marking(tr_pre);
 			printf("\n");
@@ -319,7 +322,7 @@ void pe (cond_t *co)
 
 			curr_comb->current = curr_comb->start;
 			(++curr_comb)->start = NULL;
-			co_reset = NULL;
+			//co_reset = NULL;
 			
 		}
 		

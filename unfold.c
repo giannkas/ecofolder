@@ -179,6 +179,7 @@ void add_post_conditions (event_t *ev, char cutoff)
 	//size_t co_ptr_size = (&co_ptr)[1] - co_ptr;
 	//printf("co_ptr size: %ld\n", co_ptr_size);
 	//printf("ev->postset size: %ld\n", sizeof(ev->postset));
+	printf("tr name associated with the event: %s\n", ev->origin->name);
 	for (resconf = ev->origin->preset; resconf; resconf = resconf->next){
 		tr_prev = ((place_t*)(resconf->node))->preset;
 		if (((place_t*)(resconf->node))->reset &&
@@ -251,6 +252,7 @@ void add_post_conditions (event_t *ev, char cutoff)
 			cocoptr++;
 		}
 
+		//printf("HOLA\n");
 		/* compute possible extensions for each new condition */
 		/* printf("co_ptr->name and num: %s, %d\n", (*co_ptr)->origin->name, (*co_ptr)->num);
 		co_ptr2 = (*co_ptr)->co_common.conds;
@@ -266,11 +268,11 @@ void add_post_conditions (event_t *ev, char cutoff)
 		/* printf("name ++co_ptr: %s\n", (*++co_ptr)->origin->name);
 		printf("name co_ptr++: %s\n", (*co_ptr++)->origin->name); */
 		
-		
 		pe(*co_ptr++);
+		
 		//printf("It continues!!\n");
+		//printf("HOLA2\n");
 	}
-	
 }
 
 /*****************************************************************************/
@@ -458,9 +460,9 @@ void unfold ()
 	printf("\n");
 	recursive_pe(unf->m0);
 	/* take the next event from the queue */
-	//printf("pe_qsize: %d\n", pe_qsize);
 	while (pe_qsize)
 	{
+		printf("####pe_qsize: %d\n", pe_qsize);
 		int i, e;
 		if (interactive) for (;;)
 		{
@@ -529,10 +531,11 @@ void unfold ()
 			
 			add_post_conditions(ev,CUTOFF_NO);
 		}
+		
 	}
 	
 	
-	printf("HOLA\n");
+	
 	/* add post-conditions for cut-off events */
 	for (list = cutoff_list; list; list = list->next)
 	{

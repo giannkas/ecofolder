@@ -658,8 +658,7 @@ net_t* pr_encoding(net_t *net){
 	nodelist_t *list;
 	nodelist_t *ctxtr = NULL;
 	int n_ctxtr = 0, buffer_num = 0;
-
-	printf("hola\n");
+	
 	for (pl = net->places; pl; pl=pl->next)
 	{
 		for (ctxtr = pl->ctxset; ctxtr; ctxtr = ctxtr->next){
@@ -667,6 +666,7 @@ net_t* pr_encoding(net_t *net){
 			if(n_ctxtr > 1){
 				pl2 = nc_create_place(net);
 				pl2->name = strdup(pl->name);
+				pl2->marked = pl->marked ? 1 : 0;
 				for (list = pl->preset; list; list = list->next)
 					nc_create_arc(&(pl2->preset),&(((trans_t*)(list->node))->postset),
 			  			pl2,((trans_t*)(list->node)));

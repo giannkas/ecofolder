@@ -240,6 +240,7 @@ pe_queue_t* create_queue_entry (trans_t *tr)
 		print_marking(qu_new->marking);
 		printf("\n");
 	}
+	
 
 	
 	return qu_new;
