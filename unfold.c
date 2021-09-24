@@ -183,14 +183,18 @@ void add_post_conditions (event_t *ev, char cutoff)
 	for (resconf = ev->origin->preset; resconf; resconf = resconf->next){
 		tr_prev = ((place_t*)(resconf->node))->preset;
 		if (((place_t*)(resconf->node))->reset &&
+			((place_t*)(resconf->node))->postset &&
+			!nodelist_find(((place_t*)(resconf->node))->reset, ev->origin) &&
 			(!tr_prev ||
 			(tr_prev &&
 			!nodelist_find(((trans_t*)(tr_prev->node))->postset, resconf->node))))
 			list = nodelist_concatenate(list, resconf);
 	}
 	list = nodelist_concatenate(list, ev->origin->postset);
-	for (list = nodelist_concatenate(list, ev->origin->reset); list; list = list->next)			//*** NEW ***//
+	for (list = nodelist_concatenate(list, ev->origin->reset); list; list = list->next){
+		printf("Place-condition added: %s\n", ((place_t*)(list->node))->name);
 		*co_ptr++ = insert_condition(list->node,ev);
+	}
 	
 	if (cutoff) return;
 
@@ -209,7 +213,9 @@ void add_post_conditions (event_t *ev, char cutoff)
 		
 		for (resconf = ev->origin->preset; resconf; resconf = resconf->next){
 			tr_prev = ((place_t*)(resconf->node))->preset;
-			if (((place_t*)(resconf->node))->reset &&
+			if (((place_t*)(resconf->node))->reset && 
+				((place_t*)(resconf->node))->postset &&
+				!nodelist_find(((place_t*)(resconf->node))->reset, ev->origin) &&
 				(!tr_prev ||
 				(tr_prev &&
 				!nodelist_find(((trans_t*)(tr_prev->node))->postset, resconf->node))))
@@ -232,6 +238,8 @@ void add_post_conditions (event_t *ev, char cutoff)
 	for (resconf = ev->origin->preset; resconf; resconf = resconf->next){
 		tr_prev = ((place_t*)(resconf->node))->preset;
 		if (((place_t*)(resconf->node))->reset &&
+			((place_t*)(resconf->node))->postset &&
+			!nodelist_find(((place_t*)(resconf->node))->reset, ev->origin) &&
 			(!tr_prev ||
 			(tr_prev &&
 			!nodelist_find(((trans_t*)(tr_prev->node))->postset, resconf->node))))
@@ -252,7 +260,6 @@ void add_post_conditions (event_t *ev, char cutoff)
 			cocoptr++;
 		}
 
-		//printf("HOLA\n");
 		/* compute possible extensions for each new condition */
 		/* printf("co_ptr->name and num: %s, %d\n", (*co_ptr)->origin->name, (*co_ptr)->num);
 		co_ptr2 = (*co_ptr)->co_common.conds;
@@ -456,7 +463,7 @@ void unfold ()
 		} */
 	}
 	printf("unfolding initial marking\n");
-	print_marking(unf->m0);
+	//print_marking(unf->m0);
 	printf("\n");
 	recursive_pe(unf->m0);
 	/* take the next event from the queue */

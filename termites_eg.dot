@@ -1,7 +1,7 @@
 digraph test {
   c1 -> e3;
-  c2 -> e2;
   c2 -> e3;
+  c3 -> e2;
   c3 -> e3;
   c4 -> e2;
   c4 -> e3;
@@ -44,7 +44,7 @@ digraph test {
   e2 -> c35;
   e2 -> c36;
   e2 -> c37;
-  e2 -> c38;
+  e3 -> c38;
   e3 -> c39;
   e3 -> c40;
   e3 -> c41;
@@ -53,7 +53,6 @@ digraph test {
   e3 -> c44;
   e3 -> c45;
   e3 -> c46;
-  e3 -> c47;
   c1 [label= <fg-<FONT COLOR="red"><SUP>1</SUP></FONT>&nbsp;(c1)> shape=circle];
   c2 [label= <fg+<FONT COLOR="red"><SUP>0</SUP></FONT>&nbsp;(c2)> shape=circle];
   c3 [label= <te-<FONT COLOR="red"><SUP>1</SUP></FONT>&nbsp;(c3)> shape=circle];
@@ -90,17 +89,16 @@ digraph test {
   c34 [label= <wk+_3<FONT COLOR="red"><SUP>0</SUP></FONT>&nbsp;(c34)> shape=circle];
   c35 [label= <wk+_2<FONT COLOR="red"><SUP>0</SUP></FONT>&nbsp;(c35)> shape=circle];
   c36 [label= <wk+_1<FONT COLOR="red"><SUP>0</SUP></FONT>&nbsp;(c36)> shape=circle];
-  c37 [label= <fg+<FONT COLOR="red"><SUP>0</SUP></FONT>&nbsp;(c37)> shape=circle];
-  c38 [label= <te+<FONT COLOR="red"><SUP>0</SUP></FONT>&nbsp;(c38)> shape=circle];
-  c39 [label= <wk+_1<FONT COLOR="red"><SUP>1</SUP></FONT>&nbsp;(c39)> shape=circle];
-  c40 [label= <wd+<FONT COLOR="red"><SUP>1</SUP></FONT>&nbsp;(c40)> shape=circle];
-  c41 [label= <te+<FONT COLOR="red"><SUP>1</SUP></FONT>&nbsp;(c41)> shape=circle];
-  c42 [label= <fg+<FONT COLOR="red"><SUP>1</SUP></FONT>&nbsp;(c42)> shape=circle];
-  c43 [label= <ec+<FONT COLOR="red"><SUP>1</SUP></FONT>&nbsp;(c43)> shape=circle];
-  c44 [label= <ec-<FONT COLOR="red"><SUP>0</SUP></FONT>&nbsp;(c44)> shape=circle];
-  c45 [label= <fg-<FONT COLOR="red"><SUP>0</SUP></FONT>&nbsp;(c45)> shape=circle];
-  c46 [label= <te-<FONT COLOR="red"><SUP>0</SUP></FONT>&nbsp;(c46)> shape=circle];
-  c47 [label= <wd-<FONT COLOR="red"><SUP>0</SUP></FONT>&nbsp;(c47)> shape=circle];
+  c37 [label= <te+<FONT COLOR="red"><SUP>0</SUP></FONT>&nbsp;(c37)> shape=circle];
+  c38 [label= <wk+_1<FONT COLOR="red"><SUP>1</SUP></FONT>&nbsp;(c38)> shape=circle];
+  c39 [label= <wd+<FONT COLOR="red"><SUP>1</SUP></FONT>&nbsp;(c39)> shape=circle];
+  c40 [label= <te+<FONT COLOR="red"><SUP>1</SUP></FONT>&nbsp;(c40)> shape=circle];
+  c41 [label= <fg+<FONT COLOR="red"><SUP>1</SUP></FONT>&nbsp;(c41)> shape=circle];
+  c42 [label= <ec+<FONT COLOR="red"><SUP>1</SUP></FONT>&nbsp;(c42)> shape=circle];
+  c43 [label= <ec-<FONT COLOR="red"><SUP>0</SUP></FONT>&nbsp;(c43)> shape=circle];
+  c44 [label= <fg-<FONT COLOR="red"><SUP>0</SUP></FONT>&nbsp;(c44)> shape=circle];
+  c45 [label= <te-<FONT COLOR="red"><SUP>0</SUP></FONT>&nbsp;(c45)> shape=circle];
+  c46 [label= <wd-<FONT COLOR="red"><SUP>0</SUP></FONT>&nbsp;(c46)> shape=circle];
   e1 [label="r9 (e1)" shape=box];
   e2 [label="r6 (e2)" shape=box];
   e3 [label="r3 (e3)" shape=box];

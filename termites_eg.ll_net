@@ -2,22 +2,22 @@ PEP
 PetriBox
 FORMAT_N2
 PL
-"wk+"M1
-"wk-"
-"sd+"
-"sd-"M1
-"wd+"
-"wd-"M1
-"ac+"M1
-"ac-"
-"rp+"
-"rp-"M1
-"ec+"
-"ec-"M1
-"te+"
-"te-"M1
-"fg+"
-"fg-"M1
+"wk+"M1 1
+"wk-" 2
+"sd+" 3
+"sd-"M1 4
+"wd+" 5
+"wd-"M1 6
+"ac+"M1 7
+"ac-" 8
+"rp+" 9
+"rp-"M1 10
+"ec+" 11
+"ec-"M1 12
+"te+" 13
+"te-"M1 14
+"fg+" 15
+"fg-"M1 16
 TR
 "r1"
 "r2"
@@ -61,7 +61,7 @@ RS
 15>7
 16>7
 13>6
-15>6
+14>6
 1>6
 2>6
 5>5
