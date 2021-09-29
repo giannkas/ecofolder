@@ -92,7 +92,7 @@ typedef struct
 	event_t *events;	/* pointer to first event		*/ 
 	int numco, numev;	/* number of conditions/events in net	*/
 	struct nodelist_t *m0;	/* list of minimal conditions		*/
-	struct nodelist_t *m0_unmarked;	/* list of minimal unmarked conditions		*/
+	struct nodelist_t *m0_r;	/* list of minimal reset conditions		*/
 } unf_t;
 
 /****************************************************************************/
@@ -123,8 +123,7 @@ extern void nodelist_delete (nodelist_t*);
 extern char nodelist_compare (nodelist_t*, nodelist_t*);
 extern int sizeList(nodelist_t *);
 extern nodelist_t* nodelist_concatenate(nodelist_t *list1, nodelist_t *list2);			//*** NEW  ***//
-extern int nodelist_find (nodelist_t *list, void *);
-extern int nodelist_common(cond_t*, nodelist_t*, cond_t*, trans_t*, place_t*);								//*** NEW  ***//
+extern nodelist_t* nodelist_find (nodelist_t *, void *);
 
 /****************************************************************************/
 /* declarations for readpep.c						    */

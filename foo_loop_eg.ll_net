@@ -1,0 +1,16 @@
+PEP
+PetriBox
+FORMAT_N2
+PL
+"P0"
+"P1"M1
+TR
+"T0"
+TP
+1<1
+1<2
+PT
+2>1
+RS
+1>1
+

@@ -48,20 +48,23 @@ nodelist_t* nodelist_alloc ()
 nodelist_t* nodelist_push (nodelist_t **list, void *node)
 {
 	nodelist_t *newlist = nodelist_alloc();
-	newlist->node = node;
-	newlist->next = *list;
-	return *list = newlist;
+	if (node){
+		newlist->node = node;
+		newlist->next = *list;
+		*list = newlist;
+	}
+	return *list;
 }
 
 /*****************************************************************************/
 /* find and element; return 0 if element is not found, 1 otherwise    */
 
-int nodelist_find (nodelist_t *list, void *node)
+nodelist_t* nodelist_find (nodelist_t *list, void *node)
 {
 	while (list && list->node != node )
 		list = list->next;
 	
-	return (list && list->node == node) ? 1 : 0;
+	return (list && list->node == node) ? list->node : NULL;
 }
 
 /*****************************************************************************/
@@ -169,40 +172,4 @@ nodelist_t* nodelist_concatenate(nodelist_t *list1, nodelist_t *list2)
 	}
 	
 	return head->node ? head : NULL;
-}
-
-/*****************************************************************************/ 	//*** NEW FUNCTION ***//
-/* check if two lists have elements in common. No tested yet.  */
-
-int nodelist_common(cond_t *list1, nodelist_t *list2, cond_t *co, trans_t* tr, place_t* pl)
-{	
-	int com = 0;
-	cond_t *tmp_list1 = list1;
-	if (list1 && list2){
-		while (list2 && !com){
-			while (list1 && !com){				
-				//printf("element in common\n");
-				printf("place source for the preset assessed: %s\n", pl->name);
-				printf("transition source for the preset assessed: %s\n", tr->name);
-				printf("mark condition: %d\n", list1->mark);
-				printf("num place: %d\n", ((place_t*)(list2->node))->num);
-				printf("condition name: %s\n", list1->origin->name);
-				printf("place name: %s\n", ((place_t*)(list2->node))->name);
-				if (list1->pre_ev)
-					printf("pre_event name: %s\n", list1->pre_ev->origin->name);
-				//printf("mark condition: %d", ((cond_t*)(list2->conds->node))->mark);
-				if (list1->origin->name == ((place_t*)(list2->node))->name && 
-					list1->mark == ((place_t*)(list2->node))->marked){
-					//list1->origin->name != co->origin->name
-					com = 1;
-				}
-				//printf("hola\n");
-				list1 = list1->next;
-			}
-			list2 = list2->next;
-			list1 = tmp_list1;
-		}
-	}
-
-	return com;
 }

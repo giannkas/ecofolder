@@ -87,11 +87,12 @@ cond_t* insert_condition (place_t *pl, event_t *ev)
 	co->num = unf->numco++;
 	if ((ev && nodelist_find(ev->origin->postset, pl)) ||
 		(!ev && pl->marked))
-		co->token = 1;	
+		co->token = 1;
 	else
 		co->token = 0;
 	
 	printf("num condition: %d\n", co->num);
+	printf("num place: %d\n", pl->num);
 	printf("token: %d\n", co->token);
 
 	if (interactive)
@@ -191,12 +192,13 @@ void add_post_conditions (event_t *ev, char cutoff)
 			list = nodelist_concatenate(list, resconf);
 	}
 	list = nodelist_concatenate(list, ev->origin->postset);
+	printf("HOLA\n");
 	for (list = nodelist_concatenate(list, ev->origin->reset); list; list = list->next){
 		printf("Place-condition added: %s\n", ((place_t*)(list->node))->name);
 		*co_ptr++ = insert_condition(list->node,ev);
 	}
-	
-	if (cutoff) return;
+	if (cutoff != 0) return;
+	printf("hola\n");
 
 	/* Having computed the common part of the co-relation for all
 	   conditions in co_relation(), we create a copy that uses only
@@ -229,8 +231,8 @@ void add_post_conditions (event_t *ev, char cutoff)
 			
 		}
 	}
-	
 	co_ptr = ev->postset;
+	printf("co_ptr->name and num: %s, %d\n", (*co_ptr)->origin->name, (*co_ptr)->num);
 	//size_t co_ptr_size = (&co_ptr)[1] - co_ptr;
 	//printf("co_ptr size: %lu\n", co_ptr_size);
 	list = NULL;
@@ -261,7 +263,7 @@ void add_post_conditions (event_t *ev, char cutoff)
 		}
 
 		/* compute possible extensions for each new condition */
-		/* printf("co_ptr->name and num: %s, %d\n", (*co_ptr)->origin->name, (*co_ptr)->num);
+		
 		co_ptr2 = (*co_ptr)->co_common.conds;
 		while(*co_ptr2){
 			printf("condition name in co_common: %s, %d\n",(*co_ptr2)->origin->name, (*co_ptr2)->num);
@@ -271,7 +273,7 @@ void add_post_conditions (event_t *ev, char cutoff)
 		while(*co_ptr2){
 			printf("condition name in co_private: %s, %d\n",(*co_ptr2)->origin->name, (*co_ptr2)->num);
 			co_ptr2 = &((*co_ptr2)->next);
-		} */
+		}
 		/* printf("name ++co_ptr: %s\n", (*++co_ptr)->origin->name);
 		printf("name co_ptr++: %s\n", (*co_ptr++)->origin->name); */
 		
@@ -433,7 +435,7 @@ void unfold ()
 	cutoff_list = corr_list = NULL;
 
 	/* init hash table, add initial marking */
-	marking_init(); unf->m0 = NULL;
+	marking_init(); unf->m0 = NULL; unf->m0_r = NULL;
 	add_marking(list = marking_initial(),NULL);
 
 	if (interactive){
@@ -456,12 +458,17 @@ void unfold ()
 		co = insert_condition(pl = list->node,NULL);
 		co->co_common = alloc_coarray(0);
 		co->co_private = alloc_coarray(0);
-		nodelist_push(&(unf->m0),co);
+		nodelist_push(&(unf->m0_r),co);
+		if (pl->marked)
+			nodelist_push(&(unf->m0),co);
+		else if (!pl->marked && pl->reset)
+			nodelist_push(&(unf->m0_r),co);
 		//printf("num condition: %d\n", co->num);
 		/* if (co->origin->marked == 0){
 			nodelist_push(&(unf->m0_unmarked),co);
 		} */
 	}
+
 	printf("unfolding initial marking\n");
 	//print_marking(unf->m0);
 	printf("\n");
@@ -504,9 +511,11 @@ void unfold ()
 		ev = insert_event(qu);
 		
 		if (ev){
-			//strcmp(ev->origin->name,"T1") == 0 ? printf("yes\n") : printf("no\n");
 			cutoff = add_marking(qu->marking,ev);
 			
+			strcmp(ev->origin->name,"T0") == 0 ? printf("Trans T0\n") : printf("no\n");
+			print_marking(qu->marking);
+			printf("cutoff = %d\n", cutoff);
 			
 			if (interactive && !cutoff)
 			{
@@ -536,19 +545,19 @@ void unfold ()
 			co_relation(ev);
 			/* add post-conditions, compute possible extensions */
 			
+			printf("ev name: %s\n", ev->origin->name);
 			add_post_conditions(ev,CUTOFF_NO);
 		}
 		
 	}
 	
 	
-	
 	/* add post-conditions for cut-off events */
 	for (list = cutoff_list; list; list = list->next)
 	{
 		ev = list->node;
-		//printf("ev name: %s\n", ev->origin->name);
 		ev->next = unf->events; unf->events = ev;
+		printf("cutoff before add post_conditions = %d\n", cutoff);
 		add_post_conditions(ev,CUTOFF_YES);
 	}
 	

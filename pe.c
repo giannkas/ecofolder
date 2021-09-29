@@ -250,14 +250,16 @@ void pe (cond_t *co)
 
 		/* for every other post-place of tr, collect the conditions
 			that are co-related to co in the comb structure */
+		tr_pre = nodelist_concatenate(tr->reset, tr->preset);
+		nodelist_t *ptr = tr_pre;
+		while (ptr) {
+			if (strcmp(tr->name, "T0") == 0 && strcmp(pl->name, "P2") == 0)
+				printf("%s, ", ((place_t*)(ptr->node))->name);
+			ptr = ptr->next;
+		}
 		for (tr_pre = nodelist_concatenate(tr->reset, tr->preset); tr_pre; tr_pre = tr_pre->next) 	//*** NEW  ***//
 		{
-			/*nodelist_t *ptr = tr_pre;
-			 while (ptr) {
-				if (strcmp(pl->name, "P2") == 0)
-					printf("%s, ", ((place_t*)(ptr->node))->name);
-				ptr = ptr->next;
-			} */
+			
 			if ((pl2 = tr_pre->node) == pl) continue;
 			
 			
@@ -291,17 +293,19 @@ void pe (cond_t *co)
 					}
 					else
 						nodelist_push(compat_conds,*cocoptr); */
+					if (strcmp(tr->name, "T0") == 0)
+						printf("pl2 common: %s\n", pl2->name);
 					
 					if (((*cocoptr)->token && nodelist_find(tr->preset, (*cocoptr)->origin)) ||
 						(nodelist_find(tr->reset, (*cocoptr)->origin))
 					)
 						nodelist_push(compat_conds,*cocoptr);
 					else{
-						printf("it fails in common with condition %s number: %d\n", pl->name, co->num);
-						/* printf("cocoptr->token: %d\n", (*cocoptr)->token);
+						printf("it fails in common with condition %s number: %d\n", pl->name, co->num);						
+						printf("cocoptr->token: %d\n", (*cocoptr)->token);
 						printf("cocoptr->name: %s num: %d\n", (*cocoptr)->origin->name, (*cocoptr)->num);
 						printf("tr->name: %s\n", tr->name);
-						printf("nodelist_find in preset: %d\n", nodelist_find(tr->preset, (*cocoptr)->origin));
+						/* printf("nodelist_find in preset: %d\n", nodelist_find(tr->preset, (*cocoptr)->origin));
 						printf("nodelist_find in reset: %d\n", nodelist_find(tr->reset, (*cocoptr)->origin)); */
 					}
 				}
@@ -312,14 +316,23 @@ void pe (cond_t *co)
 			} */
 			cocoptr = co->co_private.conds - 1;
 			while (*++cocoptr){
-				if ((*cocoptr)->origin == pl2){					
+				if ((*cocoptr)->origin == pl2){
+
 					if (((*cocoptr)->token && nodelist_find(tr->preset, (*cocoptr)->origin)) ||
 						(nodelist_find(tr->reset, (*cocoptr)->origin))
 					)
-						nodelist_push(compat_conds,*cocoptr);
+						{
+							
+							nodelist_push(compat_conds,*cocoptr);
+						}
 					else
 						printf("it fails in private with condition %s number: %d\n", pl->name, co->num);
 				}
+			}
+			if(!*compat_conds && tr->reset && nodelist_find(tr->reset, tr_pre->node)){
+				if (strcmp(((place_t*)(tr_pre->node))->name, "P2") == 0)
+					printf("transition associated: %s\n", tr->name);
+				nodelist_push(compat_conds, nodelist_find(unf->m0_r, tr_pre->node));
 			}
 			/* if (co_reset && !nodelist_find(*compat_conds, co_reset)){
 				nodelist_push(compat_conds,co_reset);
