@@ -99,12 +99,11 @@ nodelist_t* marking_initial ()
 	
 	for (tr = net->transitions; tr; tr = tr->next){
 		for (respl = tr->reset; respl; respl = respl->next){
-			//if (strcmp(((place_t*)(respl->node))->name, "P0") != 0)
-				//printf("THIS PLACE WAS ADDED TO INITIAL MARKING: %s\n", ((place_t*)(respl->node))->name);
 			nodelist_insert(&list,((place_t*)(respl->node)));
 		}
 	}
-	
+
+
 	return list;
 }
 

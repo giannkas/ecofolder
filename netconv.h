@@ -124,6 +124,7 @@ extern char nodelist_compare (nodelist_t*, nodelist_t*);
 extern int sizeList(nodelist_t *);
 extern nodelist_t* nodelist_concatenate(nodelist_t *list1, nodelist_t *list2);			//*** NEW  ***//
 extern nodelist_t* nodelist_find (nodelist_t *, void *);
+extern cond_t* cond_find (nodelist_t *, place_t *);
 
 /****************************************************************************/
 /* declarations for readpep.c						    */

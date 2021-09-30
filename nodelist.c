@@ -1,4 +1,5 @@
 #include <stdlib.h>
+#include <string.h>
 
 #include "common.h"
 #include "netconv.h"
@@ -57,7 +58,7 @@ nodelist_t* nodelist_push (nodelist_t **list, void *node)
 }
 
 /*****************************************************************************/
-/* find and element; return 0 if element is not found, 1 otherwise    */
+/* find an element; return NULL if element is not found, the element otherwise    */
 
 nodelist_t* nodelist_find (nodelist_t *list, void *node)
 {
@@ -65,6 +66,17 @@ nodelist_t* nodelist_find (nodelist_t *list, void *node)
 		list = list->next;
 	
 	return (list && list->node == node) ? list->node : NULL;
+}
+
+/*****************************************************************************/
+/* find an condition; return NULL if element is not found, the element otherwise    */
+
+cond_t* cond_find (nodelist_t *list, place_t *node)
+{
+	while (list && strcmp(((cond_t*)(list->node))->origin->name, node->name) != 0)
+		list = list->next;
+	printf("it runs through here and the condition was found? %d\n", strcmp(((cond_t*)(list->node))->origin->name, node->name));
+	return (list && strcmp(((cond_t*)(list->node))->origin->name, node->name) == 0) ? ((cond_t*)(list->node)) : NULL;
 }
 
 /*****************************************************************************/

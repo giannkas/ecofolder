@@ -213,12 +213,7 @@ void pe (cond_t *co)
 	*pe_conds = co;	/* any new PE contains co */
 	nodelist_push(&(pl->conds),co);
 	/* check the transitions in pl's postset */
-	if (strcmp(pl->name, "P2") == 0){
-		printf("Concurrent conditions with %s num %d that comes from the same event\n", pl->name, co->num);			
-		/* tr_pre = nodelist_concatenate(tr->reset, tr->preset);
-		print_marking(tr_pre);
-		printf("\n"); */
-	}
+	printf("Condition %s with num %d in pe\n", co->origin->name, co->num);
 	for (pl_post = nodelist_concatenate(pl->postset, pl->reset); pl_post; pl_post = pl_post->next) 		//*** NEW  ***//
 	{		
 		/* if ((ev && nodelist_find(ev->origin->reset, pl) && 
@@ -247,20 +242,20 @@ void pe (cond_t *co)
 
 		tr = pl_post->node;
 		(curr_comb = pe_combs)->start = NULL;
-
 		/* for every other post-place of tr, collect the conditions
 			that are co-related to co in the comb structure */
-		tr_pre = nodelist_concatenate(tr->reset, tr->preset);
+		/* tr_pre = nodelist_concatenate(tr->reset, tr->preset);
 		nodelist_t *ptr = tr_pre;
 		while (ptr) {
 			if (strcmp(tr->name, "T0") == 0 && strcmp(pl->name, "P2") == 0)
 				printf("%s, ", ((place_t*)(ptr->node))->name);
 			ptr = ptr->next;
-		}
+		} */
 		for (tr_pre = nodelist_concatenate(tr->reset, tr->preset); tr_pre; tr_pre = tr_pre->next) 	//*** NEW  ***//
 		{
 			
 			if ((pl2 = tr_pre->node) == pl) continue;
+			
 			
 			
 			/* if(!pl2->marked && nodelist_find(tr->reset, pl2) &&
@@ -280,8 +275,11 @@ void pe (cond_t *co)
 				printf("co_common condition name: %d\n",(*++co_ptr2)->num);
 				co_ptr2 = &((*co_ptr2)->next);
 			} */			
+			/* if(!strcmp(tr->name, "T1") && co->num == 3){
+				printf("PUBLIC\n");
+				printf("common cocoptr: %s and num %d\n", (*cocoptr)->origin->name, (*cocoptr)->num);
+			} */
 			while (*++cocoptr){
-				
 				if ((*cocoptr)->origin == pl2){
 					/* if (!(*cocoptr)->origin->marked && 
 						!nodelist_find(tr->reset, (*cocoptr)->origin)
@@ -293,18 +291,18 @@ void pe (cond_t *co)
 					}
 					else
 						nodelist_push(compat_conds,*cocoptr); */
-					if (strcmp(tr->name, "T0") == 0)
-						printf("pl2 common: %s\n", pl2->name);
+					/* if (strcmp(tr->name, "T0") == 0)
+						printf("pl2 common: %s\n", pl2->name); */
 					
 					if (((*cocoptr)->token && nodelist_find(tr->preset, (*cocoptr)->origin)) ||
 						(nodelist_find(tr->reset, (*cocoptr)->origin))
 					)
 						nodelist_push(compat_conds,*cocoptr);
 					else{
-						printf("it fails in common with condition %s number: %d\n", pl->name, co->num);						
+						/* printf("it fails in common with condition %s number: %d\n", pl->name, co->num);						
 						printf("cocoptr->token: %d\n", (*cocoptr)->token);
 						printf("cocoptr->name: %s num: %d\n", (*cocoptr)->origin->name, (*cocoptr)->num);
-						printf("tr->name: %s\n", tr->name);
+						printf("tr->name: %s\n", tr->name); */
 						/* printf("nodelist_find in preset: %d\n", nodelist_find(tr->preset, (*cocoptr)->origin));
 						printf("nodelist_find in reset: %d\n", nodelist_find(tr->reset, (*cocoptr)->origin)); */
 					}
@@ -315,6 +313,10 @@ void pe (cond_t *co)
 				//printf("name of the pushed place: %s\n", co_reset->origin->name);
 			} */
 			cocoptr = co->co_private.conds - 1;
+			/* if(!strcmp(tr->name, "T1") && co->num == 3){
+				printf("PRIVATE\n");
+				printf("private cocoptr: %s and num %d\n", (*cocoptr)->origin->name, (*cocoptr)->num);
+			} */
 			while (*++cocoptr){
 				if ((*cocoptr)->origin == pl2){
 
@@ -325,22 +327,26 @@ void pe (cond_t *co)
 							
 							nodelist_push(compat_conds,*cocoptr);
 						}
-					else
-						printf("it fails in private with condition %s number: %d\n", pl->name, co->num);
+					//else
+						//printf("it fails in private with condition %s number: %d\n", pl->name, co->num);
 				}
 			}
-			if(!*compat_conds && tr->reset && nodelist_find(tr->reset, tr_pre->node)){
+			/* if(!*compat_conds && tr->reset && nodelist_find(tr->reset, tr_pre->node) 
+				&& !(((place_t*)(tr_pre->node))->marked)){
 				if (strcmp(((place_t*)(tr_pre->node))->name, "P2") == 0)
-					printf("transition associated: %s\n", tr->name);
-				nodelist_push(compat_conds, nodelist_find(unf->m0_r, tr_pre->node));
-			}
+					//printf("transition associated: %s\n", tr->name);				
+				nodelist_push(compat_conds, cond_find(unf->m0_r, ((place_t*)(tr_pre->node))));
+			} */
 			/* if (co_reset && !nodelist_find(*compat_conds, co_reset)){
 				nodelist_push(compat_conds,co_reset);
 				printf("name of the pushed place: %s\n", co_reset->origin->name);
 			} */
 						
 			if (!*compat_conds)
-				break;			
+				break;
+
+			if(!strcmp(tr->name, "T1") && co->num == 0)
+				printf("1. Transition associated %s with condition %s and number %d\n", tr->name, co->origin->name, co->num);
 
 			curr_comb->current = curr_comb->start;
 			(++curr_comb)->start = NULL;
@@ -360,7 +366,9 @@ void pe (cond_t *co)
 		} */		
 		
 		if (!tr_pre) while (curr_comb >= pe_combs)
-		{						
+		{
+			if(!strcmp(tr->name, "T1"))
+				printf("2. Transition associated %s with condition %s and number %d\n", tr->name, co->origin->name, co->num);
 			if (!curr_comb->start)
 			{
 				cond_t **co_ptr = pe_conds;
