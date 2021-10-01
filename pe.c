@@ -337,6 +337,27 @@ void pe (cond_t *co)
 					//printf("transition associated: %s\n", tr->name);				
 				nodelist_push(compat_conds, cond_find(unf->m0_r, ((place_t*)(tr_pre->node))));
 			} */
+			/* if(!*compat_conds && co->pre_ev){
+				nodelist_t* node_tmp = nodelist_find(tr->preset, tr_pre->node);
+				nodelist_t *conds_tmp = node_tmp ? ((place_t*)(node_tmp))->conds : NULL;
+				cond_t* co_tmp = conds_tmp ? ((cond_t*)(conds_tmp->node)) : NULL;				
+				if (co_tmp && nodelist_find(co->pre_ev->origin->preset, co->origin) &&
+					 nodelist_find(tr->reset, pl) && 
+					co_tmp->token){
+					printf("1. It enters here with transition %s and condition %s with num %d, and preset place %s with num %d\n", 
+						tr->name, co->origin->name, co->num, co_tmp->origin->name, co_tmp->num);
+					nodelist_push(compat_conds, co_tmp);
+				}
+				else if(co_tmp && co->token && co_tmp->token){
+					printf("2. It enters here with transition %s and condition %s with num %d, and preset place %s with num %d\n", 
+						tr->name, co->origin->name, co->num, co_tmp->origin->name, co_tmp->num);
+					nodelist_push(compat_conds, co_tmp);
+				}
+			} */
+			/* if (co_reset && !nodelist_find(*compat_conds, co_reset)){
+				nodelist_push(compat_conds,co_reset);
+				printf("name of the pushed place: %s\n", co_reset->origin->name);
+			} */
 			/* if (co_reset && !nodelist_find(*compat_conds, co_reset)){
 				nodelist_push(compat_conds,co_reset);
 				printf("name of the pushed place: %s\n", co_reset->origin->name);
