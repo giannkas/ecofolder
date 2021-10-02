@@ -413,11 +413,12 @@ void recursive_pe (nodelist_t *list)
 
 void unfold ()
 {
-	nodelist_t *list;
+	nodelist_t *list, *respl = NULL;
 	pe_queue_t *qu;
 	place_t *pl;
 	event_t *ev, *stopev = NULL;
 	cond_t  *co;
+	trans_t		*tr;
 	int cutoff;
 
 	/* create empty unfolding structure */
@@ -433,7 +434,7 @@ void unfold ()
 	cutoff_list = corr_list = NULL;
 
 	/* init hash table, add initial marking */
-	marking_init(); unf->m0 = NULL;
+	marking_init(); unf->m0 = unf->m0_unmarked = NULL;
 	add_marking(list = marking_initial(),NULL);
 
 	if (interactive){
@@ -462,6 +463,18 @@ void unfold ()
 			nodelist_push(&(unf->m0_unmarked),co);
 		} */
 	}
+
+	for (tr = net->transitions; tr; tr = tr->next){
+		for (respl = tr->reset; respl; respl = respl->next){
+			if(!(pl = respl->node)->marked){
+				co = insert_condition(pl,NULL);
+				co->co_common = alloc_coarray(0);
+				co->co_private = alloc_coarray(0);
+				nodelist_push(&(unf->m0_unmarked),co);
+			}
+		}
+	}
+
 	printf("unfolding initial marking\n");
 	//print_marking(unf->m0);
 	printf("\n");
