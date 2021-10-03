@@ -230,6 +230,8 @@ pe_queue_t* create_queue_entry (trans_t *tr)
 	for (list = nodelist_concatenate(list,tr->reset); list; list = list->next)	//*** NEW ***//
 		nodelist_insert(&(qu_new->marking), list->node);
 	/* add the places of unconsumed minimal conditions */
+	//list = nodelist_concatenate(list, tr->postset);
+	//list = nodelist_concatenate(list, unf->m0_unmarked);
 	for (list = unf->m0; list; list = list->next)
 		if ((co = list->node)->mark != ev_mark-1)
 			nodelist_insert(&(qu_new->marking), co->origin);

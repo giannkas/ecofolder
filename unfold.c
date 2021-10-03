@@ -451,6 +451,17 @@ void unfold ()
 	pe_init(list);
 	parikh_init();
 
+	/* for (tr = net->transitions; tr; tr = tr->next){
+		for (respl = tr->reset; respl; respl = respl->next){
+			if(!(pl = respl->node)->marked){
+				co = insert_condition(pl,NULL);
+				co->co_common = alloc_coarray(0);
+				co->co_private = alloc_coarray(0);
+				nodelist_push(&(unf->m0_unmarked),co);
+			}
+		}
+	} */
+	
 	/* add initial conditions to unfolding, compute possible extensions */
 	for (; list; list = list->next)
 	{
@@ -464,20 +475,11 @@ void unfold ()
 		} */
 	}
 
-	for (tr = net->transitions; tr; tr = tr->next){
-		for (respl = tr->reset; respl; respl = respl->next){
-			if(!(pl = respl->node)->marked){
-				co = insert_condition(pl,NULL);
-				co->co_common = alloc_coarray(0);
-				co->co_private = alloc_coarray(0);
-				nodelist_push(&(unf->m0_unmarked),co);
-			}
-		}
-	}
 
 	printf("unfolding initial marking\n");
 	//print_marking(unf->m0);
 	printf("\n");
+	//nodelist_concatenate(unf->m0_unmarked, unf->m0);
 	recursive_pe(unf->m0);
 	/* take the next event from the queue */
 	while (pe_qsize)
