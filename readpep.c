@@ -529,12 +529,18 @@ int insert_arc()
 	if (*blocktype)
 	{
 		rs = strcmp(blocktype,"RS");
+		/* rd = strcmp(blocktype, "RD");
+		tp = strcmp(blocktype,"PT"); */
 		if (rs == 0)
 			tp = -1;
 		else{
 			rd = strcmp(blocktype, "RD");
 			tp = rd == 0 ? -2 : strcmp(blocktype,"PT");
 		}	
+		/* printf("blocktype is: %s\n", blocktype);
+		printf("rs is: %d\n", rs);
+		printf("rd is: %d\n", rd);
+		printf("tp is: %d\n", tp); */
 		*blocktype = '\0';
 		/* rs = strcmp(blocktype,"RS");
 		tp = rs == 0 ? -1 : strcmp(blocktype,"PT");
@@ -567,7 +573,7 @@ int insert_arc()
 		nc_create_arc(&(PlArray[pl]->postset),&(TrArray[tr]->preset),
 			  PlArray[pl],TrArray[tr]); */
 	}
-	else if (tp == 1)
+	else if (tp != 0)
 		nc_create_arc(&(TrArray[tr]->postset),&(PlArray[pl]->preset),
 			  TrArray[tr],PlArray[pl]);
 	else{
@@ -650,6 +656,39 @@ net_t* read_pep_net(char *PEPfilename)
 	nc_compute_sizes(rd_net);
 
 	return rd_net;
+}
+
+net_t* reset_complement(net_t *net){
+
+	place_t *pl, *pl2;
+	nodelist_t *list;
+	nodelist_t *rsttr = NULL;	
+	
+	for (pl = net->places; pl; pl=pl->next)
+	{
+		rsttr = pl->reset;
+		if (rsttr){			
+			pl2 = nc_create_place(net);
+			pl2->name = strdup(pl->name);
+			strcat(pl2->name, "_rs");
+			pl2->marked = pl->marked ? 0 : 1;
+
+			for (list = pl->preset; list; list = list->next)
+				nc_create_arc(&(pl2->postset),&(((trans_t*)(list->node))->preset),
+					pl2,((trans_t*)(list->node)));
+			for (list = pl->postset; list; list = list->next)
+				nc_create_arc(&(((trans_t*)(list->node))->postset), &(pl2->preset),
+					((trans_t*)(list->node)),pl2);
+			for (list = pl->reset; list; list = list->next){
+				nc_create_arc(&(((trans_t*)(list->node))->reset), &(pl2->reset),
+					((trans_t*)(list->node)),pl2);
+				nc_create_arc(&(((trans_t*)(list->node))->postset), &(pl2->preset),
+					((trans_t*)(list->node)),pl2);
+			}
+		}
+	}
+
+	return net;
 }
 
 net_t* pr_encoding(net_t *net){

@@ -130,6 +130,7 @@ extern int nodelist_common(cond_t*, nodelist_t*, cond_t*, trans_t*, place_t*);		
 /* declarations for readpep.c						    */
 
 extern net_t* read_pep_net(char*);
+extern net_t* reset_complement(net_t*);
 extern net_t* pr_encoding(net_t*);
 
 /****************************************************************************/
