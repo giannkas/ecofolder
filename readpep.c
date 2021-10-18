@@ -674,11 +674,13 @@ net_t* reset_complement(net_t *net){
 			pl2->marked = pl->marked ? 0 : 1;
 
 			for (list = pl->preset; list; list = list->next)
-				nc_create_arc(&(pl2->postset),&(((trans_t*)(list->node))->preset),
-					pl2,((trans_t*)(list->node)));
+				if (!nodelist_find(pl->postset, list->node))
+					nc_create_arc(&(pl2->postset),&(((trans_t*)(list->node))->preset),
+						pl2,((trans_t*)(list->node)));
 			for (list = pl->postset; list; list = list->next)
-				nc_create_arc(&(((trans_t*)(list->node))->postset), &(pl2->preset),
-					((trans_t*)(list->node)),pl2);
+				if (!nodelist_find(pl->preset, list->node))
+					nc_create_arc(&(((trans_t*)(list->node))->postset), &(pl2->preset),
+						((trans_t*)(list->node)),pl2);
 			for (list = pl->reset; list; list = list->next){
 				nc_create_arc(&(((trans_t*)(list->node))->reset), &(pl2->reset),
 					((trans_t*)(list->node)),pl2);

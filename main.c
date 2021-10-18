@@ -76,7 +76,7 @@ int main (int argc, char **argv)
 	if (!llnet) usage(argv[0]);
 
 	net = read_pep_net(llnet);
-	net = reset_complement(net);
+	//net = reset_complement(net);
 	net = pr_encoding(net);
 	nc_static_checks(net,stoptr_name);
 
