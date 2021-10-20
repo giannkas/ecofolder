@@ -178,12 +178,12 @@ char pe_conflict (pe_comb_t *curr)
 		for (sz = ev->origin->prereset_size, co_ptr = ev->preset; sz--; )	//*** NEW  ***//
 		{
 			/* printf("transition reset: \n");
-			print_marking(ev->origin->reset);
+			print_marking_pl(ev->origin->reset);
 			printf("place name: %s", co->origin->name); */
 			if ((co = *co_ptr++)->mark == ev_mark && 
 				!nodelist_find(ev->origin->reset, co->origin)){
 				/* printf("transition reset: \n");
-				print_marking(ev->origin->reset);
+				print_marking_pl(ev->origin->reset);
 				printf("hola\n");
 				printf("place name: %s", co->origin->name); */
 				return 1;
@@ -216,7 +216,7 @@ void pe (cond_t *co)
 	if (strcmp(pl->name, "P2") == 0){
 		printf("Concurrent conditions with %s num %d that comes from the same event\n", pl->name, co->num);			
 		/* tr_pre = nodelist_concatenate(tr->reset, tr->preset);
-		print_marking(tr_pre);
+		print_marking_pl(tr_pre);
 		printf("\n"); */
 	}
 	for (pl_post = nodelist_concatenate(pl->postset, pl->reset); pl_post; pl_post = pl_post->next) 		//*** NEW  ***//

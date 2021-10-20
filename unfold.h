@@ -38,7 +38,8 @@ extern void marking_init ();
 extern int find_marking (nodelist_t*);
 extern int add_marking (nodelist_t*,event_t*);
 extern nodelist_t* marking_initial ();
-extern void print_marking (nodelist_t*);
+extern void print_marking_pl (nodelist_t*);
+extern void print_marking_co (nodelist_t*);
 
 /***************************************************************************/
 /* declarations for pe.c						   */

@@ -439,19 +439,19 @@ void unfold ()
 
 	if (interactive){
 		printf("Initial marking:");
-		print_marking(list);
+		print_marking_pl(list);
 		printf("\n");
 	}
 
 	printf("Print initial marking\n");
-	print_marking(list);
+	//print_marking_pl(list);
 	printf("\n");
 	
 	/* initialize PE computation */
 	pe_init(list);
 	parikh_init();
 
-	/* for (tr = net->transitions; tr; tr = tr->next){
+	for (tr = net->transitions; tr; tr = tr->next){
 		for (respl = tr->reset; respl; respl = respl->next){
 			if(!(pl = respl->node)->marked){
 				co = insert_condition(pl,NULL);
@@ -460,7 +460,7 @@ void unfold ()
 				nodelist_push(&(unf->m0_unmarked),co);
 			}
 		}
-	} */
+	}
 	
 	/* add initial conditions to unfolding, compute possible extensions */
 	for (; list; list = list->next)
@@ -477,10 +477,10 @@ void unfold ()
 
 
 	printf("unfolding initial marking\n");
-	//print_marking(unf->m0);
+	//print_marking_co(unf->m0);
 	printf("\n");
 	//nodelist_concatenate(unf->m0_unmarked, unf->m0);
-	recursive_pe(unf->m0);
+	recursive_pe(nodelist_concatenate(unf->m0_unmarked, unf->m0));
 	/* take the next event from the queue */
 	while (pe_qsize)
 	{

@@ -97,22 +97,29 @@ nodelist_t* marking_initial ()
 	for (pl = net->places; pl; pl = pl->next)
 		if (pl->marked) nodelist_insert(&list,pl);
 	
-	for (tr = net->transitions; tr; tr = tr->next){
+	/* for (tr = net->transitions; tr; tr = tr->next){
 		for (respl = tr->reset; respl; respl = respl->next){
 			//if (strcmp(((place_t*)(respl->node))->name, "P0") != 0)
 				//printf("THIS PLACE WAS ADDED TO INITIAL MARKING: %s\n", ((place_t*)(respl->node))->name);
 			nodelist_insert(&list,((place_t*)(respl->node)));
 		}
-	}
+	} */
 	
 	return list;
 }
 
 /*****************************************************************************/
 
-void print_marking (nodelist_t* list)
+void print_marking_pl (nodelist_t* list)
 {
 	if (!list) return;
 	printf("%s ",((place_t*)(list->node))->name);
-	print_marking(list->next);
+	print_marking_pl(list->next);
+}
+
+void print_marking_co (nodelist_t* list)
+{
+	if (!list) return;
+	printf("%s ",((cond_t*)(list->node))->origin->name);
+	print_marking_co(list->next);
 }
