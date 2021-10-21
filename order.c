@@ -204,16 +204,23 @@ pe_queue_t* create_queue_entry (trans_t *tr)
 		//for (sz = ev->origin->postset_size, co_ptr = ev->postset; sz--;)
 		for (sz = ev->origin->postreset_size,
 			 co_ptr = ev->postset; sz--;){		//*** NEW ***//
-			/* printf("event name: %s\n", ev->origin->name);
-			printf("condition name: %s\n", (*co_ptr)->origin->name);
+			printf("event name: %s\n", ev->origin->name);
 			printf("transition name: %s\n", tr->name);
 			printf("ev->postset_size: %d\n", ev->postset_size);
 			printf("postreset_size: %d\n", ev->origin->postreset_size);
+			/*
+			printf("condition name: %s\n", (*co_ptr)->origin->name);
 			printf("co_ptr size: %lu\n", (&co_ptr)[1] - co_ptr);
 			printf("ev->postset size: %lu\n", sizeof(ev->postset) / sizeof(ev->postset[0])); */
-			if ((co = *co_ptr++)->mark != ev_mark-1 && 
-				nodelist_find(ev->origin->postset, co->origin)){
+			co = *co_ptr++;
+			if (strcmp(ev->origin->name, "T0") == 0){
 				printf("ev_mark-1: %d\n", ev_mark-1);
+				printf("condition name %s, %d and its mark is %d\n", co->origin->name, co->num, co->mark);
+			}
+			
+			if (co->mark != ev_mark-1 && 
+				nodelist_find(ev->origin->postset, co->origin)){
+				printf("added condition name %s, %d and its mark is %d\n", co->origin->name, co->num, co->mark);
 				nodelist_insert(&(qu_new->marking),co->origin);
 			}
 			//printf("(co = *co_ptr++)->mark: %d\n", (co = *co_ptr++)->mark);

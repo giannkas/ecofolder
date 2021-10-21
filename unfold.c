@@ -174,7 +174,7 @@ void add_post_conditions (event_t *ev, char cutoff)
 	ev->postset = co_ptr
 		= MYmalloc(ev->postset_size * sizeof(cond_t*));
 	
-	//printf("ev->postset_size: %d\n", ev->postset_size);
+	printf("1. ev->postset_size: %d\n", ev->postset_size);
 	//printf("ev->postset_size * sizeof(cond_t*): %lu\n", ev->postset_size * sizeof(cond_t*));
 	//size_t co_ptr_size = (&co_ptr)[1] - co_ptr;
 	//printf("co_ptr size: %ld\n", co_ptr_size);
@@ -187,15 +187,20 @@ void add_post_conditions (event_t *ev, char cutoff)
 			!nodelist_find(((place_t*)(resconf->node))->reset, ev->origin) &&
 			(!tr_prev ||
 			(tr_prev &&
-			!nodelist_find(((trans_t*)(tr_prev->node))->postset, resconf->node))))
+			!nodelist_find(((trans_t*)(tr_prev->node))->postset, resconf->node)))){
 			list = nodelist_concatenate(list, resconf);
+			ev->postset_size++;
+			ev->origin->postreset_size++;
+			ev->postset = co_ptr
+				= MYrealloc(ev->postset,ev->postset_size * sizeof(cond_t*));
+		}
 	}
 	list = nodelist_concatenate(list, ev->origin->postset);
 	for (list = nodelist_concatenate(list, ev->origin->reset); list; list = list->next){
 		printf("Place-condition added: %s\n", ((place_t*)(list->node))->name);
 		*co_ptr++ = insert_condition(list->node,ev);
 	}
-	
+	printf("2. ev->postset_size: %d\n", ev->postset_size);
 	if (cutoff) return;
 
 	/* Having computed the common part of the co-relation for all
@@ -444,7 +449,7 @@ void unfold ()
 	}
 
 	printf("Print initial marking\n");
-	//print_marking_pl(list);
+	print_marking_pl(list);
 	printf("\n");
 	
 	/* initialize PE computation */
