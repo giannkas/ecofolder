@@ -184,17 +184,15 @@ void add_post_conditions (event_t *ev, char cutoff)
 		tr_prev = ((place_t*)(resconf->node))->preset;
 		if (((place_t*)(resconf->node))->reset &&
 			((place_t*)(resconf->node))->postset &&
-			!nodelist_find(((place_t*)(resconf->node))->reset, ev->origin) &&
-			(!tr_prev ||
-			(tr_prev &&
-			!nodelist_find(((trans_t*)(tr_prev->node))->postset, resconf->node)))){
+			!nodelist_find(ev->origin->reset, resconf->node) &&
+			!nodelist_find(ev->origin->postset, resconf->node)){
 			list = nodelist_concatenate(list, resconf);
 			ev->postset_size++;
 			ev->origin->postreset_size++;
-			ev->postset = co_ptr
-				= MYrealloc(ev->postset,ev->postset_size * sizeof(cond_t*));
 		}
 	}
+	ev->postset = co_ptr
+		= MYrealloc(ev->postset,ev->postset_size * sizeof(cond_t*));
 	list = nodelist_concatenate(list, ev->origin->postset);
 	for (list = nodelist_concatenate(list, ev->origin->reset); list; list = list->next){
 		printf("Place-condition added: %s\n", ((place_t*)(list->node))->name);
@@ -218,12 +216,10 @@ void add_post_conditions (event_t *ev, char cutoff)
 		
 		for (resconf = ev->origin->preset; resconf; resconf = resconf->next){
 			tr_prev = ((place_t*)(resconf->node))->preset;
-			if (((place_t*)(resconf->node))->reset && 
+			if (((place_t*)(resconf->node))->reset &&
 				((place_t*)(resconf->node))->postset &&
-				!nodelist_find(((place_t*)(resconf->node))->reset, ev->origin) &&
-				(!tr_prev ||
-				(tr_prev &&
-				!nodelist_find(((trans_t*)(tr_prev->node))->postset, resconf->node))))
+				!nodelist_find(ev->origin->reset, resconf->node) &&
+				!nodelist_find(ev->origin->postset, resconf->node))
 				list = nodelist_concatenate(list, resconf);
 		}
 		list = nodelist_concatenate(list, ev->origin->postset);
@@ -244,10 +240,8 @@ void add_post_conditions (event_t *ev, char cutoff)
 		tr_prev = ((place_t*)(resconf->node))->preset;
 		if (((place_t*)(resconf->node))->reset &&
 			((place_t*)(resconf->node))->postset &&
-			!nodelist_find(((place_t*)(resconf->node))->reset, ev->origin) &&
-			(!tr_prev ||
-			(tr_prev &&
-			!nodelist_find(((trans_t*)(tr_prev->node))->postset, resconf->node))))
+			!nodelist_find(ev->origin->reset, resconf->node) &&
+			!nodelist_find(ev->origin->postset, resconf->node))
 			list = nodelist_concatenate(list, resconf);		
 	}
 	list = nodelist_concatenate(list, ev->origin->postset);

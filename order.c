@@ -208,6 +208,7 @@ pe_queue_t* create_queue_entry (trans_t *tr)
 			printf("transition name: %s\n", tr->name);
 			printf("ev->postset_size: %d\n", ev->postset_size);
 			printf("postreset_size: %d\n", ev->origin->postreset_size);
+			printf("value of sz variable: %d\n", sz);
 			/*
 			printf("condition name: %s\n", (*co_ptr)->origin->name);
 			printf("co_ptr size: %lu\n", (&co_ptr)[1] - co_ptr);
