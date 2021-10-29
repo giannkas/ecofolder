@@ -186,13 +186,17 @@ void add_post_conditions (event_t *ev, char cutoff)
 			((place_t*)(resconf->node))->postset &&
 			!nodelist_find(ev->origin->reset, resconf->node) &&
 			!nodelist_find(ev->origin->postset, resconf->node)){
+			/* if (strcmp(ev->origin->name, "T3") == 0){
+				printf("########\n");
+				printf("place name %s to be add in %s\n", ((place_t*)(resconf->node))->name, ev->origin->name);
+			} */
 			list = nodelist_concatenate(list, resconf);
-			ev->postset_size++;
-			ev->origin->postreset_size++;
+			/* ev->postset_size++;
+			ev->origin->postreset_size++; */
 		}
 	}
-	ev->postset = co_ptr
-		= MYrealloc(ev->postset,ev->postset_size * sizeof(cond_t*));
+	/* ev->postset = co_ptr
+		= MYrealloc(ev->postset,ev->postset_size * sizeof(cond_t*)); */
 	list = nodelist_concatenate(list, ev->origin->postset);
 	for (list = nodelist_concatenate(list, ev->origin->reset); list; list = list->next){
 		printf("Place-condition added: %s\n", ((place_t*)(list->node))->name);
