@@ -180,30 +180,32 @@ void add_post_conditions (event_t *ev, char cutoff)
 	//printf("co_ptr size: %ld\n", co_ptr_size);
 	//printf("ev->postset size: %ld\n", sizeof(ev->postset));
 	printf("tr name associated with the event: %s\n", ev->origin->name);
-	for (resconf = ev->origin->preset; resconf; resconf = resconf->next){
+	/* for (resconf = ev->origin->preset; resconf; resconf = resconf->next){
 		tr_prev = ((place_t*)(resconf->node))->preset;
 		if (((place_t*)(resconf->node))->reset &&
 			((place_t*)(resconf->node))->postset &&
 			!nodelist_find(ev->origin->reset, resconf->node) &&
 			!nodelist_find(ev->origin->postset, resconf->node)){
-			/* if (strcmp(ev->origin->name, "T3") == 0){
+			if (strcmp(ev->origin->name, "T3") == 0){
 				printf("########\n");
 				printf("place name %s to be add in %s\n", ((place_t*)(resconf->node))->name, ev->origin->name);
-			} */
+			}
 			list = nodelist_concatenate(list, resconf);
-			/* ev->postset_size++;
-			ev->origin->postreset_size++; */
+			ev->postset_size++;
+			ev->origin->postreset_size++;
 		}
 	}
-	/* ev->postset = co_ptr
-		= MYrealloc(ev->postset,ev->postset_size * sizeof(cond_t*)); */
+	ev->postset = co_ptr
+		= MYrealloc(ev->postset,ev->postset_size * sizeof(cond_t*));
 	list = nodelist_concatenate(list, ev->origin->postset);
 	for (list = nodelist_concatenate(list, ev->origin->reset); list; list = list->next){
 		printf("Place-condition added: %s\n", ((place_t*)(list->node))->name);
 		*co_ptr++ = insert_condition(list->node,ev);
-	}
-	printf("2. ev->postset_size: %d\n", ev->postset_size);
+	} */
+	for (list = nodelist_concatenate(ev->origin->postset, ev->origin->reset); list; list = list->next)
+		*co_ptr++ = insert_condition(list->node,ev);
 	if (cutoff) return;
+	printf("2. ev->postset_size: %d\n", ev->postset_size);
 
 	/* Having computed the common part of the co-relation for all
 	   conditions in co_relation(), we create a copy that uses only
@@ -218,7 +220,7 @@ void add_post_conditions (event_t *ev, char cutoff)
 	{
 		co_ptr = ev->postset;
 		
-		for (resconf = ev->origin->preset; resconf; resconf = resconf->next){
+		/* for (resconf = ev->origin->preset; resconf; resconf = resconf->next){
 			tr_prev = ((place_t*)(resconf->node))->preset;
 			if (((place_t*)(resconf->node))->reset &&
 				((place_t*)(resconf->node))->postset &&
@@ -227,20 +229,22 @@ void add_post_conditions (event_t *ev, char cutoff)
 				list = nodelist_concatenate(list, resconf);
 		}
 		list = nodelist_concatenate(list, ev->origin->postset);
-		for (list = nodelist_concatenate(list, ev->origin->reset); list; list = list->next){		//*** NEW ***//
+		for (list = nodelist_concatenate(list, ev->origin->reset); list; list = list->next){
 			//printf("name trans: %s\n",((trans_t*)(list->node))->name);
 			addto_coarray(&((*cocoptr)->co_private),*co_ptr++);
 			//printf("name event: %s\n", ev->origin->name);
 			
-		}
+		} */
+		for (list = nodelist_concatenate(ev->origin->postset, ev->origin->reset); list; list = list->next)
+			addto_coarray(&((*cocoptr)->co_private),*co_ptr++);
 	}
 	
 	co_ptr = ev->postset;
 	//size_t co_ptr_size = (&co_ptr)[1] - co_ptr;
 	//printf("co_ptr size: %lu\n", co_ptr_size);
 	list = NULL;
-	//for (list = ev->origin->postset; list; list = list->next)			//*** NEW ***//
-	for (resconf = ev->origin->preset; resconf; resconf = resconf->next){
+	//for (list = ev->origin->postset; list; list = list->next)
+	/* for (resconf = ev->origin->preset; resconf; resconf = resconf->next){
 		tr_prev = ((place_t*)(resconf->node))->preset;
 		if (((place_t*)(resconf->node))->reset &&
 			((place_t*)(resconf->node))->postset &&
@@ -248,9 +252,9 @@ void add_post_conditions (event_t *ev, char cutoff)
 			!nodelist_find(ev->origin->postset, resconf->node))
 			list = nodelist_concatenate(list, resconf);		
 	}
-	list = nodelist_concatenate(list, ev->origin->postset);
+	list = nodelist_concatenate(list, ev->origin->postset); */
 	
-	for (list = nodelist_concatenate(list, ev->origin->reset); list; list = list->next)			//*** NEW ***//
+	for (list = nodelist_concatenate(ev->origin->postset, ev->origin->reset); list; list = list->next)			//*** NEW ***//
 	{
 		/* record co-relation between new conditions */
 		(*co_ptr)->co_common = newarray;

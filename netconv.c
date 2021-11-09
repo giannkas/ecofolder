@@ -94,12 +94,12 @@ void nc_compute_sizes (net_t *net)
 		nodelist_t *list;
 
 		for (k = 0, list = tr->preset; list; k++, list = list->next){
-			if (((place_t*)(list->node))->reset &&
+			/* if (((place_t*)(list->node))->reset &&
 			((place_t*)(list->node))->postset &&
 			!nodelist_find(tr->reset, list->node) &&
 			!nodelist_find(tr->postset, list->node))			
 				tr->postreset_size++;
-			/* if (strcmp(tr->name, "T0") == 0){
+			if (strcmp(tr->name, "T0") == 0){
 				printf("########\n");
 				printf("place name %s to be add in %s with postreset_size %d\n", 
 					((place_t*)(list->node))->name, tr->name, tr->postreset_size);
@@ -127,7 +127,7 @@ void nc_compute_sizes (net_t *net)
 		tr->prereset_size = k;
 
 		for (k = 0, list = nodelist_concatenate(tr->postset, tr->reset); list; k++, list = list->next){
-			tr->postreset_size += k;
+			tr->postreset_size = k;			
 			/* tr->postreset_size += k;
 			if (strcmp(tr->name, "T0") == 0){
 				printf("@@@@@@@\n");
