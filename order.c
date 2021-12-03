@@ -234,9 +234,10 @@ pe_queue_t* create_queue_entry (trans_t *tr)
 	}
 	
 	/* add the post-places of tr */
-	//list = nodelist_concatenate(list, tr->postset);
+	list = nodelist_concatenate(list, tr->postset);
 	//list = nodelist_concatenate(list,tr->reset);
-	for (list = tr->postset; list; list = list->next)	//*** NEW ***//
+	//list = tr->postset;
+	for (list = nodelist_concatenate(list,tr->reset); list; list = list->next)	//*** NEW ***//
 		nodelist_insert(&(qu_new->marking), list->node);
 	/* add the places of unconsumed minimal conditions */
 	//list = nodelist_concatenate(list, tr->postset);
@@ -246,10 +247,13 @@ pe_queue_t* create_queue_entry (trans_t *tr)
 	printf("\n");
 	print_marking_co(nodelist_concatenate(unf->m0, tr->postset));
 	printf("\n"); */
-	for (list = unf->m0; list; list = list->next)
+	for (list = unf->m0; list; list = list->next){
+		/*co = list->node;
+		printf("ev_mark-1: %d\n", ev_mark-1);
+		printf("condition name %s, %d and its mark is %d\n", co->origin->name, co->num, co->mark); */
 		if ((co = list->node)->mark != ev_mark-1)
 			nodelist_insert(&(qu_new->marking), co->origin);
-
+	}
 	printf("  Corresponding marking after transition %s: ", tr->name);
 	print_marking_pl(qu_new->marking);
 	printf("\n");

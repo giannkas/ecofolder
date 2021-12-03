@@ -209,16 +209,9 @@ void pe (cond_t *co)
 	trans_t *tr;
 	//event_t *ev = co->pre_ev;
 	//cond_t  **co_ptr2, *co_reset = NULL;
-	
 	*pe_conds = co;	/* any new PE contains co */
 	nodelist_push(&(pl->conds),co);
 	/* check the transitions in pl's postset */
-	if (strcmp(pl->name, "P2") == 0){
-		printf("Concurrent conditions with %s num %d that comes from the same event\n", pl->name, co->num);			
-		/* tr_pre = nodelist_concatenate(tr->reset, tr->preset);
-		print_marking_pl(tr_pre);
-		printf("\n"); */
-	}
 	for (pl_post = nodelist_concatenate(pl->postset, pl->reset); pl_post; pl_post = pl_post->next) 		//*** NEW  ***//
 	{		
 		/* if ((ev && nodelist_find(ev->origin->reset, pl) && 
@@ -237,7 +230,7 @@ void pe (cond_t *co)
 	
 			continue;
 		}
-
+		
 		/* co_ptr2 = pe_conds;
 		printf("FROM place %s transition name %s  and its pe_conds: \n", pl->name, ((trans_t*)(pl_post->node))->name);
 		while(*co_ptr2){
@@ -246,11 +239,12 @@ void pe (cond_t *co)
 		} */
 
 		tr = pl_post->node;
+		
 		(curr_comb = pe_combs)->start = NULL;
 
 		/* for every other post-place of tr, collect the conditions
 			that are co-related to co in the comb structure */
-		for (tr_pre = nodelist_concatenate(tr->reset, tr->preset); tr_pre; tr_pre = tr_pre->next) 	//*** NEW  ***//
+		for (tr_pre = nodelist_concatenate(tr->preset, tr->reset); tr_pre; tr_pre = tr_pre->next) 	//*** NEW  ***//
 		{
 			/*nodelist_t *ptr = tr_pre;
 			 while (ptr) {
@@ -258,7 +252,7 @@ void pe (cond_t *co)
 					printf("%s, ", ((place_t*)(ptr->node))->name);
 				ptr = ptr->next;
 			} */
-			if ((pl2 = tr_pre->node) == pl) continue;
+			if ((pl2 = tr_pre->node) == pl) continue;			
 			
 			
 			/* if(!pl2->marked && nodelist_find(tr->reset, pl2) &&
@@ -277,10 +271,26 @@ void pe (cond_t *co)
 			while(*co_ptr2 && strcmp(pl->name, "P3") == 0 && co->num == 5){				
 				printf("co_common condition name: %d\n",(*++co_ptr2)->num);
 				co_ptr2 = &((*co_ptr2)->next);
-			} */			
+			} */
+			/* int lundash_cocoptr;
+			char *prfx_cocoptr;
+			int lundash_pl2 = last_strchr(pl2->name, '_');			
+			char *prfx_pl2 = extract_substr_up_to(pl2->name, lundash_pl2); */
+			//printf("lundash_pl2 %d and prfx_pl2 %s\n", lundash_pl2, prfx_pl2);
 			while (*++cocoptr){
-				
-				if ((*cocoptr)->origin == pl2){
+				/* lundash_cocoptr = last_strchr((*cocoptr)->origin->name, '_');
+				prfx_cocoptr = extract_substr_up_to((*cocoptr)->origin->name, lundash_cocoptr); */
+				printf("hola\n");
+				if (!strcmp(tr->name, "r4")){
+					printf("Common: Rule 4 is here in the post.re.set of the place %s and condition %d\n", pl->name, co->num);
+					printf("cocoptr corresponds to this place %s\n", (*cocoptr)->origin->name);
+					printf("second place corresponds to this place %s\n", pl2->name);
+				/* 	if (!strcmp(prfx_cocoptr, prfx_pl2) && strlen(prfx_pl2) > 0)
+						printf("prfx_cocoptr %s and prfx_pl2 %s\n", prfx_cocoptr, prfx_pl2); */
+				}
+				if ((*cocoptr)->origin == pl2){// || 
+					//(strlen(prfx_cocoptr) > 0 && strlen(prfx_pl2) > 0 && !strcmp(prfx_cocoptr, prfx_pl2))){
+					
 					/* if (!(*cocoptr)->origin->marked && 
 						!nodelist_find(tr->reset, (*cocoptr)->origin)
 						){
@@ -312,7 +322,17 @@ void pe (cond_t *co)
 			} */
 			cocoptr = co->co_private.conds - 1;
 			while (*++cocoptr){
-				if ((*cocoptr)->origin == pl2){					
+				/* lundash_cocoptr = last_strchr((*cocoptr)->origin->name, '_');
+				prfx_cocoptr = extract_substr_up_to((*cocoptr)->origin->name, lundash_cocoptr); */
+				if (strcmp(tr->name, "r4") == 0){
+					printf("Private: Rule 4 is here in the post.re.set of the place %s and condition %d\n", pl->name, co->num);
+					printf("cocoptr corresponds to this place %s\n", (*cocoptr)->origin->name);
+					printf("second place corresponds to this place %s\n", pl2->name);
+					/* if (!strcmp(prfx_cocoptr, prfx_pl2) && strlen(prfx_pl2) > 0)
+						printf("prfx_cocoptr %s and prfx_pl2 %s\n", prfx_cocoptr, prfx_pl2); */
+				}
+				if ((*cocoptr)->origin == pl2){ // || 
+					//(strlen(prfx_cocoptr) > 0 && strlen(prfx_pl2) > 0 && !strcmp(prfx_cocoptr, prfx_pl2))){
 					if (((*cocoptr)->token && nodelist_find(tr->preset, (*cocoptr)->origin)) ||
 						(nodelist_find(tr->reset, (*cocoptr)->origin))
 					)
@@ -343,6 +363,7 @@ void pe (cond_t *co)
 				printf("name of the pushed place: %s\n", co_reset->origin->name);
 			} */
 						
+			
 			if (!*compat_conds)
 				break;			
 
@@ -370,7 +391,7 @@ void pe (cond_t *co)
 				cond_t **co_ptr = pe_conds;
 				for (curr_comb = pe_combs; curr_comb->start;
 						curr_comb++)
-					*++co_ptr = curr_comb->current->node;		
+					*++co_ptr = curr_comb->current->node;
 				pe_insert(tr); // CHECK pe_insert!!
 				
 				curr_comb--;

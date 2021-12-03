@@ -37,6 +37,26 @@ void nc_warning (const char* msg, ...)
 	va_end(the_args);
 }
 
+int last_strchr(const char *str, int c){
+	
+	int i = -1;
+	for (i = strlen(str)-1; i >= 0; i--)
+	{
+		if (str[i] == c)
+			break;
+	}
+	return i;	
+}
+
+char * extract_substr_up_to(const char *str, int c){
+	char *substr = c != -1 ? MYmalloc(c) : "";
+	for (int i = 0; i < c; i++)		
+		substr[i] = str[i];
+	if (c != -1)
+		substr[c] = '\0';
+	return substr;
+}
+
 /****************************************************************************/
 /* Wrapper functions for memory allocation.				    */
 

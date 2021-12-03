@@ -212,7 +212,6 @@ void add_post_conditions (event_t *ev, char cutoff)
 	   the necessary amount of memory. */
 	newarray = coarray_copy(ev->coarray);	
 	free(ev->coarray.conds);
-	
 	/* Add the reverse half of the concurrency relation. */
 	cocoptr = newarray.conds-1;
 	list = NULL;
@@ -235,6 +234,7 @@ void add_post_conditions (event_t *ev, char cutoff)
 			//printf("name event: %s\n", ev->origin->name);
 			
 		} */
+		//printf("hola\n");
 		for (list = nodelist_concatenate(ev->origin->postset, ev->origin->reset); list; list = list->next)
 			addto_coarray(&((*cocoptr)->co_private),*co_ptr++);
 	}
@@ -458,17 +458,6 @@ void unfold ()
 	pe_init(list);
 	parikh_init();
 
-	for (tr = net->transitions; tr; tr = tr->next){
-		for (respl = tr->reset; respl; respl = respl->next){
-			if(!(pl = respl->node)->marked){
-				co = insert_condition(pl,NULL);
-				co->co_common = alloc_coarray(0);
-				co->co_private = alloc_coarray(0);
-				nodelist_push(&(unf->m0_unmarked),co);
-			}
-		}
-	}
-	
 	/* add initial conditions to unfolding, compute possible extensions */
 	for (; list; list = list->next)
 	{
@@ -481,13 +470,28 @@ void unfold ()
 			nodelist_push(&(unf->m0_unmarked),co);
 		} */
 	}
-
+	
+	for (tr = net->transitions; tr; tr = tr->next){
+		for (respl = tr->reset; respl; respl = respl->next){
+			if(!(pl = respl->node)->marked){
+				co = insert_condition(pl,NULL);
+				co->co_common = alloc_coarray(0);
+				co->co_private = alloc_coarray(0);
+				nodelist_push(&(unf->m0_unmarked),co);
+			}
+		}
+	}
 
 	printf("unfolding initial marking\n");
-	//print_marking_co(unf->m0);
+	print_marking_co(unf->m0);
+	printf("\n");
+	print_marking_co(unf->m0_unmarked);
+	printf("\n");
+	print_marking_co(nodelist_concatenate(unf->m0, unf->m0_unmarked));
 	printf("\n");
 	//nodelist_concatenate(unf->m0_unmarked, unf->m0);
-	recursive_pe(nodelist_concatenate(unf->m0_unmarked, unf->m0));
+	recursive_pe(nodelist_concatenate(unf->m0, unf->m0_unmarked));
+	
 	/* take the next event from the queue */
 	while (pe_qsize)
 	{
@@ -562,7 +566,6 @@ void unfold ()
 		}
 		
 	}
-	
 	
 	
 	/* add post-conditions for cut-off events */
