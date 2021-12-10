@@ -35,9 +35,12 @@ void write_mci_file (char *filename)
 	if (!(file = fopen(filename,"wb")))
 		nc_error("cannot write to file %s\n",filename);
 
+	printf("unf->numco: %d\n", unf->numco);
+	printf("unf->numev: %d\n", unf->numev);
 	write_int(unf->numco);
+	printf("CUTOFF_YES\n");
+	//fwrite(&(unf->numco),sizeof(int),1,file);
 	write_int(unf->numev);
-
 	/* Reverse the lists of places, events etc. This is to maintain
 	   compatibility with RdlcheckMcM and mcsmodels, which expect events
 	   to be numbered in accordance with the causality relation. */

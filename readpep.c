@@ -529,24 +529,14 @@ int insert_arc()
 	if (*blocktype)
 	{
 		rs = strcmp(blocktype,"RS");
-		/* rd = strcmp(blocktype, "RD");
-		tp = strcmp(blocktype,"PT"); */
 		if (rs == 0)
 			tp = -1;
 		else{
 			rd = strcmp(blocktype, "RD");
 			tp = rd == 0 ? -2 : strcmp(blocktype,"PT");
-		}	
-		/* printf("blocktype is: %s\n", blocktype);
-		printf("rs is: %d\n", rs);
-		printf("rd is: %d\n", rd);
-		printf("tp is: %d\n", tp); */
+		}
 		*blocktype = '\0';
-		/* rs = strcmp(blocktype,"RS");
-		tp = rs == 0 ? -1 : strcmp(blocktype,"PT");
-		*blocktype = '\0'; */
 	}
-	//printf("tp %d and rs %d\n", tp, rs);
 
 	if (tp == -1)
 		tp = rs;
@@ -568,28 +558,14 @@ int insert_arc()
 	else if (rd == 0){
 		nc_create_arc(&(TrArray[tr]->ctxset),&(PlArray[pl]->ctxset),
 			  TrArray[tr],PlArray[pl]);
-		/* nc_create_arc(&(TrArray[tr]->postset),&(PlArray[pl]->preset),
-			  TrArray[tr],PlArray[pl]);
-		nc_create_arc(&(PlArray[pl]->postset),&(TrArray[tr]->preset),
-			  PlArray[pl],TrArray[tr]); */
 	}
 	else if (tp != 0)
 		nc_create_arc(&(TrArray[tr]->postset),&(PlArray[pl]->preset),
 			  TrArray[tr],PlArray[pl]);
 	else{
-		//printf("pl: %d, tr: %d\n", pl, tr);
-		//printf("PlArray[pl] name: %s, num: %d, \n", PlArray[pl]->name, PlArray[pl]->num);
-		//printf("TrArray[tr] name: %s, num: %d, \n", TrArray[tr]->name, TrArray[tr]->num);
 		nc_create_arc(&(PlArray[pl]->postset),&(TrArray[tr]->preset),
 			  PlArray[pl],TrArray[tr]);
 	}
-	
-	/* tp? nc_create_arc(&(TrArray[tr]->postset),&(PlArray[pl]->preset),
-			  TrArray[tr],PlArray[pl])
-	  : rs? nc_create_arc(&(PlArray[pl]->postset),&(TrArray[tr]->preset),
-			  PlArray[pl],TrArray[tr])				//### NEW  ###//
-	  : nc_create_arc(&(PlArray[pl]->postset),&(TrArray[tr]->reset),
-			  PlArray[pl],TrArray[tr]); */
 	return 0;
 }
 

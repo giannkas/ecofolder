@@ -203,23 +203,23 @@ pe_queue_t* create_queue_entry (trans_t *tr)
 		/* check off the postset conditions */
 		//for (sz = ev->origin->postset_size, co_ptr = ev->postset; sz--;)
 		for (sz = ev->origin->postreset_size,
-			 co_ptr = ev->postset; sz--;){		//*** NEW ***//
-			printf("event name: %s\n", ev->origin->name);
+			 co_ptr = ev->postset; sz--;){
+			/* printf("event name: %s\n", ev->origin->name);
 			printf("transition name: %s\n", tr->name);
 			printf("ev->postset_size: %d\n", ev->postset_size);
 			printf("postreset_size: %d\n", ev->origin->postreset_size);
 			printf("value of sz variable: %d\n", sz);
-			/*
+			
 			printf("condition name: %s\n", (*co_ptr)->origin->name);
 			printf("co_ptr size: %lu\n", (&co_ptr)[1] - co_ptr);
 			printf("ev->postset size: %lu\n", sizeof(ev->postset) / sizeof(ev->postset[0])); */
 			co = *co_ptr++;
-			if (strcmp(ev->origin->name, "T0") == 0){
+			/* if (strcmp(ev->origin->name, "T0") == 0){
 				printf("ev_mark-1: %d\n", ev_mark-1);
 				printf("condition name %s, %d and its mark is %d\n", co->origin->name, co->num, co->mark);
-			}
+			} */
 			
-			if (co->mark != ev_mark-1 && 
+			if (co->mark != ev_mark-1 && co->token &&
 				nodelist_find(ev->origin->postset, co->origin)){
 				printf("added condition name %s, %d and its mark is %d\n", co->origin->name, co->num, co->mark);
 				nodelist_insert(&(qu_new->marking),co->origin);
@@ -234,10 +234,10 @@ pe_queue_t* create_queue_entry (trans_t *tr)
 	}
 	
 	/* add the post-places of tr */
-	list = nodelist_concatenate(list, tr->postset);
+	//list = nodelist_concatenate(list, tr->postset);
 	//list = nodelist_concatenate(list,tr->reset);
 	//list = tr->postset;
-	for (list = nodelist_concatenate(list,tr->reset); list; list = list->next)	//*** NEW ***//
+	for (list = tr->postset; list; list = list->next)
 		nodelist_insert(&(qu_new->marking), list->node);
 	/* add the places of unconsumed minimal conditions */
 	//list = nodelist_concatenate(list, tr->postset);
@@ -248,10 +248,10 @@ pe_queue_t* create_queue_entry (trans_t *tr)
 	print_marking_co(nodelist_concatenate(unf->m0, tr->postset));
 	printf("\n"); */
 	for (list = unf->m0; list; list = list->next){
-		/*co = list->node;
+		/* co = list->node;
 		printf("ev_mark-1: %d\n", ev_mark-1);
 		printf("condition name %s, %d and its mark is %d\n", co->origin->name, co->num, co->mark); */
-		if ((co = list->node)->mark != ev_mark-1)
+		if ((co = list->node)->mark != ev_mark-1 && co->token)
 			nodelist_insert(&(qu_new->marking), co->origin);
 	}
 	printf("  Corresponding marking after transition %s: ", tr->name);

@@ -51,9 +51,6 @@ void addto_coarray (coa_t *coa, cond_t *co)
 	//printf("name cond: %s\n",co->origin->name);
 	coa->conds[coa->inuse++] = co;
 	coa->conds[coa->inuse] = NULL;
-	/* if(strcmp(co->origin->name, "P2") == 0){
-		printf("coa inuse when P2 is co: %d\n", coa->inuse);
-	} */
 }
 
 /* Copy an array, truncating it to the necessary size. */
@@ -91,6 +88,7 @@ cond_t* insert_condition (place_t *pl, event_t *ev)
 	else
 		co->token = 0;
 	
+	printf("condition name place: %s\n", co->origin->name);
 	printf("num condition: %d\n", co->num);
 	printf("token: %d\n", co->token);
 
@@ -100,6 +98,7 @@ cond_t* insert_condition (place_t *pl, event_t *ev)
 		if (ev) printf(" [event E%d]",ev->id);
 		printf(".\n");
 	}
+
 
 	return co;
 }
@@ -129,9 +128,10 @@ event_t* insert_event (pe_queue_t *qu)
 	sz = qu->trans->prereset_size;
 	
 	ev->next = unf->events;
-	unf->events = ev;		
+	unf->events = ev;
 	ev->mark = 0;		/* for marking_of */
 	ev->foata_level = find_foata_level(qu);
+	printf("hola\n");
 	ev->preset_size = qu->trans->prereset_size;			//*** NEW ***//
 	ev->postset_size = qu->trans->postreset_size;		//*** NEW ***//	
 	//ev->preset_size = qu->trans->preset_size;
@@ -147,7 +147,6 @@ event_t* insert_event (pe_queue_t *qu)
 		events_size += ce_alloc_step;
 		events = MYrealloc(events,events_size * sizeof(event_t*));
 	}
-
 	if (interactive)
 	{
 		ev->id = qu->id;
@@ -165,45 +164,20 @@ enum { CUTOFF_NO, CUTOFF_YES };
 void add_post_conditions (event_t *ev, char cutoff)
 {
 	
-	cond_t **co_ptr, **cocoptr, **co_ptr2;
-	nodelist_t *list = NULL, *resconf;
-	coa_t newarray;	
-	nodelist_t *tr_prev;
+	cond_t **co_ptr, **cocoptr;
+	nodelist_t *list = NULL;
+	coa_t newarray;
 	/* First insert the conditions without putting them in pl->conds;
 	   that is done by pe() to avoid duplicated new events. */
 	ev->postset = co_ptr
 		= MYmalloc(ev->postset_size * sizeof(cond_t*));
 	
 	printf("1. ev->postset_size: %d\n", ev->postset_size);
-	//printf("ev->postset_size * sizeof(cond_t*): %lu\n", ev->postset_size * sizeof(cond_t*));
-	//size_t co_ptr_size = (&co_ptr)[1] - co_ptr;
-	//printf("co_ptr size: %ld\n", co_ptr_size);
-	//printf("ev->postset size: %ld\n", sizeof(ev->postset));
 	printf("tr name associated with the event: %s\n", ev->origin->name);
-	/* for (resconf = ev->origin->preset; resconf; resconf = resconf->next){
-		tr_prev = ((place_t*)(resconf->node))->preset;
-		if (((place_t*)(resconf->node))->reset &&
-			((place_t*)(resconf->node))->postset &&
-			!nodelist_find(ev->origin->reset, resconf->node) &&
-			!nodelist_find(ev->origin->postset, resconf->node)){
-			if (strcmp(ev->origin->name, "T3") == 0){
-				printf("########\n");
-				printf("place name %s to be add in %s\n", ((place_t*)(resconf->node))->name, ev->origin->name);
-			}
-			list = nodelist_concatenate(list, resconf);
-			ev->postset_size++;
-			ev->origin->postreset_size++;
-		}
-	}
-	ev->postset = co_ptr
-		= MYrealloc(ev->postset,ev->postset_size * sizeof(cond_t*));
-	list = nodelist_concatenate(list, ev->origin->postset);
-	for (list = nodelist_concatenate(list, ev->origin->reset); list; list = list->next){
-		printf("Place-condition added: %s\n", ((place_t*)(list->node))->name);
-		*co_ptr++ = insert_condition(list->node,ev);
-	} */
+	
 	for (list = nodelist_concatenate(ev->origin->postset, ev->origin->reset); list; list = list->next)
 		*co_ptr++ = insert_condition(list->node,ev);
+	//if (strcmp(ev->origin->name, "T3") == 0)
 	if (cutoff) return;
 	printf("2. ev->postset_size: %d\n", ev->postset_size);
 
@@ -214,46 +188,15 @@ void add_post_conditions (event_t *ev, char cutoff)
 	free(ev->coarray.conds);
 	/* Add the reverse half of the concurrency relation. */
 	cocoptr = newarray.conds-1;
-	list = NULL;
 	while (*++cocoptr)
 	{
 		co_ptr = ev->postset;
-		
-		/* for (resconf = ev->origin->preset; resconf; resconf = resconf->next){
-			tr_prev = ((place_t*)(resconf->node))->preset;
-			if (((place_t*)(resconf->node))->reset &&
-				((place_t*)(resconf->node))->postset &&
-				!nodelist_find(ev->origin->reset, resconf->node) &&
-				!nodelist_find(ev->origin->postset, resconf->node))
-				list = nodelist_concatenate(list, resconf);
-		}
-		list = nodelist_concatenate(list, ev->origin->postset);
-		for (list = nodelist_concatenate(list, ev->origin->reset); list; list = list->next){
-			//printf("name trans: %s\n",((trans_t*)(list->node))->name);
-			addto_coarray(&((*cocoptr)->co_private),*co_ptr++);
-			//printf("name event: %s\n", ev->origin->name);
-			
-		} */
-		//printf("hola\n");
 		for (list = nodelist_concatenate(ev->origin->postset, ev->origin->reset); list; list = list->next)
 			addto_coarray(&((*cocoptr)->co_private),*co_ptr++);
 	}
 	
 	co_ptr = ev->postset;
-	//size_t co_ptr_size = (&co_ptr)[1] - co_ptr;
-	//printf("co_ptr size: %lu\n", co_ptr_size);
-	list = NULL;
-	//for (list = ev->origin->postset; list; list = list->next)
-	/* for (resconf = ev->origin->preset; resconf; resconf = resconf->next){
-		tr_prev = ((place_t*)(resconf->node))->preset;
-		if (((place_t*)(resconf->node))->reset &&
-			((place_t*)(resconf->node))->postset &&
-			!nodelist_find(ev->origin->reset, resconf->node) &&
-			!nodelist_find(ev->origin->postset, resconf->node))
-			list = nodelist_concatenate(list, resconf);		
-	}
-	list = nodelist_concatenate(list, ev->origin->postset); */
-	
+
 	for (list = nodelist_concatenate(ev->origin->postset, ev->origin->reset); list; list = list->next)			//*** NEW ***//
 	{
 		/* record co-relation between new conditions */
@@ -283,9 +226,6 @@ void add_post_conditions (event_t *ev, char cutoff)
 		printf("name co_ptr++: %s\n", (*co_ptr++)->origin->name); */
 		
 		pe(*co_ptr++);
-		
-		//printf("It continues!!\n");
-		//printf("HOLA2\n");
 	}
 }
 
@@ -458,19 +398,6 @@ void unfold ()
 	pe_init(list);
 	parikh_init();
 
-	/* add initial conditions to unfolding, compute possible extensions */
-	for (; list; list = list->next)
-	{
-		co = insert_condition(pl = list->node,NULL);
-		co->co_common = alloc_coarray(0);
-		co->co_private = alloc_coarray(0);
-		nodelist_push(&(unf->m0),co);
-		//printf("num condition: %d\n", co->num);
-		/* if (co->origin->marked == 0){
-			nodelist_push(&(unf->m0_unmarked),co);
-		} */
-	}
-	
 	for (tr = net->transitions; tr; tr = tr->next){
 		for (respl = tr->reset; respl; respl = respl->next){
 			if(!(pl = respl->node)->marked){
@@ -481,6 +408,15 @@ void unfold ()
 			}
 		}
 	}
+	/* add initial conditions to unfolding, compute possible extensions */
+	for (; list; list = list->next)
+	{
+		co = insert_condition(pl = list->node,NULL);
+		co->co_common = alloc_coarray(0);
+		co->co_private = alloc_coarray(0);
+		nodelist_push(&(unf->m0),co);
+	}
+	
 
 	printf("unfolding initial marking\n");
 	print_marking_co(unf->m0);
@@ -489,7 +425,6 @@ void unfold ()
 	printf("\n");
 	print_marking_co(nodelist_concatenate(unf->m0, unf->m0_unmarked));
 	printf("\n");
-	//nodelist_concatenate(unf->m0_unmarked, unf->m0);
 	recursive_pe(nodelist_concatenate(unf->m0, unf->m0_unmarked));
 	
 	/* take the next event from the queue */
@@ -520,50 +455,43 @@ void unfold ()
 		}
 		else
 			qu = pe_pop(1);
+		
+	
 		/* add event to the unfolding */
-		/* for (i = 1; i <= pe_qsize; i++)
-			printf(" E%d ",pe_queue[i]->id); */
-		
-		//check_conds = qu->conds;
-		//unmarked_cos = (cond_t*)(unf->m0_unmarked->node);	
-		
 		ev = insert_event(qu);
+		//printf("This is the next marking to be unfolded: \n");
+		//print_marking_co(qu->conds);
+		cutoff = add_marking(qu->marking,ev);
 		
-		if (ev){
-			//strcmp(ev->origin->name,"T1") == 0 ? printf("yes\n") : printf("no\n");
-			cutoff = add_marking(qu->marking,ev);
-			
-			
-			if (interactive && !cutoff)
-			{
-				if (!corr_list->node)
-					printf("E%d has the initial marking.\n",e);
-				else
-					printf("E%d has the same marking as E%d.\n",
-						e,((event_t*)(corr_list->node))->id);
-			}
-			pe_free(qu);
-			
-			/* if we've found the -T transition, stop immediately */
-			if (stoptr && ev->origin == stoptr)
-			{
-				stopev = ev;
-				unf->events = unf->events->next;
-				break;
-			}
-			
-			
-			/* if the marking was already represented in the unfolding,
-			we have a cut-off event */
-			if (!cutoff) { unf->events = unf->events->next; continue; }
-			
-			/* compute the co-relation for ev and post-conditions */
-			//printf("hola\n");
-			co_relation(ev);
-			/* add post-conditions, compute possible extensions */
-			
-			add_post_conditions(ev,CUTOFF_NO);
+		if (interactive && !cutoff)
+		{
+			if (!corr_list->node)
+				printf("E%d has the initial marking.\n",e);
+			else
+				printf("E%d has the same marking as E%d.\n",
+					e,((event_t*)(corr_list->node))->id);
 		}
+		pe_free(qu);
+		
+		/* if we've found the -T transition, stop immediately */
+		if (stoptr && ev->origin == stoptr)
+		{
+			stopev = ev;
+			unf->events = unf->events->next;
+			break;
+		}
+		
+		
+		/* if the marking was already represented in the unfolding,
+		we have a cut-off event */
+		if (!cutoff) { unf->events = unf->events->next; continue; }
+		
+		/* compute the co-relation for ev and post-conditions */
+		co_relation(ev);
+
+		/* add post-conditions, compute possible extensions */
+		printf("CUTOFF_NO\n");
+		add_post_conditions(ev,CUTOFF_NO);
 		
 	}
 	
@@ -572,7 +500,6 @@ void unfold ()
 	for (list = cutoff_list; list; list = list->next)
 	{
 		ev = list->node;
-		//printf("ev name: %s\n", ev->origin->name);
 		ev->next = unf->events; unf->events = ev;
 		add_post_conditions(ev,CUTOFF_YES);
 	}
@@ -592,5 +519,6 @@ void unfold ()
 	free(events);
 	for (pl = net->places; pl; pl = pl->next)
 		nodelist_delete(pl->conds);
+	
 	
 }

@@ -110,16 +110,10 @@ void pe_insert (trans_t *tr)
 pe_queue_t* pe_pop (int where)
 {
 	pe_queue_t *first = pe_queue[where];
-	/* printf("Trans associated: %s\n", first->trans->name);
-	int size_preset = first->trans->preset_size;
-	printf("Size preset: %d\n", size_preset);
-	for (int i = 0; i < size_preset; i++)
-		printf("Cond %d associated: %s\n", i, first->conds[i]->origin->name); */
 	pe_queue_t *last;
 	int index = where, newindex;
 
 	if (!pe_qsize) return NULL;
-
 	last = pe_queue[pe_qsize--];
 	for (;;)	/* sift last element downwards */
 	{
@@ -177,17 +171,9 @@ char pe_conflict (pe_comb_t *curr)
 		queue--;
 		for (sz = ev->origin->prereset_size, co_ptr = ev->preset; sz--; )	//*** NEW  ***//
 		{
-			/* printf("transition reset: \n");
-			print_marking_pl(ev->origin->reset);
-			printf("place name: %s", co->origin->name); */
 			if ((co = *co_ptr++)->mark == ev_mark && 
-				!nodelist_find(ev->origin->reset, co->origin)){
-				/* printf("transition reset: \n");
-				print_marking_pl(ev->origin->reset);
-				printf("hola\n");
-				printf("place name: %s", co->origin->name); */
+				!nodelist_find(ev->origin->reset, co->origin))
 				return 1;
-			}
 			co->mark = ev_mark;
 			if ((ev = co->pre_ev) && ev->mark != ev_mark)
 				 (*++queue = ev)->mark = ev_mark;
@@ -214,22 +200,8 @@ void pe (cond_t *co)
 	/* check the transitions in pl's postset */
 	for (pl_post = nodelist_concatenate(pl->postset, pl->reset); pl_post; pl_post = pl_post->next) 		//*** NEW  ***//
 	{		
-		/* if ((ev && nodelist_find(ev->origin->reset, pl) && 
-			!nodelist_find(((trans_t*)(pl_post->node))->preset, pl)) ||
-			(!ev && !pl->marked && nodelist_find(pl->postset, pl_post->node))
-			){
+		if (!co->token && nodelist_find(pl->postset, pl_post->node))
 			continue;
-		}
-		if (ev && nodelist_find(pl->postset, pl_post->node) && 
-			nodelist_find(ev->origin->reset, pl) &&
-			!nodelist_find(ev->origin->postset, pl) 
-			){
-			continue;
-		} */
-		if (!co->token && nodelist_find(pl->postset, pl_post->node)){
-	
-			continue;
-		}
 		
 		/* co_ptr2 = pe_conds;
 		printf("FROM place %s transition name %s  and its pe_conds: \n", pl->name, ((trans_t*)(pl_post->node))->name);
@@ -246,61 +218,17 @@ void pe (cond_t *co)
 			that are co-related to co in the comb structure */
 		for (tr_pre = nodelist_concatenate(tr->preset, tr->reset); tr_pre; tr_pre = tr_pre->next) 	//*** NEW  ***//
 		{
-			/*nodelist_t *ptr = tr_pre;
-			 while (ptr) {
-				if (strcmp(pl->name, "P2") == 0)
-					printf("%s, ", ((place_t*)(ptr->node))->name);
-				ptr = ptr->next;
-			} */
-			if ((pl2 = tr_pre->node) == pl) continue;			
-			
-			
-			/* if(!pl2->marked && nodelist_find(tr->reset, pl2) &&
-				!nc_check_unmarked_initial_marking(unf->conditions, pl2->name)
-			){				
-				co_reset = insert_condition(pl2, NULL);
-				co_reset->co_common = alloc_coarray(0);
-				co_reset->co_private = alloc_coarray(0);
-				nodelist_push(&(unf->m0_unmarked),co_reset);				
-			} */
+			if ((pl2 = tr_pre->node) == pl) continue;
 			
 			compat_conds = &(curr_comb->start);
 			cocoptr = co->co_common.conds - 1;
-			/* co_ptr2 = cocoptr;
-
-			while(*co_ptr2 && strcmp(pl->name, "P3") == 0 && co->num == 5){				
-				printf("co_common condition name: %d\n",(*++co_ptr2)->num);
-				co_ptr2 = &((*co_ptr2)->next);
-			} */
-			/* int lundash_cocoptr;
-			char *prfx_cocoptr;
-			int lundash_pl2 = last_strchr(pl2->name, '_');			
-			char *prfx_pl2 = extract_substr_up_to(pl2->name, lundash_pl2); */
-			//printf("lundash_pl2 %d and prfx_pl2 %s\n", lundash_pl2, prfx_pl2);
 			while (*++cocoptr){
-				/* lundash_cocoptr = last_strchr((*cocoptr)->origin->name, '_');
-				prfx_cocoptr = extract_substr_up_to((*cocoptr)->origin->name, lundash_cocoptr); */
-				printf("hola\n");
-				if (!strcmp(tr->name, "r4")){
+				/* if (!strcmp(tr->name, "r4")){
 					printf("Common: Rule 4 is here in the post.re.set of the place %s and condition %d\n", pl->name, co->num);
 					printf("cocoptr corresponds to this place %s\n", (*cocoptr)->origin->name);
 					printf("second place corresponds to this place %s\n", pl2->name);
-				/* 	if (!strcmp(prfx_cocoptr, prfx_pl2) && strlen(prfx_pl2) > 0)
-						printf("prfx_cocoptr %s and prfx_pl2 %s\n", prfx_cocoptr, prfx_pl2); */
-				}
-				if ((*cocoptr)->origin == pl2){// || 
-					//(strlen(prfx_cocoptr) > 0 && strlen(prfx_pl2) > 0 && !strcmp(prfx_cocoptr, prfx_pl2))){
-					
-					/* if (!(*cocoptr)->origin->marked && 
-						!nodelist_find(tr->reset, (*cocoptr)->origin)
-						){
-							if (!(*cocoptr)->pre_ev)
-							{}
-							else if(nodelist_find((*cocoptr)->pre_ev->origin->postset,(*cocoptr)->origin))
-								nodelist_push(compat_conds,*cocoptr);
-					}
-					else
-						nodelist_push(compat_conds,*cocoptr); */
+				} */
+				if ((*cocoptr)->origin == pl2){
 					
 					if (((*cocoptr)->token && nodelist_find(tr->preset, (*cocoptr)->origin)) ||
 						(nodelist_find(tr->reset, (*cocoptr)->origin))
@@ -316,23 +244,15 @@ void pe (cond_t *co)
 					}
 				}
 			}
-			/* if (co_reset && !nodelist_find(*compat_conds, co_reset)){
-				nodelist_push(compat_conds,co_reset);
-				//printf("name of the pushed place: %s\n", co_reset->origin->name);
-			} */
+			
 			cocoptr = co->co_private.conds - 1;
 			while (*++cocoptr){
-				/* lundash_cocoptr = last_strchr((*cocoptr)->origin->name, '_');
-				prfx_cocoptr = extract_substr_up_to((*cocoptr)->origin->name, lundash_cocoptr); */
-				if (strcmp(tr->name, "r4") == 0){
+				/* if (strcmp(tr->name, "r4") == 0){
 					printf("Private: Rule 4 is here in the post.re.set of the place %s and condition %d\n", pl->name, co->num);
 					printf("cocoptr corresponds to this place %s\n", (*cocoptr)->origin->name);
 					printf("second place corresponds to this place %s\n", pl2->name);
-					/* if (!strcmp(prfx_cocoptr, prfx_pl2) && strlen(prfx_pl2) > 0)
-						printf("prfx_cocoptr %s and prfx_pl2 %s\n", prfx_cocoptr, prfx_pl2); */
-				}
-				if ((*cocoptr)->origin == pl2){ // || 
-					//(strlen(prfx_cocoptr) > 0 && strlen(prfx_pl2) > 0 && !strcmp(prfx_cocoptr, prfx_pl2))){
+				} */
+				if ((*cocoptr)->origin == pl2){
 					if (((*cocoptr)->token && nodelist_find(tr->preset, (*cocoptr)->origin)) ||
 						(nodelist_find(tr->reset, (*cocoptr)->origin))
 					)
@@ -341,28 +261,6 @@ void pe (cond_t *co)
 						printf("it fails in private with condition %s number: %d\n", pl->name, co->num);
 				}
 			}
-			/* if(!*compat_conds && co->pre_ev){
-				nodelist_t* node_tmp = nodelist_find(tr->preset, tr_pre->node);
-				nodelist_t *conds_tmp = node_tmp ? ((place_t*)(node_tmp))->conds : NULL;
-				cond_t* co_tmp = conds_tmp ? ((cond_t*)(conds_tmp->node)) : NULL;				
-				if (co_tmp && nodelist_find(co->pre_ev->origin->preset, co->origin) &&
-					 nodelist_find(tr->reset, pl) && 
-					co_tmp->token){
-					printf("1. It enters here with transition %s and condition %s with num %d, and preset place %s with num %d\n", 
-						tr->name, co->origin->name, co->num, co_tmp->origin->name, co_tmp->num);
-					nodelist_push(compat_conds, co_tmp);
-				}
-				else if(co_tmp && co->token && co_tmp->token){
-					printf("2. It enters here with transition %s and condition %s with num %d, and preset place %s with num %d\n", 
-						tr->name, co->origin->name, co->num, co_tmp->origin->name, co_tmp->num);
-					nodelist_push(compat_conds, co_tmp);
-				}
-			} */
-			/* if (co_reset && !nodelist_find(*compat_conds, co_reset)){
-				nodelist_push(compat_conds,co_reset);
-				printf("name of the pushed place: %s\n", co_reset->origin->name);
-			} */
-						
 			
 			if (!*compat_conds)
 				break;			
@@ -376,13 +274,6 @@ void pe (cond_t *co)
 		
 		/* find all non-conflicting combinations in the comb */
 		curr_comb = pe_combs;
-		/* printf("curr_comb->start: %s\n",((cond_t*)(curr_comb->start->node))->origin->name);
-		printf("curr_comb->current: %s\n",((cond_t*)(curr_comb->current->node))->origin->name); */
-		/* if (curr_comb->start && curr_comb->current)
-		{
-			printf("curr_comb->start: %s\n",((cond_t*)(curr_comb->start->node))->origin->name);
-			printf("curr_comb->current: %s\n",((cond_t*)(curr_comb->current->node))->origin->name);
-		} */		
 		
 		if (!tr_pre) while (curr_comb >= pe_combs)
 		{						
