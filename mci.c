@@ -37,9 +37,21 @@ void write_mci_file (char *filename)
 
 	printf("unf->numco: %d\n", unf->numco);
 	printf("unf->numev: %d\n", unf->numev);
+	print_conditions(unf->conditions);
+	printf("\n");
+	print_events(unf->events);
+	printf("\n");
+	print_marking_co(unf->m0);
+	printf("\n");
+	print_marking_co(unf->m0_unmarked);
+	printf("\n");
+	int numco = 53;
+	int numev = 5;
 	write_int(unf->numco);
-	printf("CUTOFF_YES\n");
+	//fprintf(file, "%d", unf->numco);
 	//fwrite(&(unf->numco),sizeof(int),1,file);
+	printf("CUTOFF_YES\n");
+	//write_int(unf->numev);
 	write_int(unf->numev);
 	/* Reverse the lists of places, events etc. This is to maintain
 	   compatibility with RdlcheckMcM and mcsmodels, which expect events
@@ -52,8 +64,9 @@ void write_mci_file (char *filename)
 	for (ev = unf->events; ev; ev = ev->next)
 		ev->mark = ++ev_num;
 
-	for (ev = unf->events; ev; ev = ev->next)
+	for (ev = unf->events; ev; ev = ev->next){
 		write_int(ev->origin->num);
+	}
 
 	for (co = unf->conditions; co ; co = co->next)
 	{

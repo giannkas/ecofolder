@@ -64,6 +64,20 @@ coa_t coarray_copy (coa_t coa)
 	return ncoa;
 }
 
+void print_conditions (cond_t* list)
+{
+	if (!list) return;
+	printf("%s ",list->origin->name);
+	print_conditions(list->next);
+}
+
+void print_events (event_t* list)
+{
+	if (!list) return;
+	printf("%s ",list->origin->name);
+	print_events(list->next);
+}
+
 /*****************************************************************************/
 /* Insert a condition into the unfolding. The new condition is labelled with */
 /* the place pl.							     */

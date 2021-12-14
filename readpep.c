@@ -674,15 +674,17 @@ net_t* pr_encoding(net_t *net){
 	place_t *pl, *pl2;
 	nodelist_t *list;
 	nodelist_t *ctxtr = NULL;
-	int n_ctxtr = 0, buffer_num = 0;
-	
+	int n_ctxtr = 0;
+	char buffer[50];
+
 	for (pl = net->places; pl; pl=pl->next)
 	{
 		for (ctxtr = pl->ctxset; ctxtr; ctxtr = ctxtr->next){
 			n_ctxtr++;
 			if(n_ctxtr > 1){
 				pl2 = nc_create_place(net);
-				pl2->name = strdup(pl->name);
+				sprintf(buffer, "%s_%d", pl->name, n_ctxtr);
+				pl2->name = MYstrdup(buffer);
 				pl2->marked = pl->marked ? 1 : 0;
 				for (list = pl->preset; list; list = list->next)
 					nc_create_arc(&(pl2->preset),&(((trans_t*)(list->node))->postset),
@@ -693,10 +695,9 @@ net_t* pr_encoding(net_t *net){
 				for (list = pl->reset; list; list = list->next)
 					nc_create_arc(&(((trans_t*)(list->node))->reset), &(pl2->reset),
 						((trans_t*)(list->node)),pl2);
+				/* char buffer[buffer_num];
 				buffer_num = snprintf(NULL, 0,"%d", n_ctxtr+2);
-				char buffer[buffer_num];
-				sprintf(buffer, "_%d", n_ctxtr);				
-				pl2->name = strcat(pl2->name, buffer);
+				strcat(pl2->name, buffer); */
 				nc_create_arc(&(((trans_t*)(ctxtr->node))->postset),&(pl2->preset),
 			  		((trans_t*)(ctxtr->node)),pl2);
 				nc_create_arc(&(pl2->postset),&(((trans_t*)(ctxtr->node))->preset),

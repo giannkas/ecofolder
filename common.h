@@ -23,4 +23,6 @@ int last_strchr(const char *, int);
 char * extract_substr_up_to(const char *, int);
 extern float get_seconds ();
 
+//#define MALLOC_CHECK_ = 2;
+
 #endif
