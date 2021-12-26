@@ -123,11 +123,18 @@ cond_t* insert_condition (place_t *pl, event_t *ev)
 
 event_t* insert_event (pe_queue_t *qu)
 {
-    cond_t **co_ptr;	
 	
-	    event_t *ev = MYmalloc(sizeof(event_t));
+	event_t *ev = MYmalloc(sizeof(event_t));
 	int sz = qu->trans->prereset_size;
+    cond_t **co_ptr;
+
+	ev->next = unf->events;
+	unf->events = ev;
 	ev->origin = qu->trans;
+	ev->mark = 0;		/* for marking_of */
+	ev->foata_level = find_foata_level(qu);
+	ev->preset_size = qu->trans->prereset_size;
+	ev->postset_size = qu->trans->postreset_size;
 
 	/* add preset (postset comes later) */
         ev->preset = co_ptr = MYmalloc(sz * sizeof(cond_t*));
@@ -139,15 +146,7 @@ event_t* insert_event (pe_queue_t *qu)
 		printf("EVENT %s precondition name: %s, %d\n", ev->origin->name,(*co_ptr2)->origin->name, (*co_ptr2)->num);
 		co_ptr2 = &((*co_ptr2)->next);
 	} */
-	sz = qu->trans->prereset_size;
 	
-	ev->next = unf->events;
-	unf->events = ev;
-	ev->mark = 0;		/* for marking_of */
-	ev->foata_level = find_foata_level(qu);
-	printf("hola\n");
-	ev->preset_size = qu->trans->prereset_size;			//*** NEW ***//
-	ev->postset_size = qu->trans->postreset_size;		//*** NEW ***//	
 	//ev->preset_size = qu->trans->preset_size;
 	//ev->postset_size = qu->trans->postset_size;
 
@@ -179,21 +178,21 @@ void add_post_conditions (event_t *ev, char cutoff)
 {
 	
 	cond_t **co_ptr, **cocoptr;
-	nodelist_t *list = NULL;
+	nodelist_t *list;
 	coa_t newarray;
 	/* First insert the conditions without putting them in pl->conds;
 	   that is done by pe() to avoid duplicated new events. */
 	ev->postset = co_ptr
 		= MYmalloc(ev->postset_size * sizeof(cond_t*));
 	
-	printf("1. ev->postset_size: %d\n", ev->postset_size);
-	printf("tr name associated with the event: %s\n", ev->origin->name);
+	/* printf("1. ev->postset_size: %d\n", ev->postset_size);
+	printf("tr name associated with the event: %s\n", ev->origin->name); */
 	
 	for (list = nodelist_concatenate(ev->origin->postset, ev->origin->reset); list; list = list->next)
 		*co_ptr++ = insert_condition(list->node,ev);
 	//if (strcmp(ev->origin->name, "T3") == 0)
 	if (cutoff) return;
-	printf("2. ev->postset_size: %d\n", ev->postset_size);
+	/* printf("2. ev->postset_size: %d\n", ev->postset_size); */
 
 	/* Having computed the common part of the co-relation for all
 	   conditions in co_relation(), we create a copy that uses only

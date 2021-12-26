@@ -69,6 +69,7 @@ void pe_insert (trans_t *tr)
 	
 	int index = ++pe_qsize;
 	static char stoptr_found = 0;
+	
 	/* If -d is used, ignore the new event if its size exceeds the limit. */
 	if (unfold_depth && qu_new->lc_size > unfold_depth)
 		{	pe_qsize--; return;	}
@@ -101,6 +102,7 @@ void pe_insert (trans_t *tr)
 		pe_queue[index] = pe_queue[index/2]; /* move parent downwards */
 	}
 	pe_queue[index] = qu_new;
+
 	
 }
 
