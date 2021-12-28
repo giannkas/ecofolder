@@ -93,7 +93,7 @@ void nc_compute_sizes (net_t *net)
 	{
 		nodelist_t *list;
 
-		for (k = 0, list = tr->preset; list; k++, list = list->next)
+		for (k = 0, list = tr->preset; list; k++, list = list->next);
 		tr->preset_size = k;
 		//printf("Transition %s, preset size: %d\n", tr->name, k);
 		if (net->maxpre < k) net->maxpre = k;
@@ -115,7 +115,7 @@ void nc_compute_sizes (net_t *net)
 		for (k = 0, list = nodelist_concatenate(tr->preset, tr->reset); list; k++, list = list->next);
 		tr->prereset_size = k;
 
-		for (k = 0, list = nodelist_concatenate(tr->postset, tr->reset); list; k++, list = list->next)
+		for (k = 0, list = nodelist_concatenate(tr->postset, tr->reset); list; k++, list = list->next);
 		tr->postreset_size = k;
 	}
 	//printf("maxpre: %d\n", net->maxpre);

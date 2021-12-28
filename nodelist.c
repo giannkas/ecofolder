@@ -144,7 +144,8 @@ int sizeList(nodelist_t *head)
 
 nodelist_t* nodelist_concatenate(nodelist_t *list1, nodelist_t *list2)
 {	
-	nodelist_t *head = nodelist_alloc();
+	//nodelist_t *head = nodelist_alloc();
+	nodelist_t *head = MYcalloc(sizeof(nodelist_t));
 	nodelist_t *first = list1;
 	nodelist_t *second = list2;
 

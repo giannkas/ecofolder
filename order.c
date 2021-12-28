@@ -170,9 +170,9 @@ pe_queue_t* create_queue_entry (trans_t *tr)
 	if (interactive)
 	{
 		qu_new->id = ++queuecount;
-		int i = tr->prereset_size;
 		printf("Discovered new extension E%d (%s) [condition%s",
-			qu_new->id, tr->name, i == 1? "" : "s");	//*** NEW ***//
+			qu_new->id, tr->name, tr->prereset_size == 1? "" : "s");	//*** NEW ***//
+		int i = tr->prereset_size;
 		while (i) { printf(" C%d",pe_conds[--i]->num); }
 		printf("].\n");
 	}
@@ -251,7 +251,7 @@ pe_queue_t* create_queue_entry (trans_t *tr)
 		/* co = list->node;
 		printf("ev_mark-1: %d\n", ev_mark-1);
 		printf("condition name %s, %d and its mark is %d\n", co->origin->name, co->num, co->mark); */
-		if ((co = list->node)->mark != ev_mark-1 && co->token)
+		if ((co = list->node)->mark != ev_mark-1)
 			nodelist_insert(&(qu_new->marking), co->origin);
 	}
 	printf("  Corresponding marking after transition %s: ", tr->name);
