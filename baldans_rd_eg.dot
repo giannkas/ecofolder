@@ -25,11 +25,11 @@ digraph test {
   c1 [label= <3<FONT COLOR="red"><SUP>1</SUP></FONT>&nbsp;(c1)> shape=circle];
   c2 [label= <2<FONT COLOR="red"><SUP>1</SUP></FONT>&nbsp;(c2)> shape=circle];
   c3 [label= <1<FONT COLOR="red"><SUP>1</SUP></FONT>&nbsp;(c3)> shape=circle];
-  c4 [label= <4_2<FONT COLOR="red"><SUP>1</SUP></FONT>&nbsp;(c4)> shape=circle];
-  c5 [label= <4_1<FONT COLOR="red"><SUP>1</SUP></FONT>&nbsp;(c5)> shape=circle];
-  c6 [label= <4_1<FONT COLOR="red"><SUP>1</SUP></FONT>&nbsp;(c6)> shape=circle];
+  c4 [label= <4_1<FONT COLOR="red"><SUP>1</SUP></FONT>&nbsp;(c4)> shape=circle];
+  c5 [label= <4_2<FONT COLOR="red"><SUP>1</SUP></FONT>&nbsp;(c5)> shape=circle];
+  c6 [label= <4_2<FONT COLOR="red"><SUP>1</SUP></FONT>&nbsp;(c6)> shape=circle];
   c7 [label= <5<FONT COLOR="red"><SUP>1</SUP></FONT>&nbsp;(c7)> shape=circle];
-  c8 [label= <4_2<FONT COLOR="red"><SUP>1</SUP></FONT>&nbsp;(c8)> shape=circle];
+  c8 [label= <4_1<FONT COLOR="red"><SUP>1</SUP></FONT>&nbsp;(c8)> shape=circle];
   c9 [label= <7<FONT COLOR="red"><SUP>1</SUP></FONT>&nbsp;(c9)> shape=circle];
   c10 [label= <6<FONT COLOR="red"><SUP>1</SUP></FONT>&nbsp;(c10)> shape=circle];
   c11 [label= <6<FONT COLOR="red"><SUP>1</SUP></FONT>&nbsp;(c11)> shape=circle];

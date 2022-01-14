@@ -21,6 +21,9 @@ enum { FT_STRING = 1, FT_COORDS = 2, FT_NUMBER = 3, FT_FLAG = 4 };
 enum { TB_MANDATORY = 0, TB_OPTIONAL = 1 };
 enum { TB_BLOCK = 0, TB_LINE = 1 };
 
+#define MAX_LINE_SIZE 500
+#define MAX_READ_PLACES 50
+
 /* used for specifying where data fields of interest should be stored. */
 typedef struct
 {
@@ -435,9 +438,9 @@ t_blockinfo netblocks[] =
 	  { "PL",  TB_MANDATORY, TB_BLOCK, placefields },
 	  { "TR",  TB_MANDATORY, TB_BLOCK, transfields },
 	  { "PTR", TB_OPTIONAL,  TB_BLOCK, transfields+1 },
+	  { "RD",  TB_OPTIONAL, TB_BLOCK, arcfields },		//*** NEW  ***//
 	  { "TP",  TB_MANDATORY, TB_BLOCK, arcfields },
 	  { "PT",  TB_MANDATORY, TB_BLOCK, arcfields },
-	  { "RD",  TB_OPTIONAL, TB_BLOCK, arcfields },		//*** NEW  ***//
 	  { "RS",  TB_OPTIONAL, TB_BLOCK, arcfields },		//*** NEW  ***//
 	  { "PTP", TB_OPTIONAL,  TB_BLOCK, arcfields },
 	  { "PPT", TB_OPTIONAL,  TB_BLOCK, arcfields },
@@ -601,10 +604,10 @@ net_t* read_pep_net(char *PEPfilename)
 	t_blockdest netdest[] =
 		{ { "PL",  insert_place, NULL, place_dest },
 		  { "TR",  insert_trans, NULL, trans_dest },
+		  { "RD",  insert_arc,   NULL, arc_dest},			//*** NEW  ***//
 		  { "TP",  insert_arc,   NULL, arc_dest },
 		  { "PT",  insert_arc,   NULL, arc_dest },
 		  { "RS",  insert_arc,   NULL, arc_dest},			//*** NEW  ***//
-		  { "RD",  insert_arc,   NULL, arc_dest},			//*** NEW  ***//
 		  { NULL, NULL, NULL, NULL } };
 
 	int count;
@@ -669,7 +672,7 @@ net_t* reset_complement(net_t *net){
 	return net;
 }
 
-net_t* pr_encoding(net_t *net){
+/* net_t* pr_encoding(net_t *net){
 
 	place_t *pl, *pl2;
 	nodelist_t *list;
@@ -694,10 +697,7 @@ net_t* pr_encoding(net_t *net){
 						((trans_t*)(list->node)),pl2);
 				for (list = pl->reset; list; list = list->next)
 					nc_create_arc(&(((trans_t*)(list->node))->reset), &(pl2->reset),
-						((trans_t*)(list->node)),pl2);
-				/* char buffer[buffer_num];
-				buffer_num = snprintf(NULL, 0,"%d", n_ctxtr+2);
-				strcat(pl2->name, buffer); */
+						((trans_t*)(list->node)),pl2);				
 				nc_create_arc(&(((trans_t*)(ctxtr->node))->postset),&(pl2->preset),
 			  		((trans_t*)(ctxtr->node)),pl2);
 				nc_create_arc(&(pl2->postset),&(((trans_t*)(ctxtr->node))->preset),
@@ -718,4 +718,194 @@ net_t* pr_encoding(net_t *net){
 	nc_compute_sizes(net);
 	
 	return net;
+} */
+
+char* pr_encoding(char* in_file){
+    // Declare the file pointer
+    FILE *r_pointer ;
+    FILE *w_pointer = NULL;
+     
+    // Variables that come along
+    char d_read[50];
+    char *token, *tmp, *tmp1, *token2, *out_file = NULL;    
+    int header = 0, places = 0, trans = 0, new_places = 0, 
+        counter_pl = 0, num_tmp, rd_arcs = 0;
+
+    // Open the existing file using fopen()
+    // in read mode using "r" attribute
+    r_pointer = fopen(in_file, "r") ;
+     
+    // Check if this r_pointer is null
+    // which maybe if the file does not exist
+    if ( r_pointer == NULL )
+    {
+        printf( "%s file failed to open.", in_file ) ;
+    }
+    else
+    {        
+        /* Read up to RD label and get number of transitions and places*/
+        while(fgets(d_read, 50, r_pointer) != NULL && d_read[0] != 'R' && d_read[1] != 'D'){
+            if (d_read[0] == 'P' && d_read[1] == 'L');
+            else if (places == header) header++;
+            if (d_read[0] == 'T' && d_read[1] == 'R');
+            else if (trans == places) places++;
+            trans++;
+        }
+        /* Compute header lines, number of places and transitions  */
+        header++;
+        places = places - header;
+        header++;
+        trans = trans - places - header;
+        
+        if(d_read[0] == 'R' && d_read[1] == 'D'){
+			out_file = ftokstr(in_file, 0, '.');
+			strcat(out_file, "_pr.ll_net");
+    		w_pointer = fopen(out_file, "w"); // if we have reset arcs then create a new file.
+            int n_ctxtr = 1;
+            char buf_arcs[MAX_READ_PLACES];
+            int read_places[MAX_READ_PLACES] = {0};
+            char buffer_pl[MAX_LINE_SIZE] = {0};
+            char buffer_rd[MAX_LINE_SIZE] = {0};            
+
+            /* Check for those places that have more than one read arc and make its respective
+             replication in buffer_pl which will be pasted into the output file */
+            while(fgets(d_read, 50, r_pointer) != NULL && isdigit(d_read[0])){
+                strcat(buffer_rd, d_read);
+                token = strtok(d_read, ">");
+                if(n_ctxtr > 1 && !strcmp(token, tmp)){
+                    sprintf(buf_arcs, "\"%s_%d\",\n", token, n_ctxtr);
+                    strcat(buffer_pl, buf_arcs);
+                    new_places++;
+                    read_places[strtoint(token)] = n_ctxtr;
+                }
+                else{
+                    tmp = strdup(token);
+                    n_ctxtr = 1;
+                }
+                n_ctxtr++;
+            }            
+
+            /* Print into the output file the places that come from the input file plus
+            those that were replicated (print the content from buffer_pl) */
+            fseek( r_pointer, 0, SEEK_SET );
+            while(fgets(d_read, 50, r_pointer) != NULL && d_read[0] != 'T' && d_read[1] != 'R'){
+                token = ftokstr(d_read, 1, '\"');
+                if(token){                    
+                    num_tmp = strtoint(token);
+                    if(read_places[num_tmp] > 1){
+                        sprintf(buf_arcs, "\"%s_%d\"\n", token, 1);
+                        fprintf(w_pointer, "%s", buf_arcs);
+                    }
+                    else
+                        fprintf(w_pointer, "%s", d_read);
+                }
+                else
+                    fprintf(w_pointer, "%s", d_read);
+            }
+            token = strtok(buffer_pl, ",");
+            while (token != NULL){
+                fprintf(w_pointer, "%s", token);
+                token = strtok(NULL, ",");
+            }
+
+            /* TP SECTION */
+            /* Any transition t producing p in N produces p_i in N', i.e., p_i in postset(t)*/
+            new_places = places;
+            if(d_read[0] == 'T' && d_read[1] == 'R'){
+                fprintf(w_pointer, "%s", d_read);
+                while(fgets(d_read, 50, r_pointer) != NULL && d_read[0] != 'P' && d_read[1] != 'T'){
+                    if( strlen(d_read) > 2 && d_read[1] == '<' ){
+                        tmp1 = ltokstr(d_read, '<');
+						printf("d_read is: %s", d_read);
+						printf("tmp1 is: %s\n", tmp1);
+                        num_tmp = strtoint(tmp1);
+                        counter_pl = read_places[num_tmp]-1;
+                        for(int i = 1; i <= counter_pl && counter_pl > 0; i++){
+                            num_tmp = new_places + 1;
+                            sprintf(buf_arcs, "%s<%d", ftokstr(d_read, 0, '<'), num_tmp);
+                            fprintf(w_pointer, "%s\n", buf_arcs);
+                            new_places = new_places + i;
+                        }            
+                    }
+                    fprintf(w_pointer, "%s", d_read);
+                }
+            }
+            /* Transition t_i produces place p_i, i.e., p_i in postset(t)*/
+            new_places = places;
+            if(d_read[0] == 'P' && d_read[1] == 'T'){
+                rd_arcs = 0;
+                token = ftokstr(buffer_rd, rd_arcs, '\n'); tmp = "";
+                while (strlen(token) != 0){
+                    token2 = strdup(token);
+                    tmp1 = ftokstr(token, 0, '>');
+                    if(strcmp(tmp1, tmp) != 0){
+                        revstr(token2);
+                        flip(token2, '>', '<');
+                        fprintf(w_pointer, "%s\n", token2);
+                        counter_pl = 0;
+                    }else{
+                        counter_pl++;
+                        num_tmp = new_places + 1;
+                        tmp1 = ltokstr(token, '>');
+                        sprintf(buf_arcs, "%s<%d", tmp1, num_tmp);
+                        fprintf(w_pointer, "%s\n", buf_arcs);
+                        new_places = new_places + counter_pl;
+                    }
+                    tmp = ftokstr(token, 0, '>');
+                    rd_arcs++;
+                    token = ftokstr(buffer_rd, rd_arcs,'\n');
+                }
+            }
+
+            /* PT SECTION */
+            /* Any transition t consuming p in N consumes p_i in N', i.e., p_i in preset(t)*/
+            new_places = places;
+            if(d_read[0] == 'P' && d_read[1] == 'T'){
+                fprintf(w_pointer, "%s", d_read);
+                while(fgets(d_read, 50, r_pointer) != NULL){
+                    if( strlen(d_read) > 2 && d_read[1] == '>' ){
+                        tmp1 = ftokstr(d_read, 0, '>');
+                        num_tmp = strtoint(tmp1);
+                        counter_pl = read_places[num_tmp]-1;
+                        for(int i = 1; i <= counter_pl && counter_pl > 0; i++){
+                            num_tmp = new_places + 1;
+                            sprintf(buf_arcs, "%d>%s", num_tmp, ltokstr(d_read, '>'));
+                            fprintf(w_pointer, "%s\n", buf_arcs);
+                            new_places = new_places + i;
+                        }        
+                    }
+                    fprintf(w_pointer, "%s", d_read);
+                }
+            }
+            /* Transition t_i consumes place p_i, i.e., p_i in preset(t)*/
+            new_places = places;
+            if(fgets(d_read, 50, r_pointer) == NULL){
+                fprintf(w_pointer, "\n");
+                rd_arcs = 0;
+                token = ftokstr(buffer_rd, rd_arcs, '\n'); tmp = "";
+                while (strlen(token) != 0){
+                    tmp1 = ftokstr(token, 0, '>');
+                    if (strcmp(tmp1, tmp) != 0)
+                        fprintf(w_pointer, "%s\n", token);
+                    else{
+                        num_tmp = strtoint(tmp1);
+                        counter_pl = read_places[num_tmp]-1;
+                        if (counter_pl > 0){
+                            num_tmp = new_places + 1;
+                            sprintf(buf_arcs, "%d>%s", num_tmp, ltokstr(token, '>'));
+                            fprintf(w_pointer, "%s\n", buf_arcs);
+                            new_places++;
+                        }
+                    }
+                    tmp = ftokstr(token, 0, '>');
+                    rd_arcs++;
+                    token = ftokstr(buffer_rd, rd_arcs,'\n');
+                }
+            }
+        }        
+
+        fclose(r_pointer) ;
+        fclose(w_pointer) ;
+    }
+    return out_file? out_file : in_file;
 }

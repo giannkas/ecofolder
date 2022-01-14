@@ -74,10 +74,10 @@ int main (int argc, char **argv)
 		}
 
 	if (!llnet) usage(argv[0]);
-
+	llnet = pr_encoding(llnet);
+	printf("llnet is: %s\n", llnet);
 	net = read_pep_net(llnet);
 	//net = reset_complement(net);
-	net = pr_encoding(net);
 	nc_static_checks(net,stoptr_name);
 
 	place_t *plr = net->places;

@@ -19,8 +19,11 @@ extern void* MYrealloc(void*,size_t);
 extern char* MYstrdup(char*);
 extern void nc_error (const char*,...);
 extern void nc_warning (const char*,...);
-int last_strchr(const char *, int);
-char * extract_substr_up_to(const char *, int);
+int strtoint(char*);
+void revstr(char*);
+void flip(char*, char, char);
+char* ftokstr(char *, int, char);
+char* ltokstr(char *, char);
 
 //#define MALLOC_CHECK_ = 2;
 

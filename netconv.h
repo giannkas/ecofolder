@@ -131,7 +131,7 @@ nodelist_t* nodelist_remove (nodelist_t *, nodelist_t *);
 
 extern net_t* read_pep_net(char*);
 extern net_t* reset_complement(net_t*);
-extern net_t* pr_encoding(net_t*);
+extern char* pr_encoding(char*);
 
 /****************************************************************************/
 /* declarations for mci.c						    */

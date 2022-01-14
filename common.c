@@ -37,24 +37,76 @@ void nc_warning (const char* msg, ...)
 	va_end(the_args);
 }
 
-int last_strchr(const char *str, int c){
-	
-	int i = -1;
-	for (i = strlen(str)-1; i >= 0; i--)
-	{
-		if (str[i] == c)
-			break;
-	}
-	return i;	
+int strtoint(char *num) {
+    int  i, len;
+    int result = 0;
+
+    len = strlen(num);
+
+    for(i=0; i<len; i++)
+        result = result * 10 + ( num[i] - '0' );
+    return result;
 }
 
-char * extract_substr_up_to(const char *str, int c){
-	char *substr = c != -1 ? MYmalloc(c) : "";
-	for (int i = 0; i < c; i++)		
-		substr[i] = str[i];
-	if (c != -1)
-		substr[c] = '\0';
-	return substr;
+void revstr(char *str){    
+    int i, len, tmp;  
+    len = strlen(str);
+      
+    for (i = 0; i < len/2; i++)  
+    {  
+        tmp = str[i];  
+        str[i] = str[len-i-1];  
+        str[len-i-1] = tmp;  
+    }  
+}
+
+void flip(char *str, char oldsym, char newsym){
+    int i, len;  
+    len = strlen(str);
+      
+    for (i = 0; i < len && str[i] != oldsym; i++);
+    if (i < len && str[i] == oldsym)
+        str[i] = newsym;
+}
+
+char* ftokstr(char *str, int pos, char delim){
+    int len = strlen(str), i = 0, c_delim = 0;
+    char tok[len];
+    char *result;
+    
+    for (int j = 0; i < len && c_delim <= pos; i++){
+        if(str[i] == delim && c_delim != pos){
+            tok[0] = '\0';
+            c_delim++; j = 0;
+        }else if(str[i] == delim){
+            c_delim++; tok[j] = '\0';
+        }
+        else{
+            tok[j] = str[i];
+            j++;
+        }        
+    }
+    result = strdup(tok);
+    return i == len && pos > c_delim ? NULL : result;
+}
+
+char* ltokstr(char *str, char delim){
+    int len = strlen(str), pos;
+    char tok[len];
+    char *result;
+
+    for (pos = 0; pos < len && str[pos] != delim; pos++);
+    /* while (pos < len && str[pos] != delim)
+        pos++; */
+    
+    if(str[pos] == delim){
+        for (int i = 0; i < strlen(tok) && pos+1 < len; i++, pos++)
+            tok[i] = str[pos+1];
+    }
+    //strcat(tok,"\0");
+    result = strdup(tok);
+    //strcat(result, "\0");
+    return result;
 }
 
 /****************************************************************************/
