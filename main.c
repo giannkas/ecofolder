@@ -74,9 +74,10 @@ int main (int argc, char **argv)
 		}
 
 	if (!llnet) usage(argv[0]);
-	llnet = pr_encoding(llnet);
-	printf("llnet is: %s\n", llnet);
-	net = read_pep_net(llnet);
+    //strcpy(llnet, pr_encoding(llnet));
+	//llnet = pr_encoding(llnet);
+	//printf("llnet is: %s\n", llnet);
+	net = read_pep_net(pr_encoding(llnet));
 	//net = reset_complement(net);
 	nc_static_checks(net,stoptr_name);
 

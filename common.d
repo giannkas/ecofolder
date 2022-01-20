@@ -1,1 +1,1 @@
-common.o common.d: common.c common.h
+common.o common.d: common.h

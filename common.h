@@ -23,7 +23,7 @@ int strtoint(char*);
 void revstr(char*);
 void flip(char*, char, char);
 char* ftokstr(char *, int, char);
-char* ltokstr(char *, char);
+char* ltokstr(char *, int, char);
 
 //#define MALLOC_CHECK_ = 2;
 

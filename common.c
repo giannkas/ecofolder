@@ -69,44 +69,44 @@ void flip(char *str, char oldsym, char newsym){
         str[i] = newsym;
 }
 
-char* ftokstr(char *str, int pos, char delim){
+char* ftokstr(char *str, int ins, char delim)
+{    
     int len = strlen(str), i = 0, c_delim = 0;
-    char tok[len];
-    char *result;
-    
-    for (int j = 0; i < len && c_delim <= pos; i++){
-        if(str[i] == delim && c_delim != pos){
-            tok[0] = '\0';
+    char *tok = malloc(len+1);
+
+    for (int j = 0; i < len && c_delim <= ins; i++){
+        if(str[i] == delim && c_delim != ins){
+            *tok = '\0';
             c_delim++; j = 0;
         }else if(str[i] == delim){
-            c_delim++; tok[j] = '\0';
+            c_delim++; *(tok+j) = '\0';
         }
         else{
-            tok[j] = str[i];
+            *(tok+j) = str[i];
             j++;
-        }        
+        }
     }
-    result = strdup(tok);
-    return i == len && pos > c_delim ? NULL : result;
+    return i == len && ins > c_delim ? NULL : tok;
 }
 
-char* ltokstr(char *str, char delim){
-    int len = strlen(str), pos;
-    char tok[len];
-    char *result;
+char* ltokstr(char *str, int ins, char delim){
+    int len = strlen(str), pos, i = 0, c_delim = 0;
+    char *tok = malloc(len+1);
 
-    for (pos = 0; pos < len && str[pos] != delim; pos++);
-    /* while (pos < len && str[pos] != delim)
-        pos++; */
-    
-    if(str[pos] == delim){
-        for (int i = 0; i < strlen(tok) && pos+1 < len; i++, pos++)
-            tok[i] = str[pos+1];
+    for (pos = 0; pos < len && c_delim <= ins; pos++){
+        if (str[pos] == delim){
+            if (c_delim == ins)
+                break;
+            c_delim++;
+        }
     }
-    //strcat(tok,"\0");
-    result = strdup(tok);
-    //strcat(result, "\0");
-    return result;
+
+    if(str[pos] == delim){
+        for (i = 0; i < len && pos+1 < len; i++, pos++)
+            *(tok+i) = *(str+pos+1);
+    }
+    *(tok+i) = '\0';
+    return tok;
 }
 
 /****************************************************************************/
