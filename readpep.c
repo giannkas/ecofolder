@@ -780,7 +780,7 @@ char* pr_encoding(char* in_file){
             if(d_read[0] == 'T' && d_read[1] == 'R'){
                 fprintf(w_pointer, "%s", d_read);
                 while(fgets(d_read, MAX_READ_PLACES, r_pointer) != NULL && d_read[0] != 'P' && d_read[1] != 'T'){
-                    if( strlen(d_read) > 2 && d_read[1] == '<' ){
+                    if( strlen(d_read) > 2 ){
                         tmp1 = ltokstr(d_read, 0, '<');
 						/* printf("d_read is: %s", d_read);
 						printf("tmp1 is: %s\n", tmp1); */
@@ -803,12 +803,10 @@ char* pr_encoding(char* in_file){
                 rd_arcs = 0;
                 token = ftokstr(buffer_rd, rd_arcs, '\n'); tmp = "";
                 while (strlen(token) != 0){
-                    token2 = strdup(token);
                     tmp1 = ftokstr(token, 0, '>');
-                    if(strcmp(tmp1, tmp) != 0){
-                        revstr(token2);
-                        flip(token2, '>', '<');
-                        fprintf(w_pointer, "%s\n", token2);
+                    token2 = ltokstr(token, 0, '>');
+                    if(strcmp(tmp1, tmp) != 0){                        
+                        fprintf(w_pointer, "%s<%s\n", token2, tmp1);
                         counter_pl = 0;
                     }else{
                         counter_pl++;
@@ -830,7 +828,7 @@ char* pr_encoding(char* in_file){
             if(d_read[0] == 'P' && d_read[1] == 'T'){
                 fprintf(w_pointer, "%s", d_read);
                 while(fgets(d_read, MAX_READ_PLACES, r_pointer) != NULL && d_read[0] != 'R' && d_read[1] != 'S'){
-                    if( strlen(d_read) > 2 && d_read[1] == '>' ){
+                    if( strlen(d_read) > 2 ){
                         tmp1 = ftokstr(d_read, 0, '>');
                     	num_tmp = strtol(tmp1, &token2, 10);
                         counter_pl = read_place_arcs[num_tmp]-1;
@@ -876,10 +874,13 @@ char* pr_encoding(char* in_file){
             if(d_read[0] == 'R' && d_read[1] == 'S'){
                 fprintf(w_pointer, "%s", d_read);
                 while(fgets(d_read, MAX_READ_PLACES, r_pointer) != NULL){
-                    if( strlen(d_read) > 2 && d_read[1] == '>' ){
+                    if( strlen(d_read) > 2 ){
                         tmp1 = ftokstr(d_read, 0, '>');
                     	num_tmp = strtol(tmp1, &token2, 10);
                         counter_pl = read_place_arcs[num_tmp]-1;
+						//if (num_tmp == 13)
+						printf("tmp is %s, place %d has those number of read arcs: %d\n"
+							, tmp1, num_tmp, counter_pl);
                         for(int i = 1; i <= counter_pl && counter_pl > 0; i++){
                             num_tmp = new_places + 1;
                             sprintf(buf_arcs, "%d>%s", num_tmp, ltokstr(d_read, 0, '>'));

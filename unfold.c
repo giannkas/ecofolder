@@ -411,14 +411,13 @@ void unfold ()
 	pe_init(list);
 	parikh_init();
 
-	for (tr = net->transitions; tr; tr = tr->next){
-		for (respl = tr->reset; respl; respl = respl->next){
-			if(!(pl = respl->node)->marked){
-				co = insert_condition(pl,NULL);
-				co->co_common = alloc_coarray(0);
-				co->co_private = alloc_coarray(0);
-				nodelist_push(&(unf->m0_unmarked),co);
-			}
+	for (pl = net->places; pl; pl = pl->next){
+		if(!pl->marked && pl->reset != NULL){
+			co = insert_condition(pl,NULL);
+			co->co_common = alloc_coarray(0);
+			co->co_private = alloc_coarray(0);
+			//if (!nodelist_find(unf->m0_unmarked, co))
+			nodelist_push(&(unf->m0_unmarked),co);
 		}
 	}
 	/* add initial conditions to unfolding, compute possible extensions */

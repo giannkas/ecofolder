@@ -8,7 +8,7 @@ INCLUDES =
 
 ##############################################################
 
-DEBUG = --std=gnu11
+DEBUG = -std=gnu11
 WARNINGS = -Wall -Wno-unused-result
 
 CC = gcc $(DEBUG) $(INCLUDES) $(WARNINGS) $(FLAGS)

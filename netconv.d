@@ -1,1 +1,1 @@
-common.o: common.h
+netconv.o netconv.d: netconv.c common.h netconv.h unfold.h

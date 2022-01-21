@@ -1,1 +1,1 @@
-common.o: common.h
+readlib.o readlib.d: readlib.c common.h
