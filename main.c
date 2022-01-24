@@ -77,8 +77,8 @@ int main (int argc, char **argv)
     //strcpy(llnet, pr_encoding(llnet));
 	//llnet = pr_encoding(llnet);
 	//printf("llnet is: %s\n", llnet);
-	net = read_pep_net(pr_encoding(llnet));
-	//net = read_pep_net(llnet);
+	//net = read_pep_net(pr_encoding(llnet));
+	net = read_pep_net(llnet);
 	nc_static_checks(net,stoptr_name);
 
 	place_t *plr = net->places;
