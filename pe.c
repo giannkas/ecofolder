@@ -66,7 +66,6 @@ void pe_insert (trans_t *tr)
 {
 	pe_queue_t *qu_new = create_queue_entry(tr);
 	
-	
 	int index = ++pe_qsize;
 	static char stoptr_found = 0;
 	
@@ -101,9 +100,7 @@ void pe_insert (trans_t *tr)
 		if (pe_compare(qu_new,pe_queue[index/2]) > 0) break;
 		pe_queue[index] = pe_queue[index/2]; /* move parent downwards */
 	}
-	pe_queue[index] = qu_new;
-
-	
+	pe_queue[index] = qu_new;	
 }
 
 /*****************************************************************************/
@@ -286,7 +283,6 @@ void pe (cond_t *co)
 						curr_comb++)
 					*++co_ptr = curr_comb->current->node;
 				pe_insert(tr); // CHECK pe_insert!!
-				
 				curr_comb--;
 			}
 			else if (!pe_conflict(curr_comb))
@@ -301,12 +297,12 @@ void pe (cond_t *co)
 				curr_comb->current = curr_comb->start;
 				curr_comb--;
 			}
+			printf("hola\n");
 		}
 		
 		/* release the comb lists */
 		for (curr_comb = pe_combs; curr_comb->start; curr_comb++)
-			nodelist_delete(curr_comb->start);
-		
+			nodelist_delete(curr_comb->start);		
 	}
 	
 }
