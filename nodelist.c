@@ -58,6 +58,7 @@ nodelist_t* nodelist_push (nodelist_t **list, void *node)
 
 int nodelist_find (nodelist_t *list, void *node)
 {
+	//struct nodelist_t *lst_tmp = list;	
 	while (list && list->node != node )
 		list = list->next;
 	

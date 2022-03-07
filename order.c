@@ -219,7 +219,7 @@ pe_queue_t* create_queue_entry (trans_t *tr)
 				printf("condition name %s, %d and its mark is %d\n", co->origin->name, co->num, co->mark);
 			} */
 			
-			if (co->mark != ev_mark-1 && co->token &&
+			if (co->mark != ev_mark-1 && co->token && ev &&
 				nodelist_find(ev->origin->postset, co->origin)){
 				printf("added condition name %s, %d and its mark is %d\n", co->origin->name, co->num, co->mark);
 				nodelist_insert(&(qu_new->marking),co->origin);

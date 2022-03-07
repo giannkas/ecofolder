@@ -148,7 +148,6 @@ char pe_conflict (pe_comb_t *curr)
 	cond_t *co, **co_ptr;
 	event_t *ev, **queue;
 
-	//printf("HOLA!\n");
 	/* just one condition - no conflict */
 	if (curr == pe_combs) return 0;
 
@@ -162,23 +161,24 @@ char pe_conflict (pe_comb_t *curr)
 		if ((ev = co->pre_ev) && ev->mark != ev_mark)
 			 (*++queue = ev)->mark = ev_mark;
 	}
+	
 	/* go upwards, try to find two paths converging at some condition */
 	/* Check later how it would work if there is an asymmetric conflict
 	with reset and production arcs */
 	while ((ev = *queue))
 	{
-		queue--;
+		queue--;		
 		for (sz = ev->origin->prereset_size, co_ptr = ev->preset; sz--; )	//*** NEW  ***//
-		{
-			if ((co = *co_ptr++)->mark == ev_mark && 
-				!nodelist_find(ev->origin->reset, co->origin))
+		{			
+			if ((co = *co_ptr++)->mark == ev_mark && ev && 
+				!nodelist_find(ev->origin->reset, co->origin)){				
 				return 1;
+			}			
 			co->mark = ev_mark;
 			if ((ev = co->pre_ev) && ev->mark != ev_mark)
 				 (*++queue = ev)->mark = ev_mark;
-		}
+		}		
 	}
-
 	return 0;
 }
 
@@ -262,7 +262,7 @@ void pe (cond_t *co)
 			}
 			
 			if (!*compat_conds)
-				break;			
+				break;
 
 			curr_comb->current = curr_comb->start;
 			(++curr_comb)->start = NULL;
@@ -275,7 +275,7 @@ void pe (cond_t *co)
 		curr_comb = pe_combs;
 		
 		if (!tr_pre) while (curr_comb >= pe_combs)
-		{						
+		{									
 			if (!curr_comb->start)
 			{
 				cond_t **co_ptr = pe_conds;
@@ -286,18 +286,16 @@ void pe (cond_t *co)
 				curr_comb--;
 			}
 			else if (!pe_conflict(curr_comb))
-			{
+			{				
 				curr_comb++;
 				continue;
 			}
-			
 			while (curr_comb >= pe_combs && !(curr_comb->current =
 						curr_comb->current->next))
 			{
 				curr_comb->current = curr_comb->start;
 				curr_comb--;
 			}
-			printf("hola\n");
 		}
 		
 		/* release the comb lists */
