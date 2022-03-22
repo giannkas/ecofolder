@@ -72,10 +72,10 @@ void read_mci_file (char *filename)
 	fread(c,1,1,file);
 
 	for (i = 1; i <= numco; i++)
-		printf("  c%d [label= <%s<FONT COLOR=\"red\"><SUP>%d</SUP></FONT>&nbsp;(c%d)> shape=circle];\n",
+		printf("  c%d [fillcolor=lightblue label= <%s<FONT COLOR=\"red\"><SUP>%d</SUP></FONT>&nbsp;(c%d)> shape=circle style=filled];\n",
 				i,plname[co2pl[i]],tokens[i],i);
 	for (i = 1; i <= numev; i++)
-		printf("  e%d [label=\"%s (e%d)\" shape=box];\n",
+		printf("  e%d [fillcolor=palegreen label=\"%s (e%d)\" shape=box style=filled];\n",
 				i,trname[ev2tr[i]],i);
 	printf("}\n");
 

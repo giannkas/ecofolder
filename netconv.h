@@ -24,9 +24,9 @@ typedef struct place_t
 	int    num;		    /* number				    */
 	struct nodelist_t *preset;  /* unordered list of preset		    */
 	struct nodelist_t *postset; /* unordered list of postset	    */
-	struct nodelist_t *reset; /* unordered list of reset transitions            */                  //*** NEW  ***//
+	struct nodelist_t *reset; /* unordered list of reset transitions */
 	struct nodelist_t *conds;   /* conditions derived from this place   */
-	struct nodelist_t *ctxset; /* unordered list of context transitions            */                  //*** NEW  ***//
+	struct nodelist_t *ctxset; /* unordered list of context transitions */
 	char marked;		    /* non-zero if place is marked	    */
 } place_t;
 
@@ -37,10 +37,10 @@ typedef struct trans_t
 	int    num;		    /* number				    */
 	struct nodelist_t *preset;  /* unordered list of preset		    */
 	struct nodelist_t *postset; /* unordered list of postset	    */
-	struct nodelist_t *reset; /* unordered list of reset	    */			//*** NEW  ***//
-	struct nodelist_t *ctxset; /* unordered list of context transitions            */                  //*** NEW  ***//
+	struct nodelist_t *reset; /* unordered list of reset */
+	struct nodelist_t *ctxset; /* unordered list of context transitions */
 	short  preset_size, postset_size, reset_size, 
-		prereset_size, postreset_size, ctxset_size;							//*** NEW  ***//
+		prereset_size, postreset_size, ctxset_size;
 } trans_t;
 
 typedef struct coa_t {
@@ -83,7 +83,7 @@ typedef struct
 	place_t *places;	/* pointer to first place		*/
 	trans_t *transitions;	/* pointer to first transition		*/ 
 	int numpl, numtr;	/* number of places/transitions in net	*/
-	int maxpre, maxpost, maxres, maxctx;	/* maximal size of a t-pre/postset,reset and ctxset	*/
+	int maxpre, maxpost, maxres, maxctx;	/* maximal size of a t-pre/postset, reset and ctxset	*/
 } net_t;
 
 typedef struct
@@ -92,7 +92,7 @@ typedef struct
 	event_t *events;	/* pointer to first event		*/ 
 	int numco, numev;	/* number of conditions/events in net	*/
 	struct nodelist_t *m0;	/* list of minimal conditions		*/
-	struct nodelist_t *m0_r;	/* list of minimal reset conditions		*/
+	struct nodelist_t *m0_unmarked;	/* list of minimal unmarked conditions		*/
 } unf_t;
 
 /****************************************************************************/
@@ -104,8 +104,6 @@ extern trans_t* nc_create_transition (net_t*);
 extern void nc_create_arc (struct nodelist_t**,struct nodelist_t**,void*,void*);
 extern void nc_compute_sizes (net_t*);
 extern void nc_static_checks (net_t*,char*);
-extern int nc_same_condition (cond_t*, int);
-extern int nc_check_unmarked_initial_marking (cond_t*, char*);
 
 /*****************************************************************************/
 /* declarations from nodelist.c						     */
@@ -121,16 +119,15 @@ extern nodelist_t* nodelist_push (nodelist_t**list,void*);
 extern nodelist_t* nodelist_insert (nodelist_t**,void*e);
 extern void nodelist_delete (nodelist_t*);
 extern char nodelist_compare (nodelist_t*, nodelist_t*);
-extern int sizeList(nodelist_t *);
-extern nodelist_t* nodelist_concatenate(nodelist_t *list1, nodelist_t *list2);			//*** NEW  ***//
-extern nodelist_t* nodelist_find (nodelist_t *, void *);
-extern cond_t* cond_find (nodelist_t *, place_t *);
+extern nodelist_t* nodelist_concatenate(nodelist_t *, nodelist_t *);			//*** NEW  ***//
+extern int nodelist_find (nodelist_t *, void *);
 
 /****************************************************************************/
 /* declarations for readpep.c						    */
 
 extern net_t* read_pep_net(char*);
-extern net_t* pr_encoding(net_t*);
+extern net_t* reset_complement(net_t*);
+extern char* pr_encoding(char*);
 
 /****************************************************************************/
 /* declarations for mci.c						    */

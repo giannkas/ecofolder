@@ -37,7 +37,7 @@ void write_mci_file (char *filename)
 
 	write_int(unf->numco);
 	write_int(unf->numev);
-
+	
 	/* Reverse the lists of places, events etc. This is to maintain
 	   compatibility with RdlcheckMcM and mcsmodels, which expect events
 	   to be numbered in accordance with the causality relation. */
@@ -49,8 +49,9 @@ void write_mci_file (char *filename)
 	for (ev = unf->events; ev; ev = ev->next)
 		ev->mark = ++ev_num;
 
-	for (ev = unf->events; ev; ev = ev->next)
+	for (ev = unf->events; ev; ev = ev->next){
 		write_int(ev->origin->num);
+	}
 
 	for (co = unf->conditions; co ; co = co->next)
 	{

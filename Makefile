@@ -1,14 +1,14 @@
 ##############################################################
 # Makefile for Unfolder
 
-TARGET = mole mci2dot
+TARGET = ecofolder mci2dot
 LIBS = 
 FLAGS = 
 INCLUDES =
 
 ##############################################################
 
-DEBUG = -O3
+DEBUG = -std=gnu11
 WARNINGS = -Wall -Wno-unused-result
 
 CC = gcc $(DEBUG) $(INCLUDES) $(WARNINGS) $(FLAGS)
@@ -25,8 +25,8 @@ default: $(TARGET)
 clean:
 	rm -f $(OBJECTS) $(TMPFILES) $(TARGET) core* *.output *.d .deps gmon.out
 
-mole: $(OBJECTS)
-	$(CC) $(OBJECTS) -o mole
+ecofolder: $(OBJECTS)
+	$(CC) $(OBJECTS) -o ecofolder
 
 # Dependencies
 

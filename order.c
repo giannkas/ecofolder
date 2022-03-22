@@ -123,8 +123,6 @@ int parikh_compare (parikh_t *pv1, parikh_t *pv2)
 /* consists of the size and Parikh vector of [e]; the Foata normal form is   */
 /* computed only when necessary.					     */
 
-// SEE THIS!!!!!!
-
 pe_queue_t* create_queue_entry (trans_t *tr)
 {
 	pe_queue_t *qu_new;
@@ -139,7 +137,6 @@ pe_queue_t* create_queue_entry (trans_t *tr)
 	parikh_reset();
 	parikh_add(tr->num);
 	/* add the input events of the pre-conditions into the queue */
-	//for (sz = tr->preset_size, co_ptr = pe_conds; sz--; )
 	for (sz = tr->prereset_size, co_ptr = pe_conds; sz--; ) 			//*** NEW ***//
 	{
 		(co = *co_ptr++)->mark = ev_mark;
@@ -154,8 +151,7 @@ pe_queue_t* create_queue_entry (trans_t *tr)
 		parikh_add(ev->origin->num);
 
 		/* add the immediate predecessor events of ev to the queue */
-		//for (sz = ev->origin->preset_size, co_ptr = ev->preset; sz--; )
-		for (sz = ev->origin->prereset_size, co_ptr = ev->preset; sz--; )	//*** NEW ***//
+		for (sz = ev->origin->prereset_size, co_ptr = ev->preset; sz--; )
 		{
 			(co = *co_ptr++)->mark = ev_mark;
 			if ((ev = co->pre_ev) && ev->mark != ev_mark)
@@ -170,15 +166,15 @@ pe_queue_t* create_queue_entry (trans_t *tr)
 	if (interactive)
 	{
 		qu_new->id = ++queuecount;
-		int i = tr->prereset_size;
 		printf("Discovered new extension E%d (%s) [condition%s",
-			qu_new->id, tr->name, i == 1? "" : "s");	//*** NEW ***//
+			qu_new->id, tr->name, tr->prereset_size == 1? "" : "s");
+		int i = tr->prereset_size;
 		while (i) { printf(" C%d",pe_conds[--i]->num); }
 		printf("].\n");
 	}
 
         /* copy the pre-conditions */
-        qu_new->conds = MYmalloc((tr->prereset_size) * sizeof(cond_t*));		//*** NEW ***//
+        qu_new->conds = MYmalloc((tr->prereset_size) * sizeof(cond_t*));
         memcpy(qu_new->conds,pe_conds,(tr->prereset_size)*sizeof(cond_t*));
 
 	/* copy Parikh vector */
@@ -190,54 +186,45 @@ pe_queue_t* create_queue_entry (trans_t *tr)
 	*(queue = events) = NULL;
 	qu_new->marking = NULL;
 
-	//for (sz = tr->preset_size, co_ptr = pe_conds; sz--; )
-	for (sz = tr->prereset_size, co_ptr = pe_conds; sz--; )	//*** NEW ***//
+	for (sz = tr->prereset_size, co_ptr = pe_conds; sz--; )
 		if ((ev = (*co_ptr++)->pre_ev) && ev->mark != ev_mark)
 			(*++queue = ev)->mark = ev_mark;
 
 	while ((ev = *queue))
 	{
 		queue--;
-
 		
 		/* check off the postset conditions */
-		//for (sz = ev->origin->postset_size, co_ptr = ev->postset; sz--;)
 		for (sz = ev->origin->postreset_size,
-			 co_ptr = ev->postset; sz--;){		//*** NEW ***//
-			/* printf("event name: %s\n", ev->origin->name);
-			printf("condition name: %s\n", (*co_ptr)->origin->name);
-			printf("transition name: %s\n", tr->name);
-			printf("ev->postset_size: %d\n", ev->postset_size);
-			printf("postreset_size: %d\n", ev->origin->postreset_size);
-			printf("co_ptr size: %lu\n", (&co_ptr)[1] - co_ptr);
-			printf("ev->postset size: %lu\n", sizeof(ev->postset) / sizeof(ev->postset[0])); */
-			if ((co = *co_ptr++)->mark != ev_mark-1 && 
+			 co_ptr = ev->postset; sz--;){
+		
+			co = *co_ptr++;
+			
+			if (co->mark != ev_mark-1 && co->token && ev &&
 				nodelist_find(ev->origin->postset, co->origin)){
-				printf("ev_mark-1: %d\n", ev_mark-1);
 				nodelist_insert(&(qu_new->marking),co->origin);
 			}
-			//printf("(co = *co_ptr++)->mark: %d\n", (co = *co_ptr++)->mark);
 		}
 		/* add the immediate predecessor events of ev to the queue */
-		// for (sz = ev->origin->preset_size, co_ptr = ev->preset; sz--; )
 		for (sz = ev->origin->prereset_size, co_ptr = ev->preset; sz--; )		//*** NEW ***//
 			if ((ev = (*co_ptr++)->pre_ev) && ev->mark != ev_mark)
 				(*++queue = ev)->mark = ev_mark;
 	}
 	
 	/* add the post-places of tr */
-	list = nodelist_concatenate(list, tr->postset);
-	for (list = nodelist_concatenate(list,tr->reset); list; list = list->next)	//*** NEW ***//
+	for (list = tr->postset; list; list = list->next)
 		nodelist_insert(&(qu_new->marking), list->node);
+	
 	/* add the places of unconsumed minimal conditions */
-	for (list = unf->m0; list; list = list->next)
+	for (list = unf->m0; list; list = list->next){
 		if ((co = list->node)->mark != ev_mark-1)
 			nodelist_insert(&(qu_new->marking), co->origin);
+	}
 
 	if (interactive)
 	{
-		printf("  Corresponding marking:");
-		print_marking(qu_new->marking);
+		printf("  Corresponding marking after transition %s: ", tr->name);
+		print_marking_pl(qu_new->marking);
 		printf("\n");
 	}
 	
@@ -252,7 +239,7 @@ pe_queue_t* create_queue_entry (trans_t *tr)
 int find_foata_level (pe_queue_t *pe)
 {
 	int level = 1;
-	int sz = pe->trans->prereset_size;	//*** NEW ***//
+	int sz = pe->trans->prereset_size;
         cond_t **co_ptr = pe->conds;
 	event_t *ev;
 
@@ -279,8 +266,7 @@ nodelist_t** create_foata_lists (pe_queue_t *pe)
 	ev_mark++;
 	*(queue = events) = NULL;
 
-	//for (sz = pe->trans->preset_size, co_ptr = pe->conds; sz--; )
-	for (sz = pe->trans->prereset_size, co_ptr = pe->conds; sz--; )	//*** NEW ***//
+	for (sz = pe->trans->prereset_size, co_ptr = pe->conds; sz--; )
 		if ((ev = (*co_ptr++)->pre_ev) && ev->mark != ev_mark)
 			(*++queue = ev)->mark = ev_mark;
 
@@ -291,8 +277,7 @@ nodelist_t** create_foata_lists (pe_queue_t *pe)
 		--queue;
 		nodelist_push(fo + ev->foata_level, ev->origin);
 
-		//for (sz = ev->origin->preset_size, co_ptr = ev->preset; sz--; )
-		for (sz = ev->origin->prereset_size, co_ptr = ev->preset; sz--; )	//*** NEW ***//
+		for (sz = ev->origin->prereset_size, co_ptr = ev->preset; sz--; )
 			if ((ev = (*co_ptr++)->pre_ev) && ev->mark != ev_mark)
 				(*++queue = ev)->mark = ev_mark;
 	}

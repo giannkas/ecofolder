@@ -1,5 +1,4 @@
 #include <stdlib.h>
-#include <string.h>
 
 #include "common.h"
 #include "netconv.h"
@@ -49,34 +48,20 @@ nodelist_t* nodelist_alloc ()
 nodelist_t* nodelist_push (nodelist_t **list, void *node)
 {
 	nodelist_t *newlist = nodelist_alloc();
-	if (node){
-		newlist->node = node;
-		newlist->next = *list;
-		*list = newlist;
-	}
-	return *list;
+	newlist->node = node;
+	newlist->next = *list;
+	return *list = newlist;
 }
 
 /*****************************************************************************/
-/* find an element; return NULL if element is not found, the element otherwise    */
+/* find and element; return 0 if element is not found, 1 otherwise    */
 
-nodelist_t* nodelist_find (nodelist_t *list, void *node)
+int nodelist_find (nodelist_t *list, void *node)
 {
 	while (list && list->node != node )
 		list = list->next;
 	
-	return (list && list->node == node) ? list->node : NULL;
-}
-
-/*****************************************************************************/
-/* find an condition; return NULL if element is not found, the element otherwise    */
-
-cond_t* cond_find (nodelist_t *list, place_t *node)
-{
-	while (list && strcmp(((cond_t*)(list->node))->origin->name, node->name) != 0)
-		list = list->next;
-	printf("it runs through here and the condition was found? %d\n", strcmp(((cond_t*)(list->node))->origin->name, node->name));
-	return (list && strcmp(((cond_t*)(list->node))->origin->name, node->name) == 0) ? ((cond_t*)(list->node)) : NULL;
+	return (list && list->node == node) ? 1 : 0;
 }
 
 /*****************************************************************************/
@@ -122,26 +107,11 @@ char nodelist_compare (nodelist_t *list1, nodelist_t *list2)
 }
 
 /*****************************************************************************/ 	//*** NEW FUNCTION ***//
-/* calculate the size of an array of pointers    */
-
-int sizeList(nodelist_t *head)
-{
-    nodelist_t *ptr = head;
-	int list_size = 0;
-    while (ptr)
-	{
-		list_size++;
-        ptr = ptr->next;
-    }
-    return list_size;
-}
-
-/*****************************************************************************/ 	//*** NEW FUNCTION ***//
 /* concatenate two lists and return the join    */
 
 nodelist_t* nodelist_concatenate(nodelist_t *list1, nodelist_t *list2)
 {	
-	nodelist_t *head = nodelist_alloc();
+	nodelist_t *head = MYcalloc(sizeof(nodelist_t));
 	nodelist_t *first = list1;
 	nodelist_t *second = list2;
 
@@ -156,7 +126,7 @@ nodelist_t* nodelist_concatenate(nodelist_t *list1, nodelist_t *list2)
 		nodelist_t *tmp_first = first;
 		int duplicated = 0;
 
-		head->node = first->node;		
+		head->node = first->node;
 		nodelist_t *tail = head;
 		first = first->next;
 		while (first != NULL){

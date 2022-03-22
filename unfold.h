@@ -30,6 +30,8 @@ extern nodelist_t *cutoff_list, *corr_list;  /* cut-off/corresponding list */
 extern void unfold();	/* the unfolding procedure */
 extern cond_t* insert_condition(place_t*, event_t*);  /* insert a condition to the unfolding */
 extern coa_t alloc_coarray (int);	/* Create an empty coarray with 'size' allocated events. */
+extern void print_conditions (cond_t*);
+extern void print_events (event_t*);
 
 /***************************************************************************/
 /* declarations for marking.c						   */
@@ -38,7 +40,8 @@ extern void marking_init ();
 extern int find_marking (nodelist_t*);
 extern int add_marking (nodelist_t*,event_t*);
 extern nodelist_t* marking_initial ();
-extern void print_marking (nodelist_t*);
+extern void print_marking_pl (nodelist_t*);
+extern void print_marking_co (nodelist_t*);
 
 /***************************************************************************/
 /* declarations for pe.c						   */

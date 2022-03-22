@@ -37,6 +37,57 @@ void nc_warning (const char* msg, ...)
 	va_end(the_args);
 }
 
+int strtoint(char *num) {
+    int  i, len;
+    int result = 0;
+
+    len = strlen(num);
+
+    for(i=0; i<len; i++)
+        result = result * 10 + ( num[i] - '0' );
+    return result;
+}
+
+char* ftokstr(char *str, int ins, char delim)
+{    
+    int len = strlen(str), i = 0, c_delim = 0;
+    char *tok = malloc(len+1);
+
+    for (int j = 0; i < len && c_delim <= ins; i++){
+        if(str[i] == delim && c_delim != ins){
+            *tok = '\0';
+            c_delim++; j = 0;
+        }else if(str[i] == delim){
+            c_delim++; *(tok+j) = '\0';
+        }
+        else{
+            *(tok+j) = str[i];
+            j++;
+        }
+    }
+    return i == len && ins > c_delim ? NULL : tok;
+}
+
+char* ltokstr(char *str, int ins, char delim){
+    int len = strlen(str), pos, i = 0, c_delim = 0;
+    char *tok = malloc(len+1);
+
+    for (pos = 0; pos < len && c_delim <= ins; pos++){
+        if (str[pos] == delim){
+            if (c_delim == ins)
+                break;
+            c_delim++;
+        }
+    }
+
+    if(str[pos] == delim){
+        for (i = 0; i < len && pos+1 < len; i++, pos++)
+            *(tok+i) = *(str+pos+1);
+    }
+    *(tok+i) = '\0';
+    return tok;
+}
+
 /****************************************************************************/
 /* Wrapper functions for memory allocation.				    */
 

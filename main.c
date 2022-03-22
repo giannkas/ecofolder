@@ -74,18 +74,12 @@ int main (int argc, char **argv)
 		}
 
 	if (!llnet) usage(argv[0]);
-
+    //strcpy(llnet, pr_encoding(llnet));
+	//llnet = pr_encoding(llnet);
+	//printf("llnet is: %s\n", llnet);
+	//net = read_pep_net(pr_encoding(llnet));
 	net = read_pep_net(llnet);
-	net = pr_encoding(net);
 	nc_static_checks(net,stoptr_name);
-
-	place_t *plr = net->places;
-	while (plr){
-		//printf("%s -> ", plr->name);
-		plr = plr->next;
-	}
-	//printf("\n");
-	
 
 	/* Reset set of the transitions */
 	printf("Reset set of the transitions\n");

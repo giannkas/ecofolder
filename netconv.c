@@ -42,7 +42,6 @@ place_t* nc_create_place (net_t *net)
 	place_t *pl = MYmalloc(sizeof(place_t));
 	pl->next = net->places;
 	net->places = pl;
-	//pl->preset = pl->postset = pl->conds = NULL;
 	pl->preset = pl->postset = pl->conds =
 		pl->reset = pl->ctxset = NULL;
 	pl->num = ++net->numpl;
@@ -95,17 +94,14 @@ void nc_compute_sizes (net_t *net)
 
 		for (k = 0, list = tr->preset; list; k++, list = list->next);
 		tr->preset_size = k;
-		//printf("Transition %s, preset size: %d\n", tr->name, k);
 		if (net->maxpre < k) net->maxpre = k;
 
 		for (k = 0, list = tr->postset; list; k++, list = list->next);
 		tr->postset_size = k;
-		//printf("Transition %s, postset size: %d\n", tr->name, k);
 		if (net->maxpost < k) net->maxpost = k;
 
 		for (k = 0, list = tr->reset; list; k++, list = list->next);
 		tr->reset_size = k;
-		//printf("Transition %s, reset size: %d\n", tr->name, k);
 		if (net->maxres < k) net->maxres = k;
 
 		for (k = 0, list = tr->ctxset; list; k++, list = list->next);
@@ -118,9 +114,6 @@ void nc_compute_sizes (net_t *net)
 		for (k = 0, list = nodelist_concatenate(tr->postset, tr->reset); list; k++, list = list->next);
 		tr->postreset_size = k;
 	}
-	//printf("maxpre: %d\n", net->maxpre);
-	//printf("maxpost: %d\n", net->maxpost);
-	//printf("maxres: %d\n", net->maxres);
 }
 
 /*****************************************************************************/
@@ -144,24 +137,4 @@ void nc_static_checks (net_t* net, char *stoptr_name)
 	for (pl = net->places; pl; pl = pl->next)
 		if (pl->marked) break;
 	if (!pl) nc_error("no initial marking");
-}
-
-/*****************************************************************************/
-/* Check whether two conditions have the same num.  */
-
-int nc_same_condition (cond_t *list, int num)
-{
-	if (list){
-		printf("unmarked condition number: %d\n", list->num);		
-	}
-	while (list && list->num != num )
-		list = list->next;
-	return (list && list->num == num) ? 1 : 0;
-}
-
-int nc_check_unmarked_initial_marking (cond_t *list, char* name)
-{
-	while (list && strcmp(list->origin->name, name) != 0)
-		list = list->next;
-	return (list && strcmp(list->origin->name, name) == 0) ? 1 : 0;
 }

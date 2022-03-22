@@ -19,6 +19,10 @@ extern void* MYrealloc(void*,size_t);
 extern char* MYstrdup(char*);
 extern void nc_error (const char*,...);
 extern void nc_warning (const char*,...);
-extern float get_seconds ();
+int strtoint(char*);
+char* ftokstr(char *, int, char);
+char* ltokstr(char *, int, char);
+
+//#define MALLOC_CHECK_ = 2;
 
 #endif
