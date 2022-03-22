@@ -20,8 +20,6 @@ extern char* MYstrdup(char*);
 extern void nc_error (const char*,...);
 extern void nc_warning (const char*,...);
 int strtoint(char*);
-void revstr(char*);
-void flip(char*, char, char);
 char* ftokstr(char *, int, char);
 char* ltokstr(char *, int, char);
 

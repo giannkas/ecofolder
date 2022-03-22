@@ -58,7 +58,6 @@ nodelist_t* nodelist_push (nodelist_t **list, void *node)
 
 int nodelist_find (nodelist_t *list, void *node)
 {
-	//struct nodelist_t *lst_tmp = list;	
 	while (list && list->node != node )
 		list = list->next;
 	
@@ -76,24 +75,6 @@ nodelist_t* nodelist_insert (nodelist_t **list, void *node)
 	if (*list && (*list)->node == node) return *list;
 
 	return nodelist_push(list,node);
-}
-
-/*****************************************************************************/
-/* remove an element to a list		     */
-
-nodelist_t* nodelist_remove (nodelist_t *list, nodelist_t *elem)
-{
-	nodelist_t *head = nodelist_alloc();
-	head->node = list->node;
-
-	while (list && list->node != elem )
-		list = list->next;
-	
-	if (list && list->node == elem->node){
-		list = elem->next;
-	}
-	
-	return list->node ? list : head;
 }
 
 /*****************************************************************************/
@@ -126,26 +107,10 @@ char nodelist_compare (nodelist_t *list1, nodelist_t *list2)
 }
 
 /*****************************************************************************/ 	//*** NEW FUNCTION ***//
-/* calculate the size of an array of pointers    */
-
-int sizeList(nodelist_t *head)
-{
-    nodelist_t *ptr = head;
-	int list_size = 0;
-    while (ptr)
-	{
-		list_size++;
-        ptr = ptr->next;
-    }
-    return list_size;
-}
-
-/*****************************************************************************/ 	//*** NEW FUNCTION ***//
 /* concatenate two lists and return the join    */
 
 nodelist_t* nodelist_concatenate(nodelist_t *list1, nodelist_t *list2)
 {	
-	//nodelist_t *head = nodelist_alloc();
 	nodelist_t *head = MYcalloc(sizeof(nodelist_t));
 	nodelist_t *first = list1;
 	nodelist_t *second = list2;

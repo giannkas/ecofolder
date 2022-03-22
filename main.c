@@ -81,14 +81,6 @@ int main (int argc, char **argv)
 	net = read_pep_net(llnet);
 	nc_static_checks(net,stoptr_name);
 
-	place_t *plr = net->places;
-	while (plr){
-		//printf("%s -> ", plr->name);
-		plr = plr->next;
-	}
-	//printf("\n");
-	
-
 	/* Reset set of the transitions */
 	printf("Reset set of the transitions\n");
 	trans_t *trr = net->transitions;

@@ -1,6 +1,6 @@
-These are the sources for Mole, version 1.1.0 (28.04.2014).
+These are the sources for Ecofolder, version 1.1.0 (28.04.2014).
 
-Copyright (C) 1993-2014 Stefan Römer, Stefan Schwoon
+Copyright (C) 1993-2014 Stefan Rï¿½mer, Stefan Schwoon
 
 ############################################################################
 
@@ -20,8 +20,8 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA 02111-1307, USA
 
 ############################################################################
 
-The homepage of Mole is at
-<http://www.fmi.uni-stuttgart.de/szs/tools/mole>.
+The homepage of Ecofolder is at
+<http://www.fmi.uni-stuttgart.de/szs/tools/ecofolder>.
 
 Installation: Typing "make" in the directory with the sources should
 do the trick. You can place the resulting executable in whichever
@@ -29,26 +29,26 @@ directory you want.
 
 ############################################################################
 
-This program implements the Esparza/Römer/Vogler unfolding algorithm for
+This program implements the Esparza/Rï¿½mer/Vogler unfolding algorithm for
 low-level Petri nets (see [ERV02]). It is designed to be compatible with
 the tools in the PEP project [Ste01] and with the Model-Checking Kit [SSE03]
 - its input is a low level Petri net in PEP's .ll_net format, and its output
 is the resulting unfolding in the .mci format also used in the PEP tools.
 
-This tool represents an overhaul of Stefan Römer's ERVunfold tool (which,
+This tool represents an overhaul of Stefan Rï¿½mer's ERVunfold tool (which,
 in turn, was an enhancement of the EVunfold tool from PEP). It is much
 smaller and does not have the vast set of options that ERVunfold has;
 in exchange, this tool is usually somewhat faster than ERVunfold. The
-default set of options is to use the Esparza/Römer/Vogler unfolding and
+default set of options is to use the Esparza/Rï¿½mer/Vogler unfolding and
 not to compute global configurations, i.e. running
 
-	mole some.ll_net
+	ecofolder some.ll_net
 
 should be equivalent to
 
 	ERVunfold some.ll_net -m=some.mci -c -n=1 -@@
 
-Calling Mole without any argument yields a usage summary.
+Calling Ecofolder without any argument yields a usage summary.
 Currently, there are just two options:
 
 -m <some.filename>
@@ -73,7 +73,7 @@ Currently, there are just two options:
 
 As of version 1.0.5, the distribution contains an additional utility
 called mci2dot. The input of this tool is an .mci file (as produced
-by mole), and its output can be processed by the dot tool from the
+by ecofolder), and its output can be processed by the dot tool from the
 Graphviz package (http://www.research.att.com/sw/tools/graphviz/) in
 order to visualise the unfolding. Calling
 
@@ -86,11 +86,11 @@ to standard output.
 
 Related publications:
 
-[ERV02] Javier Esparza, Stefan Römer, and Walter Vogler. An improvement of
+[ERV02] Javier Esparza, Stefan Rï¿½mer, and Walter Vogler. An improvement of
 	McMillan's unfolding algorithm. Formal Methods in System Design,
 	20:285-310, 2002.
 
-[SSE03] Claus Schröter, Stefan Schwoon, and Javier Esparza. The Model-Checking
+[SSE03] Claus Schrï¿½ter, Stefan Schwoon, and Javier Esparza. The Model-Checking
 	Kit. In Wil van der Aalst and Eike Best, editors, Applications and
 	Theory of Petri Nets 2003, volume 2679 of Lecture Notes in Computer
 	Science, pages 463-472. Springer, June 2003. See also

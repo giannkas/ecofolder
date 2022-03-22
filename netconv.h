@@ -104,8 +104,6 @@ extern trans_t* nc_create_transition (net_t*);
 extern void nc_create_arc (struct nodelist_t**,struct nodelist_t**,void*,void*);
 extern void nc_compute_sizes (net_t*);
 extern void nc_static_checks (net_t*,char*);
-extern int nc_same_condition (cond_t*, int);
-extern int nc_check_unmarked_initial_marking (cond_t*, char*);
 
 /*****************************************************************************/
 /* declarations from nodelist.c						     */
@@ -121,10 +119,8 @@ extern nodelist_t* nodelist_push (nodelist_t**list,void*);
 extern nodelist_t* nodelist_insert (nodelist_t**,void*e);
 extern void nodelist_delete (nodelist_t*);
 extern char nodelist_compare (nodelist_t*, nodelist_t*);
-extern int sizeList(nodelist_t *);
 extern nodelist_t* nodelist_concatenate(nodelist_t *, nodelist_t *);			//*** NEW  ***//
 extern int nodelist_find (nodelist_t *, void *);
-nodelist_t* nodelist_remove (nodelist_t *, nodelist_t *);
 
 /****************************************************************************/
 /* declarations for readpep.c						    */

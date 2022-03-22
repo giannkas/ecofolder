@@ -39,11 +39,9 @@ void pe_init (nodelist_t *m0)
 	pe_conds = MYmalloc((net->maxpre + net->maxres) * sizeof(place_t*));
 	pe_combs = MYmalloc((net->maxpre + net->maxres) * sizeof(pe_comb_t));
 
-	//printf("net->maxpre: %d, net->maxres: %d\n", net->maxpre, net->maxres);
 	/* determine size of initial marking */
 	for (i = 0; m0; m0 = m0->next) i++;
 	pe0_conflicts = MYcalloc((i + 8) / 8);
-	//printf("pe0_conflicts: %u, i: %d\n", *pe0_conflicts, i);
 }
 
 void pe_free (pe_queue_t *qu)
@@ -222,42 +220,23 @@ void pe (cond_t *co)
 			compat_conds = &(curr_comb->start);
 			cocoptr = co->co_common.conds - 1;
 			while (*++cocoptr){
-				/* if (!strcmp(tr->name, "r4")){
-					printf("Common: Rule 4 is here in the post.re.set of the place %s and condition %d\n", pl->name, co->num);
-					printf("cocoptr corresponds to this place %s\n", (*cocoptr)->origin->name);
-					printf("second place corresponds to this place %s\n", pl2->name);
-				} */
+				
 				if ((*cocoptr)->origin == pl2){
 					
 					if (((*cocoptr)->token && nodelist_find(tr->preset, (*cocoptr)->origin)) ||
 						(nodelist_find(tr->reset, (*cocoptr)->origin))
 					)
 						nodelist_push(compat_conds,*cocoptr);
-					else{
-						printf("it fails in common with condition %s number: %d\n", pl->name, co->num);
-						/* printf("cocoptr->token: %d\n", (*cocoptr)->token);
-						printf("cocoptr->name: %s num: %d\n", (*cocoptr)->origin->name, (*cocoptr)->num);
-						printf("tr->name: %s\n", tr->name);
-						printf("nodelist_find in preset: %d\n", nodelist_find(tr->preset, (*cocoptr)->origin));
-						printf("nodelist_find in reset: %d\n", nodelist_find(tr->reset, (*cocoptr)->origin)); */
-					}
 				}
 			}
 			
 			cocoptr = co->co_private.conds - 1;
-			while (*++cocoptr){
-				/* if (strcmp(tr->name, "r4") == 0){
-					printf("Private: Rule 4 is here in the post.re.set of the place %s and condition %d\n", pl->name, co->num);
-					printf("cocoptr corresponds to this place %s\n", (*cocoptr)->origin->name);
-					printf("second place corresponds to this place %s\n", pl2->name);
-				} */
+			while (*++cocoptr){				
 				if ((*cocoptr)->origin == pl2){
 					if (((*cocoptr)->token && nodelist_find(tr->preset, (*cocoptr)->origin)) ||
 						(nodelist_find(tr->reset, (*cocoptr)->origin))
 					)
 						nodelist_push(compat_conds,*cocoptr);
-					else
-						printf("it fails in private with condition %s number: %d\n", pl->name, co->num);
 				}
 			}
 			
@@ -266,10 +245,8 @@ void pe (cond_t *co)
 
 			curr_comb->current = curr_comb->start;
 			(++curr_comb)->start = NULL;
-			//co_reset = NULL;
 			
 		}
-		
 		
 		/* find all non-conflicting combinations in the comb */
 		curr_comb = pe_combs;
@@ -282,7 +259,7 @@ void pe (cond_t *co)
 				for (curr_comb = pe_combs; curr_comb->start;
 						curr_comb++)
 					*++co_ptr = curr_comb->current->node;
-				pe_insert(tr); // CHECK pe_insert!!
+				pe_insert(tr);
 				curr_comb--;
 			}
 			else if (!pe_conflict(curr_comb))

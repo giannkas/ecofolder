@@ -438,10 +438,10 @@ t_blockinfo netblocks[] =
 	  { "PL",  TB_MANDATORY, TB_BLOCK, placefields },
 	  { "TR",  TB_MANDATORY, TB_BLOCK, transfields },
 	  { "PTR", TB_OPTIONAL,  TB_BLOCK, transfields+1 },
-	  { "RD",  TB_OPTIONAL, TB_BLOCK, arcfields },		//*** NEW  ***//
+	  { "RD",  TB_OPTIONAL, TB_BLOCK, arcfields },
 	  { "TP",  TB_MANDATORY, TB_BLOCK, arcfields },
 	  { "PT",  TB_MANDATORY, TB_BLOCK, arcfields },
-	  { "RS",  TB_OPTIONAL, TB_BLOCK, arcfields },		//*** NEW  ***//
+	  { "RS",  TB_OPTIONAL, TB_BLOCK, arcfields },
 	  { "PTP", TB_OPTIONAL,  TB_BLOCK, arcfields },
 	  { "PPT", TB_OPTIONAL,  TB_BLOCK, arcfields },
 	  { "TX",  TB_OPTIONAL,  TB_BLOCK, textfields },
@@ -547,8 +547,6 @@ int insert_arc()
 		tp = rd;
 	pl = tp? rd_co->y : rd_co->x;
 	tr = tp? rd_co->x : rd_co->y;
-	
-	//printf("pl %d and tr %d\n", pl, tr);
 
 	if (!tr || (tr > AnzTrNamen) || !TrArray[tr])
 		nc_error("arc: incorrect transition identifier");
@@ -635,41 +633,6 @@ net_t* read_pep_net(char *PEPfilename)
 	nc_compute_sizes(rd_net);
 
 	return rd_net;
-}
-
-net_t* reset_complement(net_t *net){
-
-	place_t *pl, *pl2;
-	nodelist_t *list;
-	nodelist_t *rsttr = NULL;	
-	
-	for (pl = net->places; pl; pl=pl->next)
-	{
-		rsttr = pl->reset;
-		if (rsttr){			
-			pl2 = nc_create_place(net);
-			pl2->name = strdup(pl->name);
-			strcat(pl2->name, "_rs");
-			pl2->marked = pl->marked ? 0 : 1;
-
-			for (list = pl->preset; list; list = list->next)
-				if (!nodelist_find(pl->postset, list->node))
-					nc_create_arc(&(pl2->postset),&(((trans_t*)(list->node))->preset),
-						pl2,((trans_t*)(list->node)));
-			for (list = pl->postset; list; list = list->next)
-				if (!nodelist_find(pl->preset, list->node))
-					nc_create_arc(&(((trans_t*)(list->node))->postset), &(pl2->preset),
-						((trans_t*)(list->node)),pl2);
-			for (list = pl->reset; list; list = list->next){
-				nc_create_arc(&(((trans_t*)(list->node))->reset), &(pl2->reset),
-					((trans_t*)(list->node)),pl2);
-				nc_create_arc(&(((trans_t*)(list->node))->postset), &(pl2->preset),
-					((trans_t*)(list->node)),pl2);
-			}
-		}
-	}
-
-	return net;
 }
 
 char* pr_encoding(char* in_file){

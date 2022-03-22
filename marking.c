@@ -32,7 +32,6 @@ int marking_hash (nodelist_t *marking)
 	unsigned int val = 0, i = 0;
 	while (marking)
 	{
-		//printf("marking place: %s\n", ((place_t*)(marking->node))->name);
 		val += ((place_t*)(marking->node))->num * ++i;
 		marking = marking->next;
 	}
@@ -91,19 +90,10 @@ int add_marking (nodelist_t *marking, event_t *ev)
 nodelist_t* marking_initial ()
 {
 	place_t *pl;
-	trans_t *tr;
-	nodelist_t *list = NULL, *respl = NULL;
+	nodelist_t *list = NULL;
 
 	for (pl = net->places; pl; pl = pl->next)
 		if (pl->marked) nodelist_insert(&list,pl);
-	
-	/* for (tr = net->transitions; tr; tr = tr->next){
-		for (respl = tr->reset; respl; respl = respl->next){
-			//if (strcmp(((place_t*)(respl->node))->name, "P0") != 0)
-				//printf("THIS PLACE WAS ADDED TO INITIAL MARKING: %s\n", ((place_t*)(respl->node))->name);
-			nodelist_insert(&list,((place_t*)(respl->node)));
-		}
-	} */
 	
 	return list;
 }

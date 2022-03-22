@@ -48,27 +48,6 @@ int strtoint(char *num) {
     return result;
 }
 
-void revstr(char *str){    
-    int i, len, tmp;  
-    len = strlen(str);
-      
-    for (i = 0; i < len/2; i++)  
-    {  
-        tmp = str[i];  
-        str[i] = str[len-i-1];  
-        str[len-i-1] = tmp;  
-    }  
-}
-
-void flip(char *str, char oldsym, char newsym){
-    int i, len;  
-    len = strlen(str);
-      
-    for (i = 0; i < len && str[i] != oldsym; i++);
-    if (i < len && str[i] == oldsym)
-        str[i] = newsym;
-}
-
 char* ftokstr(char *str, int ins, char delim)
 {    
     int len = strlen(str), i = 0, c_delim = 0;
