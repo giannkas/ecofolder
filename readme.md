@@ -20,9 +20,9 @@ evince termites_pr_eg.pdf
 ## Overview
 
 This program implements the Esparza/Römer/Vogler unfolding algorithm for
-low-level Petri nets (see <cite>[ERV02]</cite>). It is designed to be compatible with
-the tools in the PEP project [Ste01] and with the Model-Checking Kit [SSE03]
-- its input is a low level Petri net in PEP's .ll_net format, and its output
+low-level Petri nets (see [ERV02](#erv02)). It is designed to be compatible with
+the tools in the PEP project [Ste01](#ste01) and with the Model-Checking Kit [SSE03](#sse03)
+. Its input is a low level Petri net in PEP's .ll_net format, and its output
 is the resulting unfolding in the .mci format also used in the PEP tools.
 
 ## Quick Start
@@ -55,9 +55,9 @@ called `mci2dot`. The input of this tool is an .mci file (as produced
 by ecofolder), and its output can be processed by the [**DOT language**](https://graphviz.org/doc/info/lang.html) in
 order to visualise the unfolding. Calling
 
-	```console
-	mci2dot some.mci
-	```
+```console
+mci2dot some.mci
+```
 
 will cause `mci2dot` to read the file some.mci and print the results
 to standard output.
@@ -88,51 +88,50 @@ RS
 
 Explanation:
 ```python
-	# Header
-		PEP 
-		PetriBox
-		FORMAT_N2
-	# Tag for places, a M1 at the end of each place name is added to point out is marked for the initial marking.
-	PL
-	"place_name"M1 
-	...
-	# Tag for transitions
-	TR
-	"transition_name"
-	...
-	# Tag for arcs going from transitions to places that produce. It should be interpreted as the first transition produces a token in the second place, i.e., first_transition < second_place.
-	TP
-	1<2
-	...
-	### Tag for arcs going from places to transitions that consume. It should be interpreted as the first transition consumes a token in the first place, i.e., first_place > first_transition.
-	PT
-	1>1
-	...
-	### Tag for arcs going from places to transitions that reset. It should be interpreted as the second transition resets all tokens (if any) in the second place, i.e., second_place > second_transition.
-	RS
-	2>2
-	...
+# Header
+PEP 
+PetriBox
+FORMAT_N2
+# Tag for places, a M1 at the end of each place name is added to point out is marked for the initial marking.
+PL
+"place_name"M1 
+...
+# Tag for transitions
+TR
+"transition_name"
+...
+# Tag for arcs going from transitions to places that produce. It should be interpreted as the first transition produces a token in the second place, i.e., first_transition < second_place.
+TP
+1<2
+...
+### Tag for arcs going from places to transitions that consume. It should be interpreted as the first transition consumes a token in the first place, i.e., first_place > first_transition.
+PT
+1>1
+...
+### Tag for arcs going from places to transitions that reset. It should be interpreted as the second transition resets all tokens (if any) in the second place, i.e., second_place > second_transition.
+RS
+2>2
+...
 ```
 ## References
 
 Related publications:
 
-[ERV02]: Javier Esparza, Stefan Römer, and Walter Vogler. An improvement of
+<a id=erv02>[ERV02]</a>: Javier Esparza, Stefan Römer, and Walter Vogler. An improvement of
 	McMillan's unfolding algorithm. Formal Methods in System Design,
 	20:285-310, 2002.
 
-[SSE03] Claus Schröter, Stefan Schwoon, and Javier Esparza. The Model-Checking
+<a id=sse03>[SSE03]</a> Claus Schröter, Stefan Schwoon, and Javier Esparza. The Model-Checking
 	Kit. In Wil van der Aalst and Eike Best, editors, Applications and
 	Theory of Petri Nets 2003, volume 2679 of Lecture Notes in Computer
-	Science, pages 463-472. Springer, June 2003. See also
-	<https://doi.org/10.1007/3-540-44919-1_29>
+	Science, pages 463-472. Springer, June 2003. [See also](https://doi.org/10.1007/3-540-44919-1_29)
 
-[Ste01] C. Stehno. PEP Version 2.0. Tool demonstration ICATPN 2001.
+<a id=ste01>[Ste01]</a> C. Stehno. PEP Version 2.0. Tool demonstration ICATPN 2001.
 	Newcastle upon Tyne 2001.
 
 ## History
 
-Previous versions of Ecofolder was [**Mole - A Petri Net Unfolder**](http://www.lsv.fr/~schwoon/tools/mole/), then you can check for a more detailed version history in Mole's documentation.
+Previous versions of Ecofolder are [**Mole - A Petri Net Unfolder**](http://www.lsv.fr/~schwoon/tools/mole/), then you can check for a more detailed version history in Mole's documentation.
 
 Version 1.0.0 (22.03.2022)
 	First public release.
