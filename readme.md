@@ -21,7 +21,7 @@ evince termites_pr_eg.pdf
 
 This program implements the Esparza/Römer/Vogler unfolding algorithm for
 low-level Petri nets (see [ERV02](#erv02)). It is designed to be compatible with
-the tools in the PEP project [Ste01](#ste01) and with the Model-Checking Kit [SSE03](#sse03)
+the tools in the PEP project [STE01](TE) and with the Model-Checking Kit [SSE03](#sse03)
 . Its input is a low level Petri net in PEP's .ll_net format, and its output
 is the resulting unfolding in the .mci format also used in the PEP tools.
 
@@ -124,9 +124,9 @@ Related publications:
 <a id=sse03>[SSE03]</a> Claus Schröter, Stefan Schwoon, and Javier Esparza. The Model-Checking
 	Kit. In Wil van der Aalst and Eike Best, editors, Applications and
 	Theory of Petri Nets 2003, volume 2679 of Lecture Notes in Computer
-	Science, pages 463-472. Springer, June 2003. [See also](https://doi.org/10.1007/3-540-44919-1_29)
+	Science, pages 463-472. Springer, June 2003. [See also.](https://doi.org/10.1007/3-540-44919-1_29)
 
-<a id=ste01>[Ste01]</a> C. Stehno. PEP Version 2.0. Tool demonstration ICATPN 2001.
+<a idTE>TE]</a> C. Stehno. PEP Version 2.0. Tool demonstration ICATPN 2001.
 	Newcastle upon Tyne 2001.
 
 ## History
