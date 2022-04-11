@@ -6,16 +6,12 @@
 #include "netconv.h"
 #include "unfold.h"
 
-/* RS
-1>2
-3>1 */
-
 /*****************************************************************************/
 
 void usage(char *myname)
 {
 	fprintf(stderr,
-		"%s -- low level net unfolder\n\n"
+		"%s -- low level reset net unfolder\n\n"
 		"Usage: %s [options] <LLnetfile> [FileOptions]\n\n"
 
 	"     Options:\n"
@@ -29,7 +25,7 @@ void usage(char *myname)
 	"Unless specified otherwise, all filenames will default to\n"
 	"the basename of <LLnetfile> plus appropriate extensions.\n\n"
 
-	"Version 1.1.0 (28.04.2014)\n", myname, myname);
+	"Version 1.0.0 (22.03.2022)\n", myname, myname);
 
 	exit(1);
 }
