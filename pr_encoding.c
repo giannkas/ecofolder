@@ -110,11 +110,11 @@ char* pr_encoding(char* in_file){
 
             /* Print into the output file the places that come from the input file plus
             those that were replicated (print the content from buffer_pl) */
-            new_places = 1;            
+            new_places = 1;
 			fseek( r_pointer, 0, SEEK_SET );
             while(fgets(d_read, MAX_READ_PLACES, r_pointer) != NULL && !strstr(d_read, "TR")){
                 token = ftokstr(d_read, 1, '\"');
-                if(token){                                        
+                if(token){
                     if(read_place_arcs[new_places] > 1){
                         sprintf(buf_arcs, "\"%s_%d\"%s", token, 1, ltokstr(d_read, 1, '\"'));
                         fprintf(w_pointer, "%s", buf_arcs);
