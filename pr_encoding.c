@@ -6,7 +6,7 @@
 #include "common.h"
 
 #define MAX_LINE_SIZE 500
-#define MAX_READ_PLACES 50
+#define MAX_READ_PLACES 100
 
 /*****************************************************************************/
 
@@ -37,7 +37,7 @@ char* pr_encoding(char* in_file){
   char out_file[MAX_READ_PLACES] = {0};
   char *token, *tmp, *tmp1, *token2;    
   int header = 0, places = 0, trans = 0, new_places = 0, 
-    counter_pl = 0, num_tmp, rd_arcs = 0, names = 0;
+    counter_pl = 0, num_tmp, rd_arcs = 0, names = 1;
 
   // Open the existing file using fopen()
   // in read mode using "r" attribute
@@ -57,10 +57,10 @@ char* pr_encoding(char* in_file){
       else if (places == header) header++;
       if (d_read[0] == 'T' && d_read[1] == 'R');
       else if (trans == places){
-          if( d_read[0] == '\"'){
-            strcpy(read_place_names[names], d_read);
-            names++;
-          }
+        if( d_read[0] == '\"'){
+          strcpy(read_place_names[names], d_read);
+          names++;
+        }
         places++;
       }
       trans++;
@@ -77,8 +77,7 @@ char* pr_encoding(char* in_file){
     if(d_read[0] == 'R' && d_read[1] == 'D'){
       strcat(out_file, ftokstr(in_file, 0, '.'));
       strcat(out_file, "_pr.ll_net");			
-      w_pointer = fopen(out_file, "w"); // if we have reset arcs then create a new file.
-      int n_ctxtr = 1;
+      w_pointer = fopen(out_file, "w"); // if we have reset arcs then create a new file.      
       char buf_arcs[MAX_READ_PLACES];
       int read_place_arcs[MAX_READ_PLACES] = {0};
       char buffer_pl[MAX_LINE_SIZE] = {0};
@@ -89,22 +88,16 @@ char* pr_encoding(char* in_file){
       while(fgets(d_read, MAX_READ_PLACES, r_pointer) != NULL && isdigit(d_read[0])){
         strcat(buffer_rd, d_read);
         token = strtok(d_read, ">");
-        if(n_ctxtr > 1 && !strcmp(token, tmp)){
-            num_tmp = strtol(token, &token2, 10)-1;
-            //printf("read_place_names[num_tmp] is: %s", read_place_names[num_tmp]);
-            sprintf(buf_arcs, "\"%s_%d\"%s,", 
-              ftokstr(read_place_names[num_tmp], 1, '\"'), n_ctxtr, 
-                ltokstr(read_place_names[num_tmp], 1, '\"'));
-            strcat(buffer_pl, buf_arcs);
-            new_places++;
-            //read_place_arcs[strtoint(token)] = n_ctxtr;
-            read_place_arcs[strtol(token, &token2, 10)] = n_ctxtr;
-        }
-        else{
-          tmp = strdup(token);
-          n_ctxtr = 1;
-        }
-        n_ctxtr++;
+        num_tmp = strtol(token, &token2, 10);
+        read_place_arcs[num_tmp]++;
+        if(read_place_arcs[num_tmp] > 1){
+          //printf("read_place_names[num_tmp] is: %s", read_place_names[num_tmp]);
+          sprintf(buf_arcs, "\"%s_%d\"%s,", 
+            ftokstr(read_place_names[num_tmp], 1, '\"'), read_place_arcs[num_tmp], 
+              ltokstr(read_place_names[num_tmp], 1, '\"'));
+          strcat(buffer_pl, buf_arcs);
+          new_places++;
+        }        
       }
 
       /* Print into the output file the places that come from the input file plus
@@ -214,7 +207,7 @@ char* pr_encoding(char* in_file){
         while (strlen(token) != 0){
           tmp1 = ftokstr(token, 0, '>');
           if (strcmp(tmp1, tmp) != 0)
-            fprintf(w_pointer, "\n%s\n", token);
+            fprintf(w_pointer, "%s\n", token);
           else{
             //num_tmp = strtoint(tmp1);
             num_tmp = strtol(tmp1, &token2, 10);
