@@ -38,14 +38,14 @@ void nc_warning (const char* msg, ...)
 }
 
 int strtoint(char *num) {
-    int  i, len;
-    int result = 0;
+  int  i, len;
+  int result = 0;
 
-    len = strlen(num);
+  len = strlen(num);
 
-    for(i=0; i<len; i++)
-        result = result * 10 + ( num[i] - '0' );
-    return result;
+  for(i=0; i<len; i++)
+    result = result * 10 + ( num[i] - '0' );
+  return result;
 }
 
 char* ftokstr(char *str, int ins, char delim)
