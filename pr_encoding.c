@@ -216,7 +216,7 @@ char* pr_encoding(char* in_file){
         read_place_written[i] = -1;
       if((strstr(d_read, "RS")) || fgets(d_read, MAX_READ_PLACES, r_pointer) == NULL ){
         printf("d_read is: %s\n", d_read);
-        if (d_read == NULL) fprintf(w_pointer, "\n");
+        if (fgets(d_read, MAX_READ_PLACES, r_pointer) == NULL) fprintf(w_pointer, "\n");
         rd_arcs = 0;
         token = ftokstr(buffer_rd, rd_arcs, '\n'); tmp = "";
         tmp1 = ftokstr(token, 0, '>');
