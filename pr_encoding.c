@@ -137,8 +137,7 @@ char* pr_encoding(char* in_file){
       }
 
       /* TP SECTION */
-      /* Any transition t producing p in N produces p_i in N', i.e., p_i in postset(t)*/
-      new_places = places;
+      /* Any transition t producing p in N produces p_i in N', i.e., p_i in postset(t)*/      
       if(strstr(d_read, "TR")){
         fprintf(w_pointer, "%s", d_read);        
         while(fgets(d_read, MAX_READ_PLACES, r_pointer) && !strstr(d_read, "PT")){
@@ -192,8 +191,7 @@ char* pr_encoding(char* in_file){
       }
 
       /* PT SECTION */
-      /* Any transition t consuming p in N consumes p_i in N', i.e., p_i in preset(t)*/
-      new_places = places;
+      /* Any transition t consuming p in N consumes p_i in N', i.e., p_i in preset(t)*/      
       if(strstr(d_read, "PT")){
         fprintf(w_pointer, "%s", d_read);
         while(fgets(d_read, MAX_READ_PLACES, r_pointer) != NULL && !strstr(d_read, "RS")){
