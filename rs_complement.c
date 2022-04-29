@@ -1,0 +1,270 @@
+#include <stdio.h>
+#include <stdlib.h>
+#include <string.h>
+#include <ctype.h>
+
+#include "common.h"
+
+#define MAX_LINE_SIZE 500
+#define MAX_RESET_PLACES 100
+#define MAX_REPLICATED_PLACES_PER_PLACE 50
+
+/*****************************************************************************/
+
+void usage(char *myname)
+{
+	fprintf(stderr,
+		"%s -- reset complemen encoding for reset nets\n\n"
+		"Usage: %s <LLnetfile> \n\n"
+
+	"Unless specified otherwise, all filenames will default to\n"
+	"the basename of <LLnetfile> plus appropriate extensions.\n\n"
+
+	"Version 1.0.0 (29.04.2022)\n", myname, myname);
+
+	exit(1);
+}
+
+/*****************************************************************************/
+
+
+char* rs_complement(char* in_file){
+  // Declare the file pointer
+  FILE *r_pointer ;
+  FILE *w_pointer = NULL;
+    
+  // Variables that come along
+  char d_read[MAX_RESET_PLACES];
+  char out_file[MAX_RESET_PLACES] = {0};  
+  char *token, *tmp, *tmp1, *token2;    
+  int header = 0, places = 0, trans = 0, complement_places = 0, num_tmp, num_tmp1, names = 1;
+
+  // Open the existing file using fopen()
+  // in read mode using "r" attribute
+  r_pointer = fopen(in_file, "r") ;
+    
+  // Check if this r_pointer is null
+  // which maybe if the file does not exist
+  if ( r_pointer == NULL ){
+    printf( "%s file failed to open.", in_file ) ;
+  }
+  else
+  {
+    char place_names[MAX_RESET_PLACES][MAX_RESET_PLACES] = {0};
+    /* Read up to RD label and get number of transitions and places*/
+    while(fgets(d_read, MAX_RESET_PLACES, r_pointer) != NULL && !strstr(d_read, "RD")){
+      if (d_read[0] == 'P' && d_read[1] == 'L');
+      else if (places == header) header++;
+      if (d_read[0] == 'T' && d_read[1] == 'R');
+      else if (trans == places){
+        if( d_read[0] == '\"'){
+          strcpy(place_names[names], d_read);
+          names++;
+        }
+        places++;
+      }
+      trans++;
+    }
+    /* Compute header lines, number of places and transitions  */
+    header++;
+    places = places - header;
+    header++;
+    trans = trans - places - header;
+    printf("header: %d\n", header);
+    printf("places: %d\n", places);
+    printf("trans: %d\n", trans);
+    while(fgets(d_read, MAX_RESET_PLACES, r_pointer) != NULL && !strstr(d_read, "RS")){}
+    if(strstr(d_read, "RS")){
+      strcat(out_file, ftokstr(in_file, 0, '.'));
+      strcat(out_file, "_rs.ll_net");			
+      w_pointer = fopen(out_file, "w"); // if we have reset arcs then create a new file.      
+      char buf_arcs[MAX_RESET_PLACES];
+      int complement_place[places];      
+      int presets[places][places];
+      int postsets[places][trans];
+      int resets[places][trans];      
+      
+      for (size_t i = 1; i <= places; i++){
+        complement_place[i] = 0;
+        //printf("complement_place[i] is: %d\n", complement_place[i]);
+        for (size_t j = 1; j <= trans; j++){
+          presets[i][j] = 0;
+          postsets[i][j] = 0;
+          resets[i][j] = 0;
+        }
+      }
+      
+      char buffer_pl[MAX_LINE_SIZE] = {0};      
+
+      /* Check for those places that have at least one reset arc and make its respective
+        complement in buffer_pl which will be pasted into the output file */
+      while(fgets(d_read, MAX_RESET_PLACES, r_pointer) != NULL && isdigit(d_read[0])){
+        //strcat(buffer_rd, d_read);
+        token = strtok(d_read, ">");
+        //printf("token is: %s\n", token);
+        num_tmp = strtol(token, &token2, 10);
+        //complement_place[num_tmp]++;
+        if(complement_place[num_tmp] == 0){
+          sprintf(buf_arcs, "\"%s%s\",", 
+            ftokstr(place_names[num_tmp], 1, '\"'), "¬");
+          strcat(buffer_pl, buf_arcs);
+          complement_places++;
+          complement_place[num_tmp] = 1;          
+        }
+      }
+
+      /* Print into the output file the places that come from the input file plus
+      those that were replicated (print the content from buffer_pl) */
+      //complement_places = 1;
+      fseek( r_pointer, 0, SEEK_SET );
+      while(fgets(d_read, MAX_RESET_PLACES, r_pointer) != NULL && !strstr(d_read, "TR")){
+        fprintf(w_pointer, "%s", d_read);
+      }
+      if (strstr(d_read, "TR")){
+        token = strtok(buffer_pl, ",");
+        while (token != NULL){
+          fprintf(w_pointer, "%s", token);
+          token = strtok(NULL, ",");
+        }
+      }
+
+      fseek( r_pointer, 0, SEEK_SET );
+      while(fgets(d_read, MAX_RESET_PLACES, r_pointer) != NULL && !strstr(d_read, "TP")){}
+
+      /* TP SECTION */
+      /* Reading the transitions that are part of the preset set of a place whose reset set is not empty to create its complement*/
+      if(strstr(d_read, "TP")){
+        while(fgets(d_read, MAX_RESET_PLACES, r_pointer) && !strstr(d_read, "PT")){
+          if( strlen(d_read) > 2 && isdigit(d_read[0]) ){
+            tmp1 = ltokstr(d_read, 0, '<');
+            tmp = ftokstr(d_read, 0, '<');
+            num_tmp = strtol(tmp, &token2, 10);
+            num_tmp1 = strtol(tmp1, &token2, 10);
+            if(complement_place[num_tmp1] == 1)
+              presets[num_tmp1][num_tmp] = num_tmp;
+          }
+        }
+      }
+
+      /* PT SECTION */
+      /* Reading the transitions that are part of the postset set of a place whose reset set is not empty to create its complement*/
+      if(strstr(d_read, "PT")){        
+        while(fgets(d_read, MAX_RESET_PLACES, r_pointer) && !strstr(d_read, "RS")){
+          if( strlen(d_read) > 2 && isdigit(d_read[0]) ){
+            tmp = ftokstr(d_read, 0, '>');
+            tmp1 = ltokstr(d_read, 0, '>');
+            num_tmp = strtol(tmp, &token2, 10);
+            num_tmp1 = strtol(tmp1, &token2, 10);
+            if(complement_place[num_tmp] == 1)
+              postsets[num_tmp][num_tmp1] = num_tmp1;
+          }
+        }
+      }
+
+      /* RS SECTION */
+      /* Reading the transitions that are part of the reset set of a place to create its complement*/
+      if(strstr(d_read, "RS")){        
+        while(fgets(d_read, MAX_RESET_PLACES, r_pointer)){
+          if( strlen(d_read) > 2 && isdigit(d_read[0]) ){
+            tmp = ftokstr(d_read, 0, '>');
+            tmp1 = ltokstr(d_read, 0, '>');
+            num_tmp = strtol(tmp, &token2, 10);
+            num_tmp1 = strtol(tmp1, &token2, 10);
+            if(complement_place[num_tmp] == 1)
+              resets[num_tmp][num_tmp1] = num_tmp1;
+          }
+        }
+      }
+
+      /* making complement places */
+      fseek( r_pointer, 0, SEEK_SET );
+      while(fgets(d_read, MAX_RESET_PLACES, r_pointer) != NULL && !strstr(d_read, "TP")){}
+
+      if(strstr(d_read, "TP")){
+        fprintf(w_pointer, "\n%s", d_read);
+        int i = 1;
+        while(fgets(d_read, MAX_RESET_PLACES, r_pointer) && !strstr(d_read, "PT")){
+          if( strlen(d_read) > 2 && isdigit(d_read[0]) ){
+            tmp1 = ltokstr(d_read, 0, '<');            
+            num_tmp1 = strtol(tmp1, &token2, 10);
+            
+            if (complement_place[num_tmp1] == 1){
+              for (size_t k = 1; k <= trans; k++){
+                if(postsets[num_tmp1][k] != 0 && postsets[num_tmp1][k] != presets[num_tmp1][k]){
+                  sprintf(buf_arcs, "%d<%d", postsets[num_tmp1][k], places+i);
+                  fprintf(w_pointer, "%s\n", buf_arcs);                  
+                }
+                if(resets[num_tmp1][k] != 0 && resets[num_tmp1][k] != presets[num_tmp1][k] && resets[num_tmp1][k] != postsets[num_tmp1][k]){
+                  sprintf(buf_arcs, "%d<%d", resets[num_tmp1][k], places+i);
+                  fprintf(w_pointer, "%s\n", buf_arcs);                  
+                }
+              }
+              complement_place[num_tmp1] = -1;
+              i++;
+            }
+            fprintf(w_pointer, "%s", d_read);
+          }
+        }        
+      }
+
+      if(strstr(d_read, "PT")){
+        fprintf(w_pointer, "%s", d_read);
+        int i = 1;
+        while(fgets(d_read, MAX_RESET_PLACES, r_pointer) && !strstr(d_read, "RS")){
+          if( strlen(d_read) > 2 && isdigit(d_read[0]) ){
+            tmp = ftokstr(d_read, 0, '>');            
+            num_tmp = strtol(tmp, &token2, 10);
+            
+            if (complement_place[num_tmp] == -1){
+              for (size_t k = 1; k <= trans; k++){
+                if(presets[num_tmp][k] != 0 && presets[num_tmp][k] != postsets[num_tmp][k] && presets[num_tmp][k] != resets[num_tmp][k]){
+                  sprintf(buf_arcs, "%d>%d", places+i, presets[num_tmp][k]);
+                  fprintf(w_pointer, "%s\n", buf_arcs);                  
+                }                
+              }
+              complement_place[num_tmp] = 1;
+              i++;
+            }
+            fprintf(w_pointer, "%s", d_read);
+          }
+        }
+      }
+
+      if(strstr(d_read, "RS")){
+        fprintf(w_pointer, "%s", d_read);
+        int i = 1;
+        while(fgets(d_read, MAX_RESET_PLACES, r_pointer)){
+          if( strlen(d_read) > 2 && isdigit(d_read[0]) ){
+            tmp = ftokstr(d_read, 0, '>');            
+            num_tmp = strtol(tmp, &token2, 10);
+            
+            if (complement_place[num_tmp] == 1){
+              for (size_t k = 1; k <= trans; k++){
+                if(resets[num_tmp][k] != 0){
+                  sprintf(buf_arcs, "%d>%d", places+i, resets[num_tmp][k]);
+                  fprintf(w_pointer, "%s\n", buf_arcs);                  
+                }                
+              }
+              complement_place[num_tmp] = -1;
+              i++;
+            }
+            fprintf(w_pointer, "%s", d_read);
+          }
+        }
+      }
+    }
+    fclose(r_pointer);
+    fclose(w_pointer);
+  }
+  return out_file[0] != '\0' ? out_file : in_file;
+}
+
+int main (int argc, char **argv)
+{
+	if (argc != 2){
+		fprintf(stderr,"usage: rs_encoding <mcifile>\n");
+		exit(1);
+	}
+	rs_complement(argv[1]);
+	exit(0);
+}

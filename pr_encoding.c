@@ -101,8 +101,7 @@ char* pr_encoding(char* in_file){
         token = strtok(d_read, ">");
         num_tmp = strtol(token, &token2, 10);
         read_place_arcs[num_tmp]++;
-        if(read_place_arcs[num_tmp] > 1){
-          //printf("read_place_names[num_tmp] is: %s", read_place_names[num_tmp]);
+        if(read_place_arcs[num_tmp] > 1){          
           sprintf(buf_arcs, "\"%s_%d\"%s,", 
             ftokstr(read_place_names[num_tmp], 1, '\"'), read_place_arcs[num_tmp], 
               ltokstr(read_place_names[num_tmp], 1, '\"'));
