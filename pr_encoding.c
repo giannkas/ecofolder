@@ -75,7 +75,7 @@ char* pr_encoding(char* in_file){
     printf("places: %d\n", places);
     printf("trans: %d\n", trans);
 
-    if(d_read[0] == 'R' && d_read[1] == 'D'){
+    if(strstr(d_read, "RD")){
       strcat(out_file, ftokstr(in_file, 0, '.'));
       strcat(out_file, "_pr.ll_net");			
       w_pointer = fopen(out_file, "w"); // if we have reset arcs then create a new file.      
@@ -244,35 +244,7 @@ char* pr_encoding(char* in_file){
           if(token && read_place_written[num_tmp] == -1){
             read_place_written[num_tmp] = read_place_arcs[num_tmp];}
         }
-      }
-      /* RS SECTION */
-      /* Any transition t reseting p in N resets p_i in N', i.e., p_i in reset(t)*/
-      /* new_places = places;
-      if(strstr(d_read, "RS")){
-        fprintf(w_pointer, "%s", d_read);
-        while(fgets(d_read, MAX_READ_PLACES, r_pointer) != NULL){
-          if( strlen(d_read) > 2 ){
-            tmp1 = ftokstr(d_read, 0, '>');
-            num_tmp = strtol(tmp1, &token2, 10);
-            counter_pl = read_place_arcs[num_tmp]-1;
-            //if (num_tmp == 13)
-            printf("tmp is %s, place %d has those number of read arcs: %d\n"
-              , tmp1, num_tmp, counter_pl);
-            for(int i = 1; i <= counter_pl && counter_pl > 0; i++){
-              num_tmp = new_places + 1;
-              sprintf(buf_arcs, "%d>%s", num_tmp, ltokstr(d_read, 0, '>'));
-              fprintf(w_pointer, "%s", buf_arcs);
-              new_places = new_places + i;
-            }
-          }
-          fprintf(w_pointer, "%s", d_read);
-        }
-      }
-      else{
-        fprintf(w_pointer, "%s", d_read);
-        while(fgets(d_read, MAX_READ_PLACES, r_pointer) != NULL)
-          fprintf(w_pointer, "%s", d_read);
-      } */
+      }      
     }
     fclose(r_pointer) ;
     fclose(w_pointer) ;

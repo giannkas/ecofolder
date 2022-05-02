@@ -7,7 +7,6 @@
 
 #define MAX_LINE_SIZE 500
 #define MAX_RESET_PLACES 100
-#define MAX_REPLICATED_PLACES_PER_PLACE 50
 
 /*****************************************************************************/
 
@@ -79,10 +78,10 @@ char* rs_complement(char* in_file){
       strcat(out_file, "_rs.ll_net");			
       w_pointer = fopen(out_file, "w"); // if we have reset arcs then create a new file.      
       char buf_arcs[MAX_RESET_PLACES];
-      int complement_place[places];      
-      int presets[places][places];
-      int postsets[places][trans];
-      int resets[places][trans];      
+      int complement_place[places+1];      
+      int presets[places+1][trans+1];
+      int postsets[places+1][trans+1];
+      int resets[places+1][trans+1];      
       
       for (size_t i = 1; i <= places; i++){
         complement_place[i] = 0;
@@ -93,7 +92,7 @@ char* rs_complement(char* in_file){
           resets[i][j] = 0;
         }
       }
-      
+            
       char buffer_pl[MAX_LINE_SIZE] = {0};      
 
       /* Check for those places that have at least one reset arc and make its respective
@@ -128,11 +127,13 @@ char* rs_complement(char* in_file){
         }
       }
 
-      fseek( r_pointer, 0, SEEK_SET );
-      while(fgets(d_read, MAX_RESET_PLACES, r_pointer) != NULL && !strstr(d_read, "TP")){}
+      fseek( r_pointer, -strlen(d_read)-1, SEEK_CUR );
+      while(fgets(d_read, MAX_RESET_PLACES, r_pointer) != NULL && !strstr(d_read, "TP")){
+        fprintf(w_pointer, "%s", d_read);
+      }
 
       /* TP SECTION */
-      /* Reading the transitions that are part of the preset set of a place whose reset set is not empty to create its complement*/
+      /* Reading the transitions that are part of the preset set of a place whose reset set is not empty to create later on its complement. This part is just to build the preset of certain places which have not empty reset set*/
       if(strstr(d_read, "TP")){
         while(fgets(d_read, MAX_RESET_PLACES, r_pointer) && !strstr(d_read, "PT")){
           if( strlen(d_read) > 2 && isdigit(d_read[0]) ){
@@ -141,7 +142,7 @@ char* rs_complement(char* in_file){
             num_tmp = strtol(tmp, &token2, 10);
             num_tmp1 = strtol(tmp1, &token2, 10);
             if(complement_place[num_tmp1] == 1)
-              presets[num_tmp1][num_tmp] = num_tmp;
+              presets[num_tmp1][num_tmp] = num_tmp;              
           }
         }
       }
@@ -156,7 +157,7 @@ char* rs_complement(char* in_file){
             num_tmp = strtol(tmp, &token2, 10);
             num_tmp1 = strtol(tmp1, &token2, 10);
             if(complement_place[num_tmp] == 1)
-              postsets[num_tmp][num_tmp1] = num_tmp1;
+              postsets[num_tmp][num_tmp1] = num_tmp1;              
           }
         }
       }
@@ -171,7 +172,7 @@ char* rs_complement(char* in_file){
             num_tmp = strtol(tmp, &token2, 10);
             num_tmp1 = strtol(tmp1, &token2, 10);
             if(complement_place[num_tmp] == 1)
-              resets[num_tmp][num_tmp1] = num_tmp1;
+              resets[num_tmp][num_tmp1] = num_tmp1;              
           }
         }
       }
@@ -179,17 +180,17 @@ char* rs_complement(char* in_file){
       /* making complement places */
       fseek( r_pointer, 0, SEEK_SET );
       while(fgets(d_read, MAX_RESET_PLACES, r_pointer) != NULL && !strstr(d_read, "TP")){}
-
+      
+      /* Constructing the preset of p¬ according to p: pre(p¬) = (post(p) U res(p))\pre(p) */
       if(strstr(d_read, "TP")){
-        fprintf(w_pointer, "\n%s", d_read);
+        fprintf(w_pointer, "%s", d_read);
         int i = 1;
         while(fgets(d_read, MAX_RESET_PLACES, r_pointer) && !strstr(d_read, "PT")){
           if( strlen(d_read) > 2 && isdigit(d_read[0]) ){
             tmp1 = ltokstr(d_read, 0, '<');            
             num_tmp1 = strtol(tmp1, &token2, 10);
-            
             if (complement_place[num_tmp1] == 1){
-              for (size_t k = 1; k <= trans; k++){
+              for (size_t k = 1; k <= trans; k++){                
                 if(postsets[num_tmp1][k] != 0 && postsets[num_tmp1][k] != presets[num_tmp1][k]){
                   sprintf(buf_arcs, "%d<%d", postsets[num_tmp1][k], places+i);
                   fprintf(w_pointer, "%s\n", buf_arcs);                  
@@ -207,6 +208,7 @@ char* rs_complement(char* in_file){
         }        
       }
 
+      /* Constructing the postset of p¬ according to p: post(p¬) = pre(p)\(post(p) U res(p)) */
       if(strstr(d_read, "PT")){
         fprintf(w_pointer, "%s", d_read);
         int i = 1;
@@ -230,12 +232,13 @@ char* rs_complement(char* in_file){
         }
       }
 
+      /* Constructing the reset of p¬ according to p: res(p¬) = res(p) */
       if(strstr(d_read, "RS")){
         fprintf(w_pointer, "%s", d_read);
         int i = 1;
         while(fgets(d_read, MAX_RESET_PLACES, r_pointer)){
           if( strlen(d_read) > 2 && isdigit(d_read[0]) ){
-            tmp = ftokstr(d_read, 0, '>');            
+            tmp = ftokstr(d_read, 0, '>');
             num_tmp = strtol(tmp, &token2, 10);
             
             if (complement_place[num_tmp] == 1){
