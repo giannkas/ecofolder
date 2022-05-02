@@ -84,8 +84,7 @@ char* rs_complement(char* in_file){
       int resets[places+1][trans+1];      
       
       for (size_t i = 1; i <= places; i++){
-        complement_place[i] = 0;
-        //printf("complement_place[i] is: %d\n", complement_place[i]);
+        complement_place[i] = 0;        
         for (size_t j = 1; j <= trans; j++){
           presets[i][j] = 0;
           postsets[i][j] = 0;
@@ -97,12 +96,9 @@ char* rs_complement(char* in_file){
 
       /* Check for those places that have at least one reset arc and make its respective
         complement in buffer_pl which will be pasted into the output file */
-      while(fgets(d_read, MAX_RESET_PLACES, r_pointer) != NULL && isdigit(d_read[0])){
-        //strcat(buffer_rd, d_read);
-        token = strtok(d_read, ">");
-        //printf("token is: %s\n", token);
-        num_tmp = strtol(token, &token2, 10);
-        //complement_place[num_tmp]++;
+      while(fgets(d_read, MAX_RESET_PLACES, r_pointer) != NULL && isdigit(d_read[0])){        
+        token = strtok(d_read, ">");        
+        num_tmp = strtol(token, &token2, 10);        
         if(complement_place[num_tmp] == 0){
           sprintf(buf_arcs, "\"%s%s\",", 
             ftokstr(place_names[num_tmp], 1, '\"'), "¬");
@@ -113,8 +109,7 @@ char* rs_complement(char* in_file){
       }
 
       /* Print into the output file the places that come from the input file plus
-      those that were replicated (print the content from buffer_pl) */
-      //complement_places = 1;
+      those that were replicated (print the content from buffer_pl) */      
       fseek( r_pointer, 0, SEEK_SET );
       while(fgets(d_read, MAX_RESET_PLACES, r_pointer) != NULL && !strstr(d_read, "TR")){
         fprintf(w_pointer, "%s", d_read);
