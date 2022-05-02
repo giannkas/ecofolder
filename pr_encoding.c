@@ -201,13 +201,13 @@ char* pr_encoding(char* in_file){
           }
           fprintf(w_pointer, "%s", d_read);
         }
-      }      
+      }
       /* Transition t_i consumes place p_i, i.e., p_i in preset(t)*/
       new_places = places;
       for (size_t i = 1; i <= places; i++)
         read_place_written[i] = -1;
       if((strstr(d_read, "RS")) || fgets(d_read, MAX_READ_PLACES, r_pointer) == NULL ){        
-        if (fgets(d_read, MAX_READ_PLACES, r_pointer) == NULL) fprintf(w_pointer, "\n");
+        //if (fgets(d_read, MAX_READ_PLACES, r_pointer) == NULL) fprintf(w_pointer, "\n");
         rd_arcs = 0;
         token = ftokstr(buffer_rd, rd_arcs, '\n'); tmp = "";
         tmp1 = ftokstr(token, 0, '>');
@@ -223,7 +223,7 @@ char* pr_encoding(char* in_file){
             if (read_place_written[num_tmp] > 0){
               new_places++;              
               sprintf(buf_arcs, "%d>%s", new_places, token2);
-              fprintf(w_pointer, "%s\n", buf_arcs);
+              fprintf(w_pointer, "%s", buf_arcs);
               read_place_written[num_tmp]--;
             }
           }          
@@ -235,7 +235,24 @@ char* pr_encoding(char* in_file){
           if(token && read_place_written[num_tmp] == -1){
             read_place_written[num_tmp] = read_place_arcs[num_tmp];}
         }
-      }      
+      }
+      /* RS SECTION */
+      /* Any transition t resetting p in N resets p_i in N', i.e., p_i in reset(t)*/      
+      if(strstr(d_read, "RS")){
+        fprintf(w_pointer, "\n%s", d_read);
+        while(fgets(d_read, MAX_READ_PLACES, r_pointer) != NULL){
+          if( strlen(d_read) > 2 ){
+            tmp1 = ftokstr(d_read, 0, '>');
+            num_tmp = strtol(tmp1, &token2, 10);
+            counter_pl = read_place_arcs[num_tmp]-1;
+            for(int i = 1; i <= counter_pl && counter_pl > 0; i++){
+              sprintf(buf_arcs, "%d>%s", replicated_places_per_place[num_tmp][i+1], strtok(ltokstr(d_read, 0, '>'), "\n"));
+              fprintf(w_pointer, "%s\n", buf_arcs);              
+            }
+          }
+          fprintf(w_pointer, "%s", d_read);
+        }
+      }
     }
     fclose(r_pointer) ;
     fclose(w_pointer) ;
