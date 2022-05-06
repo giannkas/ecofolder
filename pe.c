@@ -72,8 +72,8 @@ void pe_insert (trans_t *tr)
 		{	pe_qsize--; return;	}
 	
 	/* When the -T is used and stoptr is found, empty the queue to make
-	   sure that the corresponding event is processed immediately. Also,
-	   prevent any further additions to the PE queue. */
+    sure that the corresponding event is processed immediately. Also,
+    prevent any further additions to the PE queue. */
 	if (tr == stoptr)
 	{
 		while (--index) pe_free(pe_queue[index]);
@@ -150,6 +150,7 @@ char pe_conflict (pe_comb_t *curr)
 	if (curr == pe_combs) return 0;
 
 	++ev_mark;
+  printf("ev_mark is: %d\n", ev_mark);
 	*(queue = events) = NULL;
 
 	/* put the pre-events into the queue */
@@ -160,21 +161,32 @@ char pe_conflict (pe_comb_t *curr)
 			 (*++queue = ev)->mark = ev_mark;
 	}
 	
-	/* go upwards, try to find two paths converging at some condition */
-	/* Check later how it would work if there is an asymmetric conflict
-	with reset and production arcs */
+	/* go upwards, try to find two paths converging at some condition */	
 	while ((ev = *queue))
 	{
 		queue--;		
-		for (sz = ev->origin->prereset_size, co_ptr = ev->preset; sz--; )	//*** NEW  ***//
+		for (sz = ev->origin->prereset_size, co_ptr = ev->preset; sz--; )
 		{			
 			if ((co = *co_ptr++)->mark == ev_mark && ev && 
-				!nodelist_find(ev->origin->reset, co->origin)){				
-				return 1;
-			}			
+				!nodelist_find(ev->origin->reset, co->origin)){
+        /* if(ev){
+          printf("co->pre_ev name: %s\n", co->pre_ev->origin->name);
+          printf("event mark is: %d\n", ev->mark);
+          printf("event name is: %s\n", ev->origin->name);
+          printf("event id is: %d\n", ev->id);
+          printf("--------------------\n");
+          printf("condition mark is: %d\n", co->mark);
+          printf("condition name is: %s\n", co->origin->name);
+          printf("condition num is: %d\n", co->num);
+          printf("--------------------\n");
+        } */
+        return 1;
+      }
+
+
 			co->mark = ev_mark;
 			if ((ev = co->pre_ev) && ev->mark != ev_mark)
-				 (*++queue = ev)->mark = ev_mark;
+        (*++queue = ev)->mark = ev_mark;
 		}		
 	}
 	return 0;
@@ -213,7 +225,7 @@ void pe (cond_t *co)
 
 		/* for every other post-place of tr, collect the conditions
 			that are co-related to co in the comb structure */
-		for (tr_pre = nodelist_concatenate(tr->preset, tr->reset); tr_pre; tr_pre = tr_pre->next) 	//*** NEW  ***//
+		for (tr_pre = nodelist_concatenate(tr->preset, tr->reset); tr_pre; tr_pre = tr_pre->next)
 		{
 			if ((pl2 = tr_pre->node) == pl) continue;
 			

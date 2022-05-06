@@ -7,6 +7,7 @@ void read_mci_file_ev (char *filename)
 {
 	//printf("hola\n");
 	#define read_int(x) fread(&(x),sizeof(int),1,file)
+  #define read_str(y) fread(&(y),sizeof(str),1,file)
     char keystr[80];
 
 	FILE *file;
@@ -41,21 +42,21 @@ void read_mci_file_ev (char *filename)
 		read_int(pre_ev);
 		//if (pre_ev) printf("  e%d -> c%d;\n",pre_ev,i);
 		do {
-			read_int(post_ev);
-            sprintf(keystr, "e%d->e%d",pre_ev,post_ev);
-			//printf("this is keystr: %s\n",keystr);
-            if(pre_ev && post_ev && !list_events){
-                list_events = keyevent_init(keystr);
-				printf("  e%d -> e%d;\n",pre_ev,post_ev);
+			  read_int(post_ev);
+        sprintf(keystr, "e%d->e%d",pre_ev,post_ev);
+			  //printf("this is keystr: %s\n",keystr);
+        if(pre_ev && post_ev && !list_events){
+          list_events = keyevent_init(keystr);
+				  printf("  e%d -> e%d;\n",pre_ev,post_ev);
 				//printf("first in list event: %s\n", list_events->data);
-			}
-			else if (pre_ev && post_ev && !keyevent_find(list_events, keystr)) {
-				printf("  e%d -> e%d;\n",pre_ev,post_ev);
-				//printf("hola\n");
-                keyevent_push(&(list_events), keystr);
-				//keyevent_print(list_events);
-				//printf("\n");
-			}
+        }
+        else if (pre_ev && post_ev && !keyevent_find(list_events, keystr)) {
+          printf("  e%d -> e%d;\n",pre_ev,post_ev);
+          //printf("hola\n");
+          keyevent_push(&(list_events), keystr);
+          //keyevent_print(list_events);
+          //printf("\n");
+        }
 		} while (post_ev);
 	}
 

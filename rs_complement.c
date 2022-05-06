@@ -51,7 +51,8 @@ char* rs_complement(char* in_file){
   {
     char place_names[MAX_RESET_PLACES][MAX_RESET_PLACES] = {0};
     /* Read up to RD label and get number of transitions and places*/
-    while(fgets(d_read, MAX_RESET_PLACES, r_pointer) != NULL && !strstr(d_read, "RD")){
+    while(fgets(d_read, MAX_RESET_PLACES, r_pointer) != NULL &&
+       !strstr(d_read, "RD") && !strstr(d_read, "TP")){
       if (d_read[0] == 'P' && d_read[1] == 'L');
       else if (places == header) header++;
       if (d_read[0] == 'T' && d_read[1] == 'R');
@@ -100,8 +101,12 @@ char* rs_complement(char* in_file){
         token = strtok(d_read, ">");        
         num_tmp = strtol(token, &token2, 10);        
         if(complement_place[num_tmp] == 0){
-          sprintf(buf_arcs, "\"%s%s\",", 
-            ftokstr(place_names[num_tmp], 1, '\"'), "¬");
+          if (!strcmp(ltokstr(place_names[num_tmp], 1, '\"'),"M1\n"))
+            sprintf(buf_arcs, "\"%s%s\"\n,", 
+              ftokstr(place_names[num_tmp], 1, '\"'), "¬");
+          else
+            sprintf(buf_arcs, "\"%s%s\"%s\n,", 
+              ftokstr(place_names[num_tmp], 1, '\"'), "¬","M1");
           strcat(buffer_pl, buf_arcs);
           complement_places++;
           complement_place[num_tmp] = 1;          
@@ -122,7 +127,7 @@ char* rs_complement(char* in_file){
         }
       }
 
-      fseek( r_pointer, -strlen(d_read)-1, SEEK_CUR );
+      fseek( r_pointer, -strlen(d_read), SEEK_CUR );
       while(fgets(d_read, MAX_RESET_PLACES, r_pointer) != NULL && !strstr(d_read, "TP")){
         fprintf(w_pointer, "%s", d_read);
       }

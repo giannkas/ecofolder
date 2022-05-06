@@ -97,7 +97,7 @@ cond_t* insert_condition (place_t *pl, event_t *ev)
 	co->num = unf->numco++;
 	if ((ev && nodelist_find(ev->origin->postset, pl)) ||
 		(!ev && pl->marked))
-		co->token = 1;	
+		co->token = 1;
 	else
 		co->token = 0;
 
@@ -107,7 +107,6 @@ cond_t* insert_condition (place_t *pl, event_t *ev)
 		if (ev) printf(" [event E%d]",ev->id);
 		printf(".\n");
 	}
-
 
 	return co;
 }
