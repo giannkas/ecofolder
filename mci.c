@@ -39,8 +39,8 @@ void write_mci_file (char *filename)
 	write_int(unf->numev);
 	
 	/* Reverse the lists of places, events etc. This is to maintain
-	   compatibility with RdlcheckMcM and mcsmodels, which expect events
-	   to be numbered in accordance with the causality relation. */
+	  compatibility with RdlcheckMcM and mcsmodels, which expect events
+	  to be numbered in accordance with the causality relation. */
 	net->places = reverse_list(net->places);
 	net->transitions = reverse_list(net->transitions);
 	unf->conditions = reverse_list(unf->conditions);
