@@ -76,16 +76,18 @@ char* rs_complement(char* in_file){
     while(fgets(d_read, MAX_RESET_PLACES, r_pointer) != NULL && !strstr(d_read, "RS")){}
     if(strstr(d_read, "RS")){
       strcat(out_file, ftokstr(in_file, 0, '.'));
-      strcat(out_file, "_rs.ll_net");			
+      strcat(out_file, "_rs.ll_net");
       w_pointer = fopen(out_file, "w"); // if we have reset arcs then create a new file.      
       char buf_arcs[MAX_RESET_PLACES];
-      int complement_place[places+1];      
+      int complement_place[places+1];
+      int id_complement_place[places+1];
       int presets[places+1][trans+1];
       int postsets[places+1][trans+1];
-      int resets[places+1][trans+1];      
-      
+      int resets[places+1][trans+1];
+
       for (size_t i = 1; i <= places; i++){
-        complement_place[i] = 0;        
+        complement_place[i] = 0;
+        id_complement_place[i] = 0;
         for (size_t j = 1; j <= trans; j++){
           presets[i][j] = 0;
           postsets[i][j] = 0;
@@ -109,7 +111,8 @@ char* rs_complement(char* in_file){
               ftokstr(place_names[num_tmp], 1, '\"'), "¬","M1");
           strcat(buffer_pl, buf_arcs);
           complement_places++;
-          complement_place[num_tmp] = 1;          
+          id_complement_place[complement_places] = num_tmp;
+          complement_place[num_tmp] = places+complement_places;
         }
       }
 
@@ -141,7 +144,7 @@ char* rs_complement(char* in_file){
             tmp = ftokstr(d_read, 0, '<');
             num_tmp = strtol(tmp, &token2, 10);
             num_tmp1 = strtol(tmp1, &token2, 10);
-            if(complement_place[num_tmp1] == 1)
+            if(complement_place[num_tmp1] > 0)
               presets[num_tmp1][num_tmp] = num_tmp;              
           }
         }
@@ -156,7 +159,7 @@ char* rs_complement(char* in_file){
             tmp1 = ltokstr(d_read, 0, '>');
             num_tmp = strtol(tmp, &token2, 10);
             num_tmp1 = strtol(tmp1, &token2, 10);
-            if(complement_place[num_tmp] == 1)
+            if(complement_place[num_tmp] > 0)
               postsets[num_tmp][num_tmp1] = num_tmp1;              
           }
         }
@@ -171,7 +174,7 @@ char* rs_complement(char* in_file){
             tmp1 = ltokstr(d_read, 0, '>');
             num_tmp = strtol(tmp, &token2, 10);
             num_tmp1 = strtol(tmp1, &token2, 10);
-            if(complement_place[num_tmp] == 1)
+            if(complement_place[num_tmp] > 0)
               resets[num_tmp][num_tmp1] = num_tmp1;              
           }
         }
@@ -184,76 +187,62 @@ char* rs_complement(char* in_file){
       /* Constructing the preset of p¬ according to p: pre(p¬) = (post(p) U res(p))\pre(p) */
       if(strstr(d_read, "TP")){
         fprintf(w_pointer, "%s", d_read);
-        int i = 1;
-        while(fgets(d_read, MAX_RESET_PLACES, r_pointer) && !strstr(d_read, "PT")){
-          if( strlen(d_read) > 2 && isdigit(d_read[0]) ){
-            tmp1 = ltokstr(d_read, 0, '<');            
-            num_tmp1 = strtol(tmp1, &token2, 10);
-            if (complement_place[num_tmp1] == 1){
-              for (size_t k = 1; k <= trans; k++){                
-                if(postsets[num_tmp1][k] != 0 && postsets[num_tmp1][k] != presets[num_tmp1][k]){
-                  sprintf(buf_arcs, "%d<%d", postsets[num_tmp1][k], places+i);
-                  fprintf(w_pointer, "%s\n", buf_arcs);                  
-                }
-                if(resets[num_tmp1][k] != 0 && resets[num_tmp1][k] != presets[num_tmp1][k] && resets[num_tmp1][k] != postsets[num_tmp1][k]){
-                  sprintf(buf_arcs, "%d<%d", resets[num_tmp1][k], places+i);
-                  fprintf(w_pointer, "%s\n", buf_arcs);                  
-                }
+        for (size_t i = 1; i <= complement_places; i++){
+          num_tmp1 = id_complement_place[i];
+          if (complement_place[num_tmp1] > 0){
+            for (size_t k = 1; k <= trans; k++){
+              if(postsets[num_tmp1][k] != 0 && postsets[num_tmp1][k] != presets[num_tmp1][k]){
+                sprintf(buf_arcs, "%d<%d", postsets[num_tmp1][k], complement_place[num_tmp1]);
+                fprintf(w_pointer, "%s\n", buf_arcs);
               }
-              complement_place[num_tmp1] = -1;
-              i++;
+              if(resets[num_tmp1][k] != 0 && resets[num_tmp1][k] != presets[num_tmp1][k] && resets[num_tmp1][k] != postsets[num_tmp1][k]){
+                sprintf(buf_arcs, "%d<%d", resets[num_tmp1][k], complement_place[num_tmp1]);
+                fprintf(w_pointer, "%s\n", buf_arcs);
+              }
             }
-            fprintf(w_pointer, "%s", d_read);
+            complement_place[num_tmp1] *= -1;
           }
-        }        
+        }
+        while(fgets(d_read, MAX_RESET_PLACES, r_pointer) && !strstr(d_read, "PT"))
+          fprintf(w_pointer, "%s", d_read);
       }
 
       /* Constructing the postset of p¬ according to p: post(p¬) = pre(p)\(post(p) U res(p)) */
       if(strstr(d_read, "PT")){
         fprintf(w_pointer, "%s", d_read);
-        int i = 1;
-        while(fgets(d_read, MAX_RESET_PLACES, r_pointer) && !strstr(d_read, "RS")){
-          if( strlen(d_read) > 2 && isdigit(d_read[0]) ){
-            tmp = ftokstr(d_read, 0, '>');            
-            num_tmp = strtol(tmp, &token2, 10);
-            
-            if (complement_place[num_tmp] == -1){
-              for (size_t k = 1; k <= trans; k++){
-                if(presets[num_tmp][k] != 0 && presets[num_tmp][k] != postsets[num_tmp][k] && presets[num_tmp][k] != resets[num_tmp][k]){
-                  sprintf(buf_arcs, "%d>%d", places+i, presets[num_tmp][k]);
-                  fprintf(w_pointer, "%s\n", buf_arcs);                  
-                }                
-              }
-              complement_place[num_tmp] = 1;
-              i++;
+        for (size_t i = 1; i <= complement_places; i++){
+          num_tmp = id_complement_place[i];
+          if (complement_place[num_tmp] < 0){
+            for (size_t k = 1; k <= trans; k++){
+              if(presets[num_tmp][k] != 0 && presets[num_tmp][k] != postsets[num_tmp][k] && presets[num_tmp][k] != resets[num_tmp][k]){
+                sprintf(buf_arcs, "%d>%d", complement_place[num_tmp]*-1, presets[num_tmp][k]);
+                fprintf(w_pointer, "%s\n", buf_arcs);                  
+              }                
             }
-            fprintf(w_pointer, "%s", d_read);
+            complement_place[num_tmp] *= -1;            
           }
         }
+        while(fgets(d_read, MAX_RESET_PLACES, r_pointer) && !strstr(d_read, "RS"))
+          fprintf(w_pointer, "%s", d_read);        
       }
 
       /* Constructing the reset of p¬ according to p: res(p¬) = res(p) */
       if(strstr(d_read, "RS")){
         fprintf(w_pointer, "%s", d_read);
-        int i = 1;
-        while(fgets(d_read, MAX_RESET_PLACES, r_pointer)){
-          if( strlen(d_read) > 2 && isdigit(d_read[0]) ){
-            tmp = ftokstr(d_read, 0, '>');
-            num_tmp = strtol(tmp, &token2, 10);
-            
-            if (complement_place[num_tmp] == 1){
-              for (size_t k = 1; k <= trans; k++){
-                if(resets[num_tmp][k] != 0){
-                  sprintf(buf_arcs, "%d>%d", places+i, resets[num_tmp][k]);
-                  fprintf(w_pointer, "%s\n", buf_arcs);                  
-                }                
+        for (size_t i = 1; i <= complement_places; i++){
+          num_tmp = id_complement_place[i];
+          if (complement_place[num_tmp] > 0){
+            for (size_t k = 1; k <= trans; k++){
+              if(resets[num_tmp][k] != 0){
+                sprintf(buf_arcs, "%d>%d", complement_place[num_tmp], resets[num_tmp][k]);
+                fprintf(w_pointer, "%s\n", buf_arcs);
               }
-              complement_place[num_tmp] = -1;
-              i++;
             }
-            fprintf(w_pointer, "%s", d_read);
+            complement_place[num_tmp] *= -1;            
           }
         }
+        while(fgets(d_read, MAX_RESET_PLACES, r_pointer))
+          fprintf(w_pointer, "%s", d_read);        
       }
     }
     fclose(r_pointer);
