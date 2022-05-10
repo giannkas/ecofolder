@@ -79,21 +79,11 @@ char* rs_complement(char* in_file){
       strcat(out_file, "_rs.ll_net");
       w_pointer = fopen(out_file, "w"); // if we have reset arcs then create a new file.      
       char buf_arcs[MAX_RESET_PLACES];
-      int complement_place[places+1];
-      int id_complement_place[places+1];
-      int presets[places+1][trans+1];
-      int postsets[places+1][trans+1];
-      int resets[places+1][trans+1];
-
-      for (size_t i = 1; i <= places; i++){
-        complement_place[i] = 0;
-        id_complement_place[i] = 0;
-        for (size_t j = 1; j <= trans; j++){
-          presets[i][j] = 0;
-          postsets[i][j] = 0;
-          resets[i][j] = 0;
-        }
-      }
+      int* complement_place = calloc(places+1, sizeof(int));
+      int* id_complement_place = calloc(places+1, sizeof(int));
+      int (*presets)[trans+1] = calloc(places+1, sizeof *presets);
+      int (*postsets)[trans+1] = calloc(places+1, sizeof *postsets);
+      int (*resets)[trans+1] = calloc(places+1, sizeof *resets);
             
       char buffer_pl[MAX_LINE_SIZE] = {0};      
 
