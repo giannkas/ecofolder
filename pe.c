@@ -147,10 +147,9 @@ char pe_conflict (pe_comb_t *curr)
 	event_t *ev, **queue;
 
 	/* just one condition - no conflict */
-	if (curr == pe_combs) return 0;
+	if (curr == pe_combs) return 0;  
 
 	++ev_mark;
-  printf("ev_mark is: %d\n", ev_mark);
 	*(queue = events) = NULL;
 
 	/* put the pre-events into the queue */
@@ -167,22 +166,8 @@ char pe_conflict (pe_comb_t *curr)
 		queue--;		
 		for (sz = ev->origin->prereset_size, co_ptr = ev->preset; sz--; )
 		{			
-			if ((co = *co_ptr++)->mark == ev_mark && ev && 
-				!nodelist_find(ev->origin->reset, co->origin)){
-        /* if(ev){
-          printf("co->pre_ev name: %s\n", co->pre_ev->origin->name);
-          printf("event mark is: %d\n", ev->mark);
-          printf("event name is: %s\n", ev->origin->name);
-          printf("event id is: %d\n", ev->id);
-          printf("--------------------\n");
-          printf("condition mark is: %d\n", co->mark);
-          printf("condition name is: %s\n", co->origin->name);
-          printf("condition num is: %d\n", co->num);
-          printf("--------------------\n");
-        } */
+			if ((co = *co_ptr++)->mark == ev_mark)
         return 1;
-      }
-
 
 			co->mark = ev_mark;
 			if ((ev = co->pre_ev) && ev->mark != ev_mark)
@@ -202,8 +187,7 @@ void pe (cond_t *co)
 	cond_t **cocoptr;
 	place_t *pl = co->origin, *pl2;
 	trans_t *tr;
-	//event_t *ev = co->pre_ev;
-	//cond_t  **co_ptr2, *co_reset = NULL;
+	
 	*pe_conds = co;	/* any new PE contains co */
 	nodelist_push(&(pl->conds),co);
 	/* check the transitions in pl's postset */

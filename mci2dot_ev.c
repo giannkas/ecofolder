@@ -6,12 +6,11 @@
 void read_mci_file_ev (char *filename)
 {
 	//printf("hola\n");
-	#define read_int(x) fread(&(x),sizeof(int),1,file)
-  #define read_str(y) fread(&(y),sizeof(str),1,file)
+	#define read_int(x) fread(&(x),sizeof(int),1,file)  
     char keystr[80];
 
 	FILE *file;
-	int numco, numev, numpl, numtr, sz, i;
+	int numco, numev, numpl, numtr, sz, i, ev1, ev2;
 	int pre_ev, post_ev, cutoff, dummy;
 	int *co2pl, *ev2tr, *tokens;
 	char **plname, **trname, *c;
@@ -31,6 +30,7 @@ void read_mci_file_ev (char *filename)
 	co2pl = malloc((numco+1) * sizeof(int));
 	tokens = malloc((numco+1) * sizeof(int));
 	ev2tr = malloc((numev+1) * sizeof(int));
+  int (*co_presets)[numev+1] = calloc(numco+1, sizeof *co_presets);
 
 	for (i = 1; i <= numev; i++)
 		read_int(ev2tr[i]);
@@ -40,26 +40,44 @@ void read_mci_file_ev (char *filename)
 		read_int(co2pl[i]);
 		read_int(tokens[i]);
 		read_int(pre_ev);
-		//if (pre_ev) printf("  e%d -> c%d;\n",pre_ev,i);
 		do {
-			  read_int(post_ev);
-        sprintf(keystr, "e%d->e%d",pre_ev,post_ev);
-			  //printf("this is keystr: %s\n",keystr);
-        if(pre_ev && post_ev && !list_events){
-          list_events = keyevent_init(keystr);
-				  printf("  e%d -> e%d;\n",pre_ev,post_ev);
-				//printf("first in list event: %s\n", list_events->data);
-        }
-        else if (pre_ev && post_ev && !keyevent_find(list_events, keystr)) {
-          printf("  e%d -> e%d;\n",pre_ev,post_ev);
-          //printf("hola\n");
-          keyevent_push(&(list_events), keystr);
-          //keyevent_print(list_events);
-          //printf("\n");
-        }
+      read_int(post_ev);
+      sprintf(keystr, "e%d->e%d",pre_ev,post_ev);
+      if(pre_ev && post_ev && !list_events){
+        list_events = keyevent_init(keystr);
+        printf("  e%d -> e%d;\n",pre_ev,post_ev);
+      }
+      else if (pre_ev && post_ev && !keyevent_find(list_events, keystr)) {
+        printf("  e%d -> e%d;\n",pre_ev,post_ev);        
+        keyevent_push(&(list_events), keystr);        
+      }
+      if (post_ev) co_presets[i][post_ev] = post_ev;
 		} while (post_ev);
 	}
 
+  printf("\n//conflicts\n");
+  list_events = NULL;
+
+  for (size_t i = 1; i <= numco; i++){
+    for (size_t j = 1; j <= numev-1; j++){
+      for (size_t k = j+1; k <= numev; k++){
+        ev1 = co_presets[i][j]; ev2 = co_presets[i][k];
+        if (ev1 != 0 && ev2 != 0){
+          sprintf(keystr, "e%d->e%d",ev1,ev2);
+          if(!list_events){
+            list_events = keyevent_init(keystr);
+            printf("  e%d -> e%d [arrowhead=none color=gray60 style=dashed constraint=false];\n",ev1,ev2);
+          }else if(!keyevent_find(list_events, keystr)){
+            printf("  e%d -> e%d [arrowhead=none color=gray60 style=dashed constraint=false];\n",ev1,ev2);
+            keyevent_push(&(list_events), keystr);
+          }
+        }
+      }
+      
+    }
+  }
+
+  printf("\n");
 	for (;;) {
 		read_int(cutoff);
 		if (!cutoff) break;
