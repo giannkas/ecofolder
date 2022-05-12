@@ -80,12 +80,11 @@ char* pr_encoding(char* in_file){
       strcat(out_file, "_pr.ll_net");			
       w_pointer = fopen(out_file, "w"); // if we have reset arcs then create a new file.      
       char buf_arcs[MAX_READ_PLACES];
-      int read_place_arcs[places+1];
+      int* read_place_arcs = calloc(places+1, sizeof(int));
       int read_place_written[places+1];
       int replicated_places_per_place[places+1][MAX_REPLICATED_PLACES_PER_PLACE];
       
-      for (size_t i = 0; i <= places; i++){
-        read_place_arcs[i] = 0;
+      for (size_t i = 0; i <= places; i++){        
         read_place_written[i] = -1;
         for (size_t j = 0; j < MAX_REPLICATED_PLACES_PER_PLACE; j++)
           replicated_places_per_place[i][j] = -1;
@@ -199,7 +198,7 @@ char* pr_encoding(char* in_file){
               fprintf(w_pointer, "%s\n", buf_arcs);              
             }
           }
-          fprintf(w_pointer, "%s", d_read);
+          strstr(d_read, "\n") ? fprintf(w_pointer, "%s", d_read) : fprintf(w_pointer, "%s\n", d_read);
         }
       }
       /* Transition t_i consumes place p_i, i.e., p_i in preset(t)*/
@@ -223,7 +222,7 @@ char* pr_encoding(char* in_file){
             if (read_place_written[num_tmp] > 0){
               new_places++;              
               sprintf(buf_arcs, "%d>%s", new_places, token2);
-              fprintf(w_pointer, "%s", buf_arcs);
+              fprintf(w_pointer, "%s\n", buf_arcs);
               read_place_written[num_tmp]--;
             }
           }          
@@ -239,7 +238,7 @@ char* pr_encoding(char* in_file){
       /* RS SECTION */
       /* Any transition t resetting p in N resets p_i in N', i.e., p_i in reset(t)*/      
       if(strstr(d_read, "RS")){
-        fprintf(w_pointer, "\n%s", d_read);
+        fprintf(w_pointer, "%s", d_read);
         while(fgets(d_read, MAX_READ_PLACES, r_pointer) != NULL){
           if( strlen(d_read) > 2 ){
             tmp1 = ftokstr(d_read, 0, '>');
@@ -250,7 +249,7 @@ char* pr_encoding(char* in_file){
               fprintf(w_pointer, "%s\n", buf_arcs);              
             }
           }
-          fprintf(w_pointer, "%s", d_read);
+          strstr(d_read, "\n") ? fprintf(w_pointer, "%s", d_read) : fprintf(w_pointer, "%s\n", d_read);
         }
       }
     }
