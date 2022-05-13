@@ -236,7 +236,7 @@ char* pr_encoding(char* in_file){
         }
       }
       /* RS SECTION */
-      /* Any transition t resetting p in N resets p_i in N', i.e., p_i in reset(t)*/      
+      /* Any transition t resetting p in N resets p_i in N', i.e., p_i in reset(t)*/
       if(strstr(d_read, "RS")){
         fprintf(w_pointer, "%s", d_read);
         while(fgets(d_read, MAX_READ_PLACES, r_pointer) != NULL){
@@ -246,7 +246,7 @@ char* pr_encoding(char* in_file){
             counter_pl = read_place_arcs[num_tmp]-1;
             for(int i = 1; i <= counter_pl && counter_pl > 0; i++){
               sprintf(buf_arcs, "%d>%s", replicated_places_per_place[num_tmp][i+1], strtok(ltokstr(d_read, 0, '>'), "\n"));
-              fprintf(w_pointer, "%s\n", buf_arcs);              
+              fprintf(w_pointer, "%s\n", buf_arcs);
             }
           }
           strstr(d_read, "\n") ? fprintf(w_pointer, "%s", d_read) : fprintf(w_pointer, "%s\n", d_read);
