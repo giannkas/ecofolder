@@ -64,8 +64,7 @@ void read_mci_file_ev (char *filename)
 		} while (post_ev);
 	}
 
-  printf("\n//conflicts\n");
-  //list_events = NULL;
+  printf("\n//conflicts\n");  
 
   for (size_t i = 1; i <= numco; i++){
     for (size_t j = 1; j <= numev-1; j++){
@@ -84,8 +83,7 @@ void read_mci_file_ev (char *filename)
       if (ev_confl[i][j] != 0){
         for (size_t k = 1; k <= numev; k++){
           if(ev_confl[j][k] != 0){
-            int found = find_match_matrix(numev+1, numev+1, ev_succs, i, ev_confl[j][k]);
-            //printf("found is: %d\n", found);
+            int found = find_match_matrix(numev+1, numev+1, ev_succs, i, ev_confl[j][k]);            
             if(found > 0){
               ev_confl[j][k] = 0;
               ev_succs[i][k] = ev_succs[i][k] == 0 ? k : 0;
