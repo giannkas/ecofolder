@@ -6,10 +6,12 @@ digraph test {
   e3 -> e5;
 
 //conflicts
+  e2 -> e3 [arrowhead=none color=gray60 style=dashed constraint=false];
   e1 -> e2 [arrowhead=none color=gray60 style=dashed constraint=false];
-  e3 -> e6 [arrowhead=none color=gray60 style=dashed constraint=false];
   e4 -> e5 [arrowhead=none color=gray60 style=dashed constraint=false];
   e4 -> e6 [arrowhead=none color=gray60 style=dashed constraint=false];
+  e5 -> e6 [arrowhead=none color=gray60 style=dashed constraint=false];
+  e3 -> e6 [arrowhead=none color=gray60 style=dashed constraint=false];
 
   e1 [fillcolor=palegreen label="T0 (e1)" shape=box style=filled];
   e2 [fillcolor=palegreen label="T1 (e2)" shape=box style=filled];
