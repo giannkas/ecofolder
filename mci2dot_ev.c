@@ -3,18 +3,17 @@
 
 #include "keyevent.h"
 
-int find_match_matrix(int rows, int cols, int matrix[rows][cols], int pre_ev, int post_ev ){
+int find_match_matrix(int rows, int cols, int (*matrix)[cols], int pre_ev, int post_ev ){
   size_t i, j;
   if(matrix[pre_ev][post_ev] != post_ev){
-    for (i = pre_ev; i <= rows; i++){
-      for (j = 1; j <= cols; j++){
-        if( matrix[i][j] != 0)
+    for (i = pre_ev; i < rows; i++){
+      for (j = 1; j < cols; j++){
+        if( matrix[i][j] > 0)
           return find_match_matrix(rows, cols, matrix, matrix[i][j], post_ev);
       }
     }
   }
-  if(i > rows && j > cols)
-    post_ev = 0;
+  if(i > rows && j > cols) post_ev = 0;
   return post_ev;
 }
 
@@ -28,7 +27,6 @@ void read_mci_file_ev (char *filename)
 	int pre_ev, post_ev, cutoff, dummy;
 	int *co2pl, *ev2tr, *tokens;
 	char **plname, **trname, *c;
-  //keyevent* list_events = NULL;
 
 	if (!(file = fopen(filename,"rb")))
 	{
@@ -86,7 +84,8 @@ void read_mci_file_ev (char *filename)
       if (ev_confl[i][j] != 0){
         for (size_t k = 1; k <= numev; k++){
           if(ev_confl[j][k] != 0){
-            int found = find_match_matrix(numev, numev, ev_succs, i, ev_confl[j][k]);
+            int found = find_match_matrix(numev+1, numev+1, ev_succs, i, ev_confl[j][k]);
+            //printf("found is: %d\n", found);
             if(found > 0){
               ev_confl[j][k] = 0;
               ev_succs[i][k] = ev_succs[i][k] == 0 ? k : 0;
