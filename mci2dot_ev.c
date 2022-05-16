@@ -45,6 +45,7 @@ void read_mci_file_ev (char *filename)
   int (*co_presets)[numev+1] = calloc(numco+1, sizeof *co_presets);
   int (*ev_succs)[numev+1] = calloc(numev+1, sizeof *ev_succs);
   int (*ev_confl)[numev+1] = calloc(numev+1, sizeof *ev_confl);
+  int (*ev_confl_copy)[numev+1] = calloc(numev+1, sizeof *ev_confl_copy);
 
 	for (i = 1; i <= numev; i++)
 		read_int(ev2tr[i]);
@@ -72,6 +73,7 @@ void read_mci_file_ev (char *filename)
         ev1 = co_presets[i][j]; ev2 = co_presets[i][k];
         if (ev1 != 0 && ev2 != 0 && ev_confl[ev1][ev2] == 0){
           ev_confl[ev1][ev2] = ev2;
+          ev_confl_copy[ev1][ev2] = ev2;
           //printf("  e%d -> e%d [arrowhead=none color=gray60 style=dashed constraint=false];\n",ev1,ev2);          
         }
       }
@@ -85,7 +87,7 @@ void read_mci_file_ev (char *filename)
           if(ev_confl[j][k] != 0){
             int found = find_match_matrix(numev+1, numev+1, ev_succs, i, ev_confl[j][k]);            
             if(found > 0){
-              ev_confl[j][k] = 0;
+              ev_confl_copy[j][k] = 0;
               ev_succs[i][k] = ev_succs[i][k] == 0 ? k : 0;
             }
           }
@@ -96,8 +98,8 @@ void read_mci_file_ev (char *filename)
   
   for (int i = 1; i <= numev; i++){
     for (int j = 1; j <= numev; j++){
-      if (ev_confl[i][j] > 0)
-        printf("  e%d -> e%d [arrowhead=none color=gray60 style=dashed constraint=false];\n",i,ev_confl[i][j]);          
+      if (ev_confl_copy[i][j] > 0)
+        printf("  e%d -> e%d [arrowhead=none color=gray60 style=dashed constraint=false];\n",i,ev_confl_copy[i][j]);          
     }
   }
   
