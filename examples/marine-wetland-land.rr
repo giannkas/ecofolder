@@ -1,0 +1,239 @@
+## Marine, wetlands and land systems: Social-ecological system of Western Ghana  
+## 01-07 (from Santiago Para-Bullacio and Cedric Gaucherel). 
+#F >> A
+#Mf-
+#Last 
+
+Biotic_variables:
+ Mf-: Marine fishes # Pelagic and demersal economically important fishes
+ WJf+: Juvenal marine fishes # Occurrences of juvenal marine fishes within wetlands. This variable represents economically important species with different trophic roles, namely planktivorous (Sardinella aurita; Sardinella maderensis) and those that feed on benthic invertebrates and even small fishes (Brachydeuterus auritus; Galeoides decadactylus)    
+ MJf+: Juvenal marine fishes # Occurrences of juvenal marine fishes in the sea. This variable represents economically important species with different trophic roles, namely planktivorous and those that feed on benthic invertebrates and even small fishes. 
+ MZb-: Marine Zoobenthos #  Crustaceans marcro benthos, namely Amphipods and Polychaetes
+ WZb-: Wetland Zoobenthos # Crustaceans marcro benthos Crustaceans, namely Amphipods and Polychaetes
+ Alg-: Algae # Macroalgal Bloom of Ulva clathrata locally known as "green-green ". 
+ Caf-: Fish capture
+ Icaf-: Illegal, Unreported and Unregulated (IUU) Fish capture
+ TreM+: Mangrove_trees #  Forest stands of Rhizosphora spp., Avicennia sp. and/or Laguncularia sp. 
+ Ef+: Estuarine_fish #  Occurrences of estuarine fishes within wetlands. This variable represents economically important species with different trophic roles, namely planktivorous (Tilapia guineensis; Sarotherodon melanotheron) and fiches that can feed on mollusks (Clarias spp.)
+ Sf+: Shellfishes # Occurrences of bivalves or crustaceans within wetlands, including Oyster, Crabs and Shrimp
+ TreS-: Swamp_trees # Forest stands of swamp trees like Raphia spp., Uapaca paludosa and Lophira alata
+ Tim+: Timber # Timber forest 
+ Ac+: Cassava_food_crop #  Main crop in the area
+ Ap+: Plantain_food_crop 
+ Amr-: Maize_Rice_food_crop # Variable representing maize and rice crops 
+ Av+: Vegetable_food_crop # Variable representing main vegetables: pepper, tomatoes, cucumber, cabbage 
+ Lp+: Livestock Pig # Most important livestock in the area
+ Ccn-: Coconut_cash_crop
+ Cco+: Cocoa_cash_crop
+ Cro+: Cash_crops_rubber_oil-palm # Variable representing rubber and oil palm crops
+ Tre+: Evergreen trees #  Represent native tree species either pure stand or mixed with crops 
+ Aimp-: Food_import # Import of food produced outside the region of study
+
+Abiotic_variables:
+ Upw+: Upwelling water  #  Deep marine water entering the region 
+ MFw+: Freshwater # Freshwater mass entering the marine system
+ WFw+: Freshwater # Freshwater mass entering the wetlands 
+ WSd+: Wetland Sediment # artificial or natural sediments. It could be suspended sediments in water bodies or sediment forming soft-bottom coastline
+ MSd+: Marine Sediment # artificial or natural sediments. It could be suspended sediments in water bodies or sediment forming soft-bottom coastline
+ Oce+: Ocean  #  Marine water mass within  wetlands
+ Sr+: Significant_rainfall # Mean annual rainfall
+ Nut+: Nutrients #  Nutrients in the soil
+ Ainp+: Agricultural_input # Fertilizer (NPK or UREA), Herbicides, Pesticides, seedlings
+ MAf-: Agricultural fertilizer in Marine system # Fertilizer (NPK or UREA), Herbicides, Pesticides, seedlings
+
+Human_related_variables:
+ Nze+: Nzema people # Local farmer Community 
+ Fme+: Fishermen  # Artisanal  or small local semi-industrial fishermen of Fante and Ewe people
+ Ftr+: Fish_Trader # Fish trading and processing mainly performed by Women of Fante and Ewe people
+ Fbu+: Fish Budget # Monetary incomes from fisheries in coastal communities
+ Abu+: Agricultural budget # Monetary situation of Nzema people
+ St+: State # 
+ Loa+: Local_authority # Canoe Fishermen Council: Chief Fishermen and elders 
+ Lrr+: Legal_reported_regulated # Fishing methods
+ Iuu+: Illegal_Unreported_Unregulated # (IUU) Fishing methods:  Light-fishing, trawlers fishing within the IEZ, fish transshipment at sea, use of chemicals and explosives (Fisheries Regulations 2010; Afoakwah et al. 2018)
+ Finp+: Fishing_inputs # Fishing nets, premix fuel and outboard motors
+ Imm-: Immigrants # Foreign people
+ Amar+: Local_food_market # Represent the amont of local food, namely cassava, plantain, rice, maize and local vegetables.
+
+rules:
+#m
+  Upw+, MJf+, MSd+, Finp-, Iuu- >> Mf+				#1rm
+  Upw+, Mf+ >> MJf+				#2rm
+  Upw+, Mf+, MZb+ >> MJf+				#3rm
+  WJf+ >> MJf+				#4t
+  WFw+, WSd+ >> MFw+, MSd+				#5t
+  MFw+, Ainp+ >> MAf+				#6t
+  MFw+, Ainp+ >> MAf-				#7t
+  MAf+ >> Alg+				#8rm
+  Alg+ >> MSd+				#9rm
+  Alg+, MSd+ >> MZb+				#10rm
+  MZb+, Finp-, Iuu- >> Mf+				#11rm
+  Alg+ >> Mf-				#12rm
+  Alg+ >> MJf-				#13rm
+  Alg+ >> Alg-				#14rm
+  Fme+, Iuu+ >> MSd-				#15rm
+  Fme+, Iuu+, Alg- >> Mf-				#16rm
+  Fme+, Iuu+, Alg-, Mf+ >> Icaf+				#17rm
+  Fme+, Lrr+, Alg-, Mf+ >> Caf+				#18rm
+  Caf+, Ftr+, Tim+ >> Fbu+				#19rm
+  Caf-, Iuu+, Fme+, Alg-  >> MJf-				#20rm
+  Caf-, Iuu+, Fme+, Alg-, MJf+  >> Icaf+				#21rm
+  Caf-, Fme+, Fbu+ >> Iuu+				#22rm
+  St+, Loa+, Fme+ >> Iuu-				#23rm
+  St+, Fme+ >> Loa-				#24rm
+  St+, Loa-, Fme+  >> Finp+				#25rm
+  Loa-, Fme+, Finp+, Fbu+ >> Iuu+				#26rm
+  St+ >> Loa+				#27rm
+  St+, Loa+, Fme+ >> Finp+				#28rm
+  Loa+, Fme+, Finp+, Fbu+ >> Iuu-, Lrr+				#29rm
+  Icaf+, Ftr+, Tim+ >> Fbu-				#30rm
+  Icaf+, Ftr+, Tim+ >> Fbu+				#31rm
+  Ftr+, Icaf+ >> Iuu-				#32rm
+  St+, Mf- >> Finp-				#33rm
+  Loa+, Fme+, Finp-, Fbu+ >> Lrr+, Fbu-				#34rm
+  Loa-, Fme+, Finp-, Fbu+ >> Iuu+, Fbu-				#35rm
+  Caf-, Icaf-, Fbu-, MJf-, WJf-, Sf-, Ef-  >> Fme-, Ftr-				#36rm
+  Mf- >> MJf-									#37rm
+  Finp-, Fbu- >> Iuu-, Lrr-				#38rm
+  Fme+, Caf-, Alg- >> Ef-				#39t
+  Fme+, Caf-, Alg- >> WJf-				#40t
+  Ftr+, Caf-, Alg- >> Sf- 				#41t
+  Fme+, Ftr+ >> TreM-				#42t
+  Fme+, Ftr+, TreM+ >> Tim+				#43t
+  Fme+, Ftr+ >> TreS-				#44t
+  Fme+, Ftr+, TreS+ >> Tim+				#45t
+  Fme+, Ftr+ >> Tre-				#46t
+  Fme+, Ftr+, Tre+ >> Tim+				#47t
+
+#w
+  Sr+ >> WSd+, WFw+				#1rw
+  WFw+, Oce+, WSd+ >> TreM+				#2rw
+  WFw+, Oce+, TreM+, MJf+ >> WJf+				#3tr
+  WFw+, Oce+, TreM+, MJf+, WZb+ >> WJf+				#4tr
+  WFw+, Oce+, TreM+, MJf+, Sf+ >> WJf+				#5tr
+  MJf- >> WJf-				#6tr
+  WFw+, Oce+ >> Ef+				#7rw
+  WFw+, Oce+, TreM+ >> Ef+				#8rw
+  WFw+, Oce+, TreM+ >> Sf+				#9rw
+  Sf+ >> Ef+				#10rw
+  WFw+, Oce- >> Ef+				#11rw
+  WFw+, Oce-, WSd+ >> TreS+				#12rw
+  TreM+, WFw+ >> WSd+				#13rw
+  WSd- >> WFw-, Oce+				#14rw
+  TreS+, WFw+ >> WSd+				#15rw
+  TreM- >> WSd-, MSd+				#16rw
+  Nze+, Fme+, Ftr+, WSd+, WFw+ >> WJf-				#17rw
+  Nze+, Fme+, Ftr+, WSd+, WFw+ >> Ef-				#18rw
+  Nze+, Fme+, Ftr+, WSd+, WFw+ >> TreM-, Sf-				#19rw
+  Nze+, Fme+, Ftr+, WSd+, WFw+ >> Oce-, MFw-				#20tw
+  Nze+, Alg- >> Ef-				#21rw
+  Nze+, Alg- >> WJf-				#22rw
+  Nze+, Alg- >> Sf- 				#23rw
+  Nze+, Fme+, Ftr+, WSd+ >> WSd-, TreM-				#24rw
+  Alg+ >> Ef-				#25t
+  Alg+ >> Sf-				#26t
+  Alg+ >> WJf-				#27t
+  Alg+ >> WSd+				#28t
+  Alg+, WSd+ >> WZb+				#29t
+  WZb+ >> Sf+				#30rw
+  WZb+ >> Ef+				#31rw
+  Nze+ >> TreM-				#32t
+  Nze+, TreM+ >> Tim+				#33t
+  Nze+ >> TreS-				#34t
+  Nze+, TreS+ >> Tim+				#35t
+
+#Land
+  Nze+, Nut+ >> Ac+				#1r
+  Ac+ >> Nut-				#2r
+  Nut- >> Ac-				#3r
+  Nze+, Ainp+, Abu+ >> Ac+				#4r
+  Nze+, Nut+ >> Ap+				#5r
+  Ap+ >> Nut-				#6r
+  Nze+, Ap+, Nut- >> Ap-, Ac+				#7r
+  Nze+, Ainp+, Abu+ >> Ap+				#8r
+  Nze+, Ainp+, Abu+ >> Ac+, Cco+				#9r
+  Nze+, Ainp+, Abu+ >> Ap+, Cco+				#10r
+  Nze+, Ainp+, Abu+ >> Amr+				#11r
+  Nze+, Nut+ >> Av+				#12r
+  Av+ >> Nut+				#13r
+  Nze+, Ccn+ >> Lp+				#14r
+  Nze+, Ccn-, Abu+ >> Lp+				#15r
+  Nze+, Lp+ >> Abu+				#16r
+  Nze+, Tre+, Nut+ >> Cco+, Tre-				#17r
+  Nze+, Tre+ >> Abu+, Tre-				#18r
+  Nze+, Tre+ >> Tim+				#19r
+  Cco+ >> Nut-				#20r
+  Nut- >> Cco-				#21r
+  Nze+, Ainp+, Abu+ >> Cco+				#22r
+  Nze+, Cco+ >> Abu+				#23r
+  Nze+, Nut+ >> Cco+, Tre+				#24r
+  Cco+, Tre+ >> Nut+				#25r
+  Nze+, Ainp+, Abu+ >> Ap+, Cro+				#26r
+  Ap+, Cro+ >> Nut+				#27r
+  Nze+, Ainp+, Ac+, Abu+ >> Ac-, Cro+				#28r
+  Nze+, Ainp+, Ap+, Abu+ >> Ap-, Cro+				#29r
+  Nze+, Ainp+, Av+, Abu+ >> Av-, Cro+				#30r
+  Nze+, Ainp+, Amr+, Abu+ >> Amr-, Cro+				#31r
+  Nze+, Ainp+, Tre+, Abu+ >> Tre-, Cro+				#32r
+  Nze+, Cro+ >> Abu+				#33r
+  Nze+, Cro+ >> Abu-				#34r
+  Nze+, Ainp+, Ccn-, Abu+ >> Cco+				#35r
+  Nze+, Ainp+, Ccn-, Abu+ >> Cro+				#36r
+  Nze+, Ainp+ >> Ccn+				#37r
+  Nze+, Ccn- >> Abu-				#38r
+  Nze+, Ccn+ >> Abu+				#39r
+  Aimp+, Nze+ >> Abu-				#40r
+  Amar-, Abu-, TreM-, WJf-, Sf-, Ef-  >> Nze-				#41r
+  Nze+, St+ >> Ainp+				#42r
+  Imm+, St+ >> Ainp+				#43r
+  Cco+ >> Imm+				#44r
+  Cro+ >> Imm+				#45r
+  Imm+, Ainp+ >> Cco+				#46r
+  Imm+, Ainp+ >> Cro+				#47r
+  Imm+ >> Amr-				#48r
+  Imm+ >> Ac-				#49r
+  Imm+ >> Ap-				#50r
+  Imm+ >> Av-				#51r
+  Nze+, Abu- >> Ap-				#52r
+  Nze+, Abu- >> Amr-				#53r
+  Nze+, Abu- >> Cro-				#54r
+  Nze+, Abu- >> Cco-				#55r
+    
+constraints:  
+  #m
+  Mf-, MJf- >> Icaf-				#1c
+  Mf- >> Caf-				#2c
+  Fme- >> Caf-, Icaf-, Loa-, Iuu-, Lrr-				#3c
+  Fme-, Loa- >> Finp-				#4c
+  MAf- >> Alg-				#5c
+  Alg- >> MZb-				#6c
+  Iuu- >> Icaf-				#7c
+  MSd- >> MZb-				#8c
+  Ainp- >> MAf-				#9tc
+  MFw- >> MAf-				#10tc
+  
+  #w
+  Oce- >> TreM-, WJf-, Sf-				#1c
+  WFw- >> TreM-, TreS-, Ef-, Sf-, MFw-				#2c
+  TreM- >> Sf-, WJf-				#3c
+  Oce+  >> TreS-				#4c
+  TreM-, TreS-, Tre- >> Tim-				#5tc
+  Alg- >> WZb-				#6c
+  WSd- >> WZb-				#7c
+
+  #l
+  Nze+, St+, Amar- >> Aimp+								#1c
+  Nze- >> Ac-, Ap-, Amr-, Ccn-, Av-, Aimp-				#2c
+  Ainp- >> Cro-, Amr-, Ccn-								#3c
+  Ac+, Ap+, Amr+, Av+ >> Aimp-, Amar+					#4c
+  Lp-, Ccn-, Cco-, Cro- >> Abu-				#5c
+  Ccn-, Abu- >> Lp-							#6c
+  Cco-, Cro- >> Imm-						#7c
+  Nze-, Imm- >> Ainp-						#8c
+  Amr-, Ac-, Ap-, Av- >> Amar-				#9c
+
+
+
+
+
+
