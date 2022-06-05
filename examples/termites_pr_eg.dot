@@ -60,21 +60,21 @@ digraph test {
   e10 -> e16;
 
 //conflicts
-  e1 -> e2 [arrowhead=none color=gray60 style=dashed constraint=false];
-  e1 -> e35 [arrowhead=none color=gray60 style=dashed constraint=false];
-  e1 -> e36 [arrowhead=none color=gray60 style=dashed constraint=false];
-  e1 -> e39 [arrowhead=none color=gray60 style=dashed constraint=false];
-  e10 -> e13 [arrowhead=none color=gray60 style=dashed constraint=false];
-  e10 -> e14 [arrowhead=none color=gray60 style=dashed constraint=false];
-  e10 -> e17 [arrowhead=none color=gray60 style=dashed constraint=false];
-  e10 -> e25 [arrowhead=none color=gray60 style=dashed constraint=false];
-  e10 -> e26 [arrowhead=none color=gray60 style=dashed constraint=false];
-  e10 -> e27 [arrowhead=none color=gray60 style=dashed constraint=false];
-  e10 -> e30 [arrowhead=none color=gray60 style=dashed constraint=false];
-  e10 -> e31 [arrowhead=none color=gray60 style=dashed constraint=false];
-  e10 -> e32 [arrowhead=none color=gray60 style=dashed constraint=false];
-  e10 -> e33 [arrowhead=none color=gray60 style=dashed constraint=false];
-  e10 -> e38 [arrowhead=none color=gray60 style=dashed constraint=false];
+  e2 -> e1 [arrowhead=none color=gray60 style=dashed constraint=false];
+  e13 -> e10 [arrowhead=none color=gray60 style=dashed constraint=false];
+  e14 -> e10 [arrowhead=none color=gray60 style=dashed constraint=false];
+  e17 -> e10 [arrowhead=none color=gray60 style=dashed constraint=false];
+  e25 -> e10 [arrowhead=none color=gray60 style=dashed constraint=false];
+  e26 -> e10 [arrowhead=none color=gray60 style=dashed constraint=false];
+  e27 -> e10 [arrowhead=none color=gray60 style=dashed constraint=false];
+  e30 -> e10 [arrowhead=none color=gray60 style=dashed constraint=false];
+  e31 -> e10 [arrowhead=none color=gray60 style=dashed constraint=false];
+  e32 -> e10 [arrowhead=none color=gray60 style=dashed constraint=false];
+  e33 -> e10 [arrowhead=none color=gray60 style=dashed constraint=false];
+  e35 -> e1 [arrowhead=none color=gray60 style=dashed constraint=false];
+  e36 -> e1 [arrowhead=none color=gray60 style=dashed constraint=false];
+  e38 -> e10 [arrowhead=none color=gray60 style=dashed constraint=false];
+  e39 -> e1 [arrowhead=none color=gray60 style=dashed constraint=false];
 
   e1 [fillcolor=palegreen label="r3 (e1)" shape=box style=filled];
   e2 [fillcolor=palegreen label="r6 (e2)" shape=box style=filled];
