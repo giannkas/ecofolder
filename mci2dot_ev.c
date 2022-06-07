@@ -3,6 +3,9 @@
 
 #include "keyevent.h"
 
+//void find_conflict(int rows, int cols, int (*matrix)[cols],  )
+
+
 /**
  * @brief auxiliary function to find event successors of a particular event.
  * 
@@ -14,39 +17,46 @@
  * @return integer we the event's index number if found else 0.
  */
 
-int find_match_matrix(int rows, int cols, int (*matrix)[cols], int pre_ev, int post_ev ){
-  int i, j;
-  if(matrix[pre_ev][post_ev] != post_ev){ // if post_ev is not in the 
+int find_successor(int rows, int cols, int (*ev_succs)[cols], int pre_ev, int post_ev ){
+  size_t j, found = 0;
+  if(ev_succs[pre_ev][post_ev] != post_ev){ // if post_ev is not in the 
                                           //immediate successors of pre_ev.
     // we do loops to search in breadth.
-    for (i = pre_ev; i < rows; i++){ // loop over rows starting at 
-                                    // pre_ev index because our graph
-                                    // is acyclic, events are numbered
-                                    // in increasing order and we're
-                                    // interested in just pre_ev's successors.
-      for (j = pre_ev+1; j < cols; j++){ // loop over cols starting always at 
-                                  // the first index because you never know
-                                  // where successors are.
-        if( matrix[i][j] > 0 )    // if it is 0 we don't care, it means
-                                  // no connection.
-          return find_match_matrix(rows, cols, matrix, matrix[i][j], post_ev); 
-                                  // we do recursion to search in depth
-                                  // with the next pre_ev selected. 
-      }
+    for ( j = pre_ev+1; j < cols && found == 0; j++){
+      if( ev_succs[pre_ev][j] > 0)
+        found = find_successor(rows, cols, ev_succs, ev_succs[pre_ev][j], post_ev);
+      //if (found > 0) ev_succs[pre_ev][post_ev] = found;    
     }
   }
-  if(i > rows && j > cols) post_ev = 0; // if after loops i and j are 
-                                        // greater than their limits,
-                                        // then the post_ev is not there
-                                        // and we assigned it a cero.
-  return post_ev;
+  else
+    found = post_ev;
+  return found;
+}
+
+int find_conflict(int rows, int cols, int (*ev_confl)[cols],
+  int (*ev_confl_copy)[cols], int(*ev_succs)[cols], int ev_cfl, int ev_src ){
+  size_t k;
+  int found = 0;
+  for (k = ev_cfl+1; k < cols && found == 0; k++){
+    if(ev_confl[ev_cfl][k] != 0){
+      found = find_successor(rows, cols, ev_succs, ev_src, ev_confl[ev_cfl][k]);
+      if(found > 0){
+        ev_confl_copy[ev_cfl][k] = 0;
+      }
+      else 
+        ev_confl_copy[ev_cfl][k] = find_conflict(rows, cols, ev_confl, ev_confl_copy, ev_succs, 
+            ev_confl[ev_cfl][k], ev_src) > 0 ? 0 : k;
+      //if (k > ev_src) ev_succs[ev_src][k] = ev_succs[ev_src][k] == 0 ? k : 0;
+    }
+  }
+  return found;
 }
 
 void display_matrix(int rows, int cols, int (*matrix)[cols]){
   int i, j;
-  for (i=0; i<rows; i++)
+  for (i=1; i<rows; i++)
   {
-      for(j=0; j<cols; j++)
+      for(j=1; j<cols; j++)
       {
         // upper triangular matrix
         /* if(j >= i){
@@ -59,12 +69,13 @@ void display_matrix(int rows, int cols, int (*matrix)[cols]){
         // if(i >= j) printf("%d   ", matrix[i][j]);
         //printf("%*c", j, ' ');
         // complete matrix
-        printf("%d   ", matrix[i][j]);
+        int tmp = matrix[i][j];
+        if (tmp <= 9) printf("%d   ", tmp);
+        else printf("%d  ", tmp);
       }
       printf("\n");
   }
 }
-
 
 /**
  * @brief function that reads sequentially an .mci file format
@@ -109,7 +120,8 @@ void read_mci_file_ev (char *filename)
                                            // events.
   int (*co_postsets)[numev+1] = calloc(numco+1, sizeof *co_postsets); 
                                            // conditions' postsets to detect conflicts in events.
-  int (*ev_confl_succs)[numev+1] = calloc(numev+1, sizeof *ev_confl_succs); // matrix to record events' successors.
+  int (*ev_succs)[numev+1] = calloc(numev+1, sizeof *ev_succs); // matrix to record events' successors.
+  int (*ev_confl)[numev+1] = calloc(numev+1, sizeof *ev_confl); // matrix to record events' conflicts.
   int (*ev_confl_copy)[numev+1] = calloc(numev+1, sizeof *ev_confl_copy); // a copy of the previous variable.
 
   for (i = 1; i <= numev; i++){
@@ -137,13 +149,13 @@ void read_mci_file_ev (char *filename)
                           // are the events in the postset of a condition in
                           // the unfolding.
       //printf("post_ev: %d\n", post_ev);
-      if(pre_ev && post_ev && ev_confl_succs[pre_ev][post_ev] == 0){ // check if a 
+      if(pre_ev && post_ev && ev_succs[pre_ev][post_ev] == 0){ // check if a 
                                                                // value hasn't
-                                                               // been assigned yet                                                               
+                                                               // been assigned yet
                                                                // and if pre_ev and
-                                                               // post_ev are not null                                                              
-        ev_confl_succs[pre_ev][post_ev] = post_ev; // assign in the entry pre_ev of matrix 
-                                             // ev_confl_succs the connection 
+                                                               // post_ev are not null
+        ev_succs[pre_ev][post_ev] = post_ev; // assign in the entry pre_ev of matrix 
+                                             // ev_succs the connection 
                                              // between pre_ev and post_ev
                                              // with the value of post_ev itself.
                                              // The idea is to have a record
@@ -161,12 +173,9 @@ void read_mci_file_ev (char *filename)
                                                       // of a particular conditions
                                                       // to detect conflicts.
 		} while (post_ev); // if post_ev is not null.
-    //printf("co2pl[i] is: %d\n", co2pl[i]);
-    //printf("pre_ev: %d\n", pre_ev);
 	}
-
   printf("\n//conflicts\n");  
-
+  
   // A loop over co_postsets matrix to fill ev_confl matrix with conflicts
   // among events part of the same condition's postset. We make a copy 
   // conflicts to find immediate conflicts correctly in the function right after.
@@ -174,9 +183,11 @@ void read_mci_file_ev (char *filename)
     for (size_t j = 1; j <= numev-1; j++){
       for (size_t k = j+1; k <= numev; k++){
         ev1 = co_postsets[i][j]; ev2 = co_postsets[i][k];
-        if (ev1 != 0 && ev2 != 0 && ev_confl_succs[ev2][ev1] == 0){
-          ev_confl_succs[ev2][ev1] = ev1;          
-          ev_confl_copy[ev2][ev1] = ev1;
+        if (ev1 != 0 && ev2 != 0 && ev_confl[ev1][ev2] == 0){
+          ev_confl[ev1][ev2] = ev2;
+          //ev_confl[ev2][ev1] = ev2;
+          ev_confl_copy[ev1][ev2] = ev2;
+          //ev_confl_copy[ev2][ev1] = ev2;
           //printf("  e%d -> e%d [arrowhead=none color=gray60 style=dashed constraint=false];\n",ev1,ev2);          
         }
       }
@@ -184,38 +195,52 @@ void read_mci_file_ev (char *filename)
   }
 
   // A loop over ev_confl matrix to find two pairwise conflict between events, eg.,
-  // e2->e3 and e3->e4, thereafter with find_match_matrix we use ev_confl_succs to check 
+  // e2->e3 and e3->e4, thereafter with find_successor we use ev_confl_succs to check 
   // if e4 is a successor of e2, if yes we remove the conflict between e4 and e3
   // because the conflict is inherited from e2 and e3, so we leave only immediate
   // conflicts. Finally, we use the matrix ev_confl_copy to remove those "redundant
   // conflicts" while ev_confl remains unchangeable to keep the trace of conflicts
   // for posterior relations.
+  //display_matrix(numev+1, numev+1, ev_confl_copy);
+  for (size_t i = 1; i <= numev; i++)
+    for (size_t j = i+1; j <= numev; j++)
+      if(ev_succs[i][j] == 0)
+        ev_succs[i][j] = find_successor(numev+1, numev+1, ev_succs, i, j);
   for (size_t i = 1; i <= numev; i++){
-    for (size_t j = i; j <= numev; j++){
-      if (ev_confl_succs[j][i] != 0){
-        for (size_t k = j; k <= numev; k++){
-          if(ev_confl_succs[k][j] != 0){
-            int found = find_match_matrix(numev+1, numev+1, ev_confl_succs, i, ev_confl_succs[k][j]);
-            if(found > 0){
-              ev_confl_copy[k][j] = 0;
-              int new_succ = ev_confl_succs[k][j];
-              ev_confl_succs[i][new_succ] = ev_confl_succs[i][new_succ] == 0 ? new_succ : 0;
-            }
+    for (size_t j = i+1; j <= numev; j++){
+      if(ev_confl[i][j] > 0){
+        for(size_t k = i+1; k <= numev; k++)
+          if(ev_succs[i][k] > 0){
+            if(k > j) ev_confl_copy[j][k] = 0;
+            else ev_confl_copy[k][j] = 0;
           }
-        } 
+            //{ev_confl_copy[j][k] = k > j ? ev_confl[j][k] > 0;}
+        for(size_t k = j+1; k <= numev; k++)
+          if(ev_succs[j][k] > 0){
+            if(k > i) ev_confl_copy[i][k] = 0;
+            else ev_confl_copy[k][i] = 0;
+          }
+
+        for (size_t k = i+1; k <= numev; k++)
+          for (size_t m = j+1; m <= numev; m++)
+            if(ev_succs[i][k] > 0 && ev_succs[j][m] > 0){
+              if(k > m) ev_confl_copy[m][k] = 0;
+              else ev_confl_copy[k][m] = 0;
+            }
       }
     }
   }
-
-  //display_matrix(numev+1, numev+1, ev_confl_succs);
+  
+  
+  //display_matrix(numev+1, numev+1, ev_succs);
   //printf("####################################################\n");
-  //display_matrix(numev+1, numev+1, ev_confl);
-  // After leaving only immediate conflicts we do a loop over ev_confl_copy
+  //display_matrix(numev+1, numev+1, ev_confl_copy);
+  // After leaving only immediate conflicts we do a loop over ev_confl
   // to write in the output file those conflict relations.
   for (int i = 1; i <= numev; i++){
-    for (int j = 1; j < i; j++){
+    for (int j = i+1; j <= numev; j++){
       if (ev_confl_copy[i][j] > 0)
-        printf("  e%d -> e%d [arrowhead=none color=gray60 style=dashed constraint=false];\n",i,ev_confl_copy[i][j]);
+        printf("  e%d -> e%d [arrowhead=none color=gray60 style=dashed constraint=false];\n",i,ev_confl_copy[i][j]);          
     }
   }
   
@@ -238,7 +263,6 @@ void read_mci_file_ev (char *filename)
 	read_int(numtr);
 	read_int(sz);
 
-  //printf("hola\n");
 	plname = malloc((numpl+2) * sizeof(char*));
 	trname = malloc((numtr+2) * sizeof(char*));
 	for (i = 1; i <= numpl+1; i++) plname[i] = malloc(sz+1);
@@ -252,7 +276,6 @@ void read_mci_file_ev (char *filename)
 		do { fread(c,1,1,file); } while (*c++);
 	fread(c,1,1,file);
 
-  //printf("trname[5] content: %s\n", trname[11]);
 	for (i = 1; i <= numev; i++)
 		printf("  e%d [fillcolor=palegreen label=\"%s (e%d)\" shape=box style=filled];\n",
 				i,trname[ev2tr[i]],i);
