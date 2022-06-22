@@ -124,6 +124,7 @@ void read_mci_file_ev (char *filename)
   int (*ev_confl)[numev+1] = calloc(numev+1, sizeof *ev_confl); // matrix to record events' conflicts.
   int (*ev_confl_copy)[numev+1] = calloc(numev+1, sizeof *ev_confl_copy); // a copy of the previous variable.
 
+
   for (i = 1; i <= numev; i++){
     read_int(ev2tr[i]); // assign a value to an entry in the array ev2tr for every event
                         // in the unfolding in order to map its respective 
@@ -174,7 +175,6 @@ void read_mci_file_ev (char *filename)
                                                       // to detect conflicts.
 		} while (post_ev); // if post_ev is not null.
 	}
-  printf("\n//conflicts\n");  
   
   // A loop over co_postsets matrix to fill ev_confl matrix with conflicts
   // among events part of the same condition's postset. We make a copy 
@@ -206,6 +206,8 @@ void read_mci_file_ev (char *filename)
     for (size_t j = i+1; j <= numev; j++)
       if(ev_succs[i][j] == 0)
         ev_succs[i][j] = find_successor(numev+1, numev+1, ev_succs, i, j);
+  
+  
   for (size_t i = 1; i <= numev; i++){
     for (size_t j = i+1; j <= numev; j++){
       if(ev_confl[i][j] > 0){
@@ -230,8 +232,23 @@ void read_mci_file_ev (char *filename)
       }
     }
   }
+
+
+  /* Printing event corresponding to the initial cut. We make use of 
+  the empty vector of index 0 in ev_succs matrix to collect all events 
+  that have predecesors  and hence to depict the arcs in the resulting 
+  dot file */
+  for (int i = 1; i <= numev; i++){
+    for (int j = i+1; j <= numev; j++){
+      if (ev_succs[i][j] > 0 && ev_succs[0][j] == 0) 
+        ev_succs[0][j] = ev_succs[i][j];
+    }
+  }
+  for (int i = 1; i <= numev; i++){
+    if (ev_succs[0][i] == 0) printf("  e0 -> e%d;\n", i);
+  }
   
-  
+  printf("\n//conflicts\n");
   //display_matrix(numev+1, numev+1, ev_succs);
   //printf("####################################################\n");
   //display_matrix(numev+1, numev+1, ev_confl_copy);
@@ -279,6 +296,7 @@ void read_mci_file_ev (char *filename)
 	for (i = 1; i <= numev; i++)
 		printf("  e%d [fillcolor=palegreen label=\"%s (e%d)\" shape=box style=filled];\n",
 				i,trname[ev2tr[i]],i);
+  printf("  e0 [fillcolor=white label=\"⊥\" shape=box style=filled];\n");
 	printf("}\n");
 
 	fclose(file);
