@@ -2,7 +2,7 @@
 
 ## General info
 
-Ecofolder is a sotware for unfolding Petri nets, its architecture is quite similar to [**Mole - A Petri Net Unfolder**](http://www.lsv.fr/~schwoon/tools/mole/). It provides a data structure for a net's unfolding and a way to visualize it in a .pdf file using the [**DOT language**](https://graphviz.org/doc/info/lang.html). Ecofolder aims to deliver means for analysing ecosystem dynamics in nature, but its usage is not restricted to those particular systems.
+Ecofolder is a software for unfolding Petri nets, its architecture is quite similar to [**Mole - A Petri Net Unfolder**](http://www.lsv.fr/~schwoon/tools/mole/). It provides a data structure for a net's unfolding and a way to visualize it in a .pdf file using the [**DOT language**](https://graphviz.org/doc/info/lang.html). Ecofolder aims to deliver means for analyzing ecosystem dynamics in nature, but its usage is not restricted to those particular systems.
 
 ## Installation
 
