@@ -5,9 +5,11 @@
 
 #include "common.h"
 
-#define MAX_LINE_SIZE 500
-#define MAX_READ_PLACES 100
-#define MAX_REPLICATED_PLACES_PER_PLACE 50
+#define MAX_LINE_SIZE 10000
+#define LINE_SIZE 50
+#define MAX_READ_PLACES 200
+#define READ_PLACES 100
+#define MAX_REPLICATED_PLACES_PER_PLACE 100
 
 /*****************************************************************************/
 
@@ -34,8 +36,8 @@ char* pr_encoding(char* in_file){
   FILE *w_pointer = NULL;
     
   // Variables that come along
-  char d_read[MAX_READ_PLACES];
-  char out_file[MAX_READ_PLACES] = {0};
+  char d_read[READ_PLACES];
+  char out_file[READ_PLACES] = {0};
   char *token, *tmp, *tmp1, *token2;    
   int header = 0, places = 0, trans = 0, new_places = 0, 
     counter_pl = 0, num_tmp, rd_arcs = 0, names = 1;
@@ -53,7 +55,7 @@ char* pr_encoding(char* in_file){
   {
     char read_place_names[MAX_READ_PLACES][MAX_READ_PLACES] = {0};
     /* Read up to RD label and get number of transitions and places*/
-    while(fgets(d_read, MAX_READ_PLACES, r_pointer) != NULL && !strstr(d_read, "RD")){
+    while(fgets(d_read, READ_PLACES, r_pointer) != NULL && !strstr(d_read, "RD")){
       if (d_read[0] == 'P' && d_read[1] == 'L');
       else if (places == header) header++;
       if (d_read[0] == 'T' && d_read[1] == 'R');
@@ -78,8 +80,8 @@ char* pr_encoding(char* in_file){
     if(strstr(d_read, "RD")){
       strcat(out_file, ftokstr(in_file, 0, '.'));
       strcat(out_file, "_pr.ll_net");			
-      w_pointer = fopen(out_file, "w"); // if we have reset arcs then create a new file.      
-      char buf_arcs[MAX_READ_PLACES];
+      w_pointer = fopen(out_file, "w"); // if we have read arcs then create a new file.      
+      char buf_arcs[READ_PLACES];
       int* read_place_arcs = calloc(places+1, sizeof(int));
       int read_place_written[places+1];
       int replicated_places_per_place[places+1][MAX_REPLICATED_PLACES_PER_PLACE];
@@ -96,7 +98,7 @@ char* pr_encoding(char* in_file){
 
       /* Check for those places that have more than one read arc and make its respective
         replication in buffer_pl which will be pasted into the output file */
-      while(fgets(d_read, MAX_READ_PLACES, r_pointer) != NULL && isdigit(d_read[0])){
+      while(fgets(d_read, READ_PLACES, r_pointer) != NULL && isdigit(d_read[0])){
         strcat(buffer_rd, d_read);
         token = strtok(d_read, ">");
         num_tmp = strtol(token, &token2, 10);
@@ -115,7 +117,7 @@ char* pr_encoding(char* in_file){
       those that were replicated (print the content from buffer_pl) */
       new_places = 1;
       fseek( r_pointer, 0, SEEK_SET );
-      while(fgets(d_read, MAX_READ_PLACES, r_pointer) != NULL && !strstr(d_read, "TR")){
+      while(fgets(d_read, READ_PLACES, r_pointer) != NULL && !strstr(d_read, "TR")){
         token = ftokstr(d_read, 1, '\"');
         if(token){
           if(read_place_arcs[new_places] > 1){
@@ -136,12 +138,12 @@ char* pr_encoding(char* in_file){
       }
 
       /* TP SECTION */
-      /* Any transition t producing p in N produces p_i in N', i.e., p_i in postset(t)*/      
+      /* Any transition t producing p in N produces p_i in N', i.e., p_i in postset(t)*/
       if(strstr(d_read, "TR")){
         fprintf(w_pointer, "%s", d_read);        
-        while(fgets(d_read, MAX_READ_PLACES, r_pointer) && !strstr(d_read, "PT")){          
+        while(fgets(d_read, READ_PLACES, r_pointer) && !strstr(d_read, "PT")){
           if( strlen(d_read) > 2 && isdigit(d_read[0]) ){
-            tmp1 = ltokstr(d_read, 0, '<');            
+            tmp1 = ltokstr(d_read, 0, '<');
             num_tmp = strtol(tmp1, &token2, 10);
             counter_pl = read_place_arcs[num_tmp]-1;
             for(int i = 1; i <= counter_pl && counter_pl > 0; i++){
@@ -152,6 +154,7 @@ char* pr_encoding(char* in_file){
           fprintf(w_pointer, "%s", d_read);
         }
       }
+      //fprintf(w_pointer, "%s", "hola\n");
       /* Transition t_i produces place p_i, i.e., p_i in postset(t)*/
       new_places = places;
       if(strstr(d_read, "PT")){
@@ -188,7 +191,7 @@ char* pr_encoding(char* in_file){
       /* Any transition t consuming p in N consumes p_i in N', i.e., p_i in preset(t)*/      
       if(strstr(d_read, "PT")){
         fprintf(w_pointer, "%s", d_read);
-        while(fgets(d_read, MAX_READ_PLACES, r_pointer) != NULL && !strstr(d_read, "RS")){
+        while(fgets(d_read, READ_PLACES, r_pointer) != NULL && !strstr(d_read, "RS")){
           if( strlen(d_read) > 2 ){
             tmp1 = ftokstr(d_read, 0, '>');
             num_tmp = strtol(tmp1, &token2, 10);
@@ -205,8 +208,8 @@ char* pr_encoding(char* in_file){
       new_places = places;
       for (size_t i = 1; i <= places; i++)
         read_place_written[i] = -1;
-      if((strstr(d_read, "RS")) || fgets(d_read, MAX_READ_PLACES, r_pointer) == NULL ){        
-        //if (fgets(d_read, MAX_READ_PLACES, r_pointer) == NULL) fprintf(w_pointer, "\n");
+      if((strstr(d_read, "RS")) || fgets(d_read, READ_PLACES, r_pointer) == NULL ){        
+        //if (fgets(d_read, READ_PLACES, r_pointer) == NULL) fprintf(w_pointer, "\n");
         rd_arcs = 0;
         token = ftokstr(buffer_rd, rd_arcs, '\n'); tmp = "";
         tmp1 = ftokstr(token, 0, '>');
@@ -239,7 +242,7 @@ char* pr_encoding(char* in_file){
       /* Any transition t resetting p in N resets p_i in N', i.e., p_i in reset(t)*/
       if(strstr(d_read, "RS")){
         fprintf(w_pointer, "%s", d_read);
-        while(fgets(d_read, MAX_READ_PLACES, r_pointer) != NULL){
+        while(fgets(d_read, READ_PLACES, r_pointer) != NULL){
           if( strlen(d_read) > 2 ){
             tmp1 = ftokstr(d_read, 0, '>');
             num_tmp = strtol(tmp1, &token2, 10);
