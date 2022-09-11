@@ -1,0 +1,139 @@
+# For rules and constraints ecological interpretation, see Tables A1 and A2 (Supplementary material) of the corresponding article. You can find it at the following address : https://www.mdpi.com/2073-445X/11/1/42
+
+Atmosphere: 
+ Rf+: Rainfall
+
+Soil: 
+ Sw+: Surface water (seasonal rivers, soil water, water holes)
+ Gw+: Ground water
+
+Fauna: 
+ Ca+: Carnivores
+ Gz+: Wild grazers
+ El+: Wild generalists
+ Bw+: Wild browsers
+ Ct+: Cattle
+ Go+: Goats
+
+Flora: 
+ Gr+: Grasses
+ Tr+: Tree
+ Cr+: Crops
+
+Human: 
+ To+: Tourists
+ 
+constraints:
+# Scenario "dry period" (scenario 1) 
+#[0] Sw+ >> Sw-
+
+# Scenario "wet period" (scenario 2) 
+#[0] Sw- >> Sw+
+
+# Scenario "no grazers" (scenario 3) 
+[0] Ct+ >> Ct-
+[0] Gz+ >> Gz-
+
+# Scenario "no browsers" (scenario 4) 
+#[0] Bw+ >> Bw-
+#[0] Go+ >> Go-
+#[0] El+ >> El-
+
+# lack of attraction for tourists
+[0] Ca-, El-, Bw-, Gz-, Ct-, Go- >> To- # remplacé Pa par Ct-, Go-
+
+# lack of food for wildlife
+[0] Gr-, Tr- >> El- # 
+[0] Gr- >> Ct-, Gz- # 
+[0] Tr- >> Bw-, Go- # 
+[1] Gz-, Bw-, Ct-, Go- >> Ca- # 
+
+# lack of water for herbivores
+[0] Rf-, Sw-, Gw- >> Ct-, Go-, Gz-, Ca-, Bw-, El- # removed Pa-, Ag-
+[0] Rf-, Sw- >> Ct-, Gz-, Ca- # removed Pa-
+
+# lack of water for plants
+[1] Rf-, Gw- >> Tr-, Gr-, Cr- # 
+
+rules: 
+# Season transition
+[Rf+] Rf-, Tr+, Bw-, El-, Go- >> Rf+, Sw+ # 
+[Rf+_Gr+] Rf-, Tr+, Bw+ >> Rf+, Gr+, Sw+ # Browsers maintain open areas and enable grass growth
+[Rf+_Gr+] Rf-, Tr+, El+ >> Rf+, Gr+, Sw+ # Browsers maintain open areas and enable grass growth
+[Rf+_Gr+] Rf-, Tr+, Go+ >> Rf+, Gr+, Sw+ # Browsers maintain open areas and enable grass growth
+[Rf+_Gr+] Rf-, Tr- >> Rf+, Gr+, Sw+ #
+[Rf-] Rf+ >> Rf- #  
+
+# grass growth in rainy season
+[Gr+] Rf+, Tr+, Bw+ >> Gr+ # Browsers maintain open areas and enable grass growth
+[Gr+] Rf+, Tr+, El+ >> Gr+ # Browsers maintain open areas and enable grass growth
+[Gr+] Rf+, Tr+, Go+ >> Gr+ # Browsers maintain open areas and enable grass growth
+[Gr+] Rf+, Tr- >> Gr+ #
+
+# water dynamics
+[Gw+] Rf+, Sw+ >> Gw+ # 
+[Sw-] Rf- >> Sw- # Deleted : Scenario 2 (wet period)
+[Gw-] Rf-, Sw- >> Gw- # drought or excessive water extraction
+
+# overgrazing
+[Gr-] Rf-, Ct+ >> Gr- #
+
+# carnivory on wildlife
+[Ca+] Gz+ >> Ca+ # 
+[Ca+] Bw+ >> Ca+ # 
+[Gz-] Ca+ >> Gz- # add condition Gr- ?
+[Bw-] Ca+ >> Bw- # add condition Tr- ?
+
+# carnivory on livestock
+[Ct-] Ca+, Gz-, Bw- >> Ct- # 
+[Go-] Ca+, Gz-, Bw- >> Go- # 
+
+
+# water is missing
+[aBw-] Rf-, Sw- >> El-, Bw-, Go- # 
+
+# herbivores competition
+[Gz-] Ct+ >> Gz- # 
+[Go-] El+, Gr- >> Go- # 
+[El-] Go+, Gr- >> El- # 
+[Bw-] Go+ >> Bw- # 
+[Go-] Bw+ >> Go- # 
+[Bw-] El+ >> Bw- # 
+
+# plant competition
+[Gr-] Tr+, Gr+, Rf+, Gw+ >> Gr- # 
+
+# herbivory
+[Tr-] Go+ >> Tr-, Gr+ # O'Kane (mesobrowsers *probably* have a substitutive effect to that of elephants)
+[Tr-] El+ >> Tr-, Gr+ # O'Kane 
+[Tr-] Bw+ >> Tr-, Gr+ # O'Kane (mesobrowsers *probably* have a substitutive effect to that of elephants)
+[Tr+] Rf+, Gw+, Gr+, El-, Bw-, Go- >> Tr+ # 
+[Gr-] Rf-, Gw+, Tr+, Gr+ >> Gr- # 
+
+# agriculture
+[Cr] Rf+ >> Cr+ # removed realization Ag+, removed condition Sl+ 
+[Cr] Rf-, Gw+ >> Cr+ #  removed realization Ag+, removed condition Sl+ 
+
+# resources-herbivores
+[Go+] Sw-, Gw+, Tr+ >> Go+ # removed Pa+, assumes boreholes for livestock watering
+[aBw+] Sw+, Tr+ >> Go+, Bw+, El+ # removed Pa+ 
+[Ct+] Sw-, Gw+, Gr+ >> Ct+ # removed Pa+, assumes boreholes for livestock watering
+[aGz+] Sw+, Gr+ >> Ct+, Gz+, El+ # removed Pa+ 
+ 
+# Crop raiding
+[Cr-] El+ >> Cr- # 
+
+# Tourists attractions
+[To+] Gz+ >> To+ # 
+[To+] El+ >> To+ # 
+[To+] Bw+ >> To+ # 
+[To+] Ca+ >> To+ # 
+[To+] Ct+ >> To+ # 
+[To+] Go+ >> To+ # 
+
+# Mammal diseases
+[Bw-] Rf+, Sw+, Go+, Bw+ >> Bw-, Go- # 
+[Gz-] Rf+, Sw+, Ct+, Gz+ >> Gz-, Ct- # 
+
+# Crop pests and diseases
+[Cr-] Rf+, Cr+ >> Cr- # 
