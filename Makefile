@@ -20,7 +20,7 @@ OBJECTS = main.o common.o readlib.o \
 	  netconv.o nodelist.o readpep.o mci.o \
 	  unfold.o marking.o pe.o order.o
 
-OBJECTS_EV = mci2dot_ev.o keyevent.o
+OBJECTS_EV = mci2dot_ev.o
 
 OBJECTS_PR = pr_encoding.o common.o
 
