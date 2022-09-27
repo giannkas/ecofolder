@@ -191,10 +191,14 @@ void pe (cond_t *co)
 	*pe_conds = co;	/* any new PE contains co */
 	nodelist_push(&(pl->conds),co);
 	/* check the transitions in pl's postset */
-	for (pl_post = nodelist_concatenate(pl->postset, pl->reset); pl_post; pl_post = pl_post->next) 		//*** NEW  ***//
+	for (pl_post = nodelist_concatenate(pl->postset, pl->reset); pl_post; pl_post = pl_post->next)
 	{		
+		tr = pl_post->node;
+    
 		if (!co->token && nodelist_find(pl->postset, pl_post->node))
 			continue;
+    if (co->pre_ev && !strcmp(co->pre_ev->origin->name, tr->name))
+      continue;
 		
 		/* co_ptr2 = pe_conds;
 		printf("FROM place %s transition name %s  and its pe_conds: \n", pl->name, ((trans_t*)(pl_post->node))->name);
@@ -203,7 +207,6 @@ void pe (cond_t *co)
 			co_ptr2 = &((*co_ptr2)->next);
 		} */
 
-		tr = pl_post->node;
 		
 		(curr_comb = pe_combs)->start = NULL;
 
