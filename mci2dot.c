@@ -8,7 +8,7 @@ void read_mci_file (char *filename)
 	FILE *file;
 	int numco, numev, numpl, numtr, sz, i;
 	int pre_ev, post_ev, cutoff, dummy;
-	int *co2pl, *ev2tr, *tokens;
+	int *co2pl, *ev2tr, *tokens, *cutoffs;
 	char **plname, **trname, *c;
 
 	if (!(file = fopen(filename,"rb")))
@@ -25,6 +25,7 @@ void read_mci_file (char *filename)
 	co2pl = malloc((numco+1) * sizeof(int));
 	tokens = malloc((numco+1) * sizeof(int));
 	ev2tr = malloc((numev+1) * sizeof(int));
+  cutoffs = calloc(numev+1, sizeof(int));
 
 	for (i = 1; i <= numev; i++)
 		read_int(ev2tr[i]);
@@ -44,6 +45,7 @@ void read_mci_file (char *filename)
 	for (;;) {
 		read_int(cutoff);
 		if (!cutoff) break;
+    cutoffs[cutoff] = cutoff;
 #ifdef CUTOFF
 		printf("  e%d [style=filled];\n",cutoff);
 #endif
@@ -54,12 +56,13 @@ void read_mci_file (char *filename)
 	}
 
 	do { read_int(dummy); } while(dummy);
-	read_int(numpl);
+  read_int(numpl);
 	read_int(numtr);
 	read_int(sz);
 
 	plname = malloc((numpl+2) * sizeof(char*));
 	trname = malloc((numtr+2) * sizeof(char*));
+
 	for (i = 1; i <= numpl+1; i++) plname[i] = malloc(sz+1);
 	for (i = 1; i <= numtr+1; i++) trname[i] = malloc(sz+1);
 
@@ -75,8 +78,12 @@ void read_mci_file (char *filename)
 		printf("  c%d [fillcolor=lightblue label= <%s<FONT COLOR=\"red\"><SUP>%d</SUP></FONT>&nbsp;(c%d)> shape=circle style=filled];\n",
 				i,plname[co2pl[i]],tokens[i],i);
 	for (i = 1; i <= numev; i++)
-		printf("  e%d [fillcolor=palegreen label=\"%s (e%d)\" shape=box style=filled];\n",
-				i,trname[ev2tr[i]],i);
+    if (i != cutoffs[i])
+		  printf("  e%d [fillcolor=palegreen label=\"%s (e%d)\" shape=box style=filled];\n",
+				  i,trname[ev2tr[i]],i);
+    else
+      printf("  e%d [fillcolor=firebrick2 label=\"%s (e%d)\" shape=box style=filled];\n",
+				  i,trname[ev2tr[i]],i);
 	printf("}\n");
 
 	fclose(file);
