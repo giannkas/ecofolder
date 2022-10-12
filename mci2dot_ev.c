@@ -95,7 +95,7 @@ void read_mci_file_ev (char *filename)
 	FILE *file;
 	int numco, numev, numpl, numtr, sz, i, ev1, ev2;
 	int pre_ev, post_ev, cutoff, dummy;
-	int *co2pl, *ev2tr, *tokens;
+	int *co2pl, *ev2tr, *tokens, *cutoffs;
 	char **plname, **trname, *c;
 
 	if (!(file = fopen(filename,"rb")))
@@ -116,6 +116,7 @@ void read_mci_file_ev (char *filename)
                                             // to save the particular tokens' conditions.
 	ev2tr = malloc((numev+1) * sizeof(int)); // reserve empty memory for the total number 
                                            // events.
+  cutoffs = calloc(numev+1, sizeof(int));                                         
   int (*co_postsets)[numev+1] = calloc(numco+1, sizeof *co_postsets); 
                                            // conditions' postsets to detect conflicts in events.
   int (*ev_succs)[numev+1] = calloc(numev+1, sizeof *ev_succs); // matrix to record events' successors.
@@ -264,6 +265,7 @@ void read_mci_file_ev (char *filename)
 	for (;;) {
 		read_int(cutoff);
 		if (!cutoff) break;
+    cutoffs[cutoff] = cutoff;
 #ifdef CUTOFF
 		printf("  e%d [style=filled];\n",cutoff);
 #endif
@@ -292,8 +294,12 @@ void read_mci_file_ev (char *filename)
 	fread(c,1,1,file);
 
 	for (i = 1; i <= numev; i++)
-		printf("  e%d [fillcolor=palegreen label=\"%s (e%d)\" shape=box style=filled];\n",
-				i,trname[ev2tr[i]],i);
+    if (i != cutoffs[i])
+		  printf("  e%d [fillcolor=palegreen label=\"%s (e%d)\" shape=box style=filled];\n",
+				  i,trname[ev2tr[i]],i);
+    else
+		  printf("  e%d [fillcolor=firebrick2 label=\"%s (e%d)\" shape=box style=filled];\n",
+				  i,trname[ev2tr[i]],i);
   printf("  e0 [fillcolor=white label=\"⊥\" shape=box style=filled];\n");
 	printf("}\n");
 
