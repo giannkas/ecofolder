@@ -76,6 +76,7 @@ int main (int argc, char **argv)
 	//net = read_pep_net(pr_encoding(llnet));
 	net = read_pep_net(llnet);
 	nc_static_checks(net,stoptr_name);
+  //nc_check_constraints(net);
 
 	/* Reset set of the transitions */
 	printf("Reset set of the transitions\n");
@@ -198,6 +199,16 @@ int main (int argc, char **argv)
 		pll = pll->next;
 	}
 	printf("\n");
+
+  /* Constrainst of net's unfolding */
+	printf("Constrainst of net's unfolding\n");
+	const_t *ctt = net->constraints;
+	while (ctt){
+		printf("%s\n", ctt->name);
+		ctt = ctt->next;
+	}
+	printf("\n");
+
 	unfold();
 	write_mci_file(mcifile);
 	
