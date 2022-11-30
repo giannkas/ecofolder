@@ -6,6 +6,7 @@
 
 #include <string.h>
 #include <stdio.h>
+#include <string.h>
 #include "common.h"
 #include "netconv.h"
 #include "unfold.h"
@@ -19,7 +20,8 @@ net_t* nc_create_net()
 	net_t *net = MYmalloc(sizeof(net_t));
 	net->places = NULL;
 	net->transitions = NULL;
-	net->numpl = net->numtr = 0;
+  net->constraints = NULL;
+	net->numpl = net->numtr = net->numct = 0;
 	return net;
 }
 
@@ -60,6 +62,15 @@ trans_t* nc_create_transition (net_t *net)
 		// dropping out those in common. Same for postreset_size.
 	tr->num = ++net->numtr;
 	return tr;
+}
+
+const_t* nc_create_constraint (net_t *net)
+{
+  const_t *ct = MYmalloc(sizeof(const_t));
+  ct->next = net->constraints;
+  net->constraints = ct;
+  ct->num = ++net->numct;
+  return ct;
 }
 
 /****************************************************************************/
@@ -138,3 +149,22 @@ void nc_static_checks (net_t* net, char *stoptr_name)
 		if (pl->marked) break;
 	if (!pl) nc_error("no initial marking");
 }
+
+/*****************************************************************************/
+
+/* void nc_check_constraints(net_t* net)
+{
+  int sz = 0;
+	place_t *pl;
+
+  for (pl = net->places; pl; pl = pl->next)
+		if (strlen(pl->name) > sz) sz = strlen(pl->name);
+
+  char plnames[sz*net->numpl+net->numpl] = {0};
+
+  for (pl = net->places; pl; pl = pl->next){
+		strcat(plnames, pl->name);
+    strcat(plnames, pl->name);
+  }
+  
+} */
