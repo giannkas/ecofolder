@@ -437,7 +437,7 @@ t_blockinfo netblocks[] =
 	  { "BL",  TB_OPTIONAL,  TB_BLOCK, blockfields },
 	  { "PL",  TB_MANDATORY, TB_BLOCK, placefields },
 	  { "TR",  TB_MANDATORY, TB_BLOCK, transfields },
-	  { "CT",  TB_OPTIONAL, TB_BLOCK, placefields },
+	  { "RT",  TB_OPTIONAL, TB_BLOCK, placefields },
 	  { "PTR", TB_OPTIONAL,  TB_BLOCK, transfields+1 },
 	  { "RD",  TB_OPTIONAL, TB_BLOCK, arcfields },
 	  { "TP",  TB_MANDATORY, TB_BLOCK, arcfields },
@@ -523,9 +523,9 @@ int insert_trans()
 	return 0;
 }
 
-int insert_const(){
-  const_t* ct = nc_create_constraint(rd_net);
-  ct->name = rd_name? MYstrdup(rd_name) : NULL;
+int insert_restr(){
+  restr_t* rt = nc_create_restriction(rd_net);
+  rt->name = rd_name? MYstrdup(rd_name) : NULL;
   return 0;
 }
 
@@ -598,7 +598,7 @@ net_t* read_pep_net(char *PEPfilename)
 		  { '0', &rd_ident },	/* numeric name		*/
 		  {  0 ,  0 } };
 	  
-  t_dest marking_const[] =
+  t_dest marking_restr[] =
 		{ { '\'',&rd_name },	/* identifier		*/
 		  { '"', &rd_name },	/*     "		*/
 		  {  0 ,  0 } };
@@ -614,7 +614,7 @@ net_t* read_pep_net(char *PEPfilename)
 	t_blockdest netdest[] =
 		{ { "PL",  insert_place, NULL, place_dest },
 		  { "TR",  insert_trans, NULL, trans_dest },
-		  { "CT",  insert_const, NULL, marking_const },
+		  { "RT",  insert_restr, NULL, marking_restr },
 		  { "RD",  insert_arc,   NULL, arc_dest},			//*** NEW  ***//
 		  { "TP",  insert_arc,   NULL, arc_dest },
 		  { "PT",  insert_arc,   NULL, arc_dest },

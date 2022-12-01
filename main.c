@@ -70,13 +70,9 @@ int main (int argc, char **argv)
 		}
 
 	if (!llnet) usage(argv[0]);
-    //strcpy(llnet, pr_encoding(llnet));
-	//llnet = pr_encoding(llnet);
-	//printf("llnet is: %s\n", llnet);
-	//net = read_pep_net(pr_encoding(llnet));
+  
 	net = read_pep_net(llnet);
-	nc_static_checks(net,stoptr_name);
-  //nc_check_constraints(net);
+	nc_static_checks(net,stoptr_name);  
 
 	/* Reset set of the transitions */
 	printf("Reset set of the transitions\n");
@@ -200,12 +196,12 @@ int main (int argc, char **argv)
 	}
 	printf("\n");
 
-  /* Constrainst of net's unfolding */
-	printf("Constrainst of net's unfolding\n");
-	const_t *ctt = net->constraints;
-	while (ctt){
-		printf("%s\n", ctt->name);
-		ctt = ctt->next;
+  /* Restrictions of net's unfolding */
+	printf("Restrictions of net's unfolding\n");
+	restr_t *rtt = net->restrictions;
+	while (rtt){
+		printf("%s\n", rtt->name);
+		rtt = rtt->next;
 	}
 	printf("\n");
 
