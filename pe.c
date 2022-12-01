@@ -187,18 +187,42 @@ void pe (cond_t *co)
 	cond_t **cocoptr;
 	place_t *pl = co->origin, *pl2;
 	trans_t *tr;
+  const_t *ct;
+  char *token_ct, *token_pl;
+  int const_check;
 	
 	*pe_conds = co;	/* any new PE contains co */
 	nodelist_push(&(pl->conds),co);
 	/* check the transitions in pl's postset */
 	for (pl_post = nodelist_concatenate(pl->postset, pl->reset); pl_post; pl_post = pl_post->next)
 	{		
-		tr = pl_post->node;
+		const_check = 0;
+    tr = pl_post->node;
     
 		if (!co->token && nodelist_find(pl->postset, pl_post->node))
 			continue;
-    if (co->pre_ev && !strcmp(co->pre_ev->origin->name, tr->name))
-      continue;
+    else if (co->token && nodelist_find(pl->postset, pl_post->node)){
+      for (ct = net->constraints; ct; ct = ct->next){
+        for (pl2 = tr->postset->node; pl2; pl2 = pl2->next){
+          if(strstr(pl2->name,"+") && strstr(ct->name,"-")){
+            token_pl = strtok(pl2->name, "+");
+            token_ct = strtok(ct->name, "-");
+            if(!strcmp(token_pl,token_ct)){
+              const_check = 1; printf("here is 1\n");}
+          } else if (strstr(pl2->name,"-") && strstr(ct->name,"+")){
+            token_pl = strtok(pl2->name, "-");
+            token_ct = strtok(ct->name, "+");
+            if(!strcmp(token_pl,token_ct)){
+              const_check = 1; printf("here is 2\n");}
+          } 
+        }
+      }
+    }
+    
+    if(!net->constraints)
+      printf("net->constraints == NULL\n");
+    if ((co->pre_ev && !strcmp(co->pre_ev->origin->name,tr->name)) || const_check){
+      printf("const_check %d here is 3\n", const_check); continue;}
 		
 		/* co_ptr2 = pe_conds;
 		printf("FROM place %s transition name %s  and its pe_conds: \n", pl->name, ((trans_t*)(pl_post->node))->name);
