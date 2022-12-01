@@ -1,0 +1,62 @@
+digraph test {
+  e1 -> e15;
+  e1 -> e13;
+  e1 -> e14;
+  e2 -> e12;
+  e3 -> e7;
+  e3 -> e9;
+  e4 -> e10;
+  e4 -> e11;
+  e5 -> e8;
+  e0 -> e1;
+  e0 -> e2;
+  e0 -> e3;
+  e0 -> e4;
+  e0 -> e5;
+  e0 -> e6;
+  e0 -> e16;
+
+//conflicts
+  e1 -> e16 [arrowhead=none color=gray60 style=dashed constraint=false];
+  e2 -> e14 [arrowhead=none color=gray60 style=dashed constraint=false];
+  e5 -> e13 [arrowhead=none color=gray60 style=dashed constraint=false];
+  e5 -> e14 [arrowhead=none color=gray60 style=dashed constraint=false];
+  e5 -> e15 [arrowhead=none color=gray60 style=dashed constraint=false];
+  e5 -> e16 [arrowhead=none color=gray60 style=dashed constraint=false];
+  e6 -> e8 [arrowhead=none color=gray60 style=dashed constraint=false];
+  e6 -> e9 [arrowhead=none color=gray60 style=dashed constraint=false];
+  e6 -> e10 [arrowhead=none color=gray60 style=dashed constraint=false];
+  e6 -> e12 [arrowhead=none color=gray60 style=dashed constraint=false];
+  e6 -> e13 [arrowhead=none color=gray60 style=dashed constraint=false];
+  e7 -> e9 [arrowhead=none color=gray60 style=dashed constraint=false];
+  e8 -> e9 [arrowhead=none color=gray60 style=dashed constraint=false];
+  e8 -> e10 [arrowhead=none color=gray60 style=dashed constraint=false];
+  e8 -> e12 [arrowhead=none color=gray60 style=dashed constraint=false];
+  e9 -> e10 [arrowhead=none color=gray60 style=dashed constraint=false];
+  e9 -> e12 [arrowhead=none color=gray60 style=dashed constraint=false];
+  e9 -> e13 [arrowhead=none color=gray60 style=dashed constraint=false];
+  e10 -> e11 [arrowhead=none color=gray60 style=dashed constraint=false];
+  e10 -> e12 [arrowhead=none color=gray60 style=dashed constraint=false];
+  e10 -> e13 [arrowhead=none color=gray60 style=dashed constraint=false];
+  e12 -> e13 [arrowhead=none color=gray60 style=dashed constraint=false];
+  e13 -> e15 [arrowhead=none color=gray60 style=dashed constraint=false];
+  e14 -> e15 [arrowhead=none color=gray60 style=dashed constraint=false];
+
+  e1 [fillcolor=palegreen label="r11 (e1)" shape=box style=filled];
+  e2 [fillcolor=palegreen label="r12 (e2)" shape=box style=filled];
+  e3 [fillcolor=palegreen label="r13 (e3)" shape=box style=filled];
+  e4 [fillcolor=palegreen label="r14 (e4)" shape=box style=filled];
+  e5 [fillcolor=palegreen label="r15 (e5)" shape=box style=filled];
+  e6 [fillcolor=palegreen label="r16 (e6)" shape=box style=filled];
+  e7 [fillcolor=firebrick2 label="r10 (e7)" shape=box style=filled];
+  e8 [fillcolor=firebrick2 label="r9 (e8)" shape=box style=filled];
+  e9 [fillcolor=firebrick2 label="r8 (e9)" shape=box style=filled];
+  e10 [fillcolor=firebrick2 label="r7 (e10)" shape=box style=filled];
+  e11 [fillcolor=firebrick2 label="r6 (e11)" shape=box style=filled];
+  e12 [fillcolor=firebrick2 label="r5 (e12)" shape=box style=filled];
+  e13 [fillcolor=firebrick2 label="r4 (e13)" shape=box style=filled];
+  e14 [fillcolor=firebrick2 label="r3 (e14)" shape=box style=filled];
+  e15 [fillcolor=firebrick2 label="r1 (e15)" shape=box style=filled];
+  e16 [fillcolor=firebrick2 label="r2 (e16)" shape=box style=filled];
+  e0 [fillcolor=white label="⊥" shape=box style=filled];
+}
