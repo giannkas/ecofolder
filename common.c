@@ -95,14 +95,14 @@ void* MYmalloc(size_t size)
 {
 	//printf("size: %lu\n", size);
 	void * m;
-	if (!(m = malloc(size))) nc_error("memory allocation rejected!");
+	if (!(m = malloc(size))) nc_error("MYmalloc memory allocation rejected!");
 	return m;
 }
 
 void* MYcalloc(size_t size)
 {
 	void * m;
-	if (!(m = calloc(size, 1))) nc_error("memory allocation rejected!");
+	if (!(m = calloc(size, 1))) nc_error("MYcalloc memory allocation rejected!");
 	memset(m,0,size);
 	return m;
 }
@@ -110,13 +110,13 @@ void* MYcalloc(size_t size)
 void* MYrealloc(void *ptr, size_t size)
 {
 	void *r;
-	if (!(r = realloc(ptr,size))) nc_error("memory allocation rejected!");
+	if (!(r = realloc(ptr,size))) nc_error("MYrealloc memory allocation rejected!");
 	return r;
 }
 
 char* MYstrdup(char *string)
 {
 	char *str;
-	if (!(str = strdup(string))) nc_error("memory allocation rejected!");
+	if (!(str = strdup(string))) nc_error("MYstrdup memory allocation rejected!");
 	return str;
 }
