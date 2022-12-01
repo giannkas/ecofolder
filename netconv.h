@@ -43,13 +43,13 @@ typedef struct trans_t
 		prereset_size, postreset_size, ctxset_size;
 } trans_t;
 
-typedef struct const_t
+typedef struct restr_t
 {
-  struct const_t *next;
+  struct restr_t *next;
 	char  *name;		    /* short name	which should correspond 
                         to a least one place name*/
 	int    num;		    /* number				    */
-} const_t;
+} restr_t;
 
 
 typedef struct coa_t {
@@ -91,7 +91,7 @@ typedef struct
 {
 	place_t *places;	/* pointer to first place		*/
 	trans_t *transitions;	/* pointer to first transition		*/
-  const_t *constraints; /* constraints to restrict net's unfolding */
+  restr_t *restrictions; /* constraints to restrict net's unfolding */
 	int numpl, numtr, numct;	/* number of places/transitions in net	*/
 	int maxpre, maxpost, maxres, maxctx;	/* maximal size of a t-pre/postset, reset and ctxset	*/
 } net_t;
@@ -111,11 +111,10 @@ extern net_t* nc_create_net ();
 extern unf_t* nc_create_unfolding ();
 extern place_t* nc_create_place (net_t*);
 extern trans_t* nc_create_transition (net_t*);
-extern const_t* nc_create_constraint(net_t*);
+extern restr_t* nc_create_restriction(net_t*);
 extern void nc_create_arc (struct nodelist_t**,struct nodelist_t**,void*,void*);
 extern void nc_compute_sizes (net_t*);
 extern void nc_static_checks (net_t*,char*);
-extern void nc_check_constraints(net_t*);
 
 /*****************************************************************************/
 /* declarations from nodelist.c						     */
