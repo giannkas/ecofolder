@@ -72,7 +72,9 @@ int main (int argc, char **argv)
 	if (!llnet) usage(argv[0]);
   
 	net = read_pep_net(llnet);
-	nc_static_checks(net,stoptr_name);  
+	nc_static_checks(net,stoptr_name);
+  nc_create_trans_pool(net);
+  /* creating transitions pool that are enforced by restrictions */
 
 	/* Reset set of the transitions */
 	printf("Reset set of the transitions\n");

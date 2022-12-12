@@ -94,6 +94,7 @@ typedef struct
   restr_t *restrictions; /* constraints to restrict net's unfolding */
 	int numpl, numtr, numct;	/* number of places/transitions in net	*/
 	int maxpre, maxpost, maxres, maxctx;	/* maximal size of a t-pre/postset, reset and ctxset	*/
+	char  *pool_trans;		    /* word of transitions restricted to fire according to restrictions			    */
 } net_t;
 
 typedef struct
@@ -115,6 +116,7 @@ extern restr_t* nc_create_restriction(net_t*);
 extern void nc_create_arc (struct nodelist_t**,struct nodelist_t**,void*,void*);
 extern void nc_compute_sizes (net_t*);
 extern void nc_static_checks (net_t*,char*);
+extern void nc_create_trans_pool (net_t*);
 
 /*****************************************************************************/
 /* declarations from nodelist.c						     */

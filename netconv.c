@@ -149,3 +149,41 @@ void nc_static_checks (net_t* net, char *stoptr_name)
 		if (pl->marked) break;
 	if (!pl) nc_error("no initial marking");
 }
+
+/*****************************************************************************/
+void nc_create_trans_pool (net_t* net){
+
+  restr_t *rt;
+  trans_t *tr;
+  int const_check;
+  char *token_rt, *token_pl;
+  int sz = 0;
+
+  for (tr = net->transitions; tr; tr = tr->next)
+    if (strlen(tr->name) > sz) sz = strlen(tr->name);
+  
+  char trans_pool[sz*(net->numtr)];
+  memset( trans_pool, 0, sz*(net->numtr)*sizeof(char) );
+
+  for (tr = net->transitions; tr; tr = tr->next){
+    const_check = 0;
+    for (rt = net->restrictions; rt && !const_check; rt = rt->next){
+      nodelist_t *ptr = tr->postset;
+      for (; ptr && !const_check; ptr = ptr->next){          
+        if(strstr(((place_t*)(ptr->node))->name,"+") && strstr(rt->name,"-")){
+          token_pl = ftokstr(((place_t*)(ptr->node))->name, 0, '+');
+          token_rt = ftokstr(rt->name, 0, '-');
+          if(!strcmp(token_pl,token_rt)){ const_check = 1;
+          strcat(trans_pool,tr->name);}
+        } else if (strstr(((place_t*)(ptr->node))->name,"-") && strstr(rt->name,"+")){
+          token_pl = ftokstr(((place_t*)(ptr->node))->name, 0, '-');
+          token_rt = ftokstr(rt->name, 0, '+');          
+          if(!strcmp(token_pl,token_rt)){ const_check = 1;           
+          strcat(trans_pool,tr->name);}
+        }
+      }
+    }
+  }
+  net->pool_trans = strlen(trans_pool) > 0? MYstrdup(trans_pool) : NULL;  
+}
+
