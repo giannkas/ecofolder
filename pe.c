@@ -186,38 +186,19 @@ void pe (cond_t *co)
 	pe_comb_t *curr_comb;
 	cond_t **cocoptr;
 	place_t *pl = co->origin, *pl2;
-	trans_t *tr;
-  restr_t *rt;
-  char *token_rt, *token_pl;
-  int const_check;
+	trans_t *tr;  
 	
 	*pe_conds = co;	/* any new PE contains co */
 	nodelist_push(&(pl->conds),co);
 	/* check the transitions in pl's postset */
 	for (pl_post = nodelist_concatenate(pl->postset, pl->reset); pl_post; pl_post = pl_post->next)
 	{		
-		const_check = 0;
     tr = pl_post->node;
     
 		if (!co->token && nodelist_find(pl->postset, pl_post->node))
-			continue;
-    
-    for (rt = net->restrictions; rt && !const_check; rt = rt->next){
-      nodelist_t *ptr = tr->postset;
-      for (; ptr && !const_check; ptr = ptr->next){          
-        if(strstr(((place_t*)(ptr->node))->name,"+") && strstr(rt->name,"-")){
-          token_pl = ftokstr(((place_t*)(ptr->node))->name, 0, '+');
-          token_rt = ftokstr(rt->name, 0, '-');
-          if(!strcmp(token_pl,token_rt)) const_check = 1;
-        } else if (strstr(((place_t*)(ptr->node))->name,"-") && strstr(rt->name,"+")){
-          token_pl = ftokstr(((place_t*)(ptr->node))->name, 0, '-');
-          token_rt = ftokstr(rt->name, 0, '+');          
-          if(!strcmp(token_pl,token_rt)) const_check = 1;           
-        }
-      }
-    }
-    
-    if ((co->pre_ev && !strcmp(co->pre_ev->origin->name,tr->name)) || const_check)
+			continue;    
+
+    if ((co->pre_ev && !strcmp(co->pre_ev->origin->name,tr->name)) || strstr(net->pool_trans,tr->name))
       continue;
 		
 		/* co_ptr2 = pe_conds;
