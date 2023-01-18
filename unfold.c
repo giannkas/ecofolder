@@ -397,7 +397,6 @@ void unfold ()
 	print_marking_co(nodelist_concatenate(unf->m0, unf->m0_unmarked));
 	printf("\n");
 	recursive_pe(nodelist_concatenate(unf->m0, unf->m0_unmarked));
-	
 	/* take the next event from the queue */
 	while (pe_qsize)
 	{		

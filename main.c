@@ -62,7 +62,7 @@ int main (int argc, char **argv)
 
 			if (dptr == &llnet)
 			{
-				strcpy(idx,".mci");
+				strcpy(idx,"_unf.mci");
 				mcifile = MYstrdup(tmpname);
 			}
 
