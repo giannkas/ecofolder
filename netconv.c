@@ -6,7 +6,7 @@
 
 #include <string.h>
 #include <stdio.h>
-#include <string.h>
+
 #include "common.h"
 #include "netconv.h"
 #include "unfold.h"
@@ -22,6 +22,7 @@ net_t* nc_create_net()
 	net->transitions = NULL;
   net->restrictions = NULL;
 	net->numpl = net->numtr = net->numct = 0;
+  net->ign_trans = net->rt_trans = net->unf_trans = NULL;
 	return net;
 }
 
@@ -95,13 +96,16 @@ void nc_create_arc (nodelist_t **fromlist, nodelist_t **tolist,
 
 void nc_compute_sizes (net_t *net)
 {
-	trans_t *tr;	
-	int k;
+	trans_t *tr;
+  place_t *pl;
+	int k, sz = 0;
 
 	net->maxpre = net->maxpost = net->maxres = net->maxctx = 0;
 	for (tr = net->transitions; tr; tr = tr->next)
 	{
 		nodelist_t *list;
+
+    if (strlen(tr->name) > sz) sz = strlen(tr->name);
 
 		for (k = 0, list = tr->preset; list; k++, list = list->next);
 		tr->preset_size = k;
@@ -125,6 +129,11 @@ void nc_compute_sizes (net_t *net)
 		for (k = 0, list = nodelist_concatenate(tr->postset, tr->reset); list; k++, list = list->next);
 		tr->postreset_size = k;
 	}
+  net->maxtrname = sz;
+  sz = 0;
+  for (pl = net->places; pl; pl = pl->next)
+		if (strlen(pl->name) > sz) sz = strlen(pl->name);
+  net->maxplname = sz;
 }
 
 /*****************************************************************************/
@@ -157,33 +166,55 @@ void nc_create_trans_pool (net_t* net){
   trans_t *tr;
   int const_check;
   char *token_rt, *token_pl;
-  int sz = 0;
-
-  for (tr = net->transitions; tr; tr = tr->next)
-    if (strlen(tr->name) > sz) sz = strlen(tr->name);
   
-  char trans_pool[sz*(net->numtr)];
-  memset( trans_pool, 0, sz*(net->numtr)*sizeof(char) );
+  char trans_pool[net->maxtrname*((net->numtr)+2)];
+  memset( trans_pool, 0, net->maxtrname*((net->numtr)+2)*sizeof(char) );
 
   for (tr = net->transitions; tr; tr = tr->next){
     const_check = 0;
     for (rt = net->restrictions; rt && !const_check; rt = rt->next){
       nodelist_t *ptr = tr->postset;
-      for (; ptr && !const_check; ptr = ptr->next){          
+      for (; ptr && !const_check; ptr = ptr->next){
         if(strstr(((place_t*)(ptr->node))->name,"+") && strstr(rt->name,"-")){
           token_pl = ftokstr(((place_t*)(ptr->node))->name, 0, '+');
           token_rt = ftokstr(rt->name, 0, '-');
           if(!strcmp(token_pl,token_rt)){ const_check = 1;
-          strcat(trans_pool,tr->name);}
+          strcat(strcat(trans_pool,tr->name), ", ");}
         } else if (strstr(((place_t*)(ptr->node))->name,"-") && strstr(rt->name,"+")){
           token_pl = ftokstr(((place_t*)(ptr->node))->name, 0, '-');
-          token_rt = ftokstr(rt->name, 0, '+');          
-          if(!strcmp(token_pl,token_rt)){ const_check = 1;           
-          strcat(trans_pool,tr->name);}
+          token_rt = ftokstr(rt->name, 0, '+');
+          if(!strcmp(token_pl,token_rt)){ const_check = 1;
+          strcat(strcat(trans_pool,tr->name), ", ");}
         }
       }
     }
   }
-  net->pool_trans = strlen(trans_pool) > 0? MYstrdup(trans_pool) : NULL;  
+  if(strlen(trans_pool) > 0){
+    trans_pool[strlen(trans_pool)-2] = 0;
+    net->rt_trans = MYstrdup(trans_pool);
+  }
+  else
+    net->rt_trans = "";
+  //net->pool_trans = strlen(trans_pool) > 0? MYstrdup(trans_pool) : NULL;
 }
 
+/*****************************************************************************/
+
+void nc_create_ignored_trans (net_t* net){
+  trans_t *tr;
+
+  char trans_pool[net->maxtrname*((net->numtr)+2)];
+  memset( trans_pool, 0, net->maxtrname*((net->numtr)+2)*sizeof(char) );
+
+	for (tr = net->transitions; tr; tr = tr->next){
+    if (!strstr(net->rt_trans, tr->name) && 
+      !strstr(net->unf_trans, tr->name))
+      strcat(trans_pool,strcat(tr->name, ", "));
+  }
+  if(strlen(trans_pool) > 0){
+    trans_pool[strlen(trans_pool)-2] = 0;
+    net->ign_trans = MYstrdup(trans_pool);
+  }
+  else 
+    net->ign_trans = "";
+}

@@ -115,7 +115,7 @@ cond_t* insert_condition (place_t *pl, event_t *ev)
 /* Insert an event into the unfolding. The new event is derived from	     */
 /* qu->trans and the conditions in qu->conds form its preset.		     */
 
-event_t* insert_event (pe_queue_t *qu)
+event_t* insert_event (pe_queue_t *qu, char* trans_pool)
 {
 	
 	event_t *ev = MYmalloc(sizeof(event_t));
@@ -125,6 +125,8 @@ event_t* insert_event (pe_queue_t *qu)
 	ev->next = unf->events;
 	unf->events = ev;
 	ev->origin = qu->trans;
+  if(!strstr(trans_pool, ev->origin->name))
+    strcat(strcat(trans_pool,ev->origin->name), ", ");
 	ev->mark = 0;		/* for marking_of */
 	ev->foata_level = find_foata_level(qu);
 	ev->preset_size = qu->trans->prereset_size;
@@ -344,6 +346,8 @@ void unfold ()
 	event_t *ev, *stopev = NULL;
 	cond_t  *co;
 	int cutoff;
+  char trans_pool[(net->maxtrname)*((net->numtr)+2)];
+  memset( trans_pool, 0, net->maxtrname*((net->numtr)+2)*sizeof(char) );
 
 	/* create empty unfolding structure */
 	unf = nc_create_unfolding();
@@ -397,10 +401,10 @@ void unfold ()
 	print_marking_co(nodelist_concatenate(unf->m0, unf->m0_unmarked));
 	printf("\n");
 	recursive_pe(nodelist_concatenate(unf->m0, unf->m0_unmarked));
-	
+
 	/* take the next event from the queue */
 	while (pe_qsize)
-	{		
+	{
 		int i, e;
 		if (interactive) for (;;)
 		{
@@ -426,9 +430,8 @@ void unfold ()
 		else
 			qu = pe_pop(1);
 		
-	
 		/* add event to the unfolding */
-		ev = insert_event(qu);
+		ev = insert_event(qu, trans_pool);
 		cutoff = add_marking(qu->marking,ev);
 		
 		if (interactive && !cutoff)
@@ -461,7 +464,13 @@ void unfold ()
 		add_post_conditions(ev,CUTOFF_NO);
 		
 	}
-	
+
+  if(strlen(trans_pool) > 0){
+    trans_pool[strlen(trans_pool)-2] = 0;
+    net->unf_trans = MYstrdup(trans_pool);
+  }
+  else
+    net->unf_trans = "";
 	
 	/* add post-conditions for cut-off events */
 	for (list = cutoff_list; list; list = list->next)
@@ -486,6 +495,5 @@ void unfold ()
 	free(events);
 	for (pl = net->places; pl; pl = pl->next)
 		nodelist_delete(pl->conds);
-	
-	
+  	
 }
