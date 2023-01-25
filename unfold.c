@@ -469,8 +469,6 @@ void unfold ()
     trans_pool[strlen(trans_pool)-2] = 0;
     net->unf_trans = MYstrdup(trans_pool);
   }
-  else
-    net->unf_trans = "";
 	
 	/* add post-conditions for cut-off events */
 	for (list = cutoff_list; list; list = list->next)
