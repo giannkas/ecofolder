@@ -22,7 +22,7 @@ net_t* nc_create_net()
 	net->transitions = NULL;
   net->restrictions = NULL;
 	net->numpl = net->numtr = net->numct = 0;
-  net->ign_trans = net->rt_trans = net->unf_trans = NULL;
+  net->ign_trans = net->rt_trans = net->unf_trans = "";
 	return net;
 }
 
@@ -193,8 +193,6 @@ void nc_create_trans_pool (net_t* net){
     trans_pool[strlen(trans_pool)-2] = 0;
     net->rt_trans = MYstrdup(trans_pool);
   }
-  else
-    net->rt_trans = "";
   //net->pool_trans = strlen(trans_pool) > 0? MYstrdup(trans_pool) : NULL;
 }
 
@@ -215,6 +213,4 @@ void nc_create_ignored_trans (net_t* net){
     trans_pool[strlen(trans_pool)-2] = 0;
     net->ign_trans = MYstrdup(trans_pool);
   }
-  else 
-    net->ign_trans = "";
 }
