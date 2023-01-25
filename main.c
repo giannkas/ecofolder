@@ -208,6 +208,10 @@ int main (int argc, char **argv)
 	printf("\n");
 
 	unfold();
+  nc_create_ignored_trans(net);
+  printf("Restricted transitions to fire: %s\n", net->rt_trans);
+  printf("Fired transitions in the unfolding: %s\n", net->unf_trans);
+  printf("Transitions without restrictions but never enabled: %s\n", net->ign_trans);
 	write_mci_file(mcifile);
 	
 

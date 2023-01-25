@@ -196,9 +196,9 @@ void pe (cond_t *co)
     tr = pl_post->node;
     
 		if (!co->token && nodelist_find(pl->postset, pl_post->node))
-			continue;    
+			continue;
 
-    if ((co->pre_ev && !strcmp(co->pre_ev->origin->name,tr->name)) || strstr(net->pool_trans,tr->name))
+    if ((co->pre_ev && !strcmp(co->pre_ev->origin->name,tr->name)) || strstr(net->rt_trans,tr->name))
       continue;
 		
 		/* co_ptr2 = pe_conds;

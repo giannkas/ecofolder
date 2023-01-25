@@ -154,7 +154,7 @@ char* pr_encoding(char* in_file){
           fprintf(w_pointer, "%s", d_read);
         }
       }
-      //fprintf(w_pointer, "%s", "hola\n");
+      
       /* Transition t_i produces place p_i, i.e., p_i in postset(t)*/
       new_places = places;
       if(strstr(d_read, "PT")){

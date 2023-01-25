@@ -76,10 +76,8 @@ void write_mci_file (char *filename)
 	write_int(net->numpl);
 	write_int(net->numtr);
 
-	for (pl = net->places; pl; pl = pl->next)
-		if (strlen(pl->name) > sz) sz = strlen(pl->name);
-	for (tr = net->transitions; tr; tr = tr->next)
-		if (strlen(tr->name) > sz) sz = strlen(tr->name);
+  sz = net->maxplname >= net->maxtrname ? 
+    net->maxplname : net->maxtrname;
 	write_int(sz);
 
 	for (pl = net->places; pl; pl = pl->next)
