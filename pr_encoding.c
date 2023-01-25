@@ -79,14 +79,14 @@ char* pr_encoding(char* in_file){
 
     if(strstr(d_read, "RD")){
       strcat(out_file, ftokstr(in_file, 0, '.'));
-      strcat(out_file, "_pr.ll_net");			
+      strcat(out_file, "_pr.ll_net");
       w_pointer = fopen(out_file, "w"); // if we have read arcs then create a new file.      
       char buf_arcs[READ_PLACES];
       int* read_place_arcs = calloc(places+1, sizeof(int));
       int read_place_written[places+1];
       int replicated_places_per_place[places+1][MAX_REPLICATED_PLACES_PER_PLACE];
       
-      for (size_t i = 0; i <= places; i++){        
+      for (size_t i = 0; i <= places; i++){
         read_place_written[i] = -1;
         for (size_t j = 0; j < MAX_REPLICATED_PLACES_PER_PLACE; j++)
           replicated_places_per_place[i][j] = -1;
@@ -176,7 +176,7 @@ char* pr_encoding(char* in_file){
               fprintf(w_pointer, "%s\n", buf_arcs);
               read_place_written[num_tmp]--;
             }
-          }          
+          }
           rd_arcs++;
           token = ftokstr(buffer_rd, rd_arcs,'\n');
           tmp1 = ftokstr(token, 0, '>');
