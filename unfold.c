@@ -16,6 +16,7 @@ event_t **events;			/* event queue in pe_conflict etc. */
 trans_t *stoptr = NULL;			/* transition in -T switch         */
 int unfold_depth = 0;			/* argument of -d switch	   */
 int interactive = 0;			/* interactivem mode (-i)	   */
+int compressed = 0;			/* compressed unfolding view (-c)	   */
 
 nodelist_t *cutoff_list, *corr_list;	/* cut-off list, corresponding events */
 
@@ -90,6 +91,7 @@ cond_t* insert_condition (place_t *pl, event_t *ev)
 	/* remember relation between co and pl */
 	/* the other direction is done in pe() */
 	co->origin = pl;
+  co->flag = 0;
 
         co->postset = NULL;
 	co->pre_ev = ev;

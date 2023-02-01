@@ -160,8 +160,8 @@ void nc_static_checks (net_t* net, char *stoptr_name)
 }
 
 /*****************************************************************************/
-void nc_create_trans_pool (net_t* net){
-
+void nc_create_trans_pool (net_t* net)
+{
   restr_t *rt;
   trans_t *tr;
   int const_check;
@@ -193,12 +193,32 @@ void nc_create_trans_pool (net_t* net){
     trans_pool[strlen(trans_pool)-2] = 0;
     net->rt_trans = MYstrdup(trans_pool);
   }
-  //net->pool_trans = strlen(trans_pool) > 0? MYstrdup(trans_pool) : NULL;
 }
 
 /*****************************************************************************/
 
-void nc_create_ignored_trans (net_t* net){
+/* void nc_see_trans_dependencies (net_t* net)
+{
+  trans_t* tr, *trr;
+  place_t* pl;
+
+  char trans_pool[net->maxtrname*((net->numtr)+2)];
+  memset( trans_pool, 0, net->maxtrname*((net->numtr)+2)*sizeof(char) );
+
+  for (tr = net->transitions; tr; tr = tr->next)
+  {
+    for (pl = tr->preset; pl; pl = pl->next)
+    {
+      pl->
+    }
+  }
+  
+} */
+
+/*****************************************************************************/
+
+void nc_create_ignored_trans (net_t* net)
+{
   trans_t *tr;
 
   char trans_pool[net->maxtrname*((net->numtr)+2)];
