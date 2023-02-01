@@ -65,6 +65,21 @@ int nodelist_find (nodelist_t *list, void *node)
 }
 
 /*****************************************************************************/
+/* return size of a node_list and element; return 0 if empty, number of nodes otherwise    */
+
+int nodelist_size (nodelist_t *list)
+{
+  int sz = 0;
+  while (list)
+  {
+    sz++;
+    list = list->next;
+  }
+
+  return sz;
+}
+
+/*****************************************************************************/
 /* add a place to a list; sort by pointer in ascending order		     */
 
 nodelist_t* nodelist_insert (nodelist_t **list, void *node)
@@ -137,7 +152,7 @@ nodelist_t* nodelist_concatenate(nodelist_t *list1, nodelist_t *list2)
 		}
 		while (second != NULL){
 			while (copy_first != NULL && duplicated == 0){
-				if (copy_first->node == second->node)				
+				if (copy_first->node == second->node)
 					duplicated = 1;
 				copy_first = copy_first->next;
 			}

@@ -6,6 +6,7 @@ include netconv.d
 include nodelist.d
 include readpep.d
 include mci.d
+include mci_cpr.d
 include unfold.d
 include marking.d
 include pe.d

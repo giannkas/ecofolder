@@ -3,12 +3,13 @@
 
 void read_mci_file (char *filename)
 {
+  //printf("hola\n");
   #define read_int(x) fread(&(x),sizeof(int),1,file)
 
   FILE *file;
-  int numco, numev, numpl, numtr, sz, i;
-  int pre_ev, post_ev, cutoff, dummy;
-  int *co2pl, *ev2tr, *tokens, *cutoffs;
+  int numco, numev, numpl, numtr, sz, i, j;
+  int pre_ev, post_ev, cutoff, dummy = 1;
+  int *co2pl, *co2coo, *ev2tr, *tokens, *cutoffs;
   char **plname, **trname, *c;
 
   if (!(file = fopen(filename,"rb")))
@@ -23,6 +24,7 @@ void read_mci_file (char *filename)
   read_int(numev);
 
   co2pl = malloc((numco+1) * sizeof(int));
+  co2coo = calloc(numco+1, sizeof(int));
   tokens = malloc((numco+1) * sizeof(int));
   ev2tr = malloc((numev+1) * sizeof(int));
   cutoffs = calloc(numev+1, sizeof(int));
@@ -32,13 +34,41 @@ void read_mci_file (char *filename)
 
   for (i = 1; i <= numco; i++)
   {
-    read_int(co2pl[i]);
-    read_int(tokens[i]);
+    read_int(co2pl[i]); dummy = 1; j = i;
+    if (!co2pl[i]){
+      read_int(co2pl[i]);
+      //printf("no similarities\n");
+      //printf("co2pl[i]: %d\n", co2pl[i]);
+      read_int(tokens[i]);
+      //printf("tokens[i]: %d\n", tokens[i]);
+      read_int(dummy); /* reading null in this case */ 
+    }
+    else{
+      while (co2pl[i] && dummy){
+        //printf("similarities\n");
+        //printf("co2pl[i]: %d\n", co2pl[i]);
+        read_int(tokens[i]);
+        //printf("tokens[i]: %d\n", tokens[i]);
+        read_int(co2coo[i]);
+        dummy = co2coo[i];
+        if (co2coo[i]){
+          //printf("co2coo[i]: %d\n", co2coo[i]);
+          i++;
+          read_int(co2pl[i]);
+        }
+      }
+    }
     read_int(pre_ev);
-    if (pre_ev) printf("  e%d -> c%d;\n",pre_ev,i);
+    if (pre_ev)
+    { 
+      //printf("pre_ev: %d\n", pre_ev);
+      printf("  e%d -> c%d;\n",pre_ev,j);
+    }
+    //else printf("pre_ev: null\n");
     do {
       read_int(post_ev);
-      if (post_ev) printf("  c%d -> e%d;\n",i,post_ev);
+      //if (post_ev) printf("post_ev: %d\n", post_ev);
+      if (post_ev) printf("  c%d -> e%d;\n",j,post_ev);
     } while (post_ev);
   }
 
@@ -75,8 +105,25 @@ void read_mci_file (char *filename)
   fread(c,1,1,file);
 
   for (i = 1; i <= numco; i++)
-    printf("  c%d [fillcolor=lightblue label= <%s<FONT COLOR=\"red\"><SUP>%d</SUP></FONT>&nbsp;(c%d)> shape=circle style=filled];\n",
+  {
+    if( co2coo[i] == 0){
+      //printf("hola\n");
+      printf("  c%d [fillcolor=lightblue label= <%s<FONT COLOR=\"red\"><SUP>%d</SUP></FONT>&nbsp;(c%d)> shape=circle style=filled];\n",
         i,plname[co2pl[i]],tokens[i],i);
+    }
+    else
+    {
+      printf("  c%d [fillcolor=lightblue label= <", co2coo[i]);
+      for (j = i+1; j <= numco && co2coo[i] == co2coo[j]; j++)
+      {
+        printf("%s<FONT COLOR=\"red\"><SUP>%d</SUP></FONT>&nbsp;(c%d)<BR/>",
+          plname[co2pl[j]],tokens[j], j);
+        i = j;
+      }
+      printf("%s<FONT COLOR=\"red\"><SUP>%d</SUP></FONT>&nbsp;(c%d)> shape=circle style=filled];\n",
+        plname[co2pl[co2coo[i]]],tokens[co2coo[i]],co2coo[i]);
+    }
+  }
   for (i = 1; i <= numev; i++)
     if (i != cutoffs[i])
       printf("  e%d [fillcolor=palegreen label=\"%s (e%d)\" shape=box style=filled];\n",
