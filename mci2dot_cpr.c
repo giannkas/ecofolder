@@ -119,14 +119,16 @@ void read_mci_file (char *filename)
     else
     {
       printf("  c%d [fillcolor=lightblue label= <", i);
+      dummy = 0;
       for (j = i+1; j <= numco && co2coo[i] == co2coo[j]; j++)
       {
         printf("%s<FONT COLOR=\"red\"><SUP>%d</SUP></FONT>&nbsp;(c%d)<BR/>",
           plname[co2pl[j]],tokens[j], j);
+        dummy = 1;
       }
       printf("%s<FONT COLOR=\"red\"><SUP>%d</SUP></FONT>&nbsp;(c%d)> shape=circle style=filled];\n",
         plname[co2pl[i]],tokens[i],i);
-      i = j;
+      if (dummy) i = j-1;
     }
   }
   for (i = 1; i <= numev; i++)
