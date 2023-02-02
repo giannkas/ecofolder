@@ -41,6 +41,7 @@ void read_mci_file (char *filename)
       //printf("co2pl[i]: %d\n", co2pl[i]);
       read_int(tokens[i]);
       //printf("tokens[i]: %d\n", tokens[i]);
+      read_int(co2coo[i]);
       read_int(dummy); /* reading null in this case */ 
     }
     else{
@@ -53,8 +54,11 @@ void read_mci_file (char *filename)
         dummy = co2coo[i];
         if (co2coo[i]){
           //printf("co2coo[i]: %d\n", co2coo[i]);
-          i++;
-          read_int(co2pl[i]);
+          read_int(dummy);
+          if (dummy && i <= numco){
+            i++;
+            co2pl[i] = dummy;
+          }
         }
       }
     }
@@ -106,6 +110,7 @@ void read_mci_file (char *filename)
 
   for (i = 1; i <= numco; i++)
   {
+    //printf("i: %d\n", i);
     if( co2coo[i] == 0){
       //printf("hola\n");
       printf("  c%d [fillcolor=lightblue label= <%s<FONT COLOR=\"red\"><SUP>%d</SUP></FONT>&nbsp;(c%d)> shape=circle style=filled];\n",
@@ -113,15 +118,15 @@ void read_mci_file (char *filename)
     }
     else
     {
-      printf("  c%d [fillcolor=lightblue label= <", co2coo[i]);
+      printf("  c%d [fillcolor=lightblue label= <", i);
       for (j = i+1; j <= numco && co2coo[i] == co2coo[j]; j++)
       {
         printf("%s<FONT COLOR=\"red\"><SUP>%d</SUP></FONT>&nbsp;(c%d)<BR/>",
           plname[co2pl[j]],tokens[j], j);
-        i = j;
       }
       printf("%s<FONT COLOR=\"red\"><SUP>%d</SUP></FONT>&nbsp;(c%d)> shape=circle style=filled];\n",
-        plname[co2pl[co2coo[i]]],tokens[co2coo[i]],co2coo[i]);
+        plname[co2pl[i]],tokens[i],i);
+      i = j;
     }
   }
   for (i = 1; i <= numev; i++)
