@@ -82,6 +82,9 @@ void write_mci_file_cpr (char *filename)
     printf("co->token: %d\n", co->token);
     write_int(co->origin->num);
     write_int(co->token);
+    co->flag = cum;
+    printf("co->flag: %d\n", co->flag);
+    write_int(co->flag);
     printf("after co->token: 0\n");
     write_int(null);
     if (co->pre_ev) {
