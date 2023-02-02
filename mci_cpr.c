@@ -41,7 +41,7 @@ void write_mci_file_cpr (char *filename)
   for (co = unf->conditions, cum = 1; co &&
     cum <= unf->numco; co = co->next, cum++)
   {
-    int common_transs = 0, one_common_trans = 0, ifcommon_trans = 0;
+    int common_transs = 0, one_common_trans = 0;
     if (co->flag) continue;
     for (coo = co->next; coo ; coo = coo->next)
     {
@@ -59,8 +59,7 @@ void write_mci_file_cpr (char *filename)
               one_common_trans = 1;
           }
           common_transs = common_transs + one_common_trans;
-        }
-        //printf("one_common_trans: %d\n", one_common_trans);
+        }        
         if (common_transs == nodelist_size(coo->postset))
         {
           printf("coo->origin->num: %d\n", coo->origin->num);
@@ -69,15 +68,11 @@ void write_mci_file_cpr (char *filename)
           write_int(coo->token);
           coo->flag = cum;
           printf("coo->flag: %d\n", coo->flag);
-          write_int(coo->flag);
-          ifcommon_trans = 1;
+          write_int(coo->flag);          
         }
       }
     }
-    if (!ifcommon_trans){
-      printf("!ifcommon_trans: 0\n");
-      write_int(null);
-    }else printf("ifcommon_trans: %d\n", ifcommon_trans);
+    
     printf("co->origin->num: %d\n", co->origin->num);
     printf("co->token: %d\n", co->token);
     write_int(co->origin->num);

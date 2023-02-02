@@ -34,44 +34,22 @@ void read_mci_file (char *filename)
 
   for (i = 1; i <= numco; i++)
   {
-    read_int(co2pl[i]); dummy = 1; j = i;
-    if (!co2pl[i]){
-      read_int(co2pl[i]);
-      //printf("no similarities\n");
-      //printf("co2pl[i]: %d\n", co2pl[i]);
-      read_int(tokens[i]);
-      //printf("tokens[i]: %d\n", tokens[i]);
-      read_int(co2coo[i]);
-      read_int(dummy); /* reading null in this case */ 
-    }
-    else{
-      while (co2pl[i] && dummy){
-        //printf("similarities\n");
-        //printf("co2pl[i]: %d\n", co2pl[i]);
-        read_int(tokens[i]);
-        //printf("tokens[i]: %d\n", tokens[i]);
-        read_int(co2coo[i]);
-        dummy = co2coo[i];
-        if (co2coo[i]){
-          //printf("co2coo[i]: %d\n", co2coo[i]);
-          read_int(dummy);
-          if (dummy && i <= numco){
-            i++;
-            co2pl[i] = dummy;
-          }
-        }
+    read_int(co2pl[i]); 
+    dummy = 1; j = i;    
+    while (co2pl[i] && dummy){      
+      read_int(tokens[i]);      
+      read_int(co2coo[i]);      
+      read_int(dummy);
+      if (dummy && i <= numco){
+        i++;
+        co2pl[i] = dummy;
       }
     }
     read_int(pre_ev);
     if (pre_ev)
-    { 
-      //printf("pre_ev: %d\n", pre_ev);
       printf("  e%d -> c%d;\n",pre_ev,j);
-    }
-    //else printf("pre_ev: null\n");
     do {
-      read_int(post_ev);
-      //if (post_ev) printf("post_ev: %d\n", post_ev);
+      read_int(post_ev);      
       if (post_ev) printf("  c%d -> e%d;\n",j,post_ev);
     } while (post_ev);
   }
@@ -110,27 +88,19 @@ void read_mci_file (char *filename)
 
   for (i = 1; i <= numco; i++)
   {
-    //printf("i: %d\n", i);
-    if( co2coo[i] == 0){
-      //printf("hola\n");
-      printf("  c%d [fillcolor=lightblue label= <%s<FONT COLOR=\"red\"><SUP>%d</SUP></FONT>&nbsp;(c%d)> shape=circle style=filled];\n",
-        i,plname[co2pl[i]],tokens[i],i);
-    }
-    else
+    printf("  c%d [fillcolor=lightblue label= <", i);
+    dummy = 0;
+    for (j = i+1; j <= numco && co2coo[i] == co2coo[j]; j++)
     {
-      printf("  c%d [fillcolor=lightblue label= <", i);
-      dummy = 0;
-      for (j = i+1; j <= numco && co2coo[i] == co2coo[j]; j++)
-      {
-        printf("%s<FONT COLOR=\"red\"><SUP>%d</SUP></FONT>&nbsp;(c%d)<BR/>",
-          plname[co2pl[j]],tokens[j], j);
-        dummy = 1;
-      }
-      printf("%s<FONT COLOR=\"red\"><SUP>%d</SUP></FONT>&nbsp;(c%d)> shape=circle style=filled];\n",
-        plname[co2pl[i]],tokens[i],i);
-      if (dummy) i = j-1;
+      printf("%s<FONT COLOR=\"red\"><SUP>%d</SUP></FONT>&nbsp;(c%d)<BR/>",
+        plname[co2pl[j]],tokens[j], j);
+      dummy = 1;
     }
+    printf("%s<FONT COLOR=\"red\"><SUP>%d</SUP></FONT>&nbsp;(c%d)> shape=circle style=filled];\n",
+      plname[co2pl[i]],tokens[i],i);
+    if (dummy) i = j-1;
   }
+  
   for (i = 1; i <= numev; i++)
     if (i != cutoffs[i])
       printf("  e%d [fillcolor=palegreen label=\"%s (e%d)\" shape=box style=filled];\n",
