@@ -348,8 +348,8 @@ void unfold ()
 	event_t *ev, *stopev = NULL;
 	cond_t  *co;
 	int cutoff;
-  char trans_pool[(net->maxtrname)*((net->numtr)+2)];
-  memset( trans_pool, 0, net->maxtrname*((net->numtr)+2)*sizeof(char) );
+  char trans_pool[(net->maxtrname+2)*(net->numtr)];
+  memset( trans_pool, 0, (net->maxtrname+2)*(net->numtr)*sizeof(char) );
 
 	/* create empty unfolding structure */
 	unf = nc_create_unfolding();
@@ -467,7 +467,7 @@ void unfold ()
 		
 	}
 
-  if(strlen(trans_pool) > 0){
+  if(strlen(trans_pool) > 2){
     trans_pool[strlen(trans_pool)-2] = 0;
     net->unf_trans = MYstrdup(trans_pool);
   }
