@@ -35,10 +35,10 @@ void read_mci_file (char *filename)
   for (i = 1; i <= numco; i++)
   {
     read_int(co2pl[i]); 
-    dummy = 1; j = i;    
-    while (co2pl[i] && dummy){      
-      read_int(tokens[i]);      
-      read_int(co2coo[i]);      
+    dummy = 1; j = i;
+    while (co2pl[i] && dummy){
+      read_int(tokens[i]);
+      read_int(co2coo[i]);
       read_int(dummy);
       if (dummy && i <= numco){
         i++;
@@ -49,7 +49,7 @@ void read_mci_file (char *filename)
     if (pre_ev)
       printf("  e%d -> c%d;\n",pre_ev,j);
     do {
-      read_int(post_ev);      
+      read_int(post_ev);
       if (post_ev) printf("  c%d -> e%d;\n",j,post_ev);
     } while (post_ev);
   }
