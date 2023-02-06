@@ -68,7 +68,7 @@ void write_mci_file_cpr (char *filename)
           write_int(coo->token);
           coo->flag = cum;
           printf("coo->flag: %d\n", coo->flag);
-          write_int(coo->flag);          
+          write_int(coo->flag);
         }
       }
     }

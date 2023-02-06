@@ -1,3 +1,4 @@
+[<img src="img/capybara_logo.png" width="250"/>](img/capybara_logo.png)
 # Ecofolder - A program to unfold Petri nets with resets
 
 ## General info
