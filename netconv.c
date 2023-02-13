@@ -17,22 +17,22 @@
 
 net_t* nc_create_net()
 {
-	net_t *net = MYmalloc(sizeof(net_t));
-	net->places = NULL;
-	net->transitions = NULL;
+  net_t *net = MYmalloc(sizeof(net_t));
+  net->places = NULL;
+  net->transitions = NULL;
   net->restrictions = NULL;
-	net->numpl = net->numtr = net->numct = 0;
+  net->numpl = net->numtr = net->numct = 0;
   net->ign_trans = net->rt_trans = net->unf_trans = "";
-	return net;
+  return net;
 }
 
 unf_t* nc_create_unfolding()
 {
-	unf_t *unf = MYmalloc(sizeof(unf_t));
-	unf->conditions = NULL;
-	unf->events = NULL;
-	unf->numco = unf->numev = 0;
-	return unf;
+  unf_t *unf = MYmalloc(sizeof(unf_t));
+  unf->conditions = NULL;
+  unf->events = NULL;
+  unf->numco = unf->numev = 0;
+  return unf;
 }
 
 /****************************************************************************/
@@ -42,27 +42,27 @@ unf_t* nc_create_unfolding()
 
 place_t* nc_create_place (net_t *net)
 {
-	place_t *pl = MYmalloc(sizeof(place_t));
-	pl->next = net->places;
-	net->places = pl;
-	pl->preset = pl->postset = pl->conds =
-		pl->reset = pl->ctxset = NULL;
-	pl->num = ++net->numpl;
-	return pl;
+  place_t *pl = MYmalloc(sizeof(place_t));
+  pl->next = net->places;
+  net->places = pl;
+  pl->preset = pl->postset = pl->conds =
+    pl->reset = pl->ctxset = NULL;
+  pl->num = ++net->numpl;
+  return pl;
 }
 
 trans_t* nc_create_transition (net_t *net)
 {
-	trans_t *tr = MYmalloc(sizeof(trans_t));
-	tr->next = net->transitions;
-	net->transitions = tr;
-	tr->preset = tr->postset = tr->reset = tr->ctxset = NULL;
-	tr->preset_size = tr->reset_size = tr->ctxset_size =
-		tr->prereset_size = tr->postreset_size = 0;
-		// prereset_size is the sum of preset_size + reset_size
-		// dropping out those in common. Same for postreset_size.
-	tr->num = ++net->numtr;
-	return tr;
+  trans_t *tr = MYmalloc(sizeof(trans_t));
+  tr->next = net->transitions;
+  net->transitions = tr;
+  tr->preset = tr->postset = tr->reset = tr->ctxset = NULL;
+  tr->preset_size = tr->reset_size = tr->ctxset_size =
+    tr->prereset_size = tr->postreset_size = 0;
+    // prereset_size is the sum of preset_size + reset_size
+    // dropping out those in common. Same for postreset_size.
+  tr->num = ++net->numtr;
+  return tr;
 }
 
 restr_t* nc_create_restriction (net_t *net)
@@ -79,15 +79,15 @@ restr_t* nc_create_restriction (net_t *net)
 /* Create an arc between two nodes (place->transition or transition->place) */
 
 void nc_create_arc (nodelist_t **fromlist, nodelist_t **tolist,
-		   void *from, void *to)
+       void *from, void *to)
 {
-	nodelist_t *list;
+  nodelist_t *list;
 
-	for (list = *fromlist; list; list = list->next)
-		if (list->node == to) return;
+  for (list = *fromlist; list; list = list->next)
+    if (list->node == to) return;
 
-	nodelist_push(fromlist,to);
-	nodelist_push(tolist,from);
+  nodelist_push(fromlist,to);
+  nodelist_push(tolist,from);
 }
 
 /****************************************************************************/
@@ -96,43 +96,43 @@ void nc_create_arc (nodelist_t **fromlist, nodelist_t **tolist,
 
 void nc_compute_sizes (net_t *net)
 {
-	trans_t *tr;
+  trans_t *tr;
   place_t *pl;
-	int k, sz = 0;
+  int k, sz = 0;
 
-	net->maxpre = net->maxpost = net->maxres = net->maxctx = 0;
-	for (tr = net->transitions; tr; tr = tr->next)
-	{
-		nodelist_t *list;
+  net->maxpre = net->maxpost = net->maxres = net->maxctx = 0;
+  for (tr = net->transitions; tr; tr = tr->next)
+  {
+    nodelist_t *list;
 
     if (strlen(tr->name) > sz) sz = strlen(tr->name);
 
-		for (k = 0, list = tr->preset; list; k++, list = list->next);
-		tr->preset_size = k;
-		if (net->maxpre < k) net->maxpre = k;
+    for (k = 0, list = tr->preset; list; k++, list = list->next);
+    tr->preset_size = k;
+    if (net->maxpre < k) net->maxpre = k;
 
-		for (k = 0, list = tr->postset; list; k++, list = list->next);
-		tr->postset_size = k;
-		if (net->maxpost < k) net->maxpost = k;
+    for (k = 0, list = tr->postset; list; k++, list = list->next);
+    tr->postset_size = k;
+    if (net->maxpost < k) net->maxpost = k;
 
-		for (k = 0, list = tr->reset; list; k++, list = list->next);
-		tr->reset_size = k;
-		if (net->maxres < k) net->maxres = k;
+    for (k = 0, list = tr->reset; list; k++, list = list->next);
+    tr->reset_size = k;
+    if (net->maxres < k) net->maxres = k;
 
-		for (k = 0, list = tr->ctxset; list; k++, list = list->next);
-		tr->ctxset_size = k;
-		if (net->maxctx < k) net->maxctx = k;
+    for (k = 0, list = tr->ctxset; list; k++, list = list->next);
+    tr->ctxset_size = k;
+    if (net->maxctx < k) net->maxctx = k;
 
-		for (k = 0, list = nodelist_concatenate(tr->preset, tr->reset); list; k++, list = list->next);
-		tr->prereset_size = k;
+    for (k = 0, list = nodelist_concatenate(tr->preset, tr->reset); list; k++, list = list->next);
+    tr->prereset_size = k;
 
-		for (k = 0, list = nodelist_concatenate(tr->postset, tr->reset); list; k++, list = list->next);
-		tr->postreset_size = k;
-	}
+    for (k = 0, list = nodelist_concatenate(tr->postset, tr->reset); list; k++, list = list->next);
+    tr->postreset_size = k;
+  }
   net->maxtrname = sz;
   sz = 0;
   for (pl = net->places; pl; pl = pl->next)
-		if (strlen(pl->name) > sz) sz = strlen(pl->name);
+    if (strlen(pl->name) > sz) sz = strlen(pl->name);
   net->maxplname = sz;
 }
 
@@ -140,23 +140,23 @@ void nc_compute_sizes (net_t *net)
 
 void nc_static_checks (net_t* net, char *stoptr_name)
 {
-	place_t *pl;
-	trans_t *tr;
+  place_t *pl;
+  trans_t *tr;
 
-	for (tr = net->transitions; tr; tr = tr->next)
-	{
-		if (!tr->preset)
-			nc_warning("%s is not restricted",tr->name);
-		if (stoptr_name && tr->name && !strcmp(tr->name,stoptr_name))
-			stoptr = tr;
-	}
+  for (tr = net->transitions; tr; tr = tr->next)
+  {
+    if (!tr->preset)
+      nc_warning("%s is not restricted",tr->name);
+    if (stoptr_name && tr->name && !strcmp(tr->name,stoptr_name))
+      stoptr = tr;
+  }
 
-	if (stoptr_name && !stoptr)
-		nc_error("Transition %s not found",stoptr_name);
+  if (stoptr_name && !stoptr)
+    nc_error("Transition %s not found",stoptr_name);
 
-	for (pl = net->places; pl; pl = pl->next)
-		if (pl->marked) break;
-	if (!pl) nc_error("no initial marking");
+  for (pl = net->places; pl; pl = pl->next)
+    if (pl->marked) break;
+  if (!pl) nc_error("no initial marking");
 }
 
 /*****************************************************************************/
@@ -224,7 +224,7 @@ void nc_create_ignored_trans (net_t* net)
   char trans_pool[(net->maxtrname+2)*(net->numtr)];
   memset( trans_pool, 0, (net->maxtrname+2)*(net->numtr)*sizeof(char) );
   
-	for (tr = net->transitions; tr; tr = tr->next){
+  for (tr = net->transitions; tr; tr = tr->next){
     if (!strstr(net->rt_trans, tr->name) && 
       !strstr(net->unf_trans, tr->name))
       strcat(trans_pool,strcat(tr->name, ", "));
