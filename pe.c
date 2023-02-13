@@ -195,7 +195,8 @@ void pe (cond_t *co)
 	{		
     tr = pl_post->node;
     
-		if (!co->token && nodelist_find(pl->postset, pl_post->node))
+		if ((!co->token && nodelist_find(pl->postset, pl_post->node)) || 
+      (tr->blocked))
 			continue;
 
     if ((co->pre_ev && !strcmp(co->pre_ev->origin->name,tr->name)) || 

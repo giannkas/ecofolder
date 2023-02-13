@@ -41,6 +41,7 @@ typedef struct trans_t
   struct nodelist_t *ctxset; /* unordered list of context transitions */
   short  preset_size, postset_size, reset_size, 
     prereset_size, postreset_size, ctxset_size;
+  char blocked;
 } trans_t;
 
 typedef struct restr_t
