@@ -6,9 +6,9 @@
 
 typedef struct hashcell_t
 {
-	nodelist_t *marking;
-	event_t    *event;
-	struct hashcell_t *next;
+  nodelist_t *marking;
+  event_t    *event;
+  struct hashcell_t *next;
 } hashcell_t;
 
 hashcell_t **hash;
@@ -18,8 +18,8 @@ int hash_buckets;
 
 void marking_init ()
 {
-	hash_buckets = net->numpl*4 + 1;
-	hash = MYcalloc(hash_buckets * sizeof(hashcell_t*));
+  hash_buckets = net->numpl*4 + 1;
+  hash = MYcalloc(hash_buckets * sizeof(hashcell_t*));
 }
 
 /*****************************************************************************/
@@ -29,28 +29,35 @@ void marking_init ()
 
 int marking_hash (nodelist_t *marking)
 {
-	unsigned int val = 0, i = 0;
-	while (marking)
-	{
-		val += ((place_t*)(marking->node))->num * ++i;
-		marking = marking->next;
-	}
-	return val % hash_buckets;
+  unsigned int val = 0, i = 0;
+  while (marking)
+  {
+    val += ((place_t*)(marking->node))->num * ++i;
+    marking = marking->next;
+  }
+  return val % hash_buckets;
 }
 
 /*****************************************************************************/
 /* Check if a marking is already present in the hash table.		     */
 /* Return 1 if yes. The given marking is left unchanged.		     */
 
-int find_marking (nodelist_t *marking)
+int find_marking (nodelist_t *marking, int m_query)
 {
-	hashcell_t **buck = hash + marking_hash(marking);
-	char cmp = 2;
+  hashcell_t **buck = hash + marking_hash(marking);
+  char cmp = 2;
+  nodelist_t* list = NULL;
 
-	while (*buck && (cmp = nodelist_compare(marking,(*buck)->marking)) > 0)
-		buck = &((*buck)->next);
+  while (*buck && (cmp = nodelist_compare(marking,(*buck)->marking)) > 0)
+    buck = &((*buck)->next);
 
-	return !cmp;
+  if(m_query && !cmp)
+  {
+    for (list = marking; list; list = list->next)
+      ((cond_t*)(list->node))->queried = 1;
+  }  
+
+  return !cmp;
 }
 
 /*****************************************************************************/
@@ -60,28 +67,28 @@ int find_marking (nodelist_t *marking)
 
 int add_marking (nodelist_t *marking, event_t *ev)
 {
-	hashcell_t *newbuck;
-	hashcell_t **buck = hash + marking_hash(marking);
-	char cmp = 2;
+  hashcell_t *newbuck;
+  hashcell_t **buck = hash + marking_hash(marking);
+  char cmp = 2;
 
-	while (*buck && (cmp = nodelist_compare(marking,(*buck)->marking)) > 0)
-		buck = &((*buck)->next);
+  while (*buck && (cmp = nodelist_compare(marking,(*buck)->marking)) > 0)
+    buck = &((*buck)->next);
 
-	if (!cmp)	/* marking is already present */
-	{
-		nodelist_delete(marking);
-		nodelist_push(&cutoff_list,ev);
-		nodelist_push(&corr_list,(*buck)->event);
-		return 0;
-	}
+  if (!cmp)	/* marking is already present */
+  {
+    nodelist_delete(marking);
+    nodelist_push(&cutoff_list,ev);
+    nodelist_push(&corr_list,(*buck)->event);
+    return 0;
+  }
 
-	newbuck = MYmalloc(sizeof(hashcell_t));
-	newbuck->marking = marking;
-	newbuck->event = ev;
-	newbuck->next = *buck;
-	*buck = newbuck;
+  newbuck = MYmalloc(sizeof(hashcell_t));
+  newbuck->marking = marking;
+  newbuck->event = ev;
+  newbuck->next = *buck;
+  *buck = newbuck;
 
-	return 1;
+  return 1;
 }
 
 /*****************************************************************************/
@@ -89,27 +96,41 @@ int add_marking (nodelist_t *marking, event_t *ev)
 
 nodelist_t* marking_initial ()
 {
-	place_t *pl;
-	nodelist_t *list = NULL;
+  place_t *pl;
+  nodelist_t *list = NULL;
 
-	for (pl = net->places; pl; pl = pl->next)
-		if (pl->marked) nodelist_insert(&list,pl);
-	
-	return list;
+  for (pl = net->places; pl; pl = pl->next)
+    if (pl->marked) nodelist_insert(&list,pl);
+  
+  return list;
+}
+
+/*****************************************************************************/
+/* Format the marking query.						     */
+
+nodelist_t* format_marking_query ()
+{
+  query_t *qr;
+  nodelist_t *list = NULL;
+
+  for (qr = net->marking_query; qr; qr = qr->next)
+    nodelist_insert(&list,qr);
+  
+  return list;
 }
 
 /*****************************************************************************/
 
 void print_marking_pl (nodelist_t* list)
 {
-	if (!list) return;
-	printf("%s ",((place_t*)(list->node))->name);
-	print_marking_pl(list->next);
+  if (!list) return;
+  printf("%s ",((place_t*)(list->node))->name);
+  print_marking_pl(list->next);
 }
 
 void print_marking_co (nodelist_t* list)
 {
-	if (!list) return;
-	printf("%s ",((cond_t*)(list->node))->origin->name);
-	print_marking_co(list->next);
+  if (!list) return;
+  printf("%s ",((cond_t*)(list->node))->origin->name);
+  print_marking_co(list->next);
 }

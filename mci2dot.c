@@ -8,7 +8,7 @@ void read_mci_file (char *filename)
   FILE *file;
   int numco, numev, numpl, numtr, sz, i;
   int pre_ev, post_ev, cutoff, dummy;
-  int *co2pl, *ev2tr, *tokens, *cutoffs;
+  int *co2pl, *ev2tr, *tokens, *query, *cutoffs;
   char **plname, **trname, *c;
 
   if (!(file = fopen(filename,"rb")))
@@ -24,6 +24,7 @@ void read_mci_file (char *filename)
 
   co2pl = malloc((numco+1) * sizeof(int));
   tokens = malloc((numco+1) * sizeof(int));
+  query = malloc((numco+1) * sizeof(int));
   ev2tr = malloc((numev+1) * sizeof(int));
   cutoffs = calloc(numev+1, sizeof(int));
 
@@ -34,6 +35,7 @@ void read_mci_file (char *filename)
   {
     read_int(co2pl[i]);
     read_int(tokens[i]);
+    read_int(query[i]);
     read_int(pre_ev);
     if (pre_ev) printf("  e%d -> c%d;\n",pre_ev,i);
     do {
@@ -74,9 +76,12 @@ void read_mci_file (char *filename)
     do { fread(c,1,1,file); } while (*c++);
   fread(c,1,1,file);
 
+  char color1[] = "lightblue";
+  char color2[] = "gold";
+
   for (i = 1; i <= numco; i++)
-    printf("  c%d [fillcolor=lightblue label= <%s<FONT COLOR=\"red\"><SUP>%d</SUP></FONT>&nbsp;(c%d)> shape=circle style=filled];\n",
-        i,plname[co2pl[i]],tokens[i],i);
+    printf("  c%d [fillcolor=%s label= <%s<FONT COLOR=\"red\"><SUP>%d</SUP></FONT>&nbsp;(c%d)> shape=circle style=filled];\n",
+        i,query[i] ? color2 : color1,plname[co2pl[i]],tokens[i],i);
   for (i = 1; i <= numev; i++)
     if (i != cutoffs[i])
       printf("  e%d [fillcolor=palegreen label=\"%s (e%d)\" shape=box style=filled];\n",

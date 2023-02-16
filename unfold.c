@@ -97,6 +97,7 @@ cond_t* insert_condition (place_t *pl, event_t *ev)
   co->pre_ev = ev;
   co->mark = 0;
   co->num = unf->numco++;
+  co->queried = 0;
   if ((ev && nodelist_find(ev->origin->postset, pl)) ||
     (!ev && pl->marked))
     co->token = 1;
@@ -411,7 +412,7 @@ void unfold ()
     if (interactive) for (;;)
     {
       for (i = 1; i <= pe_qsize; i++)
-        if (find_marking(pe_queue[i]->marking)) break;
+        if (find_marking(pe_queue[i]->marking, 0)) break;
       if (i <= pe_qsize)
       {
         printf("Event E%d is a cutoff.\n",
@@ -435,6 +436,11 @@ void unfold ()
     /* add event to the unfolding */
     ev = insert_event(qu, trans_pool);
     cutoff = add_marking(qu->marking,ev);
+
+    list = format_marking_query();
+    for (i = 1; i <= pe_qsize && list; i++)
+      if (find_marking(list, 1))
+        printf("marking query is present\n");
     
     if (interactive && !cutoff)
     {

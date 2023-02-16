@@ -95,7 +95,7 @@ void read_mci_file_ev (char *filename)
 	FILE *file;
 	int numco, numev, numpl, numtr, sz, i, ev1, ev2;
 	int pre_ev, post_ev, cutoff, dummy;
-	int *co2pl, *ev2tr, *tokens, *cutoffs;
+	int *co2pl, *ev2tr, *tokens, *query, *cutoffs;
 	char **plname, **trname, *c;
 
 	if (!(file = fopen(filename,"rb")))
@@ -113,6 +113,8 @@ void read_mci_file_ev (char *filename)
 	co2pl = malloc((numco+1) * sizeof(int)); // reserve empty memory for the total number 
                                            // conditions.
 	tokens = malloc((numco+1) * sizeof(int)); // reserve the same amount of empty memory
+
+	query = malloc((numco+1) * sizeof(int)); // reserve the same amount of empty memory
                                             // to save the particular tokens' conditions.
 	ev2tr = malloc((numev+1) * sizeof(int)); // reserve empty memory for the total number 
                                            // events.
@@ -137,6 +139,7 @@ void read_mci_file_ev (char *filename)
                         // map its respective place, eg., c2 -> pl4 
                         // (co2pl[2] -> 4)
 		read_int(tokens[i]); // assign a value to the ith entry tokens array
+		read_int(query[i]); // assign a value if the condition is queried but this feature is not displayable.
                          // for every condition in the unfolding in order to
                          // keep track of the conditions that are empty or full
                          // with tokens due to reset arcs.

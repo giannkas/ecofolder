@@ -438,6 +438,7 @@ t_blockinfo netblocks[] =
     { "BL",  TB_OPTIONAL,  TB_BLOCK, blockfields },
     { "PL",  TB_MANDATORY, TB_BLOCK, placefields },
     { "TR",  TB_MANDATORY, TB_BLOCK, transfields },
+    { "MQ",  TB_OPTIONAL, TB_BLOCK, placefields },
     { "RT",  TB_OPTIONAL, TB_BLOCK, placefields },
     { "PTR", TB_OPTIONAL,  TB_BLOCK, transfields+1 },
     { "RD",  TB_OPTIONAL, TB_BLOCK, arcfields },
@@ -531,6 +532,12 @@ int insert_restr(){
   return 0;
 }
 
+int insert_query(){
+  query_t* qr = nc_create_query(rd_net);
+  qr->name = rd_name? MYstrdup(rd_name) : NULL;
+  return 0;
+}
+
 int insert_arc()
 {
   static int tp, rs = 0, rd = 0;  /* tp = 1 means Place->Trans, 0 is Trans->Place; 
@@ -605,6 +612,11 @@ net_t* read_pep_net(char *PEPfilename)
     { { '\'',&rd_name },	/* identifier		*/
       { '"', &rd_name },	/*     "		*/
       {  0 ,  0 } };
+  
+  t_dest marking_query[] =
+    { { '\'',&rd_name },	/* identifier		*/
+      { '"', &rd_name },	/*     "		*/
+      {  0 ,  0 } };
 
   t_dest arc_dest[] =
     { { '@', &rd_co },	/* source/destination	*/
@@ -617,6 +629,7 @@ net_t* read_pep_net(char *PEPfilename)
   t_blockdest netdest[] =
     { { "PL",  insert_place, NULL, place_dest },
       { "TR",  insert_trans, NULL, trans_dest },
+      { "MQ",  insert_query, NULL, marking_query },
       { "RT",  insert_restr, NULL, marking_restr },
       { "RD",  insert_arc,   NULL, arc_dest},			//*** NEW  ***//
       { "TP",  insert_arc,   NULL, arc_dest },
