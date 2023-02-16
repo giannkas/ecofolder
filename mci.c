@@ -57,6 +57,7 @@ void write_mci_file (char *filename)
   {
     write_int(co->origin->num);
     write_int(co->token);
+    write_int(co->queried);
     if (co->pre_ev) write_int(co->pre_ev->mark);
       else	write_int(null);
     for (list1 = co->postset; list1; list1 = list1->next)

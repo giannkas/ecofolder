@@ -52,6 +52,14 @@ typedef struct restr_t
   int    num;		    /* number				    */
 } restr_t;
 
+typedef struct query_t
+{
+  struct query_t *next;
+  char  *name;		    /* short name	which should correspond 
+                        to a least one place name*/
+  int    num;		    /* number				    */
+} query_t;
+
 
 typedef struct coa_t {
   int size;
@@ -71,6 +79,7 @@ typedef struct cond_t
   int flag;         /* used to format view when compressing conditions */
   coa_t  co_common;	    /* list of co-conditions		    */
   coa_t  co_private;	    /* list of co-conditions		    */
+  char queried;		    /* non-zero if cond-cut is queried	    */
 } cond_t;
 
 typedef struct event_t
@@ -94,12 +103,13 @@ typedef struct
   place_t *places;	/* pointer to first place		*/
   trans_t *transitions;	/* pointer to first transition		*/
   restr_t *restrictions; /* constraints to restrict net's unfolding */
-  int numpl, numtr, numct;	/* number of places/transitions in net	*/
+  int numpl, numtr, numrt, numqr;	/* number of places/transitions in net	*/
   int maxpre, maxpost, maxres, maxctx;	/* maximal size of a t-pre/postset, reset and ctxset	*/
   int maxplname, maxtrname; /* maximal size of place and transition names */
   char *rt_trans;		    /* word of transitions restricted to fire according to restrictions */
   char *unf_trans; /* word of fired transitions when unfolding */
   char *ign_trans; /* word of ignored transitions because they were never enable */
+  query_t *marking_query; /* list of places to query if a marking is present when unfolding the net */
 } net_t;
 
 typedef struct
@@ -118,6 +128,7 @@ extern unf_t* nc_create_unfolding ();
 extern place_t* nc_create_place (net_t*);
 extern trans_t* nc_create_transition (net_t*);
 extern restr_t* nc_create_restriction(net_t*);
+extern query_t* nc_create_query(net_t*);
 extern void nc_create_arc (struct nodelist_t**,struct nodelist_t**,void*,void*);
 extern void nc_compute_sizes (net_t*);
 extern void nc_static_checks (net_t*,char*);
