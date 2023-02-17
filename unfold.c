@@ -436,11 +436,6 @@ void unfold ()
     /* add event to the unfolding */
     ev = insert_event(qu, trans_pool);
     cutoff = add_marking(qu->marking,ev);
-
-    list = format_marking_query();
-    for (i = 1; i <= pe_qsize && list; i++)
-      if (find_marking(list, 1))
-        printf("marking query is present\n");
     
     if (interactive && !cutoff)
     {
@@ -477,6 +472,7 @@ void unfold ()
     trans_pool[strlen(trans_pool)-2] = 0;
     net->unf_trans = MYstrdup(trans_pool);
   }
+
   
   /* add post-conditions for cut-off events */
   for (list = cutoff_list; list; list = list->next)
@@ -495,6 +491,9 @@ void unfold ()
     unf->events = stopev;
   }
 
+  list = format_marking_query();
+  if (find_marking(list, 1))
+    printf("marking query is present\n");
   /* release memory that is no longer needed (probably incomplete) */
   pe_finish();
   parikh_finish();

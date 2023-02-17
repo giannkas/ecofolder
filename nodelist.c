@@ -111,7 +111,7 @@ void nodelist_delete (nodelist_t *list)
 /*****************************************************************************/
 /* compare two lists; return 0 if equal, -1 if list1 < list2, 1 otherwise    */
 
-char nodelist_compare (nodelist_t *list1, nodelist_t *list2)
+int nodelist_compare (nodelist_t *list1, nodelist_t *list2)
 {
 	while (list1 && list2 && list1->node == list2->node)
 		list1 = list1->next, list2 = list2->next;

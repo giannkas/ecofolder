@@ -45,19 +45,35 @@ int marking_hash (nodelist_t *marking)
 int find_marking (nodelist_t *marking, int m_query)
 {
   hashcell_t **buck = hash + marking_hash(marking);
-  char cmp = 2;
+  int cmp = 2;
   nodelist_t* list = NULL;
 
-  while (*buck && (cmp = nodelist_compare(marking,(*buck)->marking)) > 0)
-    buck = &((*buck)->next);
+  if(!m_query)
+    while (*buck && (cmp = nodelist_compare(marking,(*buck)->marking)) > 0)
+      buck = &((*buck)->next);
+  else
+    while (*buck && cmp != 1)
+    {
+      for (list = marking; list && cmp; list = list->next)
+        cmp = nodelist_find((*buck)->marking, list->node);
+      buck = &((*buck)->next);
+    }
+    
 
-  if(m_query && !cmp)
+  if (m_query)
+    printf("!cmp: %d\n", !cmp);
+  if(m_query && cmp)
   {
-    for (list = marking; list; list = list->next)
+    for (list = marking; list; list = list->next){
+      printf("condition queried\n");
       ((cond_t*)(list->node))->queried = 1;
-  }  
+    }
+  }
 
-  return !cmp;
+  /* for (list = marking; list; list = list->next)
+    printf("((cond_t*)(list->node))->name: %s\n", ((cond_t*)(list->node))->origin->name); */
+
+  return m_query ? cmp : !cmp;
 }
 
 /*****************************************************************************/
@@ -113,8 +129,10 @@ nodelist_t* format_marking_query ()
   query_t *qr;
   nodelist_t *list = NULL;
 
-  for (qr = net->marking_query; qr; qr = qr->next)
+  for (qr = net->marking_query; qr; qr = qr->next){
+    printf("query name: %s\n", qr->name);
     nodelist_insert(&list,qr);
+  }
   
   return list;
 }
