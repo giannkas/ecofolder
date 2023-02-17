@@ -77,9 +77,9 @@ typedef struct cond_t
   int    mark;		    /* used by marking_of		    */
   int token; 				/* used by conditions to represent firings */
   int flag;         /* used to format view when compressing conditions */
+  int queried;		    /* non-zero if cond-cut is queried	    */
   coa_t  co_common;	    /* list of co-conditions		    */
   coa_t  co_private;	    /* list of co-conditions		    */
-  char queried;		    /* non-zero if cond-cut is queried	    */
 } cond_t;
 
 typedef struct event_t
@@ -149,7 +149,7 @@ extern nodelist_t* nodelist_alloc ();
 extern nodelist_t* nodelist_push (nodelist_t**list,void*);
 extern nodelist_t* nodelist_insert (nodelist_t**,void*e);
 extern void nodelist_delete (nodelist_t*);
-extern char nodelist_compare (nodelist_t*, nodelist_t*);
+extern int nodelist_compare (nodelist_t*, nodelist_t*);
 extern nodelist_t* nodelist_concatenate(nodelist_t *, nodelist_t *);
 extern int nodelist_find (nodelist_t *, void *);
 extern int nodelist_size (nodelist_t *);
