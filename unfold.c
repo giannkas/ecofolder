@@ -82,7 +82,7 @@ void print_events (event_t* list)
 /* Insert a condition into the unfolding. The new condition is labelled with */
 /* the place pl.							     */
 
-cond_t* insert_condition (place_t *pl, event_t *ev)
+cond_t* insert_condition (place_t *pl, event_t *ev, int queried)
 {
         cond_t *co = MYmalloc(sizeof(cond_t));
         co->next = unf->conditions;
@@ -97,7 +97,7 @@ cond_t* insert_condition (place_t *pl, event_t *ev)
   co->pre_ev = ev;
   co->mark = 0;
   co->num = unf->numco++;
-  co->queried = 0;
+  co->queried = queried;
   if ((ev && nodelist_find(ev->origin->postset, pl)) ||
     (!ev && pl->marked))
     co->token = 1;
@@ -168,7 +168,7 @@ event_t* insert_event (pe_queue_t *qu, char* trans_pool)
 
 enum { CUTOFF_NO, CUTOFF_YES };
 
-void add_post_conditions (event_t *ev, char cutoff)
+void add_post_conditions (event_t *ev, char cutoff, int queried)
 {
   
   cond_t **co_ptr, **cocoptr;
@@ -180,7 +180,7 @@ void add_post_conditions (event_t *ev, char cutoff)
     = MYmalloc(ev->postset_size * sizeof(cond_t*));
   
   for (list = nodelist_concatenate(ev->origin->postset, ev->origin->reset); list; list = list->next)
-    *co_ptr++ = insert_condition(list->node,ev);
+    *co_ptr++ = insert_condition(list->node,ev, queried);
   
   if (cutoff) return;
 
@@ -343,12 +343,12 @@ void recursive_pe (nodelist_t *list)
 
 void unfold ()
 {
-  nodelist_t *list;
+  nodelist_t *list, *mark_qr;
   pe_queue_t *qu;
   place_t *pl;
   event_t *ev, *stopev = NULL;
   cond_t  *co;
-  int cutoff;
+  int cutoff, found = 0;
   char trans_pool[(net->maxtrname+2)*(net->numtr)];
   memset( trans_pool, 0, (net->maxtrname+2)*(net->numtr)*sizeof(char) );
 
@@ -366,7 +366,10 @@ void unfold ()
 
   /* init hash table, add initial marking */
   marking_init(); unf->m0 = unf->m0_unmarked = NULL;
-  add_marking(list = marking_initial(),NULL);
+  mark_qr = format_marking_query();
+  add_marking(list = marking_initial(),NULL); 
+  if ((found = find_marking(mark_qr, 1)))
+    printf("marking query is present\n");
 
   if (interactive){
     printf("Initial marking:");
@@ -384,7 +387,7 @@ void unfold ()
 
   for (pl = net->places; pl; pl = pl->next){
     if(!pl->marked && pl->reset != NULL){
-      co = insert_condition(pl,NULL);
+      co = insert_condition(pl,NULL, found);
       co->co_common = alloc_coarray(0);
       co->co_private = alloc_coarray(0);
       nodelist_push(&(unf->m0_unmarked),co);
@@ -393,13 +396,13 @@ void unfold ()
   /* add initial conditions to unfolding, compute possible extensions */
   for (; list; list = list->next)
   {
-    co = insert_condition(pl = list->node,NULL);
+    co = insert_condition(pl = list->node,NULL, found);
     co->co_common = alloc_coarray(0);
     co->co_private = alloc_coarray(0);
     nodelist_push(&(unf->m0),co);
   }
   
-
+  found++;
   printf("Unfolding initial marking plus resets\n");
   print_marking_co(nodelist_concatenate(unf->m0, unf->m0_unmarked));
   printf("\n");
@@ -436,7 +439,12 @@ void unfold ()
     /* add event to the unfolding */
     ev = insert_event(qu, trans_pool);
     cutoff = add_marking(qu->marking,ev);
-    
+
+    if (found != 2){
+      found = find_marking(mark_qr, 1);
+      printf("marking query is present\n");
+    }
+
     if (interactive && !cutoff)
     {
       if (!corr_list->node)
@@ -464,8 +472,8 @@ void unfold ()
     co_relation(ev);
 
     /* add post-conditions, compute possible extensions */
-    add_post_conditions(ev,CUTOFF_NO);
-    
+    add_post_conditions(ev,CUTOFF_NO, found == 2 ? 0 : found);
+    if (!!found) found++;
   }
 
   if(strlen(trans_pool) > 2){
@@ -473,13 +481,13 @@ void unfold ()
     net->unf_trans = MYstrdup(trans_pool);
   }
 
-  
+  found = 0;
   /* add post-conditions for cut-off events */
   for (list = cutoff_list; list; list = list->next)
   {
     ev = list->node;
     ev->next = unf->events; unf->events = ev;
-    add_post_conditions(ev,CUTOFF_YES);
+    add_post_conditions(ev,CUTOFF_YES, found);
   }
   
   /* Make sure that stopev is the last event to ensure compatibility
@@ -491,9 +499,6 @@ void unfold ()
     unf->events = stopev;
   }
 
-  list = format_marking_query();
-  if (find_marking(list, 1))
-    printf("marking query is present\n");
   /* release memory that is no longer needed (probably incomplete) */
   pe_finish();
   parikh_finish();

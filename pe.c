@@ -172,7 +172,7 @@ char pe_conflict (pe_comb_t *curr)
       co->mark = ev_mark;
       if ((ev = co->pre_ev) && ev->mark != ev_mark)
         (*++queue = ev)->mark = ev_mark;
-    }		
+    }
   }
   return 0;
 }
