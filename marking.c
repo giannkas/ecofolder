@@ -58,7 +58,7 @@ int find_marking (nodelist_t *marking, int m_query)
         cmp = nodelist_find((*buck)->marking, list->node);
       buck = &((*buck)->next);
     }
-    
+
 
   if (m_query)
     printf("!cmp: %d\n", !cmp);
