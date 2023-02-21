@@ -28,6 +28,7 @@ typedef struct place_t
   struct nodelist_t *conds;   /* conditions derived from this place   */
   struct nodelist_t *ctxset; /* unordered list of context transitions */
   char marked;		    /* non-zero if place is marked	    */
+  int queried;      /* non-zero if a place is queried */
 } place_t;
 
 typedef struct trans_t
