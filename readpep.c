@@ -359,6 +359,7 @@ t_fieldinfo placefields[] =
     { 'a', FT_COORDS },		/* rel pos of meaning	  */
     { 'A', FT_COORDS },		/* abs pos of meaning	  */
     { 'M', FT_NUMBER },		/* initial marking (int)  */
+    { 'q', FT_NUMBER },		/* marking query (int)  */
     { 'm', FT_NUMBER },		/* current marking (int) */
     { 'u', FT_STRING },		/* block list		  */
     { 'Z', FT_STRING },		/* type			  */
@@ -461,7 +462,8 @@ t_coords *rd_co;
 place_t	**PlArray;
 trans_t **TrArray;
 int  AnzPlNamen, MaxPlNamen, AnzTrNamen, MaxTrNamen;
-int  placecount, transcount, rd_ident, rd_marked, rd_blocked;
+int  placecount, transcount, rd_ident, rd_marked, 
+  rd_blocked, rd_queried;
 char autonumbering, *rd_name;
 
 /*****************************************************************************/
@@ -477,7 +479,7 @@ int insert_place()
   if (rd_ident && rd_ident != placecount) autonumbering = 0;
   if (!rd_ident && autonumbering) rd_ident = placecount;
   if (!rd_ident) nc_error("missing place identifier");
-    
+
   if (rd_ident > AnzPlNamen)
     AnzPlNamen = rd_ident;
   else if (PlArray[rd_ident])
@@ -496,6 +498,7 @@ int insert_place()
   PlArray[rd_ident]->name = rd_name? MYstrdup(rd_name) : NULL;
   if (rd_marked > 1) nc_error("place %s has more than one token",rd_name);
   PlArray[rd_ident]->marked = !!rd_marked;
+  PlArray[rd_ident]->queried = !!rd_queried;
   return 0;
 }
 
@@ -599,6 +602,7 @@ net_t* read_pep_net(char *PEPfilename)
       { '"', &rd_name },	/*     "		*/
       { '0', &rd_ident },	/* numeric name		*/
       { 'M', &rd_marked },	/* initial marking	*/
+      { 'q', &rd_queried },	/* initial marking	*/
       {  0 ,  0 } };
     
   t_dest trans_dest[] =
@@ -631,10 +635,10 @@ net_t* read_pep_net(char *PEPfilename)
       { "TR",  insert_trans, NULL, trans_dest },
       { "MQ",  insert_query, NULL, marking_query },
       { "RT",  insert_restr, NULL, marking_restr },
-      { "RD",  insert_arc,   NULL, arc_dest},			//*** NEW  ***//
+      { "RD",  insert_arc,   NULL, arc_dest},
       { "TP",  insert_arc,   NULL, arc_dest },
       { "PT",  insert_arc,   NULL, arc_dest },
-      { "RS",  insert_arc,   NULL, arc_dest},			//*** NEW  ***//
+      { "RS",  insert_arc,   NULL, arc_dest},
       { NULL, NULL, NULL, NULL } };
 
   int count;

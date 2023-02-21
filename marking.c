@@ -48,32 +48,16 @@ int find_marking (nodelist_t *marking, int m_query)
   int cmp = 2;
   nodelist_t* list = NULL;
 
-  if(!m_query)
-    while (*buck && (cmp = nodelist_compare(marking,(*buck)->marking)) > 0)
-      buck = &((*buck)->next);
-  else
-    while (*buck && cmp != 1)
-    {
-      for (list = marking; list && cmp; list = list->next)
-        cmp = nodelist_find((*buck)->marking, list->node);
-      buck = &((*buck)->next);
+  while (*buck && (cmp = nodelist_compare(marking,(*buck)->marking)) > 0)
+    buck = &((*buck)->next);
+
+  if (m_query && !cmp)
+    for(list = marking; list && !cmp; list = list->next){
+      if(!((place_t*)(list->node))->queried)  cmp = 1;
+      printf("place->name: %s\n", ((place_t*)(list->node))->name);
+      printf("place->queried: %d\n", ((place_t*)(list->node))->queried);
     }
-
-
-  if (m_query)
-    printf("!cmp: %d\n", !cmp);
-  if(m_query && cmp)
-  {
-    for (list = marking; list; list = list->next){
-      printf("condition queried\n");
-      ((cond_t*)(list->node))->queried = 1;
-    }
-  }
-
-  /* for (list = marking; list; list = list->next)
-    printf("((cond_t*)(list->node))->name: %s\n", ((cond_t*)(list->node))->origin->name); */
-
-  return m_query ? cmp : !cmp;
+  return !cmp;
 }
 
 /*****************************************************************************/

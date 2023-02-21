@@ -368,8 +368,8 @@ void unfold ()
   marking_init(); unf->m0 = unf->m0_unmarked = NULL;
   mark_qr = format_marking_query();
   add_marking(list = marking_initial(),NULL); 
-  if ((found = find_marking(mark_qr, 1)))
-    printf("marking query is present\n");
+  if ((found = find_marking(list, 1)))
+    printf("1st marking query is present\n");
 
   if (interactive){
     printf("Initial marking:");
@@ -387,7 +387,7 @@ void unfold ()
 
   for (pl = net->places; pl; pl = pl->next){
     if(!pl->marked && pl->reset != NULL){
-      co = insert_condition(pl,NULL, found);
+      co = insert_condition(pl,NULL, 0);
       co->co_common = alloc_coarray(0);
       co->co_private = alloc_coarray(0);
       nodelist_push(&(unf->m0_unmarked),co);
@@ -441,8 +441,8 @@ void unfold ()
     cutoff = add_marking(qu->marking,ev);
 
     if (found != 2){
-      found = find_marking(mark_qr, 1);
-      printf("marking query is present\n");
+      found = find_marking(qu->marking, 1);
+      //printf("2nd marking query is present, found: %d\n", found);
     }
 
     if (interactive && !cutoff)
@@ -473,7 +473,7 @@ void unfold ()
 
     /* add post-conditions, compute possible extensions */
     add_post_conditions(ev,CUTOFF_NO, found == 2 ? 0 : found);
-    if (!!found) found++;
+    if (found == 1) found++;
   }
 
   if(strlen(trans_pool) > 2){
