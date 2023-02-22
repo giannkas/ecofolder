@@ -54,8 +54,8 @@ int find_marking (nodelist_t *marking, int m_query)
   if (m_query && !cmp)
     for(list = marking; list && !cmp; list = list->next){
       if(!((place_t*)(list->node))->queried)  cmp = 1;
-      printf("place->name: %s\n", ((place_t*)(list->node))->name);
-      printf("place->queried: %d\n", ((place_t*)(list->node))->queried);
+      /* printf("place->name: %s\n", ((place_t*)(list->node))->name);
+      printf("place->queried: %d\n", ((place_t*)(list->node))->queried); */
     }
   return !cmp;
 }
@@ -70,9 +70,16 @@ int add_marking (nodelist_t *marking, event_t *ev)
   hashcell_t *newbuck;
   hashcell_t **buck = hash + marking_hash(marking);
   char cmp = 2;
+  nodelist_t* list = NULL;
 
+  //printf("hola\n");
   while (*buck && (cmp = nodelist_compare(marking,(*buck)->marking)) > 0)
     buck = &((*buck)->next);
+  
+  printf("hola\n");
+  for(list = marking; list; list = list->next)
+    printf("place->name: %s\n", ((place_t*)(list->node))->name);
+  printf("chao\n");
 
   if (!cmp)	/* marking is already present */
   {
@@ -110,12 +117,12 @@ nodelist_t* marking_initial ()
 
 nodelist_t* format_marking_query ()
 {
-  query_t *qr;
+  place_t *pl;
   nodelist_t *list = NULL;
 
-  for (qr = net->marking_query; qr; qr = qr->next){
-    printf("query name: %s\n", qr->name);
-    nodelist_insert(&list,qr);
+  for (pl = net->places; pl; pl = pl->next){
+    printf("query name: %s\n", pl->name);
+    if (pl->queried) nodelist_insert(&list,pl);
   }
   
   return list;
