@@ -180,7 +180,8 @@ void add_post_conditions (event_t *ev, char cutoff, int queried)
     = MYmalloc(ev->postset_size * sizeof(cond_t*));
   
   for (list = nodelist_concatenate(ev->origin->postset, ev->origin->reset); list; list = list->next)
-    *co_ptr++ = insert_condition(list->node,ev, queried);
+    *co_ptr++ = insert_condition(list->node,ev, 
+      nodelist_find(ev->origin->postset, list->node) ? queried : 0);
   
   if (cutoff) return;
 
@@ -348,7 +349,7 @@ void unfold ()
   place_t *pl;
   event_t *ev, *stopev = NULL;
   cond_t  *co;
-  int cutoff, found = 0;
+  int cutoff, found = 0, check_query = 1;
   char trans_pool[(net->maxtrname+2)*(net->numtr)];
   memset( trans_pool, 0, (net->maxtrname+2)*(net->numtr)*sizeof(char) );
 
@@ -367,8 +368,9 @@ void unfold ()
   /* init hash table, add initial marking */
   marking_init(); unf->m0 = unf->m0_unmarked = NULL;
   mark_qr = format_marking_query();
-  add_marking(list = marking_initial(),NULL); 
-  if ((found = find_marking(list, 1)))
+  add_marking(list = marking_initial(),NULL);
+  check_query = nodelist_compare(list, mark_qr);
+  if (!check_query && (found = find_marking(list, 1)))
     printf("1st marking query is present\n");
 
   if (interactive){
@@ -396,7 +398,7 @@ void unfold ()
   /* add initial conditions to unfolding, compute possible extensions */
   for (; list; list = list->next)
   {
-    co = insert_condition(pl = list->node,NULL, found);
+    co = insert_condition(pl = list->node,NULL, !check_query ? found : 0);
     co->co_common = alloc_coarray(0);
     co->co_private = alloc_coarray(0);
     nodelist_push(&(unf->m0),co);
@@ -441,6 +443,7 @@ void unfold ()
     cutoff = add_marking(qu->marking,ev);
 
     if (found != 2){
+      check_query = nodelist_compare(qu->marking, mark_qr);
       found = find_marking(qu->marking, 1);
       //printf("2nd marking query is present, found: %d\n", found);
     }
@@ -453,7 +456,6 @@ void unfold ()
         printf("E%d has the same marking as E%d.\n",
           e,((event_t*)(corr_list->node))->id);
     }
-    pe_free(qu);
     
     /* if we've found the -T transition, stop immediately */
     if (stoptr && ev->origin == stoptr)
@@ -464,6 +466,7 @@ void unfold ()
     }
     
     
+    //printf("hola\n");
     /* if the marking was already represented in the unfolding,
     we have a cut-off event */
     if (!cutoff) { unf->events = unf->events->next; continue; }
@@ -472,8 +475,15 @@ void unfold ()
     co_relation(ev);
 
     /* add post-conditions, compute possible extensions */
-    add_post_conditions(ev,CUTOFF_NO, found == 2 ? 0 : found);
-    if (found == 1) found++;
+    add_post_conditions(ev,CUTOFF_NO, found == 1 && !check_query ? found : 0);
+    if (found == 1 && !check_query){
+      for(list = qu->marking; list; list = list->next)
+        if(!nodelist_find(ev->origin->postset, list->node))
+          ((cond_t*)(((place_t*)(list->node))->conds->node))->queried =
+          ((place_t*)(list->node))->queried ? 1 : 0;
+      found++;
+    }
+    pe_free(qu);
   }
 
   if(strlen(trans_pool) > 2){
