@@ -244,7 +244,7 @@ void insert_to_queue (cqentry_t **queue, cqentry_t *newentry,
   *queue = newentry;
 }
 
-void co_relation (event_t *ev)
+void co_relation (event_t *ev, pe_queue_t *qu, int check)
 {
   cond_t  **co_ptr, ***colists;
   int	  evps = ev->preset_size, sz;
@@ -310,7 +310,17 @@ void co_relation (event_t *ev)
       insert_to_queue(&queue,tmp,*(colists[index]++),index);
     }
 
-    if (count == evps) addto_coarray(&(ev->coarray),minco);
+    if (count == evps){
+      if(check){
+        nodelist_t *list, *list2;
+        for(list = qu->marking; list; list = list->next)
+          if(!nodelist_find(ev->origin->postset, list->node))
+            for(list2 = (((place_t*)(list->node))->conds); list2; list2 = list2->next)
+              if (((cond_t*)(list2->node))->num == minco->num)
+                if (minco->origin->queried) minco->queried = 1;
+      }
+      addto_coarray(&(ev->coarray),minco);
+    }
   }
 
   free(colists);
@@ -344,7 +354,7 @@ void recursive_pe (nodelist_t *list)
 
 void unfold ()
 {
-  nodelist_t *list, *mark_qr;
+  nodelist_t *list, *mark_qr = NULL;
   pe_queue_t *qu;
   place_t *pl;
   event_t *ev, *stopev = NULL;
@@ -414,6 +424,7 @@ void unfold ()
   while (pe_qsize)
   {
     int i, e;
+    check_query = 1;
     if (interactive) for (;;)
     {
       for (i = 1; i <= pe_qsize; i++)
@@ -443,7 +454,9 @@ void unfold ()
     cutoff = add_marking(qu->marking,ev);
 
     if (found != 2){
-      check_query = nodelist_compare(qu->marking, mark_qr);
+      for(list = qu->marking; list && check_query; list = list->next)
+        check_query = nodelist_find(mark_qr, list->node);
+      //check_query = nodelist_compare(qu->marking, mark_qr);
       found = find_marking(qu->marking, 1);
       //printf("2nd marking query is present, found: %d\n", found);
     }
@@ -472,17 +485,17 @@ void unfold ()
     if (!cutoff) { unf->events = unf->events->next; continue; }
     
     /* compute the co-relation for ev and post-conditions */
-    co_relation(ev);
+    co_relation(ev, qu, found == 1 && check_query ? found : 0);
 
     /* add post-conditions, compute possible extensions */
-    add_post_conditions(ev,CUTOFF_NO, found == 1 && !check_query ? found : 0);
-    if (found == 1 && !check_query){
+    add_post_conditions(ev,CUTOFF_NO, found == 1 && check_query ? found : 0);
+    /* if (found == 1 && !check_query){
       for(list = qu->marking; list; list = list->next)
         if(!nodelist_find(ev->origin->postset, list->node))
           ((cond_t*)(((place_t*)(list->node))->conds->node))->queried =
           ((place_t*)(list->node))->queried ? 1 : 0;
-      found++;
-    }
+    } */
+    found++;
     pe_free(qu);
   }
 

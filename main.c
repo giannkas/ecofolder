@@ -18,6 +18,7 @@ void usage(char *myname)
   "      -T <name>      stop when transition <name> is inserted\n"
   "      -d <depth>     unfold up to given depth\n"
   "      -i             interactive mode\n"
+  "      -mins          instance of a repeated marking"
   "      -c             compressed view\n\n"
 
   "     FileOptions:\n"
