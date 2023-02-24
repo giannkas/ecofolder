@@ -103,7 +103,7 @@ char* pr_encoding(char* in_file){
         token = strtok(d_read, ">");
         num_tmp = strtol(token, &token2, 10);
         read_place_arcs[num_tmp]++;
-        if(read_place_arcs[num_tmp] > 1){          
+        if(read_place_arcs[num_tmp] > 1){
           sprintf(buf_arcs, "\"%s_%d\"%s,", 
             ftokstr(read_place_names[num_tmp], 1, '\"'), read_place_arcs[num_tmp], 
               ltokstr(read_place_names[num_tmp], 1, '\"'));
@@ -198,7 +198,7 @@ char* pr_encoding(char* in_file){
             counter_pl = read_place_arcs[num_tmp]-1;
             for(int i = 1; i <= counter_pl && counter_pl > 0; i++){
               sprintf(buf_arcs, "%d>%s", replicated_places_per_place[num_tmp][i+1], strtok(ltokstr(d_read, 0, '>'), "\n"));
-              fprintf(w_pointer, "%s\n", buf_arcs);              
+              fprintf(w_pointer, "%s\n", buf_arcs);
             }
           }
           strstr(d_read, "\n") ? fprintf(w_pointer, "%s", d_read) : fprintf(w_pointer, "%s\n", d_read);

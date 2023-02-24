@@ -8,11 +8,14 @@ typedef struct hashcell_t
 {
   nodelist_t *marking;
   event_t    *event;
+  int repeat;
   struct hashcell_t *next;
 } hashcell_t;
 
 hashcell_t **hash;
 int hash_buckets;
+int *rep_marking;
+
 
 /*****************************************************************************/
 
@@ -40,7 +43,8 @@ int marking_hash (nodelist_t *marking)
 
 /*****************************************************************************/
 /* Check if a marking is already present in the hash table.		     */
-/* Return 1 if yes. The given marking is left unchanged.		     */
+/* Return number of times the marking is repeated otherwise 0. */
+/* The given marking is left unchanged.		     */
 
 int find_marking (nodelist_t *marking, int m_query)
 {
@@ -54,10 +58,11 @@ int find_marking (nodelist_t *marking, int m_query)
   if (m_query && !cmp)
     for(list = marking; list && !cmp; list = list->next){
       if(!((place_t*)(list->node))->queried)  cmp = 1;
-      /* printf("place->name: %s\n", ((place_t*)(list->node))->name);
-      printf("place->queried: %d\n", ((place_t*)(list->node))->queried); */
     }
-  return !cmp;
+
+  
+  //if (!cmp) printf("(*buck)->repeat: %d\n", (*buck)->repeat);
+  return (*buck) && !cmp ? (*buck)->repeat : !cmp;
 }
 
 /*****************************************************************************/
@@ -83,7 +88,9 @@ int add_marking (nodelist_t *marking, event_t *ev)
 
   if (!cmp)	/* marking is already present */
   {
-    nodelist_delete(marking);
+    (*buck)->repeat++;
+    //nodelist_delete(marking);
+    //printf("marking is already present: %d\n", (*buck)->repeat);
     nodelist_push(&cutoff_list,ev);
     nodelist_push(&corr_list,(*buck)->event);
     return 0;
@@ -92,6 +99,7 @@ int add_marking (nodelist_t *marking, event_t *ev)
   newbuck = MYmalloc(sizeof(hashcell_t));
   newbuck->marking = marking;
   newbuck->event = ev;
+  newbuck->repeat = 1;
   newbuck->next = *buck;
   *buck = newbuck;
 

@@ -38,12 +38,14 @@ extern void print_events (event_t*);
 /* declarations for marking.c						   */
 
 extern void marking_init ();
+extern int repeated_marking(nodelist_t*);
 extern int find_marking (nodelist_t*, int);
 extern int add_marking (nodelist_t*,event_t*);
 extern nodelist_t* marking_initial ();
 extern nodelist_t* format_marking_query ();
 extern void print_marking_pl (nodelist_t*);
 extern void print_marking_co (nodelist_t*);
+
 
 /***************************************************************************/
 /* declarations for pe.c						   */

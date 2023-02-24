@@ -97,7 +97,7 @@ cond_t* insert_condition (place_t *pl, event_t *ev, int queried)
   co->pre_ev = ev;
   co->mark = 0;
   co->num = unf->numco++;
-  co->queried = queried;
+  co->queried = queried ? 1 : 0;
   if ((ev && nodelist_find(ev->origin->postset, pl)) ||
     (!ev && pl->marked))
     co->token = 1;
@@ -380,8 +380,11 @@ void unfold ()
   mark_qr = format_marking_query();
   add_marking(list = marking_initial(),NULL);
   check_query = nodelist_compare(list, mark_qr);
-  if (!check_query && (found = find_marking(list, 1)))
-    printf("1st marking query is present\n");
+  if (!check_query && (found = find_marking(list, 1))){
+    //int tmp = marking_hash(list);
+    //rep_marking[tmp]++;
+    printf("initial marking repetitions: %d\n", found);
+  }
 
   if (interactive){
     printf("Initial marking:");
@@ -392,7 +395,7 @@ void unfold ()
   printf("Print initial marking\n");
   print_marking_pl(list);
   printf("\n");
-  
+
   /* initialize PE computation */
   pe_init(list);
   parikh_init();
@@ -414,7 +417,6 @@ void unfold ()
     nodelist_push(&(unf->m0),co);
   }
   
-  found++;
   printf("Unfolding initial marking plus resets\n");
   print_marking_co(nodelist_concatenate(unf->m0, unf->m0_unmarked));
   printf("\n");
@@ -453,12 +455,12 @@ void unfold ()
     ev = insert_event(qu, trans_pool);
     cutoff = add_marking(qu->marking,ev);
 
-    if (found != 2){
+    if (!found){
       for(list = qu->marking; list && check_query; list = list->next)
         check_query = nodelist_find(mark_qr, list->node);
       //check_query = nodelist_compare(qu->marking, mark_qr);
       found = find_marking(qu->marking, 1);
-      //printf("2nd marking query is present, found: %d\n", found);
+      printf("marking repetitions, found: %d\n", found);
     }
 
     if (interactive && !cutoff)
@@ -485,17 +487,16 @@ void unfold ()
     if (!cutoff) { unf->events = unf->events->next; continue; }
     
     /* compute the co-relation for ev and post-conditions */
-    co_relation(ev, qu, found == 1 && check_query ? found : 0);
+    co_relation(ev, qu, found && check_query ? found : 0);
 
     /* add post-conditions, compute possible extensions */
-    add_post_conditions(ev,CUTOFF_NO, found == 1 && check_query ? found : 0);
+    add_post_conditions(ev,CUTOFF_NO, found && check_query ? found : 0);
     /* if (found == 1 && !check_query){
       for(list = qu->marking; list; list = list->next)
         if(!nodelist_find(ev->origin->postset, list->node))
           ((cond_t*)(((place_t*)(list->node))->conds->node))->queried =
           ((place_t*)(list->node))->queried ? 1 : 0;
     } */
-    found++;
     pe_free(qu);
   }
 

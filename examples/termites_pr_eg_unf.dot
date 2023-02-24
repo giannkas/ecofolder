@@ -145,7 +145,7 @@ digraph test {
   c8 [fillcolor=lightblue label= <sd+<FONT COLOR="red"><SUP>0</SUP></FONT>&nbsp;(c8)> shape=circle style=filled];
   c9 [fillcolor=lightblue label= <wk-_1<FONT COLOR="red"><SUP>0</SUP></FONT>&nbsp;(c9)> shape=circle style=filled];
   c10 [fillcolor=lightblue label= <wk+_3<FONT COLOR="red"><SUP>1</SUP></FONT>&nbsp;(c10)> shape=circle style=filled];
-  c11 [fillcolor=gold label= <wk+_2<FONT COLOR="red"><SUP>1</SUP></FONT>&nbsp;(c11)> shape=circle style=filled];
+  c11 [fillcolor=lightblue label= <wk+_2<FONT COLOR="red"><SUP>1</SUP></FONT>&nbsp;(c11)> shape=circle style=filled];
   c12 [fillcolor=lightblue label= <fg-<FONT COLOR="red"><SUP>1</SUP></FONT>&nbsp;(c12)> shape=circle style=filled];
   c13 [fillcolor=lightblue label= <te-<FONT COLOR="red"><SUP>1</SUP></FONT>&nbsp;(c13)> shape=circle style=filled];
   c14 [fillcolor=lightblue label= <ec-<FONT COLOR="red"><SUP>1</SUP></FONT>&nbsp;(c14)> shape=circle style=filled];
@@ -155,7 +155,7 @@ digraph test {
   c18 [fillcolor=lightblue label= <sd-<FONT COLOR="red"><SUP>1</SUP></FONT>&nbsp;(c18)> shape=circle style=filled];
   c19 [fillcolor=lightblue label= <wk+_1<FONT COLOR="red"><SUP>1</SUP></FONT>&nbsp;(c19)> shape=circle style=filled];
   c20 [fillcolor=gold label= <fg+<FONT COLOR="red"><SUP>1</SUP></FONT>&nbsp;(c20)> shape=circle style=filled];
-  c21 [fillcolor=gold label= <te+<FONT COLOR="red"><SUP>1</SUP></FONT>&nbsp;(c21)> shape=circle style=filled];
+  c21 [fillcolor=lightblue label= <te+<FONT COLOR="red"><SUP>1</SUP></FONT>&nbsp;(c21)> shape=circle style=filled];
   c22 [fillcolor=gold label= <ec+<FONT COLOR="red"><SUP>1</SUP></FONT>&nbsp;(c22)> shape=circle style=filled];
   c23 [fillcolor=lightblue label= <wd+<FONT COLOR="red"><SUP>1</SUP></FONT>&nbsp;(c23)> shape=circle style=filled];
   c24 [fillcolor=gold label= <wk+_1<FONT COLOR="red"><SUP>1</SUP></FONT>&nbsp;(c24)> shape=circle style=filled];
@@ -166,7 +166,7 @@ digraph test {
   c29 [fillcolor=gold label= <sd+<FONT COLOR="red"><SUP>1</SUP></FONT>&nbsp;(c29)> shape=circle style=filled];
   c30 [fillcolor=gold label= <rp+_2<FONT COLOR="red"><SUP>1</SUP></FONT>&nbsp;(c30)> shape=circle style=filled];
   c31 [fillcolor=gold label= <rp+_1<FONT COLOR="red"><SUP>1</SUP></FONT>&nbsp;(c31)> shape=circle style=filled];
-  c32 [fillcolor=gold label= <wd+<FONT COLOR="red"><SUP>1</SUP></FONT>&nbsp;(c32)> shape=circle style=filled];
+  c32 [fillcolor=lightblue label= <wd+<FONT COLOR="red"><SUP>1</SUP></FONT>&nbsp;(c32)> shape=circle style=filled];
   c33 [fillcolor=gold label= <wk+_3<FONT COLOR="red"><SUP>1</SUP></FONT>&nbsp;(c33)> shape=circle style=filled];
   c34 [fillcolor=lightblue label= <rp-<FONT COLOR="red"><SUP>0</SUP></FONT>&nbsp;(c34)> shape=circle style=filled];
   c35 [fillcolor=lightblue label= <sd-<FONT COLOR="red"><SUP>0</SUP></FONT>&nbsp;(c35)> shape=circle style=filled];
@@ -174,9 +174,9 @@ digraph test {
   c37 [fillcolor=lightblue label= <te+<FONT COLOR="red"><SUP>1</SUP></FONT>&nbsp;(c37)> shape=circle style=filled];
   c38 [fillcolor=lightblue label= <wd-<FONT COLOR="red"><SUP>1</SUP></FONT>&nbsp;(c38)> shape=circle style=filled];
   c39 [fillcolor=lightblue label= <wd+<FONT COLOR="red"><SUP>0</SUP></FONT>&nbsp;(c39)> shape=circle style=filled];
-  c40 [fillcolor=lightblue label= <wk+_2<FONT COLOR="red"><SUP>1</SUP></FONT>&nbsp;(c40)> shape=circle style=filled];
-  c41 [fillcolor=lightblue label= <te+<FONT COLOR="red"><SUP>1</SUP></FONT>&nbsp;(c41)> shape=circle style=filled];
-  c42 [fillcolor=lightblue label= <wd-<FONT COLOR="red"><SUP>1</SUP></FONT>&nbsp;(c42)> shape=circle style=filled];
+  c40 [fillcolor=gold label= <wk+_2<FONT COLOR="red"><SUP>1</SUP></FONT>&nbsp;(c40)> shape=circle style=filled];
+  c41 [fillcolor=gold label= <te+<FONT COLOR="red"><SUP>1</SUP></FONT>&nbsp;(c41)> shape=circle style=filled];
+  c42 [fillcolor=gold label= <wd-<FONT COLOR="red"><SUP>1</SUP></FONT>&nbsp;(c42)> shape=circle style=filled];
   c43 [fillcolor=lightblue label= <wd+<FONT COLOR="red"><SUP>0</SUP></FONT>&nbsp;(c43)> shape=circle style=filled];
   c44 [fillcolor=lightblue label= <fg+<FONT COLOR="red"><SUP>1</SUP></FONT>&nbsp;(c44)> shape=circle style=filled];
   c45 [fillcolor=lightblue label= <te+<FONT COLOR="red"><SUP>1</SUP></FONT>&nbsp;(c45)> shape=circle style=filled];
