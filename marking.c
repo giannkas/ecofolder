@@ -55,12 +55,16 @@ int find_marking (nodelist_t *marking, int m_query)
   while (*buck && (cmp = nodelist_compare(marking,(*buck)->marking)) > 0)
     buck = &((*buck)->next);
 
-  if (m_query && !cmp)
-    for(list = marking; list && !cmp; list = list->next){
+  if (m_query && !cmp){
+    for(list = marking; list && !cmp; list = list->next)
       if(!((place_t*)(list->node))->queried)  cmp = 1;
+    if(!cmp && (*buck)->repeat != m_repeat){ 
+      printf("m_repeat: %d\n", m_repeat);
+      printf("(*buck)->repeat: %d\n", (*buck)->repeat);
+      cmp = 1;
     }
+  }
 
-  
   //if (!cmp) printf("(*buck)->repeat: %d\n", (*buck)->repeat);
   return (*buck) && !cmp ? (*buck)->repeat : !cmp;
 }
@@ -77,7 +81,6 @@ int add_marking (nodelist_t *marking, event_t *ev)
   char cmp = 2;
   nodelist_t* list = NULL;
 
-  //printf("hola\n");
   while (*buck && (cmp = nodelist_compare(marking,(*buck)->marking)) > 0)
     buck = &((*buck)->next);
   

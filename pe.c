@@ -186,13 +186,13 @@ void pe (cond_t *co)
   pe_comb_t *curr_comb;
   cond_t **cocoptr;
   place_t *pl = co->origin, *pl2;
-  trans_t *tr;  
+  trans_t *tr;
   
   *pe_conds = co;	/* any new PE contains co */
   nodelist_push(&(pl->conds),co);
   /* check the transitions in pl's postset */
   for (pl_post = nodelist_concatenate(pl->postset, pl->reset); pl_post; pl_post = pl_post->next)
-  {		
+  {
     tr = pl_post->node;
     
     if ((!co->token && nodelist_find(pl->postset, pl_post->node)) || 
@@ -254,7 +254,7 @@ void pe (cond_t *co)
     curr_comb = pe_combs;
     
     if (!tr_pre) while (curr_comb >= pe_combs)
-    {									
+    {
       if (!curr_comb->start)
       {
         cond_t **co_ptr = pe_conds;
