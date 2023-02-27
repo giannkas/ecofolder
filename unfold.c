@@ -17,6 +17,7 @@ trans_t *stoptr = NULL;			/* transition in -T switch         */
 int unfold_depth = 0;			/* argument of -d switch	   */
 int interactive = 0;			/* interactivem mode (-i)	   */
 int compressed = 0;			/* compressed unfolding view (-c)	   */
+int m_repeat = 1;			/* marking repeat to highlight (-r)	   */
 
 nodelist_t *cutoff_list, *corr_list;	/* cut-off list, corresponding events */
 
@@ -98,6 +99,7 @@ cond_t* insert_condition (place_t *pl, event_t *ev, int queried)
   co->mark = 0;
   co->num = unf->numco++;
   co->queried = queried ? 1 : 0;
+  if(queried) printf("insert_condition is checked\n");
   if ((ev && nodelist_find(ev->origin->postset, pl)) ||
     (!ev && pl->marked))
     co->token = 1;
@@ -312,6 +314,7 @@ void co_relation (event_t *ev, pe_queue_t *qu, int check)
 
     if (count == evps){
       if(check){
+        printf("co_relation is checked\n");
         nodelist_t *list, *list2;
         for(list = qu->marking; list; list = list->next)
           if(!nodelist_find(ev->origin->postset, list->node))
@@ -455,13 +458,16 @@ void unfold ()
     ev = insert_event(qu, trans_pool);
     cutoff = add_marking(qu->marking,ev);
 
-    if (!found){
-      for(list = qu->marking; list && check_query; list = list->next)
-        check_query = nodelist_find(mark_qr, list->node);
-      //check_query = nodelist_compare(qu->marking, mark_qr);
-      found = find_marking(qu->marking, 1);
-      printf("marking repetitions, found: %d\n", found);
+    for(list = qu->marking; list && check_query; list = list->next){
+      //printf("check query: %d\n", check_query);
+      check_query = nodelist_find(mark_qr, list->node);
     }
+    if (!found){
+      //check_query = nodelist_compare(qu->marking, mark_qr);
+      found = find_marking(mark_qr, 1);
+      //printf("check_query: %d\n", check_query);
+    }
+    found && check_query ? printf("YES\n") : printf("NO\n");
 
     if (interactive && !cutoff)
     {
@@ -480,23 +486,23 @@ void unfold ()
       break;
     }
     
-    
+    printf("marking repetitions, found: %d, event: %s\n", found, ev->origin->name);
     //printf("hola\n");
     /* if the marking was already represented in the unfolding,
     we have a cut-off event */
-    if (!cutoff) { unf->events = unf->events->next; continue; }
-    
-    /* compute the co-relation for ev and post-conditions */
     co_relation(ev, qu, found && check_query ? found : 0);
+    if (!cutoff){ 
+      unf->events = unf->events->next; 
+      add_post_conditions(ev,CUTOFF_YES, found && check_query ? found : 0);
+      continue;
+    }
+    else
+      add_post_conditions(ev,CUTOFF_NO, found && check_query ? found : 0);
+    
+
+    /* compute the co-relation for ev and post-conditions */
 
     /* add post-conditions, compute possible extensions */
-    add_post_conditions(ev,CUTOFF_NO, found && check_query ? found : 0);
-    /* if (found == 1 && !check_query){
-      for(list = qu->marking; list; list = list->next)
-        if(!nodelist_find(ev->origin->postset, list->node))
-          ((cond_t*)(((place_t*)(list->node))->conds->node))->queried =
-          ((place_t*)(list->node))->queried ? 1 : 0;
-    } */
     pe_free(qu);
   }
 
@@ -511,7 +517,7 @@ void unfold ()
   {
     ev = list->node;
     ev->next = unf->events; unf->events = ev;
-    add_post_conditions(ev,CUTOFF_YES, found);
+    //add_post_conditions(ev,CUTOFF_YES, found);
   }
   
   /* Make sure that stopev is the last event to ensure compatibility

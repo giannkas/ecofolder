@@ -18,7 +18,7 @@ void usage(char *myname)
   "      -T <name>      stop when transition <name> is inserted\n"
   "      -d <depth>     unfold up to given depth\n"
   "      -i             interactive mode\n"
-  "      -mins          instance of a repeated marking"
+  "      -r          instance of a repeated marking\n"
   "      -c             compressed view\n\n"
 
   "     FileOptions:\n"
@@ -51,6 +51,8 @@ int main (int argc, char **argv)
       unfold_depth = atoi(argv[++i]);
     else if (!strcmp(argv[i],"-i"))
       interactive = 1;
+    else if (!strcmp(argv[i],"-r"))
+      m_repeat = atoi(argv[++i]);
     else if (!strcmp(argv[i],"-c"))
       compressed = 1;
     else
@@ -86,9 +88,9 @@ int main (int argc, char **argv)
   while (trr){
     printf("%s ->\n", trr->name);
     nodelist_t *ptr = trr->reset;
-    while (ptr){			
+    while (ptr){
       printf("\t%s",((place_t*)(ptr->node))->name);
-      ptr = ptr->next;		
+      ptr = ptr->next;
     }
     printf("\n");
     trr = trr->next;
@@ -101,9 +103,9 @@ int main (int argc, char **argv)
   while (trr){
     printf("%s ->\n", trr->name);
     nodelist_t *ptr = trr->ctxset;
-    while (ptr){			
+    while (ptr){
       printf("\t%s",((place_t*)(ptr->node))->name);
-      ptr = ptr->next;		
+      ptr = ptr->next;
     }
     printf("\n");
     trr = trr->next;
@@ -116,9 +118,9 @@ int main (int argc, char **argv)
   while (trr){
     printf("%s ->\n", trr->name);
     nodelist_t *ptr = trr->preset;
-    while (ptr){			
+    while (ptr){
       printf("\t%s",((place_t*)(ptr->node))->name);
-      ptr = ptr->next;		
+      ptr = ptr->next;
     }
     printf("\n");
     trr = trr->next;
@@ -131,9 +133,9 @@ int main (int argc, char **argv)
   while (trr){
     printf("%s ->\n", trr->name);
     nodelist_t *ptr = trr->postset;
-    while (ptr){			
+    while (ptr){
       printf("\t%s",((place_t*)(ptr->node))->name);
-      ptr = ptr->next;		
+      ptr = ptr->next;
     }
     printf("\n");
     trr = trr->next;
@@ -147,9 +149,9 @@ int main (int argc, char **argv)
   while (pll){
     printf("%s ->\n", pll->name);
     nodelist_t *ptr = pll->reset;
-    while (ptr){			
+    while (ptr){
       printf("\t%s",((trans_t*)(ptr->node))->name);
-      ptr = ptr->next;		
+      ptr = ptr->next;
     }
     printf("\n");
     pll = pll->next;
@@ -163,9 +165,9 @@ int main (int argc, char **argv)
   while (pll){
     printf("%s ->\n", pll->name);
     nodelist_t *ptr = pll->ctxset;
-    while (ptr){			
+    while (ptr){
       printf("\t%s",((trans_t*)(ptr->node))->name);
-      ptr = ptr->next;		
+      ptr = ptr->next;
     }
     printf("\n");
     pll = pll->next;
@@ -178,9 +180,9 @@ int main (int argc, char **argv)
   while (pll){
     printf("%s ->\n", pll->name);
     nodelist_t *ptr = pll->preset;
-    while (ptr){			
+    while (ptr){
       printf("\t%s",((trans_t*)(ptr->node))->name);
-      ptr = ptr->next;		
+      ptr = ptr->next;
     }
     printf("\n");
     pll = pll->next;
@@ -193,9 +195,9 @@ int main (int argc, char **argv)
   while (pll){
     printf("%s ->\n", pll->name);
     nodelist_t *ptr = pll->postset;
-    while (ptr){			
+    while (ptr){
       printf("\t%s",((trans_t*)(ptr->node))->name);
-      ptr = ptr->next;		
+      ptr = ptr->next;
     }
     printf("\n");
     pll = pll->next;
