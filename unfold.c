@@ -99,7 +99,6 @@ cond_t* insert_condition (place_t *pl, event_t *ev, int queried)
   co->mark = 0;
   co->num = unf->numco++;
   co->queried = queried ? 1 : 0;
-  if(queried) printf("insert_condition is checked\n");
   if ((ev && nodelist_find(ev->origin->postset, pl)) ||
     (!ev && pl->marked))
     co->token = 1;
@@ -314,7 +313,6 @@ void co_relation (event_t *ev, pe_queue_t *qu, int check)
 
     if (count == evps){
       if(check){
-        printf("co_relation is checked\n");
         nodelist_t *list, *list2;
         for(list = qu->marking; list; list = list->next)
           if(!nodelist_find(ev->origin->postset, list->node))
@@ -383,12 +381,8 @@ void unfold ()
   mark_qr = format_marking_query();
   add_marking(list = marking_initial(),NULL);
   check_query = nodelist_compare(list, mark_qr);
-  if (!check_query && (repeat = find_marking(list, 1))){
-    //int tmp = marking_hash(list);
-    //rep_marking[tmp]++;
+  if (!check_query && (repeat = find_marking(list, 1)))
     m_repeat = 0;
-    printf("initial marking repetitions: %d\n", repeat);
-  }
 
   if (interactive){
     printf("Initial marking:");
@@ -462,11 +456,8 @@ void unfold ()
     if (m_repeat){
       for(list = qu->marking; list && check_query; list = list->next)
         check_query = nodelist_find(mark_qr, list->node);
-      //check_query = nodelist_compare(qu->marking, mark_qr);
       repeat = find_marking(mark_qr, 1);
-      //printf("check_query: %d\n", check_query);
     }
-    repeat && check_query ? printf("YES\n") : printf("NO\n");
 
     if (interactive && !cutoff)
     {
@@ -485,8 +476,6 @@ void unfold ()
       break;
     }
 
-    printf("marking repetitions, repeat: %d, event: %s\n", repeat, ev->origin->name);
-
     repeat = repeat && check_query && m_repeat ? repeat : 0;
 
     /* compute the co-relation for ev and post-conditions */
@@ -494,6 +483,7 @@ void unfold ()
 
     /* if the marking was already represented in the unfolding,
     we have a cut-off event */
+    /* add post-conditions for cut-off events */
     if (!cutoff)
     { 
       unf->events = unf->events->next; 
@@ -514,8 +504,6 @@ void unfold ()
     net->unf_trans = MYstrdup(trans_pool);
   }
 
-  repeat = 0;
-  /* add post-conditions for cut-off events */
   for (list = cutoff_list; list; list = list->next)
   {
     ev = list->node;

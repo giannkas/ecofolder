@@ -58,14 +58,10 @@ int find_marking (nodelist_t *marking, int m_query)
   if (m_query && !cmp){
     for(list = marking; list && !cmp; list = list->next)
       if(!((place_t*)(list->node))->queried)  cmp = 1;
-    if(!cmp && (*buck)->repeat != m_repeat){ 
-      printf("m_repeat: %d\n", m_repeat);
-      printf("(*buck)->repeat: %d\n", (*buck)->repeat);
+    if(!cmp && (*buck)->repeat != m_repeat)
       cmp = 1;
-    }
   }
 
-  //if (!cmp) printf("(*buck)->repeat: %d\n", (*buck)->repeat);
   return (*buck) && !cmp ? (*buck)->repeat : !cmp;
 }
 
@@ -79,21 +75,20 @@ int add_marking (nodelist_t *marking, event_t *ev)
   hashcell_t *newbuck;
   hashcell_t **buck = hash + marking_hash(marking);
   char cmp = 2;
-  nodelist_t* list = NULL;
+  //nodelist_t* list = NULL;
 
   while (*buck && (cmp = nodelist_compare(marking,(*buck)->marking)) > 0)
     buck = &((*buck)->next);
   
-  printf("hola\n");
+  /* printf("hola\n");
   for(list = marking; list; list = list->next)
     printf("place->name: %s\n", ((place_t*)(list->node))->name);
-  printf("chao\n");
+  printf("chao\n"); */
 
   if (!cmp)	/* marking is already present */
   {
     (*buck)->repeat++;
     //nodelist_delete(marking);
-    //printf("marking is already present: %d\n", (*buck)->repeat);
     nodelist_push(&cutoff_list,ev);
     nodelist_push(&corr_list,(*buck)->event);
     return 0;
@@ -131,10 +126,8 @@ nodelist_t* format_marking_query ()
   place_t *pl;
   nodelist_t *list = NULL;
 
-  for (pl = net->places; pl; pl = pl->next){
-    printf("query name: %s\n", pl->name);
+  for (pl = net->places; pl; pl = pl->next)
     if (pl->queried) nodelist_insert(&list,pl);
-  }
   
   return list;
 }
