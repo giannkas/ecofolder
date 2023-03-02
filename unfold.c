@@ -94,7 +94,7 @@ cond_t* insert_condition (place_t *pl, event_t *ev, int queried)
   co->origin = pl;
   co->flag = 0;
 
-        co->postset = NULL;
+  co->postset = NULL;
   co->pre_ev = ev;
   co->mark = 0;
   co->num = unf->numco++;
@@ -448,7 +448,7 @@ void unfold ()
     }
     else
       qu = pe_pop(1);
-    
+
     /* add event to the unfolding */
     ev = insert_event(qu, trans_pool);
     cutoff = add_marking(qu->marking,ev);
@@ -526,5 +526,5 @@ void unfold ()
   free(events);
   for (pl = net->places; pl; pl = pl->next)
     nodelist_delete(pl->conds);
-    
+
 }
