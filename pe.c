@@ -210,7 +210,6 @@ void pe (cond_t *co)
       co_ptr2 = &((*co_ptr2)->next);
     } */
 
-    
     (curr_comb = pe_combs)->start = NULL;
 
     /* for every other post-place of tr, collect the conditions

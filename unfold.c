@@ -85,9 +85,9 @@ void print_events (event_t* list)
 
 cond_t* insert_condition (place_t *pl, event_t *ev, int queried)
 {
-        cond_t *co = MYmalloc(sizeof(cond_t));
-        co->next = unf->conditions;
-        unf->conditions = co;
+  cond_t *co = MYmalloc(sizeof(cond_t));
+  co->next = unf->conditions;
+  unf->conditions = co;
 
   /* remember relation between co and pl */
   /* the other direction is done in pe() */
@@ -99,6 +99,8 @@ cond_t* insert_condition (place_t *pl, event_t *ev, int queried)
   co->mark = 0;
   co->num = unf->numco++;
   co->queried = queried ? 1 : 0;
+  if(ev) ev->queried = co->queried;
+
   if ((ev && nodelist_find(ev->origin->postset, pl)) ||
     (!ev && pl->marked))
     co->token = 1;
@@ -132,6 +134,7 @@ event_t* insert_event (pe_queue_t *qu, char* trans_pool)
   if(!strstr(trans_pool, ev->origin->name))
     strcat(strcat(trans_pool,ev->origin->name), ", ");
   ev->mark = 0;		/* for marking_of */
+  //ev->queried = 0;
   ev->foata_level = find_foata_level(qu);
   ev->preset_size = qu->trans->prereset_size;
   ev->postset_size = qu->trans->postreset_size;
@@ -142,7 +145,7 @@ event_t* insert_event (pe_queue_t *qu, char* trans_pool)
   
   /* co_ptr2 = ev->preset;
   //printf("event name %s and its preset with size %d: \n", ev->origin->name, sz);
-  while(*co_ptr2){	
+  while(*co_ptr2){
     printf("EVENT %s precondition name: %s, %d\n", ev->origin->name,(*co_ptr2)->origin->name, (*co_ptr2)->num);
     co_ptr2 = &((*co_ptr2)->next);
   } */
@@ -318,7 +321,11 @@ void co_relation (event_t *ev, pe_queue_t *qu, int check)
           if(!nodelist_find(ev->origin->postset, list->node))
             for(list2 = (((place_t*)(list->node))->conds); list2; list2 = list2->next)
               if (((cond_t*)(list2->node))->num == minco->num)
-                if (minco->origin->queried) minco->queried = 1;
+                if (minco->origin->queried)
+                {
+                  minco->pre_ev->queried = 1;
+                  minco->queried = 1;
+                }
       }
       addto_coarray(&(ev->coarray),minco);
     }
@@ -349,6 +356,22 @@ void recursive_pe (nodelist_t *list)
   recursive_add(list->next,list);
   pe(list->node);
   
+}
+
+void recursive_queried(cond_t *list_cond)
+{
+  cond_t *tmp_conds = NULL;
+  
+  for(tmp_conds = list_cond; tmp_conds; tmp_conds = tmp_conds->next)
+  {
+    if(tmp_conds->pre_ev)
+    {
+      tmp_conds->pre_ev->queried = 1;
+      recursive_queried((*(tmp_conds->pre_ev->preset)));
+      //printf("ENTRA AL LOOP\n");
+    }
+  }
+  return;
 }
 
 /*****************************************************************************/
@@ -510,6 +533,12 @@ void unfold ()
     ev->next = unf->events; unf->events = ev;
     //add_post_conditions(ev,CUTOFF_YES, repeat);
   }
+
+  /* for (co = unf->conditions; co ; co = co->next)
+  {
+    if(co->queried) recursive_queried(co);
+  } */
+
   
   /* Make sure that stopev is the last event to ensure compatibility
      with Claus Schr�ter's reachability checker (otn). */
