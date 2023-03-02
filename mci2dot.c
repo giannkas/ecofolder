@@ -8,7 +8,8 @@ void read_mci_file (char *filename)
   FILE *file;
   int numco, numev, numpl, numtr, sz, i;
   int pre_ev, post_ev, cutoff, dummy;
-  int *co2pl, *ev2tr, *tokens, *queries, *cutoffs;
+  int *co2pl, *ev2tr, *tokens, *queries_co,
+   *queries_ev, *cutoffs;
   char **plname, **trname, *c;
 
   if (!(file = fopen(filename,"rb")))
@@ -24,19 +25,22 @@ void read_mci_file (char *filename)
 
   co2pl = malloc((numco+1) * sizeof(int));
   tokens = malloc((numco+1) * sizeof(int));
-  queries = malloc((numco+1) * sizeof(int));
+  queries_co = malloc((numco+1) * sizeof(int));
+  queries_ev = malloc((numev+1) * sizeof(int));
   ev2tr = malloc((numev+1) * sizeof(int));
   cutoffs = calloc(numev+1, sizeof(int));
 
-  for (i = 1; i <= numev; i++)
+  for (i = 1; i <= numev; i++){
     read_int(ev2tr[i]);
+    read_int(queries_ev[i]);
+  }
 
   for (i = 1; i <= numco; i++)
   {
     read_int(co2pl[i]);
     read_int(tokens[i]);
-    read_int(queries[i]);
-    //printf("queries i: %d\n", queries[i]);
+    read_int(queries_co[i]);
+    //printf("queries_co i: %d\n", queries_co[i]);
     //printf("token i: %d\n", tokens[i]);
     read_int(pre_ev);
     if (pre_ev) printf("  e%d -> c%d;\n",pre_ev,i);
@@ -80,17 +84,20 @@ void read_mci_file (char *filename)
 
   char color1[] = "lightblue";
   char color2[] = "gold";
+  char color3[] = "orange";
+  char color4[] = "palegreen";
+  char color5[] = "firebrick2";
 
   for (i = 1; i <= numco; i++)
     printf("  c%d [fillcolor=%s label= <%s<FONT COLOR=\"red\"><SUP>%d</SUP></FONT>&nbsp;(c%d)> shape=circle style=filled];\n",
-        i,queries[i] ? color2 : color1,plname[co2pl[i]],tokens[i],i);
+        i,queries_co[i] ? color2 : color1,plname[co2pl[i]],tokens[i],i);
   for (i = 1; i <= numev; i++)
     if (i != cutoffs[i])
-      printf("  e%d [fillcolor=palegreen label=\"%s (e%d)\" shape=box style=filled];\n",
-          i,trname[ev2tr[i]],i);
+      printf("  e%d [fillcolor=%s label=\"%s (e%d)\" shape=box style=filled];\n",
+          i,queries_ev[i] ? color3 : color4,trname[ev2tr[i]],i);
     else
-      printf("  e%d [fillcolor=firebrick2 label=\"%s (e%d)\" shape=box style=filled];\n",
-          i,trname[ev2tr[i]],i);
+      printf("  e%d [fillcolor=%s label=\"%s (e%d)\" shape=box style=filled];\n",
+          i,queries_ev[i] ? color3 : color5,trname[ev2tr[i]],i);
   printf("}\n");
 
   fclose(file);

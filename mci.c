@@ -51,6 +51,7 @@ void write_mci_file (char *filename)
 
   for (ev = unf->events; ev; ev = ev->next){
     write_int(ev->origin->num);
+    write_int(ev->queried);
   }
 
   for (co = unf->conditions; co ; co = co->next)
