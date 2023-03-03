@@ -99,7 +99,7 @@ cond_t* insert_condition (place_t *pl, event_t *ev, int queried)
   co->mark = 0;
   co->num = unf->numco++;
   co->queried = queried ? 1 : 0;
-  if(ev) ev->queried = co->queried;
+  if(ev && co->queried) co->pre_ev->queried = 1;
 
   if ((ev && nodelist_find(ev->origin->postset, pl)) ||
     (!ev && pl->marked))
@@ -134,7 +134,7 @@ event_t* insert_event (pe_queue_t *qu, char* trans_pool)
   if(!strstr(trans_pool, ev->origin->name))
     strcat(strcat(trans_pool,ev->origin->name), ", ");
   ev->mark = 0;		/* for marking_of */
-  //ev->queried = 0;
+  ev->queried = 0;
   ev->foata_level = find_foata_level(qu);
   ev->preset_size = qu->trans->prereset_size;
   ev->postset_size = qu->trans->postreset_size;
@@ -358,20 +358,55 @@ void recursive_pe (nodelist_t *list)
   
 }
 
-void recursive_queried(cond_t *list_cond)
+void recursive_queried(cond_t **co_ptr, int sz)
 {
-  cond_t *tmp_conds = NULL;
+  /* if(!cond_list) return;
+  else if(co->queried) */
+
+
+  for(int i = 0; i < sz; i++)
+  {
+    if(co_ptr[i]->pre_ev)
+    {
+      if (!co_ptr[i]->pre_ev->queried)
+      {
+        printf("event name: %s\n", co_ptr[i]->pre_ev->origin->name);
+        co_ptr[i]->pre_ev->queried = 1;
+        recursive_queried(co_ptr[i]->pre_ev->preset, 
+          co_ptr[i]->pre_ev->preset_size);
+      }
+    }
+    else return;
+  }
+
+  /* for (; co ; co = co->next)
+  {
+    if(co->queried)
+    { 
+      co_ptr = co->pre_ev->preset;
+      sz = co->pre_ev->preset_size;
+      printf("condition name %s and its num %d \n", co->origin->name, co->num);
+      for(int i = 0; i < sz; i++)
+        printf("EVENT %s precondition name: %s, %d\n", 
+          co->pre_ev->origin->name,co_ptr[i]->origin->name,co_ptr[i]->num);
+      break;
+    }
+  } */
   
-  for(tmp_conds = list_cond; tmp_conds; tmp_conds = tmp_conds->next)
+  /* for(tmp_conds = list_cond; tmp_conds; tmp_conds = tmp_conds->next)
   {
     if(tmp_conds->pre_ev)
     {
       tmp_conds->pre_ev->queried = 1;
-      recursive_queried((*(tmp_conds->pre_ev->preset)));
+      printf("\n");
+      print_conditions((*(tmp_conds->pre_ev->preset)));
+      printf("\n");
+      //recursive_queried((*(tmp_conds->pre_ev->preset)));
       //printf("ENTRA AL LOOP\n");
     }
+    break;
   }
-  return;
+  return; */
 }
 
 /*****************************************************************************/
@@ -534,12 +569,10 @@ void unfold ()
     //add_post_conditions(ev,CUTOFF_YES, repeat);
   }
 
-  /* for (co = unf->conditions; co ; co = co->next)
-  {
-    if(co->queried) recursive_queried(co);
-  } */
+  for(co = unf->conditions; co; co = co->next)
+    if(co->queried && co->pre_ev)
+      recursive_queried(co->pre_ev->preset, co->pre_ev->preset_size);
 
-  
   /* Make sure that stopev is the last event to ensure compatibility
      with Claus Schr�ter's reachability checker (otn). */
   if (stopev)
