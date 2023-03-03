@@ -15,7 +15,7 @@ void write_mci_file_cpr (char *filename)
   cond_t *co, *coo;
   event_t *ev, *evv;
   nodelist_t *list1, *list2;
-  int ev_num = 0, sz = 0, null = 0, cum, szz = 0;
+  int ev_num = 0, sz = 0, null = 0, cum, szz = 0, once = 0;
 
   if (!(file = fopen(filename,"wb")))
     nc_error("cannot write to file %s\n",filename);
@@ -31,11 +31,23 @@ void write_mci_file_cpr (char *filename)
   unf->conditions = reverse_list(unf->conditions);
   unf->events = reverse_list(unf->events);
 
-  for (ev = unf->events; ev; ev = ev->next)
+  for (ev = unf->events; ev; ev = ev->next){
     ev->mark = ++ev_num;
+    if(ev->queried)
+    {
+      if(!once)
+      {
+        printf("chain of events to reach the queried marking:\n  ");
+        once = 1;
+      }
+      printf("%s (e%d)  ", ev->origin->name, ev->mark);
+    }
+  }
+  printf("\n");
 
   for (ev = unf->events; ev; ev = ev->next){
     write_int(ev->origin->num);
+    write_int(ev->queried);
   }
 
   for (co = unf->conditions, cum = 1; co &&
@@ -74,6 +86,7 @@ void write_mci_file_cpr (char *filename)
           //printf("coo->token: %d\n", coo->token);
           write_int(coo->origin->num);
           write_int(coo->token);
+          write_int(coo->queried);
           coo->flag = cum;
           //printf("coo->flag: %d\n", coo->flag);
           write_int(coo->flag);
@@ -85,6 +98,7 @@ void write_mci_file_cpr (char *filename)
     //printf("co->token: %d\n", co->token);
     write_int(co->origin->num);
     write_int(co->token);
+    write_int(co->queried);
     co->flag = cum;
     //printf("co->flag: %d\n", co->flag);
     write_int(co->flag);

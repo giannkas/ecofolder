@@ -95,7 +95,7 @@ void read_mci_file_ev (char *filename)
 	FILE *file;
 	int numco, numev, numpl, numtr, sz, i, ev1, ev2;
 	int pre_ev, post_ev, cutoff, dummy;
-	int *co2pl, *ev2tr, *tokens, *query, *cutoffs;
+	int *co2pl, *ev2tr, *tokens, *queries_co, *queries_ev, *cutoffs;
 	char **plname, **trname, *c;
 
 	if (!(file = fopen(filename,"rb")))
@@ -113,9 +113,11 @@ void read_mci_file_ev (char *filename)
 	co2pl = malloc((numco+1) * sizeof(int)); // reserve empty memory for the total number 
                                            // conditions.
 	tokens = malloc((numco+1) * sizeof(int)); // reserve the same amount of empty memory
-
-	query = malloc((numco+1) * sizeof(int)); // reserve the same amount of empty memory
                                             // to save the particular tokens' conditions.
+	queries_co = malloc((numco+1) * sizeof(int)); // reserve the same amount of empty memory
+                                            // to save the particular queries' conditions.
+	queries_ev = malloc((numev+1) * sizeof(int)); // reserve the same amount of empty memory
+                                            // to save the particular queries' events.
 	ev2tr = malloc((numev+1) * sizeof(int)); // reserve empty memory for the total number 
                                            // events.
   cutoffs = calloc(numev+1, sizeof(int));                                         
@@ -130,6 +132,9 @@ void read_mci_file_ev (char *filename)
     read_int(ev2tr[i]); // assign a value to an entry in the array ev2tr for every event
                         // in the unfolding in order to map its respective 
                         // transition, eg., ev1 -> tr3 (ev2tr[1] -> 3)
+    read_int(queries_ev[i]); // assign a value to an entry in the array queries_ev for every event
+                        // in the unfolding in order to map its respective
+                        // query number, eg., ev1 -> 1 (queries_ev[1] -> 1)
   }
 
 	for (i = 1; i <= numco; i++)
@@ -139,7 +144,7 @@ void read_mci_file_ev (char *filename)
                         // map its respective place, eg., c2 -> pl4 
                         // (co2pl[2] -> 4)
 		read_int(tokens[i]); // assign a value to the ith entry tokens array
-		read_int(query[i]); // assign a value if the condition is queried but this feature is not displayable.
+		read_int(queries_co[i]); // assign a value if the condition is queried but this feature is not displayable.
                          // for every condition in the unfolding in order to
                          // keep track of the conditions that are empty or full
                          // with tokens due to reset arcs.
@@ -296,13 +301,17 @@ void read_mci_file_ev (char *filename)
 		do { fread(c,1,1,file); } while (*c++);
 	fread(c,1,1,file);
 
+  char color1[] = "palegreen";
+  char color2[] = "firebrick2";
+  char color3[] = "orange";
+
 	for (i = 1; i <= numev; i++)
     if (i != cutoffs[i])
-		  printf("  e%d [fillcolor=palegreen label=\"%s (e%d)\" shape=box style=filled];\n",
-				  i,trname[ev2tr[i]],i);
+		  printf("  e%d [fillcolor=%s label=\"%s (e%d)\" shape=box style=filled];\n",
+				  i,queries_ev[i] ? color3 : color1,trname[ev2tr[i]],i);
     else
-		  printf("  e%d [fillcolor=firebrick2 label=\"%s (e%d)\" shape=box style=filled];\n",
-				  i,trname[ev2tr[i]],i);
+		  printf("  e%d [fillcolor=%s label=\"%s (e%d)\" shape=box style=filled];\n",
+				  i,queries_ev[i] ? color3 : color2,trname[ev2tr[i]],i);
   printf("  e0 [fillcolor=white label=\"⊥\" shape=box style=filled];\n");
 	printf("}\n");
 
