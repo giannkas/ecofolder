@@ -66,12 +66,14 @@ void write_mci_file (char *filename)
       for(buck = hash[i]; buck; buck = buck->next)
       {
         print_marking_pl(buck->marking);
+        printf("\n");
         if(buck->pre_events->node)
-        {
-          ev = buck->pre_events->node;
-          printf("\n producing event: %s, %d and repetition: %d\n",
-            ev->origin->name,ev->mark,buck->repeat);
-        }
+          for(list1 = buck->pre_events; list1; list1 = list1->next)
+          {
+            if ((ev = list1->node))
+              printf("%s, %d repeat: %d\n",
+                ev->origin->name,ev->mark,buck->repeat);
+          }
         else printf("\n");
       }
 
