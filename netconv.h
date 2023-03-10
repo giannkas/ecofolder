@@ -123,6 +123,15 @@ typedef struct
   struct nodelist_t *m0_unmarked;	/* list of minimal unmarked conditions		*/
 } unf_t;
 
+typedef struct hashcell_t
+{
+  struct nodelist_t *marking;
+  struct nodelist_t  *pre_events;
+  int repeat;
+  struct hashcell_t *next;
+} hashcell_t;
+
+
 /****************************************************************************/
 
 extern net_t* nc_create_net ();

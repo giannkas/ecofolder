@@ -4,14 +4,6 @@
 #include "netconv.h"
 #include "unfold.h"
 
-typedef struct hashcell_t
-{
-  nodelist_t *marking;
-  event_t    *event;
-  int repeat;
-  struct hashcell_t *next;
-} hashcell_t;
-
 hashcell_t **hash;
 int hash_buckets;
 int *rep_marking;
@@ -66,6 +58,15 @@ int find_marking (nodelist_t *marking, int m_query)
 }
 
 /*****************************************************************************/
+/* Inspecting the cone of an event to see if its corresponding marking was */
+/* seen before  */
+/* int check_back(cond_t **conds, int size, event_t *ev)
+{
+  for(int i = 0; i < size; i++)
+    if(conds[i]->pre_ev->id )
+} */
+
+/*****************************************************************************/
 /* Add a marking to the hash table. It is assumed that marking = Mark([ev]). */
 /* Return 1 if the marking was not yet present; otherwise, add ev to the     */
 /* list of cut-off events and return 0.					     */
@@ -73,12 +74,17 @@ int find_marking (nodelist_t *marking, int m_query)
 int add_marking (nodelist_t *marking, event_t *ev)
 {
   hashcell_t *newbuck;
-  hashcell_t **buck = hash + marking_hash(marking);
+  int key_mk = marking_hash(marking);
+  hashcell_t **buck = hash + key_mk;
   char cmp = 2;
   //nodelist_t* list = NULL;
 
   while (*buck && (cmp = nodelist_compare(marking,(*buck)->marking)) > 0)
     buck = &((*buck)->next);
+  
+  /* if(!cmp && mcmillan)
+    *buck = hash[key_mk];
+    ev->preset */
 
   /* printf("hola\n");
   for(list = marking; list; list = list->next)
@@ -90,13 +96,14 @@ int add_marking (nodelist_t *marking, event_t *ev)
     (*buck)->repeat++;
     //nodelist_delete(marking);
     nodelist_push(&cutoff_list,ev);
-    nodelist_push(&corr_list,(*buck)->event);
+    nodelist_push(&corr_list, ((event_t*)((*buck)->pre_events->node)));
     return 0;
   }
 
   newbuck = MYmalloc(sizeof(hashcell_t));
   newbuck->marking = marking;
-  newbuck->event = ev;
+  //newbuck->pre_events = ev;
+  nodelist_push(&(newbuck->pre_events),ev);
   newbuck->repeat = 1;
   newbuck->next = *buck;
   *buck = newbuck;

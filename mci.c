@@ -60,6 +60,21 @@ void write_mci_file (char *filename)
   }
   printf("\n");
 
+  hashcell_t *buck;
+  for(int i = 0; i < hash_buckets; i++)
+    if(hash[i])
+      for(buck = hash[i]; buck; buck = buck->next)
+      {
+        print_marking_pl(buck->marking);
+        if(buck->pre_events->node)
+        {
+          ev = buck->pre_events->node;
+          printf("\n producing event: %s, %d and repetition: %d\n",
+            ev->origin->name,ev->mark,buck->repeat);
+        }
+        else printf("\n");
+      }
+
   for (ev = unf->events; ev; ev = ev->next){
     write_int(ev->origin->num);
     write_int(ev->queried);
