@@ -60,11 +60,17 @@ int find_marking (nodelist_t *marking, int m_query)
 /*****************************************************************************/
 /* Inspecting the cone of an event to see if its corresponding marking was */
 /* seen before  */
-/* int check_back(cond_t **conds, int size, event_t *ev)
+int check_back(cond_t **conds, int size, event_t *ev)
 {
-  for(int i = 0; i < size; i++)
-    if(conds[i]->pre_ev->id )
-} */
+  int i, found = 0;
+  for(i = 0; i < size && !found; i++)
+    if(conds[i]->pre_ev == ev)
+      found = 1;
+    else if(conds[i]->pre_ev)
+      found = check_back(conds[i]->pre_ev->preset, 
+                conds[i]->pre_ev->preset_size, ev);
+  return found;
+}
 
 /*****************************************************************************/
 /* Add a marking to the hash table. It is assumed that marking = Mark([ev]). */
@@ -77,38 +83,49 @@ int add_marking (nodelist_t *marking, event_t *ev)
   int key_mk = marking_hash(marking);
   hashcell_t **buck = hash + key_mk;
   char cmp = 2;
-  //nodelist_t* list = NULL;
+  nodelist_t* list;
+  int not_present = 0;
 
   while (*buck && (cmp = nodelist_compare(marking,(*buck)->marking)) > 0)
     buck = &((*buck)->next);
   
-  /* if(!cmp && mcmillan)
-    *buck = hash[key_mk];
-    ev->preset */
+  if(!cmp && mcmillan)
+  {
+    for(list = (*buck)->pre_events; list; list = list->next)
+      if (check_back(ev->preset, ev->preset_size, list->node))
+      {
+        nodelist_push(&cutoff_list,ev);
+        nodelist_push(&corr_list, ((event_t*)((*buck)->pre_events->node)));
+      }
+    (*buck)->repeat++;
+    nodelist_push(&((*buck)->pre_events),ev);
+  }
 
   /* printf("hola\n");
   for(list = marking; list; list = list->next)
     printf("place->name: %s\n", ((place_t*)(list->node))->name);
   printf("chao\n"); */
 
-  if (!cmp)	/* marking is already present */
+  if (!cmp && !mcmillan)	/* marking is already present */
   {
     (*buck)->repeat++;
     //nodelist_delete(marking);
     nodelist_push(&cutoff_list,ev);
     nodelist_push(&corr_list, ((event_t*)((*buck)->pre_events->node)));
-    return 0;
+  }
+  else if(!!cmp)
+  {
+    newbuck = MYmalloc(sizeof(hashcell_t));
+    newbuck->marking = marking;
+    //newbuck->pre_events = ev;
+    nodelist_push(&(newbuck->pre_events),ev);
+    newbuck->repeat = 1;
+    newbuck->next = *buck;
+    *buck = newbuck;
+    not_present = 1;
   }
 
-  newbuck = MYmalloc(sizeof(hashcell_t));
-  newbuck->marking = marking;
-  //newbuck->pre_events = ev;
-  nodelist_push(&(newbuck->pre_events),ev);
-  newbuck->repeat = 1;
-  newbuck->next = *buck;
-  *buck = newbuck;
-
-  return 1;
+  return not_present;
 }
 
 /*****************************************************************************/

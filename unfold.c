@@ -159,9 +159,9 @@ event_t* insert_event (pe_queue_t *qu, char* trans_pool)
     events_size += ce_alloc_step;
     events = MYrealloc(events,events_size * sizeof(event_t*));
   }
-  ev->id = qu->id;
   if (interactive)
   {
+    ev->id = qu->id;
     printf("Added event E%d.\n",ev->id);
   }
   

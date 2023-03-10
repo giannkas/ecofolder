@@ -56,6 +56,8 @@ int main (int argc, char **argv)
       m_repeat = atoi(argv[++i]);
     else if (!strcmp(argv[i],"-c"))
       compressed = 1;
+    else if (!strcmp(argv[i],"-mcmillan"))
+      mcmillan = 1;
     else
     {
       if (!dptr) usage(argv[0]);
