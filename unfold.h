@@ -15,16 +15,20 @@
 
 extern net_t *net;	/* stores the net	*/
 extern unf_t *unf;	/* stores the unfolding */
+extern hashcell_t **hash; /* hashing table for markings */
+
 
 extern int conditions_size, events_size;
 extern int ev_mark;		  	   /* needed for various procedures */
 extern event_t **events;
+extern int hash_buckets;
 
 extern int exitcode;		/* proposed exit code of the program         */
 extern trans_t *stoptr;		/* the transition mentioned by the -T switch */
 extern int unfold_depth;	/* argument of the -d parameter */
 extern int interactive;		/* whether the -i switch has been supplied */
 extern int compressed;		/* whether the -c switch has been supplied */
+extern int mcmillan;      /* whether the -mcmillan switch has benn suplied */
 extern int m_repeat;		/* whether the -r switch has been supplied */
 
 extern nodelist_t *cutoff_list, *corr_list;  /* cut-off/corresponding list */
