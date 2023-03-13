@@ -36,6 +36,7 @@ extern nodelist_t *cutoff_list, *corr_list;  /* cut-off/corresponding list */
 extern void unfold();	/* the unfolding procedure */
 extern cond_t* insert_condition(place_t*, event_t*, int);  /* insert a condition to the unfolding */
 extern coa_t alloc_coarray (int);	/* Create an empty coarray with 'size' allocated events. */
+extern coa_t coarray_copy (coa_t);
 extern void print_conditions (cond_t*);
 extern void print_events (event_t*);
 
