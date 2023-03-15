@@ -1,0 +1,38 @@
+digraph test {
+  t1 -> p2;
+  t2 -> p2;
+  t3 -> p3;
+  t4 -> p3;
+  t5 -> p4;
+  t6 -> p4;
+  t7 -> p5;
+  t8 -> p5;
+  t9 -> p6;
+  t10 -> p6;
+  p1 -> t1;
+  p1 -> t2;
+  p2 -> t3;
+  p2 -> t4;
+  p3 -> t5;
+  p3 -> t6;
+  p4 -> t7;
+  p4 -> t8;
+  p5 -> t9;
+  p5 -> t10;
+  p1 [label=⬤ xlabel= <<FONT COLOR="red">P0</FONT>> shape=circle ];
+  p2 [label="" xlabel= <<FONT COLOR="red">P1</FONT>> shape=circle ];
+  p3 [label="" xlabel= <<FONT COLOR="red">P2</FONT>> shape=circle ];
+  p4 [label="" xlabel= <<FONT COLOR="red">P3</FONT>> shape=circle ];
+  p5 [label="" xlabel= <<FONT COLOR="red">P4</FONT>> shape=circle ];
+  p6 [label="" xlabel= <<FONT COLOR="red">P5</FONT>> shape=circle ];
+  t1 [fillcolor=gray60 label=T0 shape=box style=filled];
+  t2 [fillcolor=gray60 label=T1 shape=box style=filled];
+  t3 [fillcolor=gray60 label=T2 shape=box style=filled];
+  t4 [fillcolor=gray60 label=T3 shape=box style=filled];
+  t5 [fillcolor=gray60 label=T4 shape=box style=filled];
+  t6 [fillcolor=gray60 label=T5 shape=box style=filled];
+  t7 [fillcolor=gray60 label=T6 shape=box style=filled];
+  t8 [fillcolor=gray60 label=T7 shape=box style=filled];
+  t9 [fillcolor=gray60 label=T8 shape=box style=filled];
+  t10 [fillcolor=gray60 label=T9 shape=box style=filled];
+}
