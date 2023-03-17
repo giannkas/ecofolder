@@ -19,7 +19,8 @@ void usage(char *myname)
   "      -d <depth>     unfold up to given <depth>\n"
   "      -i             interactive mode\n"
   "      -r <instance>  highlight <instance> of a repeated marking\n"
-  "      -c             compressed view\n\n"
+  "      -c             compressed view\n"
+  "      -mcmillan      unfolds with mcmillan criteria\n\n"
 
   "     FileOptions:\n"
   "      -m <filename>  file to store the unfolding in\n\n"
@@ -55,6 +56,8 @@ int main (int argc, char **argv)
       m_repeat = atoi(argv[++i]);
     else if (!strcmp(argv[i],"-c"))
       compressed = 1;
+    else if (!strcmp(argv[i],"-mcmillan"))
+      mcmillan = 1;
     else
     {
       if (!dptr) usage(argv[0]);

@@ -17,6 +17,7 @@ trans_t *stoptr = NULL;			/* transition in -T switch         */
 int unfold_depth = 0;			/* argument of -d switch	   */
 int interactive = 0;			/* interactivem mode (-i)	   */
 int compressed = 0;			/* compressed unfolding view (-c)	   */
+int mcmillan = 0;      /* mcmillan criteria flag (-mcmillan) */
 int m_repeat = 1;			/* marking repeat to highlight (-r)	   */
 
 nodelist_t *cutoff_list, *corr_list;	/* cut-off list, corresponding events */
@@ -360,17 +361,12 @@ void recursive_pe (nodelist_t *list)
 
 void recursive_queried(cond_t **co_ptr, int sz)
 {
-  /* if(!cond_list) return;
-  else if(co->queried) */
-
-
   for(int i = 0; i < sz; i++)
   {
     if(co_ptr[i]->pre_ev)
     {
       if (!co_ptr[i]->pre_ev->queried)
       {
-        printf("event name: %s\n", co_ptr[i]->pre_ev->origin->name);
         co_ptr[i]->pre_ev->queried = 1;
         recursive_queried(co_ptr[i]->pre_ev->preset, 
           co_ptr[i]->pre_ev->preset_size);
@@ -378,35 +374,6 @@ void recursive_queried(cond_t **co_ptr, int sz)
     }
     else return;
   }
-
-  /* for (; co ; co = co->next)
-  {
-    if(co->queried)
-    { 
-      co_ptr = co->pre_ev->preset;
-      sz = co->pre_ev->preset_size;
-      printf("condition name %s and its num %d \n", co->origin->name, co->num);
-      for(int i = 0; i < sz; i++)
-        printf("EVENT %s precondition name: %s, %d\n", 
-          co->pre_ev->origin->name,co_ptr[i]->origin->name,co_ptr[i]->num);
-      break;
-    }
-  } */
-  
-  /* for(tmp_conds = list_cond; tmp_conds; tmp_conds = tmp_conds->next)
-  {
-    if(tmp_conds->pre_ev)
-    {
-      tmp_conds->pre_ev->queried = 1;
-      printf("\n");
-      print_conditions((*(tmp_conds->pre_ev->preset)));
-      printf("\n");
-      //recursive_queried((*(tmp_conds->pre_ev->preset)));
-      //printf("ENTRA AL LOOP\n");
-    }
-    break;
-  }
-  return; */
 }
 
 /*****************************************************************************/

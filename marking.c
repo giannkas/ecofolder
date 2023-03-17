@@ -4,14 +4,6 @@
 #include "netconv.h"
 #include "unfold.h"
 
-typedef struct hashcell_t
-{
-  nodelist_t *marking;
-  event_t    *event;
-  int repeat;
-  struct hashcell_t *next;
-} hashcell_t;
-
 hashcell_t **hash;
 int hash_buckets;
 int *rep_marking;
@@ -66,6 +58,23 @@ int find_marking (nodelist_t *marking, int m_query)
 }
 
 /*****************************************************************************/
+/* Inspecting the cone of an event to see if its corresponding marking was */
+/* seen before  */
+
+int check_back(cond_t **conds, int size, event_t *ev)
+{
+  int i, found = 0;
+  for(i = 0; i < size && !found; i++) 
+    if(conds[i]->pre_ev == ev) found = 1;
+  if(!found)
+    for(i = 0; i < size && !found; i++)
+      if(conds[i]->pre_ev)
+        found = check_back(conds[i]->pre_ev->preset, 
+          conds[i]->pre_ev->preset_size, ev);
+  return found;
+}
+
+/*****************************************************************************/
 /* Add a marking to the hash table. It is assumed that marking = Mark([ev]). */
 /* Return 1 if the marking was not yet present; otherwise, add ev to the     */
 /* list of cut-off events and return 0.					     */
@@ -75,33 +84,50 @@ int add_marking (nodelist_t *marking, event_t *ev)
   hashcell_t *newbuck;
   hashcell_t **buck = hash + marking_hash(marking);
   char cmp = 2;
-  //nodelist_t* list = NULL;
+  nodelist_t* list = NULL;
+  int not_present = 0;
 
   while (*buck && (cmp = nodelist_compare(marking,(*buck)->marking)) > 0)
     buck = &((*buck)->next);
+
+  if(!cmp && mcmillan)
+  {
+    for(list = (*buck)->pre_evs; list; list = list->next)
+      if (check_back(ev->preset, ev->preset_size, list->node))
+      {
+        nodelist_push(&cutoff_list,ev);
+        nodelist_push(&corr_list, ((event_t*)((*buck)->pre_evs->node)));
+      }
+    (*buck)->repeat++;
+    nodelist_push(&((*buck)->pre_evs),ev);
+  }
 
   /* printf("hola\n");
   for(list = marking; list; list = list->next)
     printf("place->name: %s\n", ((place_t*)(list->node))->name);
   printf("chao\n"); */
 
-  if (!cmp)	/* marking is already present */
+  if (!cmp && !mcmillan)	/* marking is already present */
   {
     (*buck)->repeat++;
     //nodelist_delete(marking);
     nodelist_push(&cutoff_list,ev);
-    nodelist_push(&corr_list,(*buck)->event);
-    return 0;
+    nodelist_push(&corr_list,((event_t*)((*buck)->pre_evs->node)));
+    nodelist_push(&((*buck)->pre_evs),ev);
+  }
+  else if(!!cmp)
+  {
+    newbuck = MYmalloc(sizeof(hashcell_t));
+    newbuck->marking = marking;
+    newbuck->pre_evs = NULL;
+    nodelist_push(&(newbuck->pre_evs),ev);
+    newbuck->repeat = 1;
+    newbuck->next = *buck;
+    *buck = newbuck;
+    not_present = 1;
   }
 
-  newbuck = MYmalloc(sizeof(hashcell_t));
-  newbuck->marking = marking;
-  newbuck->event = ev;
-  newbuck->repeat = 1;
-  newbuck->next = *buck;
-  *buck = newbuck;
-
-  return 1;
+  return not_present;
 }
 
 /*****************************************************************************/
