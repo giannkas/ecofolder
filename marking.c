@@ -65,7 +65,8 @@ int check_back(cond_t **conds, int size, event_t *ev)
 {
   int i, found = 0;
   for(i = 0; i < size && !found; i++) 
-    if(conds[i]->pre_ev == ev) found = 1;
+    if(conds[i]->pre_ev && conds[i]->pre_ev->id == ev->id)
+      found = 1;
   if(!found)
     for(i = 0; i < size && !found; i++)
       if(conds[i]->pre_ev)
@@ -92,20 +93,24 @@ int add_marking (nodelist_t *marking, event_t *ev)
 
   if(!cmp && mcmillan)
   {
-    for(list = (*buck)->pre_evs; list; list = list->next)
+    /* for(list = (*buck)->pre_evs; list; list = list->next)
+    {
       if (check_back(ev->preset, ev->preset_size, list->node))
       {
+        printf("cutoff event: %s id: %d\n", ev->origin->name, ev->id);
         nodelist_push(&cutoff_list,ev);
         nodelist_push(&corr_list, ((event_t*)((*buck)->pre_evs->node)));
       }
+    } */
+    printf("mcmillan\n");
     (*buck)->repeat++;
     nodelist_push(&((*buck)->pre_evs),ev);
   }
 
-  /* printf("hola\n");
+  printf("hola\n");
   for(list = marking; list; list = list->next)
     printf("place->name: %s\n", ((place_t*)(list->node))->name);
-  printf("chao\n"); */
+  printf("chao\n");
 
   if (!cmp && !mcmillan)	/* marking is already present */
   {
