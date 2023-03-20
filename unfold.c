@@ -425,7 +425,7 @@ void unfold ()
 
   for (pl = net->places; pl; pl = pl->next){
     if(!pl->marked && pl->reset != NULL){
-      co = insert_condition(pl,NULL, 0);
+      co = insert_condition(pl,NULL,0);
       co->co_common = alloc_coarray(0);
       co->co_private = alloc_coarray(0);
       nodelist_push(&(unf->m0_unmarked),co);
