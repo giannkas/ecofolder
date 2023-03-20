@@ -71,8 +71,8 @@ void write_mci_file (char *filename)
       for (list1 = buck->pre_evs; list1; list1 = list1->next)
       {
         if((ev = list1->node))
-          printf("creator event: %s\n", 
-            ev->origin->name);
+          printf("creator event: %s id: %d\n", 
+            ev->origin->name, ev->id);
       }
     }
   }
