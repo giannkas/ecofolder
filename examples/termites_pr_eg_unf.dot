@@ -354,7 +354,7 @@ digraph test {
   e4 [fillcolor=orange label="r7 (e4)" shape=box style=filled];
   e5 [fillcolor=orange label="r8 (e5)" shape=box style=filled];
   e6 [fillcolor=orange label="r9 (e6)" shape=box style=filled];
-  e7 [fillcolor=orange color=firebrick2 fontcolor=firebrick2 label="r8 (e7)" shape=box style=filled];
+  e7 [fillcolor=orange label="r8 (e7)" shape=box style=filled];
   e8 [fillcolor=firebrick2 label="r7 (e8)" shape=box style=filled];
   e9 [fillcolor=firebrick2 label="r9 (e9)" shape=box style=filled];
   e10 [fillcolor=firebrick2 label="r9 (e10)" shape=box style=filled];
