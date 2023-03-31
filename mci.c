@@ -61,21 +61,21 @@ void write_mci_file (char *filename)
   printf("\n");
 
   hashcell_t *buck;
-  for (int i = 0; i < hash_buckets; i++)
+  /* for (int i = 0; i < hash_buckets; i++)
   {
     for(buck = hash[i]; buck; buck = buck->next)
     {
-      print_marking_pl(buck->marking);
-      printf("i: %d\n", i);
-      printf("repeat: %d\n", buck->repeat);
+      //print_marking_pl(buck->marking);
+      //printf("i: %d\n", i);
+      //printf("repeat: %d\n", buck->repeat);
       for (list1 = buck->pre_evs; list1; list1 = list1->next)
       {
         if((ev = list1->node))
-          printf("creator event: %s id: %d\n", 
-            ev->origin->name, ev->id);
+          //printf("creator event: %s id: %d\n", 
+          //  ev->origin->name, ev->id);
       }
     }
-  }
+  } */
   
   for (ev = unf->events; ev; ev = ev->next){
     write_int(ev->origin->num);
