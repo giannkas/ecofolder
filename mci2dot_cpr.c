@@ -117,9 +117,12 @@ void read_mci_file (char *filename)
     if (i != cutoffs[i])
       printf("  e%d [fillcolor=%s label=\"%s (e%d)\" shape=box style=filled];\n",
           i,queries_ev[i] ? color3 : color4,trname[ev2tr[i]],i);
-    else
+    else if(queries_ev[i])
+      printf("  e%d [fillcolor=%s color=%s fontcolor=%s label=\"%s (e%d)\" shape=box style=filled];\n",
+          i,color3,color5,color5,trname[ev2tr[i]],i);
+    else  
       printf("  e%d [fillcolor=%s label=\"%s (e%d)\" shape=box style=filled];\n",
-          i,queries_ev[i] ? color3 : color5,trname[ev2tr[i]],i);
+          i,color5,trname[ev2tr[i]],i);
   printf("}\n");
 
   fclose(file);

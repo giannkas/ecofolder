@@ -86,13 +86,26 @@ int check_back(cond_t **conds, int size, event_t *ev)
 int add_marking (nodelist_t *marking, event_t *ev)
 {
   hashcell_t *newbuck;
-  hashcell_t **buck = hash + marking_hash(marking);
+  int key_mk = marking_hash(marking);
+  hashcell_t **buck = hash + key_mk;
   char cmp = 2;
   nodelist_t* list = NULL;
   int not_present = 0, checked_back = 0;
 
   while (*buck && (cmp = nodelist_compare(marking,(*buck)->marking)) > 0)
     buck = &((*buck)->next);
+  
+  if(!cmp && mcmillan)
+  {
+    (*buck)->repeat++;
+    if((*buck)->repeat > 1)
+      if (check_back(ev->preset, ev->preset_size, marking))
+      {
+        nodelist_push(&cutoff_list,ev);
+        nodelist_push(&corr_list, ((event_t*)((*buck)->pre_events->node)));
+      }
+    nodelist_push(&((*buck)->pre_events),ev);
+  }
 
   /* printf("hola\n");
   if(ev) printf("creating marking: %s\n", ev->origin->name);
