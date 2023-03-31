@@ -163,9 +163,9 @@ pe_queue_t* create_queue_entry (trans_t *tr)
         qu_new = MYmalloc(sizeof(pe_queue_t));
         qu_new->trans = tr;
 
+  qu_new->id = ++queuecount;
   if (interactive)
   {
-    qu_new->id = ++queuecount;
     printf("Discovered new extension E%d (%s) [condition%s",
       qu_new->id, tr->name, tr->prereset_size == 1? "" : "s");
     int i = tr->prereset_size;
