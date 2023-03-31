@@ -11,6 +11,7 @@ void read_mci_file (char *filename)
   int *co2pl, *ev2tr, *tokens, *queries_co,
    *queries_ev, *cutoffs;
   char **plname, **trname, *c;
+
   if (!(file = fopen(filename,"rb")))
   {
     fprintf(stderr,"cannot read file %s\n",filename);
@@ -67,9 +68,6 @@ void read_mci_file (char *filename)
   read_int(numtr);
   read_int(sz);
 
-  /* printf("numpl: %d\n", numpl);
-  printf("numtr: %d\n", numtr);
-  printf("sz: %d\n",sz); */
   plname = malloc((numpl+2) * sizeof(char*));
   trname = malloc((numtr+2) * sizeof(char*));
 
@@ -97,12 +95,9 @@ void read_mci_file (char *filename)
     if (i != cutoffs[i])
       printf("  e%d [fillcolor=%s label=\"%s (e%d)\" shape=box style=filled];\n",
           i,queries_ev[i] ? color3 : color4,trname[ev2tr[i]],i);
-    else if(queries_ev[i])
-      printf("  e%d [fillcolor=%s color=%s fontcolor=%s label=\"%s (e%d)\" shape=box style=filled];\n",
-          i,color3,color5,color5,trname[ev2tr[i]],i);
-    else  
+    else
       printf("  e%d [fillcolor=%s label=\"%s (e%d)\" shape=box style=filled];\n",
-          i,color5,trname[ev2tr[i]],i);
+          i,queries_ev[i] ? color3 : color5,trname[ev2tr[i]],i);
   printf("}\n");
 
   fclose(file);
