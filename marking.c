@@ -60,37 +60,21 @@ int find_marking (nodelist_t *marking, int m_query)
 /*****************************************************************************/
 /* Inspecting the cone of an event to see if its corresponding marking was */
 /* seen before  */
-int check_back(cond_t **conds, int size, nodelist_t *marking)
+
+int check_back(cond_t **conds, int size, event_t *ev)
 {
-  int i, found = 1, j;
-  cond_t **tmp_conds;
-  for(i = 0; i < size && found; i++)
-  {
-    if (conds[i]->token && conds[i]->pre_ev)
-    {
-      tmp_conds = conds[i]->pre_ev->postset;
-      for(j = 0; j < conds[i]->pre_ev->postset_size && found; j++)
-        if(tmp_conds && tmp_conds[j]->token)
-          found = nodelist_find(marking, tmp_conds[j]->origin);
-      if(found)
+  int i, found = 0;
+  for(i = 0; i < size && !found; i++)
+    if(conds[i]->pre_ev && ev &&
+      conds[i]->pre_ev->mark != ev->id*-1)
       {
-        tmp_conds = conds[i]->pre_ev->coarray.conds;
-        if(tmp_conds)
-        {
-          for(j = 2; j < conds[i]->pre_ev->coarray.inuse && found; j++)
-          {
-            if(tmp_conds[j] && tmp_conds[j]->token)
-            {
-              found = nodelist_find(marking, tmp_conds[j]->origin);
-            }
-          }
-        }
+        if(conds[i]->pre_ev == ev)
+          found = 1;
+        else
+          found = check_back(conds[i]->pre_ev->preset,
+            conds[i]->pre_ev->preset_size, ev);
+        conds[i]->pre_ev->mark = ev->id*-1;
       }
-    }
-    if(!found)
-      found = check_back(conds[i]->pre_ev->preset, 
-                conds[i]->pre_ev->preset_size, marking);
-  }
   return found;
 }
 
@@ -105,8 +89,8 @@ int add_marking (nodelist_t *marking, event_t *ev)
   int key_mk = marking_hash(marking);
   hashcell_t **buck = hash + key_mk;
   char cmp = 2;
-  //nodelist_t* list;
-  int not_present = 0;
+  nodelist_t* list = NULL;
+  int not_present = 0, checked_back = 0;
 
   while (*buck && (cmp = nodelist_compare(marking,(*buck)->marking)) > 0)
     buck = &((*buck)->next);
@@ -124,24 +108,41 @@ int add_marking (nodelist_t *marking, event_t *ev)
   }
 
   /* printf("hola\n");
+  if(ev) printf("creating marking: %s\n", ev->origin->name);
   for(list = marking; list; list = list->next)
     printf("place->name: %s\n", ((place_t*)(list->node))->name);
   printf("chao\n"); */
+  
+  if(!cmp && mcmillan)
+  {
+    for(list = (*buck)->pre_evs; list; list = list->next)
+    {
+      if (check_back(ev->preset, ev->preset_size, list->node))
+      {
+        nodelist_push(&cutoff_list,ev);
+        nodelist_push(&corr_list, ((event_t*)((*buck)->pre_evs->node)));
+        checked_back = 1;
+      }
+    }
+    not_present = !checked_back;
+    (*buck)->repeat++;
+    nodelist_push(&((*buck)->pre_evs),ev);
+  }
 
   if (!cmp && !mcmillan)	/* marking is already present */
   {
     (*buck)->repeat++;
     //nodelist_delete(marking);
     nodelist_push(&cutoff_list,ev);
-    nodelist_push(&corr_list, ((event_t*)((*buck)->pre_events->node)));
-    nodelist_push(&((*buck)->pre_events),ev);
+    nodelist_push(&corr_list,((event_t*)((*buck)->pre_evs->node)));
+    nodelist_push(&((*buck)->pre_evs),ev);
   }
   else if(!!cmp)
   {
     newbuck = MYmalloc(sizeof(hashcell_t));
     newbuck->marking = marking;
-    //newbuck->pre_events = ev;
-    nodelist_push(&(newbuck->pre_events),ev);
+    newbuck->pre_evs = NULL;
+    nodelist_push(&(newbuck->pre_evs),ev);
     newbuck->repeat = 1;
     newbuck->next = *buck;
     *buck = newbuck;

@@ -17,7 +17,7 @@ trans_t *stoptr = NULL;			/* transition in -T switch         */
 int unfold_depth = 0;			/* argument of -d switch	   */
 int interactive = 0;			/* interactivem mode (-i)	   */
 int compressed = 0;			/* compressed unfolding view (-c)	   */
-int mcmillan = 0;       /* unfolding under mcmillan criteria */
+int mcmillan = 0;      /* mcmillan criteria flag (-mcmillan) */
 int m_repeat = 1;			/* marking repeat to highlight (-r)	   */
 
 nodelist_t *cutoff_list, *corr_list;	/* cut-off list, corresponding events */
@@ -159,9 +159,9 @@ event_t* insert_event (pe_queue_t *qu, char* trans_pool)
     events_size += ce_alloc_step;
     events = MYrealloc(events,events_size * sizeof(event_t*));
   }
+  ev->id = qu->id;
   if (interactive)
   {
-    ev->id = qu->id;
     printf("Added event E%d.\n",ev->id);
   }
   
@@ -367,7 +367,6 @@ void recursive_queried(cond_t **co_ptr, int sz)
     {
       if (!co_ptr[i]->pre_ev->queried)
       {
-        //printf("event name: %s\n", co_ptr[i]->pre_ev->origin->name);
         co_ptr[i]->pre_ev->queried = 1;
         recursive_queried(co_ptr[i]->pre_ev->preset, 
           co_ptr[i]->pre_ev->preset_size);
@@ -426,7 +425,7 @@ void unfold ()
 
   for (pl = net->places; pl; pl = pl->next){
     if(!pl->marked && pl->reset != NULL){
-      co = insert_condition(pl,NULL, 0);
+      co = insert_condition(pl,NULL,0);
       co->co_common = alloc_coarray(0);
       co->co_private = alloc_coarray(0);
       nodelist_push(&(unf->m0_unmarked),co);

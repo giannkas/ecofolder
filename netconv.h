@@ -126,11 +126,10 @@ typedef struct
 typedef struct hashcell_t
 {
   struct nodelist_t *marking;
-  struct nodelist_t  *pre_events;
+  struct nodelist_t *pre_evs;
   int repeat;
   struct hashcell_t *next;
 } hashcell_t;
-
 
 /****************************************************************************/
 

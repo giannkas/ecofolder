@@ -20,7 +20,7 @@ void usage(char *myname)
   "      -i             interactive mode\n"
   "      -r <instance>  highlight <instance> of a repeated marking\n"
   "      -c             compressed view\n"
-  "      -mcmillan      unfolding under mcmillan's criteria\n\n"
+  "      -mcmillan      unfolds with mcmillan criteria\n\n"
 
   "     FileOptions:\n"
   "      -m <filename>  file to store the unfolding in\n\n"
