@@ -21,6 +21,7 @@ extern int conditions_size, events_size;
 extern int ev_mark;		  	   /* needed for various procedures */
 extern int hash_buckets;
 extern event_t **events;
+extern int hash_buckets;
 
 extern int exitcode;		/* proposed exit code of the program         */
 extern trans_t *stoptr;		/* the transition mentioned by the -T switch */
@@ -35,6 +36,7 @@ extern nodelist_t *cutoff_list, *corr_list;  /* cut-off/corresponding list */
 extern void unfold();	/* the unfolding procedure */
 extern cond_t* insert_condition(place_t*, event_t*, int);  /* insert a condition to the unfolding */
 extern coa_t alloc_coarray (int);	/* Create an empty coarray with 'size' allocated events. */
+extern coa_t coarray_copy (coa_t);
 extern void print_conditions (cond_t*);
 extern void print_events (event_t*);
 
