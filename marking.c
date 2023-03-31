@@ -66,13 +66,15 @@ int check_back(cond_t **conds, int size, event_t *ev)
   int i, found = 0;
   for(i = 0; i < size && !found; i++)
     if(conds[i]->pre_ev && ev &&
-      conds[i]->pre_ev->id == ev->id)
-      found = 1;
-  if(!found)
-    for(i = 0; i < size && !found; i++)
-      if(conds[i]->pre_ev)
-        found = check_back(conds[i]->pre_ev->preset, 
-          conds[i]->pre_ev->preset_size, ev);
+      conds[i]->pre_ev->mark != ev->id*-1)
+      {
+        if(conds[i]->pre_ev->id == ev->id)
+          found = 1;
+        else
+          found = check_back(conds[i]->pre_ev->preset,
+            conds[i]->pre_ev->preset_size, ev);
+        conds[i]->pre_ev->mark = ev->id*-1;
+      }
   return found;
 }
 
