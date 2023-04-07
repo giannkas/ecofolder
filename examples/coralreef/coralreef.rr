@@ -1,0 +1,23 @@
+########### Toy-model Tropical eastern Pacific - Coralreef
+
+nodes:
+ Cr: Corals (cnidaria), '-' dead or absense and '+' living coral (marine invertebrates that forms colonies of many individual polyps).
+ Ca: calcareous algae '+' when present cement calcium carbonate to accumulate calcareous material, '-' no accumulation nor cementation of calcareous material. 
+ Fh: fishes, inhabitants of the ecosystem and some are corallivorous. (+) coral reduction, (-) coral augmentation.
+ Zx: zooxanthellae, '+' provide mainly energy from photosynthesis to corals due to their symbiosis, '-' coral depletion.
+ Sp: sponges, inhabitants of the ecosystem '-' that chemically erode the reef, '+' coral augmentation.
+ Bv: bivalves, inhabitants of the ecosystem '-' that physically erode the reef, '+' coral augmentation.
+ Ra: reef accretion, a process '+' that result of coral’s growth which makes the reef bigger. If not there is reef loss '-'.
+ Cc: calcium carbonate, main compound that constitutes the raw material of coral reefs. It accumlates '+' when is captured by Ca or Cr, else it could be lost '-'.
+ Ht: high temperature, long period of temperature above coral’s susceptibility. '+' coral damage, '-' coralreef is stable.
+
+rules:
+ Cr+, Ca+ >> Cc+, Ra+, Cr+, Ca+   # Presence of corals and calcareous algae will produce calcium carbonate capture and reef accretion.
+ Fh+, Ca- >> Ra-, Fh+, Ca-   # Presence of fishes and absence or reduction of calcareous algae will stop or decrease reef accretion.
+ Zx- >> Cr-, Ra-, Zx-   # If zooxanthellae abandon corals and end symbiosis, then corals will die eventually which thereafter causes a decline on reef accretion.
+ Sp+, Ca- >> Ra-, Sp+, Ca-   # Presence of sponges and absence or reduction of calcareous algae will stop or decrease reef accretion.
+ Bv+, Ca- >> Ra-, Bv+, Ca-   # Presence of bivalves and absence or reduction of calcareous algae will stop or decrease reef accretion.
+ Cr+, Ht+ >> Zx-, Cr+, Ht+   # Presence of corals and high temperatures will produce a reduction or detaching of zooxanthellae to corals.
+ Ra+, Cr+ >> Fh+, Sp+, Bv+, Ra+, Cr+   # A healthy ecosystem with reef accretion and corals will produce an attraction of fishes, sponges and bivalves to dwell.
+ Ht+ >> Ca-, Ht-   # Presence of high temperatures will cause an absence of calcareous algae and then a reduction on fixing calcium carbonate.
+ Ca-, Cr- >> Fh-, Sp-, Bv-, Ca-, Cr-   # A reduction of coral accretion of corals will cause an absence of fishes, sponges and bivalves. The ecosystem needs self-control to keep an equilibrium.
