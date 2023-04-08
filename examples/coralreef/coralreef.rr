@@ -3,7 +3,7 @@
 nodes:
  Cr: Corals (cnidaria), '-' dead or absense and '+' living coral (marine invertebrates that forms colonies of many individual polyps).
  Ca: calcareous algae '+' when present cement calcium carbonate to accumulate calcareous material, '-' no accumulation nor cementation of calcareous material. 
- Fh: fishes, inhabitants of the ecosystem and some are corallivorous. (+) coral reduction, (-) coral augmentation.
+ Fh: fishes, inhabitants of the ecosystem and some are corallivorous. '+' coral reduction, '-' coral augmentation.
  Zx: zooxanthellae, '+' provide mainly energy from photosynthesis to corals due to their symbiosis, '-' coral depletion.
  Sp: sponges, inhabitants of the ecosystem '-' that chemically erode the reef, '+' coral augmentation.
  Bv: bivalves, inhabitants of the ecosystem '-' that physically erode the reef, '+' coral augmentation.
