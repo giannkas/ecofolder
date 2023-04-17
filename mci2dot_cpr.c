@@ -104,11 +104,11 @@ void read_mci_file (char *filename)
     dummy = 0;
     for (j = i+1; j <= numco && co2coo[i] == co2coo[j]; j++)
     {
-      printf("<FONT COLOR =\"%s\">%s</FONT><FONT COLOR=\"red\"><SUP>%d</SUP></FONT>&nbsp;<FONT COLOR=\"%s\">(c%d)</FONT><BR/>",
+      printf("<FONT COLOR =\"%s\">%s</FONT><FONT COLOR=\"red\"><SUP>%d</SUP></FONT><FONT COLOR=\"%s\"> (c%d)</FONT><BR/>",
         queries_co[j] ? color2 : color1, plname[co2pl[j]],tokens[j],queries_co[j] ? color2 : color1,j);
       dummy = 1;
     }
-    printf("<FONT COLOR =\"%s\">%s</FONT><FONT COLOR=\"red\"><SUP>%d</SUP></FONT>&nbsp;<FONT COLOR=\"%s\">(c%d)</FONT>> shape=circle style=filled];\n",
+    printf("<FONT COLOR =\"%s\">%s</FONT><FONT COLOR=\"red\"><SUP>%d</SUP></FONT><FONT COLOR=\"%s\"> (c%d)</FONT>> shape=circle style=filled];\n",
       queries_co[i] ? color2 : color1, plname[co2pl[i]],tokens[i],queries_co[i] ? color2 : color1,i);
     if (dummy) i = j-1;
   }
