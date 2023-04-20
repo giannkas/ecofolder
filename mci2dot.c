@@ -87,6 +87,7 @@ void read_mci_file (char *filename)
   char color3[] = "orange";
   char color4[] = "palegreen";
   char color5[] = "firebrick2";
+  char color6[] = "black";
 
   for (i = 1; i <= numco; i++)
     printf("  c%d [fillcolor=%s label= <%s<FONT COLOR=\"red\"><SUP>%d</SUP></FONT>&nbsp;(c%d)> shape=circle style=filled];\n",
@@ -96,8 +97,8 @@ void read_mci_file (char *filename)
       printf("  e%d [fillcolor=%s label=\"%s (e%d)\" shape=box style=filled];\n",
           i,queries_ev[i] ? color3 : color4,trname[ev2tr[i]],i);
     else
-      printf("  e%d [fillcolor=%s label=\"%s (e%d)\" shape=box style=filled];\n",
-          i,queries_ev[i] ? color3 : color5,trname[ev2tr[i]],i);
+      printf("  e%d [color=%s fillcolor=%s label=\"%s (e%d)\" shape=box style=filled];\n",
+          i,queries_ev[i] ? color3 : color6,color5,trname[ev2tr[i]],i);
   printf("}\n");
 
   fclose(file);

@@ -5,6 +5,7 @@
 #include "unfold.h"
 
 hashcell_t **hash;
+querycell_t **query;
 int hash_buckets;
 int *rep_marking;
 
@@ -15,6 +16,8 @@ void marking_init ()
 {
   hash_buckets = net->numpl*4 + 1;
   hash = MYcalloc(hash_buckets * sizeof(hashcell_t*));
+  if (m_repeat > 0)
+    query = MYcalloc(hash_buckets * sizeof(querycell_t*));
 }
 
 /*****************************************************************************/
