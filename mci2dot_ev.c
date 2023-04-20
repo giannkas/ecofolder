@@ -1,9 +1,6 @@
 #include <stdio.h>
 #include <stdlib.h>
 
-//void find_conflict(int rows, int cols, int (*matrix)[cols],  )
-
-
 /**
  * @brief auxiliary function to find event successors of a particular event.
  * 

@@ -123,7 +123,8 @@ typedef struct hashcell_t
 
 typedef struct querycell_t
 {
-  struct cond_t *cut;
+  struct nodelist_t *cut;
+  int repeat;
   struct querycell_t *next;  
 } querycell_t;
 

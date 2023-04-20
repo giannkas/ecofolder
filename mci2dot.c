@@ -1,5 +1,12 @@
+#include <string.h>
 #include <stdio.h>
 #include <stdlib.h>
+
+#include "common.h"
+#include "netconv.h"
+#include "unfold.h"
+
+int m_repeat;
 
 void read_mci_file (char *filename)
 {
@@ -106,11 +113,21 @@ void read_mci_file (char *filename)
 
 int main (int argc, char **argv)
 {
-  if (argc != 2)
+  int i;
+  char *filename;
+
+  //printf("m_repeat: %d\n", m_repeat);
+  for (i = 1; i < argc; i++)
+    if (!strcmp(argv[i],"-r"))
+      m_repeat = atoi(argv[++i]);
+    else
+      filename = argv[i];
+
+  if (!filename)
   {
     fprintf(stderr,"usage: mci2dot <mcifile>\n");
     exit(1);
   }
-  read_mci_file(argv[1]);
+  read_mci_file(filename);
   exit(0);
 }

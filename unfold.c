@@ -20,15 +20,18 @@ int compressed = 0;			/* compressed unfolding view (-c)	   */
 int mcmillan = 0;      /* mcmillan criteria flag (-mcmillan) */
 int m_repeat = 1;			/* marking repeat to highlight (-r)	   */
 
-nodelist_t *cutoff_list, *corr_list;	/* cut-off list, corresponding events */
+nodelist_t *cutoff_list, *corr_list;	/* cut-off list, corresponding 
+  events */
 
-/*****************************************************************************/
-/* The co-relation is kept in the form of an incidence list. Every condition */
-/* keeps two lists of conditions such that are concurrent to it. The first list,  */
-/* stored in the coarray_common field, stores the conditions that are con-   */
-/* current to all conditions with the same event as their singleton preset.  */
-/* The second list, coarray_private, contains additional conditions which do */
-/* not (necessarily) enjoy this property.				     */
+/*********************************************************************/
+/* 
+  The co-relation is kept in the form of an incidence list. Every 
+  condition keeps two lists of conditions such that are concurrent to 
+  it. The first list, stored in the coarray_common field, stores the 
+  conditions that are concurrent to all conditions with the same event 
+  as their singleton preset. The second list, coarray_private, contains
+  additional conditions which do not (necessarily) enjoy this property.
+*/
 
 /* Create an empty coarray with 'size' allocated events. */
 coa_t alloc_coarray (int size)
@@ -42,7 +45,9 @@ coa_t alloc_coarray (int size)
   return coa;
 }
 
-/* Add a single condition to an array, enlarging the array if necessary. */
+/* 
+  Add a single condition to an array, enlarging the array if necessary.
+*/
 void addto_coarray (coa_t *coa, cond_t *co)
 {
   if (coa->size == coa->inuse)
@@ -80,11 +85,12 @@ void print_events (event_t* list)
   print_events(list->next);
 }
 
-/*****************************************************************************/
-/* Insert a condition into the unfolding. The new condition is labelled with */
-/* the place pl.							     */
+/**************************************************************/
+/* Insert a condition into the unfolding. The new condition is 
+labelled with the place pl. */
 
-cond_t* insert_condition (place_t *pl, event_t *ev, int queried)
+cond_t* insert_condition (place_t *pl, event_t *ev, int queried,
+  int queryable)
 {
   cond_t *co = MYmalloc(sizeof(cond_t));
   co->next = unf->conditions;
@@ -114,13 +120,13 @@ cond_t* insert_condition (place_t *pl, event_t *ev, int queried)
     if (ev) printf(" [event E%d]",ev->id);
     printf(".\n");
   }
-
+  if(queryable) nodelist_push(&((*query)->cut),co);
   return co;
 }
 
-/*****************************************************************************/
-/* Insert an event into the unfolding. The new event is derived from	     */
-/* qu->trans and the conditions in qu->conds form its preset.		     */
+/*******************************************************************/
+/* Insert an event into the unfolding. The new event is derived from
+ qu->trans and the conditions in qu->conds form its preset.*/
 
 event_t* insert_event (pe_queue_t *qu, char* trans_pool)
 {
@@ -145,9 +151,11 @@ event_t* insert_event (pe_queue_t *qu, char* trans_pool)
   memcpy(ev->preset,qu->conds,sz * sizeof(cond_t*));
   
   /* co_ptr2 = ev->preset;
-  //printf("event name %s and its preset with size %d: \n", ev->origin->name, sz);
+  //printf("event name %s and its preset with size %d: \n", 
+    ev->origin->name, sz);
   while(*co_ptr2){
-    printf("EVENT %s precondition name: %s, %d\n", ev->origin->name,(*co_ptr2)->origin->name, (*co_ptr2)->num);
+    printf("EVENT %s precondition name: %s, %d\n", 
+      ev->origin->name,(*co_ptr2)->origin->name, (*co_ptr2)->num);
     co_ptr2 = &((*co_ptr2)->next);
   } */
   
@@ -168,12 +176,14 @@ event_t* insert_event (pe_queue_t *qu, char* trans_pool)
   return ev;
 }
 
-/*****************************************************************************/
-/* Add the post-conditions of event ev and compute the possible extensions.  */
+/*******************************************************/
+/* Add the post-conditions of event ev and compute the 
+  possible extensions.  */
 
 enum { CUTOFF_NO, CUTOFF_YES };
 
-void add_post_conditions (event_t *ev, char cutoff, int queried)
+void add_post_conditions (event_t *ev, char cutoff, int queried, 
+  int queryable)
 {
   
   cond_t **co_ptr, **cocoptr;
@@ -184,9 +194,14 @@ void add_post_conditions (event_t *ev, char cutoff, int queried)
   ev->postset = co_ptr
     = MYmalloc(ev->postset_size * sizeof(cond_t*));
   
-  for (list = nodelist_concatenate(ev->origin->postset, ev->origin->reset); list; list = list->next)
+  for (list = nodelist_concatenate(ev->origin->postset, 
+    ev->origin->reset); list; list = list->next)
+  {
+    int tmp_find = nodelist_find(ev->origin->postset, list->node);
     *co_ptr++ = insert_condition(list->node,ev, 
-      nodelist_find(ev->origin->postset, list->node) ? queried : 0);
+      tmp_find ? queried : 0, tmp_find ?
+      queryable : 0);
+  }
   
   if (cutoff) return;
 
@@ -200,13 +215,15 @@ void add_post_conditions (event_t *ev, char cutoff, int queried)
   while (*++cocoptr)
   {
     co_ptr = ev->postset;
-    for (list = nodelist_concatenate(ev->origin->postset, ev->origin->reset); list; list = list->next)
+    for (list = nodelist_concatenate(ev->origin->postset, 
+          ev->origin->reset); list; list = list->next)
       addto_coarray(&((*cocoptr)->co_private),*co_ptr++);
   }
   
   co_ptr = ev->postset;
 
-  for (list = nodelist_concatenate(ev->origin->postset, ev->origin->reset); list; list = list->next)
+  for (list = nodelist_concatenate(ev->origin->postset, 
+      ev->origin->reset); list; list = list->next)
   {
     /* record co-relation between new conditions */
     (*co_ptr)->co_common = newarray;
@@ -223,12 +240,15 @@ void add_post_conditions (event_t *ev, char cutoff, int queried)
   }
 }
 
-/*****************************************************************************/
-/* Function co_relation computes the set of conditions that are concurrent   */
-/* to the newly added event ev. That set of conditions is also concurrent to */
-/* the postset of ev and forms the common part of their concurrency list.    */
-/* The set is essentially computed by taking the intersection of the sets of */
-/* conditions concurrent to the input conditions of ev.			     */
+/******************************************************************/
+/* 
+  Function co_relation computes the set of conditions that are 
+  concurrent to the newly added event ev. That set of conditions 
+  is also concurrent to the postset of ev and forms the common 
+  part of their concurrency list. The set is essentially computed 
+  by taking the intersection of the sets of conditions concurrent 
+  to the input conditions of ev. 
+*/
 
 typedef struct cqentry_t {
   cond_t *co;
@@ -236,7 +256,10 @@ typedef struct cqentry_t {
   struct cqentry_t *next;
 } cqentry_t;
 
-/* This maintains a queue of conditions used for computing the intersection. */
+/* 
+  This maintains a queue of conditions used for computing the 
+  intersection. 
+*/
 void insert_to_queue (cqentry_t **queue, cqentry_t *newentry,
       cond_t *co, int index)
 {
@@ -249,7 +272,8 @@ void insert_to_queue (cqentry_t **queue, cqentry_t *newentry,
   *queue = newentry;
 }
 
-void co_relation (event_t *ev, pe_queue_t *qu, int check)
+void co_relation (event_t *ev, pe_queue_t *qu, int check, 
+  int queryable)
 {
   cond_t  **co_ptr, ***colists;
   int	  evps = ev->preset_size, sz;
@@ -316,16 +340,21 @@ void co_relation (event_t *ev, pe_queue_t *qu, int check)
     }
 
     if (count == evps){
-      if(check){
+      if(queryable){
         nodelist_t *list, *list2;
         for(list = qu->marking; list; list = list->next)
           if(!nodelist_find(ev->origin->postset, list->node))
-            for(list2 = (((place_t*)(list->node))->conds); list2; list2 = list2->next)
+            for(list2 = (((place_t*)(list->node))->conds); list2;
+               list2 = list2->next)
               if (((cond_t*)(list2->node))->num == minco->num)
                 if (minco->origin->queried)
                 {
-                  minco->pre_ev->queried = 1;
-                  minco->queried = 1;
+                  if(check)
+                  {
+                    minco->pre_ev->queried = 1;
+                    minco->queried = 1;
+                  }
+                  nodelist_push(&((*query)->cut),minco);
                 }
       }
       addto_coarray(&(ev->coarray),minco);
@@ -376,7 +405,7 @@ void recursive_queried(cond_t **co_ptr, int sz)
   }
 }
 
-/*****************************************************************************/
+/*******************************************************************/
 
 void unfold ()
 {
@@ -385,6 +414,7 @@ void unfold ()
   place_t *pl;
   event_t *ev, *stopev = NULL;
   cond_t  *co;
+  querycell_t *newbuck;
   int cutoff, repeat = 0, check_query = 1;
   char trans_pool[(net->maxtrname+2)*(net->numtr)];
   memset( trans_pool, 0, (net->maxtrname+2)*(net->numtr)*sizeof(char) );
@@ -408,6 +438,14 @@ void unfold ()
   check_query = nodelist_compare(list, mark_qr);
   if (!check_query && (repeat = find_marking(list, 1)))
     m_repeat = 0;
+  if(!check_query)
+  {
+    newbuck = MYmalloc(sizeof(querycell_t));
+    newbuck->repeat = 1;
+    newbuck->cut = NULL;
+    newbuck->next = *query;
+    *query = newbuck;
+  }
 
   if (interactive){
     printf("Initial marking:");
@@ -425,7 +463,7 @@ void unfold ()
 
   for (pl = net->places; pl; pl = pl->next){
     if(!pl->marked && pl->reset != NULL){
-      co = insert_condition(pl,NULL,0);
+      co = insert_condition(pl,NULL,0,0);
       co->co_common = alloc_coarray(0);
       co->co_private = alloc_coarray(0);
       nodelist_push(&(unf->m0_unmarked),co);
@@ -434,7 +472,8 @@ void unfold ()
   /* add initial conditions to unfolding, compute possible extensions */
   for (; list; list = list->next)
   {
-    co = insert_condition(pl = list->node,NULL, !check_query ? repeat : 0);
+    co = insert_condition(pl = list->node,NULL, !check_query ? 
+      repeat : 0, !check_query);
     co->co_common = alloc_coarray(0);
     co->co_private = alloc_coarray(0);
     nodelist_push(&(unf->m0),co);
@@ -478,10 +517,20 @@ void unfold ()
     ev = insert_event(qu, trans_pool);
     cutoff = add_marking(qu->marking,ev);
     
-    if (m_repeat){
-      for(list = qu->marking; list && check_query; list = list->next)
-        check_query = nodelist_find(mark_qr, list->node);
+    for(list = qu->marking; list && check_query; list = list->next)
+      check_query = nodelist_find(mark_qr, list->node);
+    if(check_query)
+    {
       repeat = find_marking(mark_qr, 1);
+      printf("repeat value: %d\n", repeat);
+      if(repeat)
+      {
+        newbuck = MYmalloc(sizeof(querycell_t));
+        newbuck->repeat = repeat < 0 ? repeat*-1 : repeat;
+        newbuck->cut = NULL;
+        newbuck->next = *query;
+        *query = newbuck;
+      }
     }
 
     if (interactive && !cutoff)
@@ -501,10 +550,10 @@ void unfold ()
       break;
     }
 
-    repeat = repeat && check_query && m_repeat ? repeat : 0;
+    repeat = repeat > 0 && check_query && m_repeat ? repeat : 0;
 
     /* compute the co-relation for ev and post-conditions */
-    co_relation(ev, qu, repeat);
+    co_relation(ev, qu, repeat,check_query);
 
     /* if the marking was already represented in the unfolding,
     we have a cut-off event */
@@ -512,13 +561,13 @@ void unfold ()
     if (!cutoff)
     { 
       unf->events = unf->events->next; 
-      add_post_conditions(ev,CUTOFF_YES, repeat);
+      add_post_conditions(ev,CUTOFF_YES, repeat, check_query);
       continue;
     }
     else
-      add_post_conditions(ev,CUTOFF_NO, repeat);
+      add_post_conditions(ev,CUTOFF_NO, repeat, check_query);
 
-    if (repeat && check_query) m_repeat = 0;
+    //if (repeat && check_query) m_repeat = 0;
 
     /* add post-conditions, compute possible extensions */
     pe_free(qu);
@@ -547,6 +596,20 @@ void unfold ()
     exitcode = 2;
     stopev->next = unf->events;
     unf->events = stopev;
+  }
+
+  querycell_t *buck;
+  for(buck = *query; buck; buck = buck->next)
+  {
+    //print_marking_pl(buck->marking);
+    //printf("i: %d\n", i);
+    printf("repeat: %d\n", buck->repeat);
+    for (list = buck->cut; list; list = list->next)
+    {
+      if((co = list->node))
+        printf("condition name and condition number: %s num: %d\n", 
+         co->origin->name, co->num);
+    }
   }
 
   /* release memory that is no longer needed (probably incomplete) */
