@@ -16,6 +16,7 @@
 extern net_t *net;	/* stores the net	*/
 extern unf_t *unf;	/* stores the unfolding */
 extern hashcell_t **hash; /* stores the hash table for markings */
+extern querycell_t **query; /* stores cuts that have been queried to allow a posteriori highlighting  */
 
 extern int conditions_size, events_size;
 extern int ev_mark;		  	   /* needed for various procedures */
