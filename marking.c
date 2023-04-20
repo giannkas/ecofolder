@@ -16,8 +16,7 @@ void marking_init ()
 {
   hash_buckets = net->numpl*4 + 1;
   hash = MYcalloc(hash_buckets * sizeof(hashcell_t*));
-  if (m_repeat > 0)
-    query = MYcalloc(hash_buckets * sizeof(querycell_t*));
+  query = MYcalloc(1 * sizeof(querycell_t*));
 }
 
 /*****************************************************************************/
@@ -38,7 +37,10 @@ int marking_hash (nodelist_t *marking)
 
 /*****************************************************************************/
 /* Check if a marking is already present in the hash table.		     */
-/* Return number of times the marking is repeated otherwise 0. */
+/* Return number of times the marking is repeated, negative values are
+  returned when the marking is present but its corresponding instance
+  does not match with the requested one by the user when searching. If
+  the marking is not present at all, it returns 0. */
 /* The given marking is left unchanged.		     */
 
 int find_marking (nodelist_t *marking, int m_query)
@@ -46,6 +48,7 @@ int find_marking (nodelist_t *marking, int m_query)
   hashcell_t **buck = hash + marking_hash(marking);
   int cmp = 2;
   nodelist_t* list = NULL;
+  int tmp_repeat = 0;
 
   while (*buck && (cmp = nodelist_compare(marking,(*buck)->marking)) > 0)
     buck = &((*buck)->next);
@@ -54,10 +57,12 @@ int find_marking (nodelist_t *marking, int m_query)
     for(list = marking; list && !cmp; list = list->next)
       if(!((place_t*)(list->node))->queried)  cmp = 1;
     if(!cmp && (*buck)->repeat != m_repeat)
-      cmp = 1;
+      tmp_repeat = (*buck)->repeat*-1;
+    else if(!cmp && (*buck)->repeat == m_repeat)
+      tmp_repeat = (*buck)->repeat;
   }
 
-  return (*buck) && !cmp ? (*buck)->repeat : !cmp;
+  return !cmp && m_query ? tmp_repeat : !cmp;
 }
 
 /*****************************************************************************/
