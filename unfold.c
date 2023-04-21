@@ -18,7 +18,7 @@ int unfold_depth = 0;			/* argument of -d switch	   */
 int interactive = 0;			/* interactivem mode (-i)	   */
 int compressed = 0;			/* compressed unfolding view (-c)	   */
 int mcmillan = 0;      /* mcmillan criteria flag (-mcmillan) */
-int m_repeat = 1;			/* marking repeat to highlight (-r)	   */
+int m_repeat = 0;			/* marking repeat to highlight (-r)	   */
 
 nodelist_t *cutoff_list, *corr_list;	/* cut-off list, corresponding 
   events */
@@ -120,7 +120,11 @@ cond_t* insert_condition (place_t *pl, event_t *ev, int queried,
     if (ev) printf(" [event E%d]",ev->id);
     printf(".\n");
   }
-  if(queryable) nodelist_push(&((*query)->cut),co);
+  if(queryable)
+  {
+    nodelist_push(&((*query)->cut),co);
+    (*query)->size++;
+  }
   return co;
 }
 
@@ -355,6 +359,7 @@ void co_relation (event_t *ev, pe_queue_t *qu, int check,
                     minco->queried = 1;
                   }
                   nodelist_push(&((*query)->cut),minco);
+                  (*query)->size++;
                 }
       }
       addto_coarray(&(ev->coarray),minco);
@@ -436,12 +441,11 @@ void unfold ()
   mark_qr = format_marking_query();
   add_marking(list = marking_initial(),NULL);
   check_query = nodelist_compare(list, mark_qr);
-  if (!check_query && (repeat = find_marking(list, 1)))
-    m_repeat = 0;
   if(!check_query)
   {
     newbuck = MYmalloc(sizeof(querycell_t));
     newbuck->repeat = 1;
+    newbuck->size = 0;
     newbuck->cut = NULL;
     newbuck->next = *query;
     *query = newbuck;
@@ -527,6 +531,7 @@ void unfold ()
       {
         newbuck = MYmalloc(sizeof(querycell_t));
         newbuck->repeat = repeat < 0 ? repeat*-1 : repeat;
+        newbuck->size = 0;
         newbuck->cut = NULL;
         newbuck->next = *query;
         *query = newbuck;
@@ -550,7 +555,7 @@ void unfold ()
       break;
     }
 
-    repeat = repeat > 0 && check_query && m_repeat ? repeat : 0;
+    repeat = repeat > 0 && check_query ? repeat : 0;
 
     /* compute the co-relation for ev and post-conditions */
     co_relation(ev, qu, repeat,check_query);
@@ -596,20 +601,6 @@ void unfold ()
     exitcode = 2;
     stopev->next = unf->events;
     unf->events = stopev;
-  }
-
-  querycell_t *buck;
-  for(buck = *query; buck; buck = buck->next)
-  {
-    //print_marking_pl(buck->marking);
-    //printf("i: %d\n", i);
-    printf("repeat: %d\n", buck->repeat);
-    for (list = buck->cut; list; list = list->next)
-    {
-      if((co = list->node))
-        printf("condition name and condition number: %s num: %d\n", 
-         co->origin->name, co->num);
-    }
   }
 
   /* release memory that is no longer needed (probably incomplete) */

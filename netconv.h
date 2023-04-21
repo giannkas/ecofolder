@@ -124,6 +124,7 @@ typedef struct hashcell_t
 typedef struct querycell_t
 {
   struct nodelist_t *cut;
+  int size;
   int repeat;
   struct querycell_t *next;  
 } querycell_t;
@@ -153,8 +154,9 @@ typedef struct nodelist_t
 } nodelist_t;
 
 extern nodelist_t* nodelist_alloc ();
-extern nodelist_t* nodelist_push (nodelist_t**list,void*);
-extern nodelist_t* nodelist_insert (nodelist_t**,void*e);
+extern nodelist_t* nodelist_push (nodelist_t**,void*);
+extern nodelist_t* nodelist_reverse(nodelist_t *);
+extern nodelist_t* nodelist_insert (nodelist_t**,void*);
 extern void nodelist_delete (nodelist_t*);
 extern int nodelist_compare (nodelist_t*, nodelist_t*);
 extern nodelist_t* nodelist_concatenate(nodelist_t *, nodelist_t *);

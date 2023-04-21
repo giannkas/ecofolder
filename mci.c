@@ -30,7 +30,8 @@ void write_mci_file (char *filename)
   cond_t *co;
   event_t *ev;
   nodelist_t *list1, *list2;
-  int ev_num = 0, sz = 0, null = 0, once = 0;
+  querycell_t *qbuck;
+  int ev_num = 0, sz = 0, null = 0, once = 0, tmp = 0;
 
   if (!(file = fopen(filename,"wb")))
     nc_error("cannot write to file %s\n",filename);
@@ -46,6 +47,24 @@ void write_mci_file (char *filename)
   unf->conditions = reverse_list(unf->conditions);
   unf->events = reverse_list(unf->events);
 
+  /* if(m_repeat)
+    for(qbuck = *query; qbuck; qbuck = qbuck->next)
+    {
+      write_int(qbuck->repeat);
+      write_int(qbuck->size);
+      qbuck->cut = nodelist_reverse(qbuck->cut);
+      for(list1 = qbuck->cut; list1; list1 = list1->next)
+      {
+        if((co = list1->node))
+        {
+          tmp = co->num + 1;
+          write_int(tmp);
+        }
+      }
+    }
+  
+  write_int(null); */
+
   for (ev = unf->events; ev; ev = ev->next){
     ev->mark = ++ev_num;
     if(ev->queried)
@@ -59,6 +78,18 @@ void write_mci_file (char *filename)
     }
   }
   printf("\n");
+
+  for(qbuck = *query; qbuck; qbuck = qbuck->next)
+  {
+    printf("repeat: %d\n", qbuck->repeat);
+    printf("size: %d\n", qbuck->size);
+    for (list1 = qbuck->cut; list1; list1 = list1->next)
+    {
+      if((co = list1->node))
+        printf("condition name and condition number: %s num: %d\n", 
+         co->origin->name, co->num+1);
+    }
+  }
 
   hashcell_t *buck;
   /* for (int i = 0; i < hash_buckets; i++)
