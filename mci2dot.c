@@ -6,15 +6,20 @@
 #include "netconv.h"
 #include "unfold.h"
 
-int m_repeat;
+typedef struct cut_t
+{
+  int repeat;
+  int size;
+  int *cut;
+} cut_t;
 
-void read_mci_file (char *filename)
+void read_mci_file (char *filename, int m_repeat)
 {
   #define read_int(x) fread(&(x),sizeof(int),1,file)
 
   FILE *file;
-  int numco, numev, numpl, numtr, sz, i;
-  int pre_ev, post_ev, cutoff, dummy;
+  int nqure, nqusz, numco, numev, numpl, numtr, sz, i;
+  int pre_ev, post_ev, cutoff, dummy, j;
   int *co2pl, *ev2tr, *tokens, *queries_co,
    *queries_ev, *cutoffs;
   char **plname, **trname, *c;
@@ -36,6 +41,29 @@ void read_mci_file (char *filename)
   queries_ev = malloc((numev+1) * sizeof(int));
   ev2tr = malloc((numev+1) * sizeof(int));
   cutoffs = calloc(numev+1, sizeof(int));
+
+  /* read_int(nqure);
+  cut_t **cuts = calloc(nqure+1, sizeof (cut_t*)); 
+  while(nqure && m_repeat)
+  {
+    read_int(nqusz);
+    cuts[nqure]->repeat = nqure;
+    cuts[nqure]->size = nqusz;
+    cuts[nqure]->cut = calloc(nqusz+1, sizeof(int));
+    for (i = 1; i <= nqusz; i++)
+      read_int(cuts[nqure]->cut[i]);
+    read_int(nqure);
+  } */
+
+  /* for (i = 1; i <= 3; i++)
+  {
+    printf("cuts[i]->repeat: %d\n", cuts[i]->repeat);
+    printf("cuts[i]->repeat: %d\n", cuts[i]->size);
+    for (j = 1; j <= cuts[i]->size; j++)
+      printf("cuts[i]->cut[j]: %d\n", cuts[i]->cut[j]);
+  } */
+
+
 
   for (i = 1; i <= numev; i++){
     read_int(ev2tr[i]);
@@ -113,10 +141,9 @@ void read_mci_file (char *filename)
 
 int main (int argc, char **argv)
 {
-  int i;
+  int i, m_repeat = 0;
   char *filename;
 
-  //printf("m_repeat: %d\n", m_repeat);
   for (i = 1; i < argc; i++)
     if (!strcmp(argv[i],"-r"))
       m_repeat = atoi(argv[++i]);
@@ -128,6 +155,6 @@ int main (int argc, char **argv)
     fprintf(stderr,"usage: mci2dot <mcifile>\n");
     exit(1);
   }
-  read_mci_file(filename);
+  read_mci_file(filename, m_repeat);
   exit(0);
 }
