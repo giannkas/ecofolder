@@ -122,8 +122,9 @@ cond_t* insert_condition (place_t *pl, event_t *ev, int queried,
   }
   if(queryable)
   {
+    if(ev) nodelist_insert(&((*query)->evscut),ev);
     nodelist_push(&((*query)->cut),co);
-    (*query)->size++;
+    (*query)->szcut++;
   }
   return co;
 }
@@ -358,8 +359,9 @@ void co_relation (event_t *ev, pe_queue_t *qu, int check,
                     minco->pre_ev->queried = 1;
                     minco->queried = 1;
                   }
+                  nodelist_insert(&((*query)->evscut),minco->pre_ev);
                   nodelist_push(&((*query)->cut),minco);
-                  (*query)->size++;
+                  (*query)->szcut++;
                 }
       }
       addto_coarray(&(ev->coarray),minco);
@@ -393,18 +395,17 @@ void recursive_pe (nodelist_t *list)
   
 }
 
-void recursive_queried(cond_t **co_ptr, int sz)
+void recursive_queried(querycell_t *qbuck, cond_t **co_ptr, int sz)
 {
   for(int i = 0; i < sz; i++)
   {
     if(co_ptr[i]->pre_ev)
     {
-      if (!co_ptr[i]->pre_ev->queried)
-      {
+      nodelist_insert(&(qbuck->evscut),co_ptr[i]->pre_ev);
+      if (qbuck->repeat > 0 && !co_ptr[i]->pre_ev->queried)
         co_ptr[i]->pre_ev->queried = 1;
-        recursive_queried(co_ptr[i]->pre_ev->preset, 
-          co_ptr[i]->pre_ev->preset_size);
-      }
+      recursive_queried(qbuck, co_ptr[i]->pre_ev->preset, 
+        co_ptr[i]->pre_ev->preset_size);
     }
     else return;
   }
@@ -419,7 +420,7 @@ void unfold ()
   place_t *pl;
   event_t *ev, *stopev = NULL;
   cond_t  *co;
-  querycell_t *newbuck;
+  querycell_t *qbuck;
   int cutoff, repeat = 0, check_query = 1;
   char trans_pool[(net->maxtrname+2)*(net->numtr)];
   memset( trans_pool, 0, (net->maxtrname+2)*(net->numtr)*sizeof(char) );
@@ -443,12 +444,14 @@ void unfold ()
   check_query = nodelist_compare(list, mark_qr);
   if(!check_query)
   {
-    newbuck = MYmalloc(sizeof(querycell_t));
-    newbuck->repeat = 1;
-    newbuck->size = 0;
-    newbuck->cut = NULL;
-    newbuck->next = *query;
-    *query = newbuck;
+    qbuck = MYmalloc(sizeof(querycell_t));
+    qbuck->repeat = 1;
+    qbuck->szcut = 0;
+    qbuck->szevscut = 0;
+    qbuck->evscut = NULL;
+    qbuck->cut = NULL;
+    qbuck->next = *query;
+    *query = qbuck;
   }
 
   if (interactive){
@@ -529,12 +532,14 @@ void unfold ()
       printf("repeat value: %d\n", repeat);
       if(repeat)
       {
-        newbuck = MYmalloc(sizeof(querycell_t));
-        newbuck->repeat = repeat < 0 ? repeat*-1 : repeat;
-        newbuck->size = 0;
-        newbuck->cut = NULL;
-        newbuck->next = *query;
-        *query = newbuck;
+        qbuck = MYmalloc(sizeof(querycell_t));
+        qbuck->repeat = repeat;
+        qbuck->szcut = 0;
+        qbuck->szevscut = 0;
+        qbuck->evscut = NULL;
+        qbuck->cut = NULL;
+        qbuck->next = *query;
+        *query = qbuck;
       }
     }
 
@@ -590,9 +595,18 @@ void unfold ()
     //add_post_conditions(ev,CUTOFF_YES, repeat);
   }
 
-  for(co = unf->conditions; co; co = co->next)
+  /* for(co = unf->conditions; co; co = co->next)
     if(co->queried && co->pre_ev)
-      recursive_queried(co->pre_ev->preset, co->pre_ev->preset_size);
+      recursive_queried(co->pre_ev->preset, co->pre_ev->preset_size); */
+
+  for(qbuck = *query; qbuck; qbuck = qbuck->next)
+  {
+    for (list = qbuck->cut; list; list = list->next)
+      if((co = list->node) && co->pre_ev)
+        recursive_queried(qbuck, co->pre_ev->preset,
+          co->pre_ev->preset_size);
+    qbuck->szevscut = nodelist_size(qbuck->evscut);
+  }
 
   /* Make sure that stopev is the last event to ensure compatibility
      with Claus Schr�ter's reachability checker (otn). */
