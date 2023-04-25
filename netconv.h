@@ -124,7 +124,8 @@ typedef struct hashcell_t
 typedef struct querycell_t
 {
   struct nodelist_t *cut;
-  int size;
+  struct nodelist_t *evscut;
+  int szcut, szevscut;
   int repeat;
   struct querycell_t *next;  
 } querycell_t;
