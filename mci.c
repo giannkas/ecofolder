@@ -30,7 +30,8 @@ void write_mci_file (char *filename)
   cond_t *co;
   event_t *ev;
   nodelist_t *list1, *list2;
-  int ev_num = 0, sz = 0, null = 0, once = 0;
+  querycell_t *qbuck;
+  int ev_num = 0, sz = 0, null = 0, once = 0, tmp = 0;
 
   if (!(file = fopen(filename,"wb")))
     nc_error("cannot write to file %s\n",filename);
@@ -60,30 +61,67 @@ void write_mci_file (char *filename)
   }
   printf("\n");
 
-  hashcell_t *buck;
-  for(int i = 0; i < hash_buckets; i++)
-    if(hash[i])
-      for(buck = hash[i]; buck; buck = buck->next)
+  if(m_repeat)
+  {
+    for(qbuck = *query; qbuck; qbuck = qbuck->next)
+    {
+      write_int(qbuck->repeat);
+      write_int(qbuck->szcut);
+      write_int(qbuck->szevscut);
+      qbuck->cut = nodelist_reverse(qbuck->cut);
+      qbuck->evscut = nodelist_reverse(qbuck->evscut);
+      for(list1 = qbuck->cut; list1; list1 = list1->next)
       {
-        print_marking_pl(buck->marking);
-        printf("hola\n");
-        if(buck->pre_events)
+        if((co = list1->node))
         {
-          list1 = buck->pre_events;
-          while(list1)
-          {
-            list1 = list1->next;
-          }
-          /* for(list1 = buck->pre_events; list1; list1 = list1->next)
-          {
-            if ((ev = list1->node))
-              printf("%s, %d repeat: %d\n",
-                ev->origin->name,ev->mark,buck->repeat);
-          } */
+          tmp = co->num + 1;
+          write_int(tmp);
         }
-        else printf("\nhola2\n");
       }
+      for(list1 = qbuck->evscut; list1; list1 = list1->next)
+        if((ev = list1->node))
+          write_int(ev->mark);
+    }
+    write_int(null);
+  }
 
+
+  for(qbuck = *query; qbuck; qbuck = qbuck->next)
+  {
+    printf("repeat: %d\n", qbuck->repeat);
+    printf("cut size: %d\n", qbuck->szcut);
+    printf("evscut size: %d\n", qbuck->szevscut);
+    for (list1 = qbuck->cut; list1; list1 = list1->next)
+    {
+      if((co = list1->node))
+        printf("condition name and condition number: %s num: %d\n", 
+         co->origin->name, co->num+1);
+    }
+    for (list1 = qbuck->evscut; list1; list1 = list1->next)
+    {
+      if((ev = list1->node))
+        printf("event name and event number: %s num: %d\n", 
+         ev->origin->name, ev->mark);
+    }
+  }
+
+  hashcell_t *buck;
+  /* for (int i = 0; i < hash_buckets; i++)
+  {
+    for(buck = hash[i]; buck; buck = buck->next)
+    {
+      //print_marking_pl(buck->marking);
+      //printf("i: %d\n", i);
+      //printf("repeat: %d\n", buck->repeat);
+      for (list1 = buck->pre_evs; list1; list1 = list1->next)
+      {
+        if((ev = list1->node))
+          //printf("creator event: %s id: %d\n", 
+          //  ev->origin->name, ev->id);
+      }
+    }
+  } */
+  
   for (ev = unf->events; ev; ev = ev->next){
     write_int(ev->origin->num);
     write_int(ev->queried);

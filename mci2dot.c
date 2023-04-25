@@ -1,16 +1,32 @@
+#include <string.h>
 #include <stdio.h>
 #include <stdlib.h>
 
-void read_mci_file (char *filename)
+#include "common.h"
+#include "netconv.h"
+#include "unfold.h"
+
+typedef struct cut_t
+{
+  int repeat;
+  int szcut, szevscut;
+  int *cut;
+  int *evscut;
+} cut_t;
+
+void read_mci_file (char *filename, int m_repeat)
 {
   #define read_int(x) fread(&(x),sizeof(int),1,file)
 
   FILE *file;
-  int numco, numev, numpl, numtr, sz, i;
-  int pre_ev, post_ev, cutoff, dummy;
+  int nqure, nqure_, nquszcut, nquszevscut, 
+    numco, numev, numpl, numtr, sz, i;
+  int pre_ev, post_ev, cutoff, dummy = 0, j;
   int *co2pl, *ev2tr, *tokens, *queries_co,
    *queries_ev, *cutoffs;
   char **plname, **trname, *c;
+
+
   if (!(file = fopen(filename,"rb")))
   {
     fprintf(stderr,"cannot read file %s\n",filename);
@@ -28,6 +44,40 @@ void read_mci_file (char *filename)
   queries_ev = malloc((numev+1) * sizeof(int));
   ev2tr = malloc((numev+1) * sizeof(int));
   cutoffs = calloc(numev+1, sizeof(int));
+
+  if(m_repeat)
+  {
+    read_int(nqure);
+    nqure_ = abs(nqure);
+    cut_t **cuts = calloc(nqure_+1, sizeof(cut_t*));
+    if(m_repeat <= nqure_) dummy = 1;
+    while(nqure_ && m_repeat)
+    {
+      read_int(nquszcut);
+      read_int(nquszevscut);
+      cuts[nqure_] = malloc(sizeof(cut_t));
+      cuts[nqure_]->repeat = nqure;
+      cuts[nqure_]->szcut = nquszcut;
+      cuts[nqure_]->szevscut = nquszevscut;
+      cuts[nqure_]->cut = calloc(nquszcut+1, sizeof(int));
+      cuts[nqure_]->evscut = calloc(nquszevscut+1, sizeof(int));
+      for (i = 1; i <= nquszcut; i++)
+        read_int(cuts[nqure_]->cut[i]);
+      for (i = 1; i <= nquszevscut; i++)
+        read_int(cuts[nqure_]->evscut[i]);
+      read_int(nqure);
+      nqure_ = abs(nqure);
+    }
+    /* for (i = 1; i <= 3; i++)
+    {
+      printf("cuts[i]->repeat: %d\n", cuts[i]->repeat);
+      printf("cuts[i]->szcut: %d\n", cuts[i]->szcut);
+      for (j = 1; j <= cuts[i]->szcut; j++)
+        printf("cuts[i]->cut[j]: %d\n", cuts[i]->cut[j]);
+      for (j = 1; j <= cuts[i]->szevscut; j++)
+        printf("cuts[i]->evscut[j]: %d\n", cuts[i]->evscut[j]);
+    } */
+  }
 
   for (i = 1; i <= numev; i++){
     read_int(ev2tr[i]);
@@ -49,6 +99,8 @@ void read_mci_file (char *filename)
     } while (post_ev);
   }
 
+  //if(dummy)
+
   for (;;) {
     read_int(cutoff);
     if (!cutoff) break;
@@ -67,9 +119,6 @@ void read_mci_file (char *filename)
   read_int(numtr);
   read_int(sz);
 
-  /* printf("numpl: %d\n", numpl);
-  printf("numtr: %d\n", numtr);
-  printf("sz: %d\n",sz); */
   plname = malloc((numpl+2) * sizeof(char*));
   trname = malloc((numtr+2) * sizeof(char*));
 
@@ -89,6 +138,7 @@ void read_mci_file (char *filename)
   char color3[] = "orange";
   char color4[] = "palegreen";
   char color5[] = "firebrick2";
+  char color6[] = "black";
 
   for (i = 1; i <= numco; i++)
     printf("  c%d [fillcolor=%s label= <%s<FONT COLOR=\"red\"><SUP>%d</SUP></FONT>&nbsp;(c%d)> shape=circle style=filled];\n",
@@ -97,12 +147,9 @@ void read_mci_file (char *filename)
     if (i != cutoffs[i])
       printf("  e%d [fillcolor=%s label=\"%s (e%d)\" shape=box style=filled];\n",
           i,queries_ev[i] ? color3 : color4,trname[ev2tr[i]],i);
-    else if(queries_ev[i])
-      printf("  e%d [fillcolor=%s color=%s fontcolor=%s label=\"%s (e%d)\" shape=box style=filled];\n",
-          i,color3,color5,color5,trname[ev2tr[i]],i);
-    else  
-      printf("  e%d [fillcolor=%s label=\"%s (e%d)\" shape=box style=filled];\n",
-          i,color5,trname[ev2tr[i]],i);
+    else
+      printf("  e%d [color=%s fillcolor=%s label=\"%s (e%d)\" shape=box style=filled];\n",
+          i,queries_ev[i] ? color3 : color6,color5,trname[ev2tr[i]],i);
   printf("}\n");
 
   fclose(file);
@@ -110,11 +157,20 @@ void read_mci_file (char *filename)
 
 int main (int argc, char **argv)
 {
-  if (argc != 2)
+  int i, m_repeat = 0;
+  char *filename;
+
+  for (i = 1; i < argc; i++)
+    if (!strcmp(argv[i],"-r"))
+      m_repeat = atoi(argv[++i]);
+    else
+      filename = argv[i];
+
+  if (!filename)
   {
     fprintf(stderr,"usage: mci2dot <mcifile>\n");
     exit(1);
   }
-  read_mci_file(argv[1]);
+  read_mci_file(filename, m_repeat);
   exit(0);
 }

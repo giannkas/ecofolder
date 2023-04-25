@@ -15,28 +15,29 @@
 
 extern net_t *net;	/* stores the net	*/
 extern unf_t *unf;	/* stores the unfolding */
-extern hashcell_t **hash; /* hashing table for markings */
-
+extern hashcell_t **hash; /* stores the hash table for markings */
+extern querycell_t **query; /* stores cuts that have been queried to allow a posteriori highlighting  */
 
 extern int conditions_size, events_size;
 extern int ev_mark;		  	   /* needed for various procedures */
-extern event_t **events;
 extern int hash_buckets;
+extern event_t **events;
 
 extern int exitcode;		/* proposed exit code of the program         */
 extern trans_t *stoptr;		/* the transition mentioned by the -T switch */
 extern int unfold_depth;	/* argument of the -d parameter */
 extern int interactive;		/* whether the -i switch has been supplied */
 extern int compressed;		/* whether the -c switch has been supplied */
-extern int mcmillan;      /* whether the -mcmillan switch has benn suplied */
+extern int mcmillan;		/* whether the -mcmillan switch is enabled */
 extern int m_repeat;		/* whether the -r switch has been supplied */
 
 extern nodelist_t *cutoff_list, *corr_list;  /* cut-off/corresponding list */
 
 extern void unfold();	/* the unfolding procedure */
-extern cond_t* insert_condition(place_t*, event_t*, int);  /* insert a condition to the unfolding */
-extern coa_t alloc_coarray (int);	/* Create an empty coarray with 'size' allocated events. */
-extern coa_t coarray_copy (coa_t);
+extern cond_t* insert_condition(place_t*, event_t*, int, int);  
+/* insert a condition to the unfolding */
+extern coa_t alloc_coarray (int);	/* Create an empty coarray with 'size'
+ allocated events. */
 extern void print_conditions (cond_t*);
 extern void print_events (event_t*);
 

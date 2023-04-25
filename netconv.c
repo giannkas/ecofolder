@@ -21,7 +21,6 @@ net_t* nc_create_net()
   net->places = NULL;
   net->transitions = NULL;
   net->restrictions = NULL;
-  net->marking_query = NULL;
   net->numpl = net->numtr = net->numrt = 0;
   net->ign_trans = net->rt_trans = net->unf_trans = "";
   return net;
@@ -73,15 +72,6 @@ restr_t* nc_create_restriction (net_t *net)
   net->restrictions = rt;
   rt->num = ++net->numrt;
   return rt;
-}
-
-query_t* nc_create_query (net_t *net)
-{
-  query_t *qr = MYmalloc(sizeof(query_t));
-  qr->next = net->marking_query;
-  net->marking_query = qr;
-  qr->num = ++net->numqr;
-  return qr;
 }
 
 /****************************************************************************/
