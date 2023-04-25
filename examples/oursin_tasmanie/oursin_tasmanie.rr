@@ -1,0 +1,58 @@
+###########Toy-model Tasmanian (avec Martin M., 14/03/2023) 
+########### Scales of the reef and inter-decadal 
+
+nodes:
+ Alg+: Sea weed bed (algae), '-' bare rock or '+' algal canopy  
+ Urc-: Urchin '+' High densities facilating destructing grazing, '-' marginal densities  
+ Lob+: Lobster '+' High densities of large predatory individuals, '-' marginal densities of such predators   
+ Aba+: Abalone '+' High densities supporting commercial harvesting, '-' marginal densities    
+ Oct-: Octopus '+' High densities of top-predatory individuals, '-' marginal densities  
+ Fis-: Reef (tropical) fishes '+' High abundance/biomass of fish populations, '-' low biomass   
+
+#constraints:
+# Alg- >> Fis-, Lob-, Aba-, Oct-   # Baren (Desertification)  
+
+rules:              ####### Without PERTURBATIONS (First Model)  #########
+ Alg+ >> Fis+      # Sea weeds MAY support recrutments of Fish juveniles (source of habitat and food) 
+ Alg+ >> Lob+       # Sea weeds MAY support recrutments of lobster juveniles (source of habitat and food) 
+ Alg+ >> Aba+       # Sea weeds MAY support recrutments of Abalone juveniles (source of habitat and food) 
+ Alg+ >> Oct+       # Sea weeds MAY support recrutments of Octopus juveniles (source of habitat and food) 
+
+ Lob+ >> Urc-       # Predation 
+ Urc+ >> Alg-       # Predation 
+ Oct+ >> Lob-       # Predation 
+ Oct+ >> Fis-       # Predation 
+
+ Lob+ >> Oct+       # Consumption 
+ Fis+ >> Oct+       # Consumption 
+ Lob+ >> Aba-       # Consumption (not impacting the system?) 
+ Urc+ >> Aba-       # Consumption 
+ Oct+ >> Aba-       # Consumption 
+ Fis+ >> Alg-       # Consumption 
+
+### Additional rules (from the initial model Marzloff et al.) ###
+ Fis-, Urc- >> Alg+               # Restauration of Sea weed bed (low grazing pressure)  
+ Lob- >> Urc+                     # Restauration of Urchins (low predation pressure)  
+ Lob-, Urc- >> Aba+               # Restauration of Abalone (low predation pressure)  
+ Alg- >> Fis-, Lob-, Aba-, Oct-   # Baren (Desertification)  
+ 
+
+# Lob+ >> Lob-       # Self-negative effect (Hurzwitz criterion = Justified?!?) FORGOTTEN 
+# Lob- >> Lob+       # Self-negative effect FORGOTTEN 
+
+####### With PERTURBATIONS (Second Model)  #########
+ Alg+ >> Alg-       # Sea weed decline (climate PERTURBATION 1) 
+ Lob+ >> Lob-       # Southern rock lobster decline (climate PERTURBATION 2) 
+ Aba+ >> Aba-       # Abalone decline (climate PERTURBATION 3) 
+ Urc- >> Urc+       # Urchin population increase (climate PERTURBATION 4) 
+ Oct- >> Oct+       # Octopus increase (climate PERTURBATION 5) 
+ Fis- >> Fis+       # tropical Fish increase (climate PERTURBATION 6) 
+
+ Fis+ >> Fis-       # reef Fish fishing (Human PERTURBATION 1' Other paper) 
+ Lob+ >> Lob-       # Lobster fishing (Human PERTURBATION 2' Other paper) 
+
+####### With PERTURBATIONS (Third Model)  #########
+# Oct+ >> Oct-       # endemic weed targeted harvesting (Human PERTURBATION 1'') 
+# Urc+ >> Urc-       # endemic Urchin targeted harvesting (Human PERTURBATION 3'') 
+ Lob- >> Lob+       # endemic Lobster targeted harvesting (Human PERTURBATION 2'') 
+    

@@ -1,9 +1,6 @@
 #include <stdio.h>
 #include <stdlib.h>
 
-//void find_conflict(int rows, int cols, int (*matrix)[cols],  )
-
-
 /**
  * @brief auxiliary function to find event successors of a particular event.
  * 
@@ -304,17 +301,15 @@ void read_mci_file_ev (char *filename)
   char color1[] = "palegreen";
   char color2[] = "firebrick2";
   char color3[] = "orange";
+  char color4[] = "black";
 
 	for (i = 1; i <= numev; i++)
     if (i != cutoffs[i])
 		  printf("  e%d [fillcolor=%s label=\"%s (e%d)\" shape=box style=filled];\n",
 				  i,queries_ev[i] ? color3 : color1,trname[ev2tr[i]],i);
-    else if (queries_ev[i])
-		  printf("  e%d [fillcolor=%s color=%s fontcolor=%s label=\"%s (e%d)\" shape=box style=filled];\n",
-				  i,color3,color2,color2,trname[ev2tr[i]],i);
     else
-		  printf("  e%d [fillcolor=%s label=\"%s (e%d)\" shape=box style=filled];\n",
-				  i,color2,trname[ev2tr[i]],i);
+      printf("  e%d [color=%s fillcolor=%s label=\"%s (e%d)\" shape=box style=filled];\n",
+          i,queries_ev[i] ? color3 : color4,color2,trname[ev2tr[i]],i);
   printf("  e0 [fillcolor=white label=\"⊥\" shape=box style=filled];\n");
 	printf("}\n");
 

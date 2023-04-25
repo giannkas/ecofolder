@@ -79,6 +79,23 @@ int nodelist_size (nodelist_t *list)
   return sz;
 }
 
+/* *************************************** */
+
+nodelist_t* nodelist_reverse(nodelist_t *list)
+{
+  nodelist_t *newlist = NULL, *tmp_list = list;
+
+  while(tmp_list)
+  {
+    nodelist_t *tmp = tmp_list->next;
+    tmp_list->next = newlist;
+    newlist = tmp_list;
+    tmp_list = tmp;
+  }
+
+  return newlist;
+}
+
 /*****************************************************************************/
 /* add a place to a list; sort by pointer in ascending order		     */
 

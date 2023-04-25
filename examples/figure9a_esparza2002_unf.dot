@@ -1,0 +1,27 @@
+digraph test {
+  c1 -> e5;
+  c2 -> e4;
+  c3 -> e3;
+  c4 -> e2;
+  c5 -> e1;
+  e1 -> c6;
+  e2 -> c7;
+  e3 -> c8;
+  e4 -> c9;
+  e5 -> c10;
+  c1 [fillcolor=lightblue label= <P5<FONT COLOR="red"><SUP>1</SUP></FONT>&nbsp;(c1)> shape=circle style=filled];
+  c2 [fillcolor=lightblue label= <P4<FONT COLOR="red"><SUP>1</SUP></FONT>&nbsp;(c2)> shape=circle style=filled];
+  c3 [fillcolor=lightblue label= <P3<FONT COLOR="red"><SUP>1</SUP></FONT>&nbsp;(c3)> shape=circle style=filled];
+  c4 [fillcolor=lightblue label= <P2<FONT COLOR="red"><SUP>1</SUP></FONT>&nbsp;(c4)> shape=circle style=filled];
+  c5 [fillcolor=lightblue label= <P1<FONT COLOR="red"><SUP>1</SUP></FONT>&nbsp;(c5)> shape=circle style=filled];
+  c6 [fillcolor=lightblue label= <P0<FONT COLOR="red"><SUP>1</SUP></FONT>&nbsp;(c6)> shape=circle style=filled];
+  c7 [fillcolor=lightblue label= <P0<FONT COLOR="red"><SUP>1</SUP></FONT>&nbsp;(c7)> shape=circle style=filled];
+  c8 [fillcolor=lightblue label= <P0<FONT COLOR="red"><SUP>1</SUP></FONT>&nbsp;(c8)> shape=circle style=filled];
+  c9 [fillcolor=lightblue label= <P0<FONT COLOR="red"><SUP>1</SUP></FONT>&nbsp;(c9)> shape=circle style=filled];
+  c10 [fillcolor=lightblue label= <P0<FONT COLOR="red"><SUP>1</SUP></FONT>&nbsp;(c10)> shape=circle style=filled];
+  e1 [fillcolor=palegreen label="T1 (e1)" shape=box style=filled];
+  e2 [fillcolor=palegreen label="T2 (e2)" shape=box style=filled];
+  e3 [fillcolor=palegreen label="T3 (e3)" shape=box style=filled];
+  e4 [fillcolor=palegreen label="T4 (e4)" shape=box style=filled];
+  e5 [fillcolor=palegreen label="T5 (e5)" shape=box style=filled];
+}
