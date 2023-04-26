@@ -10,7 +10,7 @@ int hash_buckets;
 int *rep_marking;
 
 
-/*****************************************************************************/
+/******************************************************/
 
 void marking_init ()
 {
@@ -19,10 +19,13 @@ void marking_init ()
   query = MYcalloc(1 * sizeof(querycell_t*));
 }
 
-/*****************************************************************************/
-/* Compute the hash value of a marking.					     */
-/* TODO: Is this a good hash function?? If not, replace by something better. */
-/* Also, this might be the only place that really needs pl->num.	     */
+/******************************************************/
+/* 
+  Compute the hash value of a marking. TODO: Is this a 
+  good hash function?? If not, replace by something better.
+  Also, this might be the only place that really needs 
+  pl->num.
+*/
 
 int marking_hash (nodelist_t *marking)
 {
@@ -35,13 +38,16 @@ int marking_hash (nodelist_t *marking)
   return val % hash_buckets;
 }
 
-/*****************************************************************************/
-/* Check if a marking is already present in the hash table.		     */
-/* Return number of times the marking is repeated, negative values are
-  returned when the marking is present but its corresponding instance
-  does not match with the requested one by the user when searching. If
-  the marking is not present at all, it returns 0. */
-/* The given marking is left unchanged.		     */
+/******************************************************/
+/*
+  Check if a marking is already present in the hash table.
+  Return number of times the marking is repeated, negative 
+  values are returned when the marking is present but its 
+  corresponding instance does not match with the requested 
+  one by the user when searching. If the marking is not 
+  present at all, it returns 0. The given marking is left 
+  unchanged.
+*/
 
 int find_marking (nodelist_t *marking, int m_query)
 {
@@ -65,9 +71,11 @@ int find_marking (nodelist_t *marking, int m_query)
   return !cmp && m_query ? tmp_repeat : !cmp;
 }
 
-/*****************************************************************************/
-/* Inspecting the cone of an event to see if its corresponding marking was */
-/* seen before  */
+/******************************************************/
+/* 
+  Inspecting the cone of an event to see if its 
+  corresponding marking was seen before
+*/
 
 int check_back(cond_t **conds, int size, event_t *ev)
 {
@@ -86,10 +94,13 @@ int check_back(cond_t **conds, int size, event_t *ev)
   return found;
 }
 
-/*****************************************************************************/
-/* Add a marking to the hash table. It is assumed that marking = Mark([ev]). */
-/* Return 1 if the marking was not yet present; otherwise, add ev to the     */
-/* list of cut-off events and return 0.					     */
+/******************************************************/
+/* 
+  Add a marking to the hash table. It is assumed that 
+  marking = Mark([ev]). Return 1 if the marking was not 
+  yet present; otherwise, add ev to the list of cut-off 
+  events and return 0.
+*/
 
 int add_marking (nodelist_t *marking, event_t *ev)
 {
@@ -124,7 +135,7 @@ int add_marking (nodelist_t *marking, event_t *ev)
     nodelist_push(&((*buck)->pre_evs),ev);
   }
 
-  if (!cmp && !mcmillan)	/* marking is already present */
+  if (!cmp && !mcmillan)/* marking is already present */
   {
     (*buck)->repeat++;
     //nodelist_delete(marking);
@@ -147,8 +158,8 @@ int add_marking (nodelist_t *marking, event_t *ev)
   return not_present;
 }
 
-/*****************************************************************************/
-/* Collect the initial marking.						     */
+/******************************************************/
+/* Collect the initial marking.     */
 
 nodelist_t* marking_initial ()
 {
@@ -161,8 +172,8 @@ nodelist_t* marking_initial ()
   return list;
 }
 
-/*****************************************************************************/
-/* Format the marking query.						     */
+/******************************************************/
+/* Format the marking query.     */
 
 nodelist_t* format_marking_query ()
 {
@@ -175,7 +186,7 @@ nodelist_t* format_marking_query ()
   return list;
 }
 
-/*****************************************************************************/
+/******************************************************/
 
 void print_marking_pl (nodelist_t* list)
 {

@@ -15,7 +15,8 @@ void write_mci_file_cpr (char *filename)
   cond_t *co, *coo;
   event_t *ev, *evv;
   nodelist_t *list1, *list2;
-  int ev_num = 0, sz = 0, null = 0, cum, szz = 0, once = 0;
+  int ev_num = 0, sz = 0, null = 0, cum, szz = 0, once = 0,
+    tmp = 0;
 
   if (!(file = fopen(filename,"wb")))
     nc_error("cannot write to file %s\n",filename);
@@ -45,6 +46,28 @@ void write_mci_file_cpr (char *filename)
   }
   printf("\n");
 
+  querycell_t *qbuck;
+  for(qbuck = *query; qbuck; qbuck = qbuck->next)
+  {
+    write_int(qbuck->repeat);
+    write_int(qbuck->szcut);
+    write_int(qbuck->szevscut);
+    qbuck->cut = nodelist_reverse(qbuck->cut);
+    qbuck->evscut = nodelist_reverse(qbuck->evscut);
+    for(list1 = qbuck->cut; list1; list1 = list1->next)
+    {
+      if((co = list1->node))
+      {
+        tmp = co->num + 1;
+        write_int(tmp);
+      }
+    }
+    for(list1 = qbuck->evscut; list1; list1 = list1->next)
+      if((ev = list1->node))
+        write_int(ev->mark);
+  }
+  write_int(null);
+
   for (ev = unf->events; ev; ev = ev->next){
     write_int(ev->origin->num);
     write_int(ev->queried);
@@ -69,8 +92,6 @@ void write_mci_file_cpr (char *filename)
           {
             ev = list1->node;
             evv = list2->node;
-            /* if( !strcmp(coo->origin->name, "Gr+_1"))
-              printf("evv->origin->name: %s\n", evv->origin->name); */
             if (!strcmp(ev->origin->name, evv->origin->name) &&
               (ev->mark == evv->mark))
               one_common_trans = 1;
@@ -82,39 +103,28 @@ void write_mci_file_cpr (char *filename)
         if ((sz == 0 && szz == 0) || (common_transs > 0 &&
           (common_transs == szz) && (sz == szz)))
         {
-          //printf("coo->origin->num: %d\n", coo->origin->num);
-          //printf("coo->token: %d\n", coo->token);
           write_int(coo->origin->num);
           write_int(coo->token);
           write_int(coo->queried);
           coo->flag = cum;
-          //printf("coo->flag: %d\n", coo->flag);
           write_int(coo->flag);
         }
       }
     }
-    
-    //printf("co->origin->num: %d\n", co->origin->num);
-    //printf("co->token: %d\n", co->token);
     write_int(co->origin->num);
     write_int(co->token);
     write_int(co->queried);
     co->flag = cum;
-    //printf("co->flag: %d\n", co->flag);
     write_int(co->flag);
-    //printf("after co->token: 0\n");
     write_int(null);
     if (co->pre_ev) {
-      //printf("co->pre_ev->mark: %d\n", co->pre_ev->mark); 
       write_int(co->pre_ev->mark);
     }
-    else	{//printf("!co->pre_ev: 0\n"); 
+    else	{
       write_int(null);}
     for (list1 = co->postset; list1; list1 = list1->next){
-      //printf("(ev = list1->node)->mark: %d\n", (ev = list1->node)->mark);
       write_int((ev = list1->node)->mark);
     }
-    //printf("end: 0\n");
     write_int(null);
   }
 

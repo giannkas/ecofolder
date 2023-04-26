@@ -1,5 +1,14 @@
+#include <string.h>
 #include <stdio.h>
 #include <stdlib.h>
+
+typedef struct cut_t
+{
+  int repeat;
+  int szcut, szevscut;
+  int *cut;
+  int *evscut;
+} cut_t;
 
 /**
  * @brief auxiliary function to find event successors of a particular event.
@@ -77,9 +86,9 @@ void display_matrix(int rows, int cols, int (*matrix)[cols]){
  * 
  * @param filename string that corresponds to the needed filename.
  */
-void read_mci_file_ev (char *filename)
+void read_mci_file_ev (char *filename, int m_repeat)
 {
-	#define read_int(x) fread(&(x),sizeof(int),1,file)
+  #define read_int(x) fread(&(x),sizeof(int),1,file)
   /* define a micro substitution to read_int.
     &(x) - is the pointer to a block of memory with a minimum
             size of "sizeof(int)*1" bytes.
@@ -89,33 +98,36 @@ void read_mci_file_ev (char *filename)
     file - is the pointer to a FILE object that specifies an input stream.
   */
 
-	FILE *file;
-	int numco, numev, numpl, numtr, sz, i, ev1, ev2;
-	int pre_ev, post_ev, cutoff, dummy;
-	int *co2pl, *ev2tr, *tokens, *queries_co, *queries_ev, *cutoffs;
-	char **plname, **trname, *c;
+  FILE *file;
+  int nqure, nqure_, nquszcut, nquszevscut, szcuts,
+    numco, numev, numpl, numtr, sz, i, ev1, ev2;
+  int pre_ev, post_ev, cutoff, dummy = 0;
+  int *co2pl, *ev2tr, *tokens, *queries_co,
+    *queries_ev, *cutoffs;
+  char **plname, **trname, *c;
+  cut_t **cuts;
 
-	if (!(file = fopen(filename,"rb")))
-	{
-		fprintf(stderr,"cannot read file %s\n",filename);
-		exit(1);
-	}
+  if (!(file = fopen(filename,"rb")))
+  {
+    fprintf(stderr,"cannot read file %s\n",filename);
+    exit(1);
+  }
 
-	printf("digraph test {\n"); // start to creating the output 
+  printf("digraph test {\n"); // start to creating the output 
                               //  file in dot format.
 
-	read_int(numco); // read from input file the total number of conditions.
-	read_int(numev); // read from input file the total number of events.
+  read_int(numco); // read from input file the total number of conditions.
+  read_int(numev); // read from input file the total number of events.
 
-	co2pl = malloc((numco+1) * sizeof(int)); // reserve empty memory for the total number 
+  co2pl = malloc((numco+1) * sizeof(int)); // reserve empty memory for the total number 
                                            // conditions.
-	tokens = malloc((numco+1) * sizeof(int)); // reserve the same amount of empty memory
+  tokens = malloc((numco+1) * sizeof(int)); // reserve the same amount of empty memory
                                             // to save the particular tokens' conditions.
-	queries_co = malloc((numco+1) * sizeof(int)); // reserve the same amount of empty memory
+  queries_co = malloc((numco+1) * sizeof(int)); // reserve the same amount of empty memory
                                             // to save the particular queries' conditions.
-	queries_ev = malloc((numev+1) * sizeof(int)); // reserve the same amount of empty memory
+  queries_ev = malloc((numev+1) * sizeof(int)); // reserve the same amount of empty memory
                                             // to save the particular queries' events.
-	ev2tr = malloc((numev+1) * sizeof(int)); // reserve empty memory for the total number 
+  ev2tr = malloc((numev+1) * sizeof(int)); // reserve empty memory for the total number 
                                            // events.
   cutoffs = calloc(numev+1, sizeof(int));                                         
   int (*co_postsets)[numev+1] = calloc(numco+1, sizeof *co_postsets); 
@@ -124,6 +136,28 @@ void read_mci_file_ev (char *filename)
   int (*ev_confl)[numev+1] = calloc(numev+1, sizeof *ev_confl); // matrix to record events' conflicts.
   int (*ev_confl_copy)[numev+1] = calloc(numev+1, sizeof *ev_confl_copy); // a copy of the previous variable.
 
+  read_int(nqure);
+  nqure_ = abs(nqure);
+  cuts = calloc((szcuts = nqure_+1), sizeof(cut_t*));
+  if(nqure_ && m_repeat > 0 && m_repeat <= nqure_) 
+    dummy = 1;
+  while(nqure_)
+  {
+    read_int(nquszcut);
+    read_int(nquszevscut);
+    cuts[nqure_] = malloc(sizeof(cut_t));
+    cuts[nqure_]->repeat = nqure;
+    cuts[nqure_]->szcut = nquszcut;
+    cuts[nqure_]->szevscut = nquszevscut;
+    cuts[nqure_]->cut = calloc(nquszcut+1, sizeof(int));
+    cuts[nqure_]->evscut = calloc(nquszevscut+1, sizeof(int));
+    for (i = 1; i <= nquszcut; i++)
+      read_int(cuts[nqure_]->cut[i]);
+    for (i = 1; i <= nquszevscut; i++)
+      read_int(cuts[nqure_]->evscut[i]);
+    read_int(nqure);
+    nqure_ = abs(nqure);
+  }
 
   for (i = 1; i <= numev; i++){
     read_int(ev2tr[i]); // assign a value to an entry in the array ev2tr for every event
@@ -134,21 +168,21 @@ void read_mci_file_ev (char *filename)
                         // query number, eg., ev1 -> 1 (queries_ev[1] -> 1)
   }
 
-	for (i = 1; i <= numco; i++)
-	{
-		read_int(co2pl[i]); // assign a value to the ith entry co2pl array for
+  for (i = 1; i <= numco; i++)
+  {
+    read_int(co2pl[i]); // assign a value to the ith entry co2pl array for
                         // every condition in the unfolding in order to
                         // map its respective place, eg., c2 -> pl4 
                         // (co2pl[2] -> 4)
-		read_int(tokens[i]); // assign a value to the ith entry tokens array
-		read_int(queries_co[i]); // assign a value if the condition is queried but this feature is not displayable.
+    read_int(tokens[i]); // assign a value to the ith entry tokens array
+    read_int(queries_co[i]); // assign a value if the condition is queried but this feature is not displayable.
                          // for every condition in the unfolding in order to
                          // keep track of the conditions that are empty or full
                          // with tokens due to reset arcs.
-		read_int(pre_ev); // read the respective event number (mark attribute
+    read_int(pre_ev); // read the respective event number (mark attribute
                       // in event_t structure definition), if any, which is the only
                       // event in the preset of a condition in the unfolding.
-		do {
+    do {
       read_int(post_ev);  // read the respective event number (mark attribute
                           // in event_t structure definition), if any, which 
                           // are the events in the postset of a condition in
@@ -177,8 +211,21 @@ void read_mci_file_ev (char *filename)
                                                       // this keep track of the postset
                                                       // of a particular conditions
                                                       // to detect conflicts.
-		} while (post_ev); // if post_ev is not null.
-	}
+    } while (post_ev); // if post_ev is not null.
+  }
+
+  if(dummy)
+  {
+    if (cuts[m_repeat] && cuts[m_repeat]->repeat < 0)
+    {
+      memset(queries_ev,0,(numev)*sizeof(int));
+      memset(queries_co,0,(numco)*sizeof(int));
+      for (i = 1; i <= cuts[m_repeat]->szcut; i++)
+        queries_co[cuts[m_repeat]->cut[i]] = 1;
+      for (i = 1; i <= cuts[m_repeat]->szevscut; i++)
+        queries_ev[cuts[m_repeat]->evscut[i]] = 1;
+    }
+  }
   
   // A loop over co_postsets matrix to fill ev_confl matrix with conflicts
   // among events part of the same condition's postset. We make a copy 
@@ -264,65 +311,74 @@ void read_mci_file_ev (char *filename)
         printf("  e%d -> e%d [arrowhead=none color=gray60 style=dashed constraint=false];\n",i,ev_confl_copy[i][j]);          
     }
   }
-  
-
   printf("\n");
-	for (;;) {
-		read_int(cutoff);
-		if (!cutoff) break;
+
+
+  for (;;) {
+    read_int(cutoff);
+    if (!cutoff) break;
     cutoffs[cutoff] = cutoff;
 #ifdef CUTOFF
-		printf("  e%d [style=filled];\n",cutoff);
+    printf("  e%d [style=filled];\n",cutoff);
 #endif
-		read_int(dummy);
+    read_int(dummy);
 #ifdef CUTOFF
-		printf("  e%d [style=dashed];\n",dummy);
+    printf("  e%d [style=dashed];\n",dummy);
 #endif
-	}
+  }
 
-	do { read_int(dummy); } while(dummy);
-	read_int(numpl);
-	read_int(numtr);
-	read_int(sz);
+  do { read_int(dummy); } while(dummy);
+  read_int(numpl);
+  read_int(numtr);
+  read_int(sz);
 
-	plname = malloc((numpl+2) * sizeof(char*));
-	trname = malloc((numtr+2) * sizeof(char*));
-	for (i = 1; i <= numpl+1; i++) plname[i] = malloc(sz+1);
-	for (i = 1; i <= numtr+1; i++) trname[i] = malloc(sz+1);
+  plname = malloc((numpl+2) * sizeof(char*));
+  trname = malloc((numtr+2) * sizeof(char*));
+  for (i = 1; i <= numpl+1; i++) plname[i] = malloc(sz+1);
+  for (i = 1; i <= numtr+1; i++) trname[i] = malloc(sz+1);
 
-	for (c = plname[i=1]; i <= numpl; c = plname[++i])
-		do { fread(c,1,1,file); } while (*c++);
-	fread(c,1,1,file);
+  for (c = plname[i=1]; i <= numpl; c = plname[++i])
+    do { fread(c,1,1,file); } while (*c++);
+  fread(c,1,1,file);
 
-	for (c = trname[i=1]; c = trname[i], i <= numtr; c = trname[++i])
-		do { fread(c,1,1,file); } while (*c++);
-	fread(c,1,1,file);
+  for (c = trname[i=1]; c = trname[i], i <= numtr; c = trname[++i])
+    do { fread(c,1,1,file); } while (*c++);
+  fread(c,1,1,file);
 
   char color1[] = "palegreen";
   char color2[] = "firebrick2";
   char color3[] = "orange";
   char color4[] = "black";
 
-	for (i = 1; i <= numev; i++)
+  for (i = 1; i <= numev; i++)
     if (i != cutoffs[i])
-		  printf("  e%d [fillcolor=%s label=\"%s (e%d)\" shape=box style=filled];\n",
-				  i,queries_ev[i] ? color3 : color1,trname[ev2tr[i]],i);
+      printf("  e%d [fillcolor=%s label=\"%s (e%d)\" shape=box style=filled];\n",
+          i,queries_ev[i] ? color3 : color1,trname[ev2tr[i]],i);
     else
       printf("  e%d [color=%s fillcolor=%s label=\"%s (e%d)\" shape=box style=filled];\n",
           i,queries_ev[i] ? color3 : color4,color2,trname[ev2tr[i]],i);
   printf("  e0 [fillcolor=white label=\"⊥\" shape=box style=filled];\n");
-	printf("}\n");
+  printf("}\n");
 
-	fclose(file);
+  fclose(file);
 }
 
 int main (int argc, char **argv)
 {
-	if (argc != 2)
-	{
-		fprintf(stderr,"usage: mci2dot_ev <mcifile>\n");
-		exit(1);
-	}
-	read_mci_file_ev(argv[1]);
-	exit(0);
+  int i, m_repeat = 0;
+  char *filename;
+
+  for (i = 1; i < argc; i++)
+    if (!strcmp(argv[i],"-r"))
+      m_repeat = atoi(argv[++i]);
+    else
+      filename = argv[i];
+
+  if (!filename)
+  {
+    fprintf(stderr,"usage: mci2dot <mcifile>\n");
+    exit(1);
+  }
+  read_mci_file_ev(filename, m_repeat);
+  exit(0);
 }
