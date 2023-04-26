@@ -1,6 +1,7 @@
 {
     "C_Cpp.errorSquiggles": "Disabled",
     "files.associations": {
-        "unordered_map": "c"
+      "unordered_map": "c",
+      "stdio.h": "c"
     }
 }

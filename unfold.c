@@ -523,13 +523,12 @@ void unfold ()
     /* add event to the unfolding */
     ev = insert_event(qu, trans_pool);
     cutoff = add_marking(qu->marking,ev);
-    
+
     for(list = qu->marking; list && check_query; list = list->next)
       check_query = nodelist_find(mark_qr, list->node);
     if(check_query)
     {
       repeat = find_marking(mark_qr, 1);
-      printf("repeat value: %d\n", repeat);
       if(repeat)
       {
         qbuck = MYmalloc(sizeof(querycell_t));
@@ -577,8 +576,6 @@ void unfold ()
     else
       add_post_conditions(ev,CUTOFF_NO, repeat, check_query);
 
-    //if (repeat && check_query) m_repeat = 0;
-
     /* add post-conditions, compute possible extensions */
     pe_free(qu);
   }
@@ -592,12 +589,7 @@ void unfold ()
   {
     ev = list->node;
     ev->next = unf->events; unf->events = ev;
-    //add_post_conditions(ev,CUTOFF_YES, repeat);
   }
-
-  /* for(co = unf->conditions; co; co = co->next)
-    if(co->queried && co->pre_ev)
-      recursive_queried(co->pre_ev->preset, co->pre_ev->preset_size); */
 
   for(qbuck = *query; qbuck; qbuck = qbuck->next)
   {

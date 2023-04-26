@@ -1,17 +1,27 @@
+#include <string.h>
 #include <stdio.h>
 #include <stdlib.h>
 
-void read_mci_file (char *filename)
+typedef struct cut_t
 {
-  //printf("hola\n");
+  int repeat;
+  int szcut, szevscut;
+  int *cut;
+  int *evscut;
+} cut_t;
+
+void read_mci_file (char *filename, int m_repeat)
+{
   #define read_int(x) fread(&(x),sizeof(int),1,file)
 
   FILE *file;
-  int numco, numev, numpl, numtr, sz, i, j;
-  int pre_ev, post_ev, cutoff, dummy = 1;
+  int nqure, nqure_, nquszcut, nquszevscut, szcuts, 
+    numco, numev, numpl, numtr, sz, i, j;
+  int pre_ev, post_ev, cutoff, dummy = 0, dummyy = 0;
   int *co2pl, *co2coo, *ev2tr, *tokens, *queries_co,
     *queries_ev, *cutoffs;
   char **plname, **trname, *c;
+  cut_t **cuts;
 
   if (!(file = fopen(filename,"rb")))
   {
@@ -31,6 +41,29 @@ void read_mci_file (char *filename)
   queries_ev = malloc((numev+1) * sizeof(int));
   ev2tr = malloc((numev+1) * sizeof(int));
   cutoffs = calloc(numev+1, sizeof(int));
+
+  read_int(nqure);
+  nqure_ = abs(nqure);
+  cuts = calloc((szcuts = nqure_+1), sizeof(cut_t*));
+  if(nqure_ && m_repeat > 0 && m_repeat <= nqure_) 
+    dummyy = 1;
+  while(nqure_)
+  {
+    read_int(nquszcut);
+    read_int(nquszevscut);
+    cuts[nqure_] = malloc(sizeof(cut_t));
+    cuts[nqure_]->repeat = nqure;
+    cuts[nqure_]->szcut = nquszcut;
+    cuts[nqure_]->szevscut = nquszevscut;
+    cuts[nqure_]->cut = calloc(nquszcut+1, sizeof(int));
+    cuts[nqure_]->evscut = calloc(nquszevscut+1, sizeof(int));
+    for (i = 1; i <= nquszcut; i++)
+      read_int(cuts[nqure_]->cut[i]);
+    for (i = 1; i <= nquszevscut; i++)
+      read_int(cuts[nqure_]->evscut[i]);
+    read_int(nqure);
+    nqure_ = abs(nqure);
+  }
 
   for (i = 1; i <= numev; i++){
     read_int(ev2tr[i]);
@@ -58,6 +91,19 @@ void read_mci_file (char *filename)
       read_int(post_ev);
       if (post_ev) printf("  c%d -> e%d;\n",j,post_ev);
     } while (post_ev);
+  }
+
+  if(dummyy)
+  {
+    if (cuts[m_repeat] && cuts[m_repeat]->repeat < 0)
+    {
+      memset(queries_ev,0,(numev)*sizeof(int));
+      memset(queries_co,0,(numco)*sizeof(int));
+      for (i = 1; i <= cuts[m_repeat]->szcut; i++)
+        queries_co[cuts[m_repeat]->cut[i]] = 1;
+      for (i = 1; i <= cuts[m_repeat]->szevscut; i++)
+        queries_ev[cuts[m_repeat]->evscut[i]] = 1;
+    }
   }
 
   for (;;) {
@@ -127,11 +173,20 @@ void read_mci_file (char *filename)
 
 int main (int argc, char **argv)
 {
-  if (argc != 2)
+  int i, m_repeat = 0;
+  char *filename;
+
+  for (i = 1; i < argc; i++)
+    if (!strcmp(argv[i],"-r"))
+      m_repeat = atoi(argv[++i]);
+    else
+      filename = argv[i];
+
+  if (!filename)
   {
     fprintf(stderr,"usage: mci2dot <mcifile>\n");
     exit(1);
   }
-  read_mci_file(argv[1]);
+  read_mci_file(filename, m_repeat);
   exit(0);
 }

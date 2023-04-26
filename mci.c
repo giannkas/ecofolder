@@ -30,7 +30,6 @@ void write_mci_file (char *filename)
   cond_t *co;
   event_t *ev;
   nodelist_t *list1, *list2;
-  querycell_t *qbuck;
   int ev_num = 0, sz = 0, null = 0, once = 0, tmp = 0;
 
   if (!(file = fopen(filename,"wb")))
@@ -61,32 +60,29 @@ void write_mci_file (char *filename)
   }
   printf("\n");
 
-  if(m_repeat)
-  {
-    for(qbuck = *query; qbuck; qbuck = qbuck->next)
-    {
-      write_int(qbuck->repeat);
-      write_int(qbuck->szcut);
-      write_int(qbuck->szevscut);
-      qbuck->cut = nodelist_reverse(qbuck->cut);
-      qbuck->evscut = nodelist_reverse(qbuck->evscut);
-      for(list1 = qbuck->cut; list1; list1 = list1->next)
-      {
-        if((co = list1->node))
-        {
-          tmp = co->num + 1;
-          write_int(tmp);
-        }
-      }
-      for(list1 = qbuck->evscut; list1; list1 = list1->next)
-        if((ev = list1->node))
-          write_int(ev->mark);
-    }
-    write_int(null);
-  }
-
-
+  querycell_t *qbuck;
   for(qbuck = *query; qbuck; qbuck = qbuck->next)
+  {
+    write_int(qbuck->repeat);
+    write_int(qbuck->szcut);
+    write_int(qbuck->szevscut);
+    qbuck->cut = nodelist_reverse(qbuck->cut);
+    qbuck->evscut = nodelist_reverse(qbuck->evscut);
+    for(list1 = qbuck->cut; list1; list1 = list1->next)
+    {
+      if((co = list1->node))
+      {
+        tmp = co->num + 1;
+        write_int(tmp);
+      }
+    }
+    for(list1 = qbuck->evscut; list1; list1 = list1->next)
+      if((ev = list1->node))
+        write_int(ev->mark);
+  }
+  write_int(null);
+
+  /* for(qbuck = *query; qbuck; qbuck = qbuck->next)
   {
     printf("repeat: %d\n", qbuck->repeat);
     printf("cut size: %d\n", qbuck->szcut);
@@ -103,10 +99,10 @@ void write_mci_file (char *filename)
         printf("event name and event number: %s num: %d\n", 
          ev->origin->name, ev->mark);
     }
-  }
+  } */
 
-  hashcell_t *buck;
-  /* for (int i = 0; i < hash_buckets; i++)
+  /* hashcell_t *buck;
+   for (int i = 0; i < hash_buckets; i++)
   {
     for(buck = hash[i]; buck; buck = buck->next)
     {
