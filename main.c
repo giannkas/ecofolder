@@ -89,10 +89,10 @@ int main (int argc, char **argv)
   printf("Reset set of the transitions\n");
   trans_t *trr = net->transitions;
   while (trr){
-    printf("%s ->\n", trr->name);
+    printf("%s:\n", trr->name);
     nodelist_t *ptr = trr->reset;
     while (ptr){
-      printf("\t%s",((place_t*)(ptr->node))->name);
+      printf("  %s\n",((place_t*)(ptr->node))->name);
       ptr = ptr->next;
     }
     printf("\n");
@@ -104,10 +104,10 @@ int main (int argc, char **argv)
   printf("Context set of the transitions\n");
   trr = net->transitions;
   while (trr){
-    printf("%s ->\n", trr->name);
+    printf("%s:\n", trr->name);
     nodelist_t *ptr = trr->ctxset;
     while (ptr){
-      printf("\t%s",((place_t*)(ptr->node))->name);
+      printf("  %s\n",((place_t*)(ptr->node))->name);
       ptr = ptr->next;
     }
     printf("\n");
@@ -119,10 +119,10 @@ int main (int argc, char **argv)
   printf("Preset of the transitions\n");
   trr = net->transitions;
   while (trr){
-    printf("%s ->\n", trr->name);
+    printf("%s:\n", trr->name);
     nodelist_t *ptr = trr->preset;
     while (ptr){
-      printf("\t%s",((place_t*)(ptr->node))->name);
+      printf("  %s\n",((place_t*)(ptr->node))->name);
       ptr = ptr->next;
     }
     printf("\n");
@@ -134,10 +134,10 @@ int main (int argc, char **argv)
   printf("Postset of the transitions\n");
   trr = net->transitions;
   while (trr){
-    printf("%s ->\n", trr->name);
+    printf("%s:\n", trr->name);
     nodelist_t *ptr = trr->postset;
     while (ptr){
-      printf("\t%s",((place_t*)(ptr->node))->name);
+      printf("  %s\n",((place_t*)(ptr->node))->name);
       ptr = ptr->next;
     }
     printf("\n");
@@ -150,10 +150,10 @@ int main (int argc, char **argv)
   printf("Reset set of the places\n");
   place_t *pll = net->places;
   while (pll){
-    printf("%s ->\n", pll->name);
+    printf("%s:\n", pll->name);
     nodelist_t *ptr = pll->reset;
     while (ptr){
-      printf("\t%s",((trans_t*)(ptr->node))->name);
+      printf("  %s\n",((trans_t*)(ptr->node))->name);
       ptr = ptr->next;
     }
     printf("\n");
@@ -166,10 +166,10 @@ int main (int argc, char **argv)
   printf("Context set of the places\n");
   pll = net->places;
   while (pll){
-    printf("%s ->\n", pll->name);
+    printf("%s:\n", pll->name);
     nodelist_t *ptr = pll->ctxset;
     while (ptr){
-      printf("\t%s",((trans_t*)(ptr->node))->name);
+      printf("  %s\n",((trans_t*)(ptr->node))->name);
       ptr = ptr->next;
     }
     printf("\n");
@@ -181,10 +181,10 @@ int main (int argc, char **argv)
   printf("Preset  of the places\n");
   pll = net->places;
   while (pll){
-    printf("%s ->\n", pll->name);
+    printf("%s:\n", pll->name);
     nodelist_t *ptr = pll->preset;
     while (ptr){
-      printf("\t%s",((trans_t*)(ptr->node))->name);
+      printf("  %s\n",((trans_t*)(ptr->node))->name);
       ptr = ptr->next;
     }
     printf("\n");
@@ -196,10 +196,10 @@ int main (int argc, char **argv)
   printf("Postset set of the places\n");
   pll = net->places;
   while (pll){
-    printf("%s ->\n", pll->name);
+    printf("%s:\n", pll->name);
     nodelist_t *ptr = pll->postset;
     while (ptr){
-      printf("\t%s",((trans_t*)(ptr->node))->name);
+      printf("  %s\n",((trans_t*)(ptr->node))->name);
       ptr = ptr->next;
     }
     printf("\n");
