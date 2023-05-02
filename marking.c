@@ -114,28 +114,27 @@ int add_marking (nodelist_t *marking, event_t *ev)
     buck = &((*buck)->next);
 
   /* printf("hola\n");
-  if(ev) printf("creating marking: %s\n", ev->origin->name);
+  if(ev) printf("creating marking: %s, %d\n", ev->origin->name, ev->id);
   for(list = marking; list; list = list->next)
-    printf("place->name: %s\n", ((place_t*)(list->node))->name);
-  printf("chao\n"); */
+    printf("%s, ", ((place_t*)(list->node))->name);
+  printf("\nchao\n"); */
   
-  if(!cmp && mcmillan)
+  if(!cmp && mcmillan) 
   {
-    for(list = (*buck)->pre_evs; list; list = list->next)
+    for(list = (*buck)->pre_evs; list && !checked_back; list = list->next)
     {
-      if (check_back(ev->preset, ev->preset_size, list->node))
+      if ((checked_back = check_back(ev->preset, ev->preset_size,
+        list->node)))
       {
         nodelist_push(&cutoff_list,ev);
         nodelist_push(&corr_list, ((event_t*)((*buck)->pre_evs->node)));
-        checked_back = 1;
       }
     }
     not_present = !checked_back;
     (*buck)->repeat++;
     nodelist_push(&((*buck)->pre_evs),ev);
   }
-
-  if (!cmp && !mcmillan)/* marking is already present */
+  else if (!cmp && !mcmillan) /* marking is already present */
   {
     (*buck)->repeat++;
     //nodelist_delete(marking);
@@ -143,7 +142,8 @@ int add_marking (nodelist_t *marking, event_t *ev)
     nodelist_push(&corr_list,((event_t*)((*buck)->pre_evs->node)));
     nodelist_push(&((*buck)->pre_evs),ev);
   }
-  else if(!!cmp)
+
+  if(!!cmp) /* marking is not present */
   {
     newbuck = MYmalloc(sizeof(hashcell_t));
     newbuck->marking = marking;

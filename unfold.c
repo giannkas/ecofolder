@@ -523,6 +523,8 @@ void unfold ()
     /* add event to the unfolding */
     ev = insert_event(qu, trans_pool);
     cutoff = add_marking(qu->marking,ev);
+    //printf("cutoff: %d\n", cutoff);
+    //printf("ev name: %s\n", ev->origin->name);
 
     for(list = qu->marking; list && check_query; list = list->next)
       check_query = nodelist_find(mark_qr, list->node);
@@ -569,6 +571,7 @@ void unfold ()
     /* add post-conditions for cut-off events */
     if (!cutoff)
     { 
+      //printf("hola\n");
       unf->events = unf->events->next; 
       add_post_conditions(ev,CUTOFF_YES, repeat, check_query);
       continue;
@@ -579,6 +582,7 @@ void unfold ()
     /* add post-conditions, compute possible extensions */
     pe_free(qu);
   }
+
 
   if(strlen(trans_pool) > 2){
     trans_pool[strlen(trans_pool)-2] = 0;
