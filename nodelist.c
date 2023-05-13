@@ -70,7 +70,7 @@ int nodelist_find (nodelist_t *list, void *node)
 int nodelist_size (nodelist_t *list)
 {
   int sz = 0;
-  while (list)
+  while (list && list->node)
   {
     sz++;
     list = list->next;
@@ -103,7 +103,6 @@ nodelist_t* nodelist_insert (nodelist_t **list, void *node)
 {
   while (*list && node < (*list)->node)
     list = &((*list)->next);
-
   if (*list && (*list)->node == node) return *list;
 
   return nodelist_push(list,node);

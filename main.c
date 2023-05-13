@@ -211,7 +211,7 @@ int main (int argc, char **argv)
   printf("Restrictions of net's unfolding\n");
   restr_t *rtt = net->restrictions;
   while (rtt){
-    printf("%s\n", rtt->name);
+    printf("  %s\n", rtt->name);
     rtt = rtt->next;
   }
   printf("\n");
