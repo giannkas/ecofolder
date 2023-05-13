@@ -107,7 +107,6 @@ cond_t* insert_condition (place_t *pl, event_t *ev, int queried,
   co->num = unf->numco++;
   co->queried = queried ? 1 : 0;
   if(ev && co->queried) co->pre_ev->queried = 1;
-
   if ((ev && nodelist_find(ev->origin->postset, pl)) ||
     (!ev && pl->marked))
     co->token = 1;
@@ -198,7 +197,6 @@ void add_post_conditions (event_t *ev, char cutoff, int queried,
      that is done by pe() to avoid duplicated new events. */
   ev->postset = co_ptr
     = MYmalloc(ev->postset_size * sizeof(cond_t*));
-  
   for (list = nodelist_concatenate(ev->origin->postset, 
     ev->origin->reset); list; list = list->next)
   {
@@ -284,7 +282,6 @@ void co_relation (event_t *ev, pe_queue_t *qu, int check,
   int	  evps = ev->preset_size, sz;
   cqentry_t *queue = NULL;
   char	finished = 0, *switched;
-
   /* Find the maximal potential size of the intersection. */
   int min = 0xfffffff;
   for (sz = evps, co_ptr = ev->preset; sz--; co_ptr++)
@@ -356,7 +353,8 @@ void co_relation (event_t *ev, pe_queue_t *qu, int check,
                 {
                   if(check)
                   {
-                    minco->pre_ev->queried = 1;
+                    if(minco->pre_ev)
+                      minco->pre_ev->queried = 1;
                     minco->queried = 1;
                   }
                   nodelist_insert(&((*query)->evscut),minco->pre_ev);
@@ -523,12 +521,12 @@ void unfold ()
     /* add event to the unfolding */
     ev = insert_event(qu, trans_pool);
     cutoff = add_marking(qu->marking,ev);
-    //printf("cutoff: %d\n", cutoff);
     //printf("ev name: %s\n", ev->origin->name);
-
-    for(list = qu->marking; list && check_query; list = list->next)
-      check_query = nodelist_find(mark_qr, list->node);
-    if(check_query)
+    
+    /* for(list = qu->marking; list && check_query; list = list->next)
+      check_query = nodelist_find(mark_qr, list->node); */
+    check_query = nodelist_compare(qu->marking, mark_qr);
+    if(!check_query)
     {
       repeat = find_marking(mark_qr, 1);
       if(repeat)
@@ -561,10 +559,10 @@ void unfold ()
       break;
     }
 
-    repeat = repeat > 0 && check_query ? repeat : 0;
+    repeat = repeat > 0 && !check_query ? repeat : 0;
 
     /* compute the co-relation for ev and post-conditions */
-    co_relation(ev, qu, repeat,check_query);
+    co_relation(ev, qu, repeat, !check_query);
 
     /* if the marking was already represented in the unfolding,
     we have a cut-off event */
@@ -573,11 +571,12 @@ void unfold ()
     { 
       //printf("hola\n");
       unf->events = unf->events->next; 
-      add_post_conditions(ev,CUTOFF_YES, repeat, check_query);
+      add_post_conditions(ev,CUTOFF_YES, repeat, !check_query);
       continue;
     }
     else
-      add_post_conditions(ev,CUTOFF_NO, repeat, check_query);
+      add_post_conditions(ev,CUTOFF_NO, repeat, !check_query);
+    //printf("cutoff: %d\n", cutoff);
 
     /* add post-conditions, compute possible extensions */
     pe_free(qu);

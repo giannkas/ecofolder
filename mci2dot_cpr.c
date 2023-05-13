@@ -56,11 +56,20 @@ void read_mci_file (char *filename, int m_repeat)
     cuts[nqure_]->szcut = nquszcut;
     cuts[nqure_]->szevscut = nquszevscut;
     cuts[nqure_]->cut = calloc(nquszcut+1, sizeof(int));
+    /* printf("nqure_: %d\n", nqure_);
+    printf("nquszcut: %d\n", nquszcut);
+    printf("nquszevscut: %d\n", nquszevscut); */
     cuts[nqure_]->evscut = calloc(nquszevscut+1, sizeof(int));
     for (i = 1; i <= nquszcut; i++)
+    {
       read_int(cuts[nqure_]->cut[i]);
+      //printf("cuts[nqure_]->cut[i]: %d\n", cuts[nqure_]->cut[i]);
+    }
     for (i = 1; i <= nquszevscut; i++)
+    {
       read_int(cuts[nqure_]->evscut[i]);
+      //printf("cuts[nqure_]->evscut[i]: %d\n", cuts[nqure_]->evscut[i]);
+    }
     read_int(nqure);
     nqure_ = abs(nqure);
   }
@@ -139,7 +148,7 @@ void read_mci_file (char *filename, int m_repeat)
   fread(c,1,1,file);
 
   char color1[] = "black";
-  char color2[] = "hotpink";
+  char color2[] = "orangered";
   char color3[] = "orange";
   char color4[] = "palegreen";
   char color5[] = "firebrick2";

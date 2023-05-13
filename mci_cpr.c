@@ -52,6 +52,9 @@ void write_mci_file_cpr (char *filename)
     write_int(qbuck->repeat);
     write_int(qbuck->szcut);
     write_int(qbuck->szevscut);
+    /* printf("qbuck->repeat: %d\n", qbuck->repeat);
+    printf("qbuck->szcut: %d\n", qbuck->szcut);
+    printf("qbuck->szevscut: %d\n", qbuck->szevscut); */
     qbuck->cut = nodelist_reverse(qbuck->cut);
     qbuck->evscut = nodelist_reverse(qbuck->evscut);
     for(list1 = qbuck->cut; list1; list1 = list1->next)
@@ -60,11 +63,16 @@ void write_mci_file_cpr (char *filename)
       {
         tmp = co->num + 1;
         write_int(tmp);
+        //printf("tmp: %d\n", tmp);
       }
     }
     for(list1 = qbuck->evscut; list1; list1 = list1->next)
       if((ev = list1->node))
+      {
         write_int(ev->mark);
+        //printf("ev->mark: %d\n", ev->mark);
+      }
+
   }
   write_int(null);
 
