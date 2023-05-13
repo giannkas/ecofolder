@@ -301,7 +301,6 @@ void read_mci_file_ev (char *filename, int m_repeat)
   
   printf("\n//conflicts\n");
   //display_matrix(numev+1, numev+1, ev_succs);
-  //printf("####################################################\n");
   //display_matrix(numev+1, numev+1, ev_confl_copy);
   // After leaving only immediate conflicts we do a loop over ev_confl
   // to write in the output file those conflict relations.
