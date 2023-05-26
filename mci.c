@@ -134,6 +134,10 @@ void write_mci_file (char *filename)
       write_int((ev = list1->node)->mark);
     write_int(null);
   }
+  
+  for (list1 = harmful_list; list1; list1 = list1->next)
+    write_int((ev = list1->node)->mark);
+  write_int(null);
 
   for (list1 = cutoff_list, list2 = corr_list; list1;
     list1 = list1->next, list2 = list2->next)

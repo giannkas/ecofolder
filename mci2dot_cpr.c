@@ -17,9 +17,9 @@ void read_mci_file (char *filename, int m_repeat)
   FILE *file;
   int nqure, nqure_, nquszcut, nquszevscut, szcuts, 
     numco, numev, numpl, numtr, sz, i, j;
-  int pre_ev, post_ev, cutoff, dummy = 0, dummyy = 0;
+  int pre_ev, post_ev, cutoff, harmful, dummy = 0, dummyy = 0;
   int *co2pl, *co2coo, *ev2tr, *tokens, *queries_co,
-    *queries_ev, *cutoffs;
+    *queries_ev, *cutoffs, *harmfuls;
   char **plname, **trname, *c;
   cut_t **cuts;
 
@@ -41,6 +41,8 @@ void read_mci_file (char *filename, int m_repeat)
   queries_ev = malloc((numev+1) * sizeof(int));
   ev2tr = malloc((numev+1) * sizeof(int));
   cutoffs = calloc(numev+1, sizeof(int));
+  harmfuls = calloc(numev+1, sizeof(int));
+
 
   read_int(nqure);
   nqure_ = abs(nqure);
@@ -116,6 +118,12 @@ void read_mci_file (char *filename, int m_repeat)
   }
 
   for (;;) {
+    read_int(harmful);
+    if (!harmful) break;
+    harmfuls[harmful] = harmful;
+  }
+
+  for (;;) {
     read_int(cutoff);
     if (!cutoff) break;
     cutoffs[cutoff] = cutoff;
@@ -151,7 +159,8 @@ void read_mci_file (char *filename, int m_repeat)
   char color2[] = "orangered";
   char color3[] = "orange";
   char color4[] = "palegreen";
-  char color5[] = "firebrick2";
+  char color5[] = "cornflowerblue";
+  char color6[] = "firebrick2";
 
   for (i = 1; i <= numco; i++)
   {
@@ -169,12 +178,15 @@ void read_mci_file (char *filename, int m_repeat)
   }
   
   for (i = 1; i <= numev; i++)
-    if (i != cutoffs[i])
-      printf("  e%d [fillcolor=%s label=\"%s (e%d)\" shape=box style=filled];\n",
-          i,queries_ev[i] ? color3 : color4,trname[ev2tr[i]],i);
-    else
+    if (i == cutoffs[i])
       printf("  e%d [color=%s fillcolor=%s label=\"%s (e%d)\" shape=box style=filled];\n",
           i,queries_ev[i] ? color3 : color1,color5,trname[ev2tr[i]],i);
+    else if (i == harmfuls[i])
+      printf("  e%d [color=%s fillcolor=%s label=\"%s (e%d)\" shape=box style=filled];\n",
+          i,queries_ev[i] ? color3 : color1,color6,trname[ev2tr[i]],i);
+    else
+      printf("  e%d [fillcolor=%s label=\"%s (e%d)\" shape=box style=filled];\n",
+          i,queries_ev[i] ? color3 : color4,trname[ev2tr[i]],i);
   printf("}\n");
 
   fclose(file);

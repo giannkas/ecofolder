@@ -1,4 +1,5 @@
 #include <stdio.h>
+#include <string.h>
 
 #include "common.h"
 #include "netconv.h"
@@ -82,14 +83,14 @@ int check_back(cond_t **conds, int size, event_t *ev)
   int i, found = 0;
   for(i = 0; i < size && !found; i++)
     if(conds[i]->pre_ev && ev &&
-      conds[i]->pre_ev->mark != ev->id*-1)
+      conds[i]->pre_ev->mark != ev_mark)
       {
         if(conds[i]->pre_ev == ev)
           found = 1;
         else
           found = check_back(conds[i]->pre_ev->preset,
             conds[i]->pre_ev->preset_size, ev);
-        conds[i]->pre_ev->mark = ev->id*-1;
+        conds[i]->pre_ev->mark = ev_mark;
       }
   return found;
 }
@@ -123,6 +124,7 @@ int add_marking (nodelist_t *marking, event_t *ev)
   {
     for(list = (*buck)->pre_evs; list && !checked_back; list = list->next)
     {
+      ev_mark++;
       if ((checked_back = check_back(ev->preset, ev->preset_size,
         list->node)))
       {
@@ -161,21 +163,24 @@ int add_marking (nodelist_t *marking, event_t *ev)
 /******************************************************/
 /* Collect the initial marking.     */
 
-nodelist_t* marking_initial ()
+nodelist_t* retrieve_list (char* attribute)
 {
   place_t *pl;
   nodelist_t *list = NULL;
 
   for (pl = net->places; pl; pl = pl->next)
-    if (pl->marked) nodelist_insert(&list,pl);
-  
+    if (((!strcmp("marked",attribute) && pl->marked) !=
+     (!strcmp("queried",attribute) && pl->queried)) !=
+     (!strcmp("harmful",attribute) && pl->harmful))
+      nodelist_insert(&list,pl);
+
   return list;
 }
 
 /******************************************************/
 /* Format the marking query.     */
 
-nodelist_t* format_marking_query ()
+/* nodelist_t* format_marking_query ()
 {
   place_t *pl;
   nodelist_t *list = NULL;
@@ -184,7 +189,7 @@ nodelist_t* format_marking_query ()
     if (pl->queried) nodelist_insert(&list,pl);
   
   return list;
-}
+} */
 
 /******************************************************/
 

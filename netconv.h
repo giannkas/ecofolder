@@ -20,15 +20,16 @@ typedef unsigned char uchar;
 typedef struct place_t
 {
   struct place_t *next;
-  char  *name;        /* short name          */
-  int    num;        /* number            */
+  char  *name;  /* short name          */
+  int    num;  /* number            */
   struct nodelist_t *preset;  /* unordered list of preset        */
-  struct nodelist_t *postset; /* unordered list of postset      */
-  struct nodelist_t *reset; /* unordered list of reset transitions */
-  struct nodelist_t *conds;   /* conditions derived from this place   */
-  struct nodelist_t *ctxset; /* unordered list of context transitions */
-  char marked;        /* non-zero if place is marked      */
-  int queried;      /* non-zero if a place is queried */
+  struct nodelist_t *postset;  /* unordered list of postset      */
+  struct nodelist_t *reset;  /* unordered list of reset transitions */
+  struct nodelist_t *conds;  /* conditions derived from this place   */
+  struct nodelist_t *ctxset;  /* unordered list of context transitions */
+  char marked;  /* non-zero if place is marked      */
+  int queried;  /* non-zero if a place is queried */
+  int harmful;  /* non-zero if a place is harmful  */
 } place_t;
 
 typedef struct trans_t
