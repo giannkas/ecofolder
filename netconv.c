@@ -197,26 +197,6 @@ void nc_create_trans_pool (net_t* net)
 
 /*****************************************************************************/
 
-/* void nc_see_trans_dependencies (net_t* net)
-{
-  trans_t* tr, *trr;
-  place_t* pl;
-
-  char trans_pool[(net->maxtrname+2)*(net->numtr)];
-  memset( trans_pool, 0, (net->maxtrname+2)*(net->numtr)*sizeof(char) );
-
-  for (tr = net->transitions; tr; tr = tr->next)
-  {
-    for (pl = tr->preset; pl; pl = pl->next)
-    {
-      pl->
-    }
-  }
-  
-} */
-
-/*****************************************************************************/
-
 void nc_create_ignored_trans (net_t* net)
 {
   trans_t *tr;

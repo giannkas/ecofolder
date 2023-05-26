@@ -345,7 +345,7 @@ void read_mci_file_ev (char *filename, int m_repeat)
   fread(c,1,1,file);
 
   char color1[] = "palegreen";
-  char color2[] = "firebrick2";
+  char color2[] = "cornflowerblue";
   char color3[] = "orange";
   char color4[] = "black";
 

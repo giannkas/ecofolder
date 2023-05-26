@@ -22,6 +22,7 @@ int m_repeat = 0;			/* marking repeat to highlight (-r)	   */
 
 nodelist_t *cutoff_list, *corr_list;	/* cut-off list, corresponding 
   events */
+nodelist_t *harmful_list; /* list of bad/harmful events */
 
 /*********************************************************************/
 /* 
@@ -184,7 +185,7 @@ event_t* insert_event (pe_queue_t *qu, char* trans_pool)
 /* Add the post-conditions of event ev and compute the 
   possible extensions.  */
 
-enum { CUTOFF_NO, CUTOFF_YES };
+enum { CUTOFF_NO, CUTOFF_YES, HARMFUL_YES };
 
 void add_post_conditions (event_t *ev, char cutoff, int queried, 
   int queryable)
@@ -413,13 +414,13 @@ void recursive_queried(querycell_t *qbuck, cond_t **co_ptr, int sz)
 
 void unfold ()
 {
-  nodelist_t *list, *mark_qr = NULL;
+  nodelist_t *list, *mark_qr = NULL, *harmful_marking = NULL;
   pe_queue_t *qu;
   place_t *pl;
   event_t *ev, *stopev = NULL;
   cond_t  *co;
   querycell_t *qbuck;
-  int cutoff, repeat = 0, check_query = 1;
+  int cutoff, repeat = 0, check_query = 1, harmful_check = 0;
   char trans_pool[(net->maxtrname+2)*(net->numtr)];
   memset( trans_pool, 0, (net->maxtrname+2)*(net->numtr)*sizeof(char) );
 
@@ -437,8 +438,9 @@ void unfold ()
 
   /* init hash table, add initial marking */
   marking_init(); unf->m0 = unf->m0_unmarked = NULL;
-  mark_qr = format_marking_query();
-  add_marking(list = marking_initial(),NULL);
+  mark_qr = retrieve_list("queried");
+  harmful_marking = retrieve_list("harmful");
+  add_marking(list = retrieve_list("marked"),NULL);
   check_query = nodelist_compare(list, mark_qr);
   if(!check_query)
   {
@@ -523,9 +525,12 @@ void unfold ()
     cutoff = add_marking(qu->marking,ev);
     //printf("ev name: %s\n", ev->origin->name);
     
-    /* for(list = qu->marking; list && check_query; list = list->next)
-      check_query = nodelist_find(mark_qr, list->node); */
     check_query = nodelist_compare(qu->marking, mark_qr);
+    for(list = harmful_marking; list && !harmful_check;
+      list = list->next)
+      if(nodelist_find(qu->marking, list->node))
+        harmful_check = 1;
+
     if(!check_query)
     {
       repeat = find_marking(mark_qr, 1);
@@ -574,6 +579,13 @@ void unfold ()
       add_post_conditions(ev,CUTOFF_YES, repeat, !check_query);
       continue;
     }
+    else if(harmful_check)
+    {
+      unf->events = unf->events->next; 
+      nodelist_push(&harmful_list,ev);
+      add_post_conditions(ev,HARMFUL_YES, repeat, !check_query);
+      continue;
+    }
     else
       add_post_conditions(ev,CUTOFF_NO, repeat, !check_query);
     //printf("cutoff: %d\n", cutoff);
@@ -586,6 +598,12 @@ void unfold ()
   if(strlen(trans_pool) > 2){
     trans_pool[strlen(trans_pool)-2] = 0;
     net->unf_trans = MYstrdup(trans_pool);
+  }
+
+  for (list = harmful_list; list; list = list->next)
+  {
+    ev = list->node;
+    ev->next = unf->events; unf->events = ev;
   }
 
   for (list = cutoff_list; list; list = list->next)

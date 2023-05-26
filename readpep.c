@@ -2,9 +2,9 @@
 /* readPEP.c                                                                 */
 /*****************************************************************************/
 /*                                  Stefan Roemer,  06.02.1995 - 06.02.1995  */
-/*                                  Stefan Schwoon, April 1997		     */
+/*                                  Stefan Schwoon, April 1997         */
 /*****************************************************************************/
-/* The function read_pep_net at the end reads a PEP LL net into memory.	     */
+/* The function read_pep_net at the end reads a PEP LL net into memory.      */
 /*****************************************************************************/
 
 #include <stdio.h>
@@ -27,20 +27,20 @@ enum { TB_BLOCK = 0, TB_LINE = 1 };
 /* used for specifying where data fields of interest should be stored. */
 typedef struct
 {
-  char c;		/* Identifying character. */
-  void *ptr;	/* Memory location.	  */
+  char c;   /* Identifying character. */
+  void *ptr;  /* Memory location.   */
 } t_dest;
 
 /* what to do with the data found in a block with matching name */
 typedef struct
 {
-  char *name;		/* Name of the block.			     */
-  int  (*hookfunc)();	/* called any time an entity has been read   */
-  char **restptr;		/* Where to store additional data fields.    */
-  t_dest *destarray;	/* Where to store which data field.	     */
+  char *name;   /* Name of the block.          */
+  int  (*hookfunc)(); /* called any time an entity has been read   */
+  char **restptr;   /* Where to store additional data fields.    */
+  t_dest *destarray;  /* Where to store which data field.      */
 } t_blockdest;
 
-typedef struct { int x,y; } t_coords;	/* Simple struct for coordinates. */
+typedef struct { int x,y; } t_coords; /* Simple struct for coordinates. */
 
 /* File and block identifier. */
 char *filetype;
@@ -67,12 +67,12 @@ typedef struct
 } t_lookup;
 
 /*****************************************************************************/
-/* read_PEP_file							     */
+/* read_PEP_file                   */
 /* This is a function for reading a file in PEP's general layout, i.e. it's  */
 /* not restricted to nets (though in practice that's the only thing we'll    */
 /* use it for). blocks is a data structure telling us how the layout of a    */
 /* file should look like, and dest tells us what we should do with the data  */
-/* we find (what and where to store it).				     */
+/* we find (what and where to store it).             */
 
 void read_PEP_file(char *filename, char **types,
        t_blockinfo *blocks, t_blockdest *dest)
@@ -311,122 +311,123 @@ void read_PEP_file(char *filename, char **types,
 }
 
 /*****************************************************************************/
-/* Define the layout of a PEP net file.					     */
+/* Define the layout of a PEP net file.              */
 
 /* Allowable types of nets. */
 char *type_llnet[] = { "PetriBox", "PTNet", NULL };
 
 /* Defaults for blocks/places/transitions. */
 t_fieldinfo nodedefs[] =
-  { { 'n', FT_COORDS },		/* rel pos of name	  */
-    { 'a', FT_COORDS },		/* rel pos of meaning	  */
-    { 's', FT_NUMBER },		/* object size		  */
-    { 't', FT_NUMBER },		/* line weight		  */
+  { { 'n', FT_COORDS },   /* rel pos of name    */
+    { 'a', FT_COORDS },   /* rel pos of meaning   */
+    { 's', FT_NUMBER },   /* object size      */
+    { 't', FT_NUMBER },   /* line weight      */
     {  0 ,  0 } };
 
 /* Defaults for arcs. */
 t_fieldinfo arcdefs[] =
-  { { 'n', FT_COORDS },		/* rel pos of name	  */
-    { 't', FT_NUMBER },		/* line weight		  */
-    { 'w', FT_NUMBER },		/* default weight	  */
+  { { 'n', FT_COORDS },   /* rel pos of name    */
+    { 't', FT_NUMBER },   /* line weight      */
+    { 'w', FT_NUMBER },   /* default weight   */
     {  0 ,  0 } };
 
 /* Data fields for blocks. */
 t_fieldinfo blockfields[] =
-  { { '\'',FT_STRING },		/* identifier		  */
-    { '"', FT_STRING },		/*     "		  */
-    { '@', FT_COORDS },		/* coordinates		  */
-    { '0', FT_NUMBER },		/* numeric identifier	  */
-    { 'n', FT_COORDS },		/* rel pos of name	  */
-    { 'N', FT_COORDS },		/* abs. Pos of name	  */
-    { 'b', FT_STRING },		/* Bedeutung		  */
-    { 'a', FT_COORDS },		/* rel pos of meaning	  */
-    { 'A', FT_COORDS },		/* abs pos of meaning	  */
-    { 'R', FT_STRING },		/* reference		  */
-    { 'T', FT_STRING },		/* BPN->HL ref (obsolete) */
-    { 'u', FT_STRING },		/* block list		  */
+  { { '\'',FT_STRING },   /* identifier     */
+    { '"', FT_STRING },   /*     "      */
+    { '@', FT_COORDS },   /* coordinates      */
+    { '0', FT_NUMBER },   /* numeric identifier   */
+    { 'n', FT_COORDS },   /* rel pos of name    */
+    { 'N', FT_COORDS },   /* abs. Pos of name   */
+    { 'b', FT_STRING },   /* Bedeutung      */
+    { 'a', FT_COORDS },   /* rel pos of meaning   */
+    { 'A', FT_COORDS },   /* abs pos of meaning   */
+    { 'R', FT_STRING },   /* reference      */
+    { 'T', FT_STRING },   /* BPN->HL ref (obsolete) */
+    { 'u', FT_STRING },   /* block list     */
     {  0 ,  0 } };
     
 /* Data fields for places. */
 t_fieldinfo placefields[] =
-  { { '\'',FT_STRING },		/* identifier		  */
-    { '"', FT_STRING },		/*     "		  */
-    { '@', FT_COORDS },		/* coordinates		  */
-    { '0', FT_NUMBER },		/* numeric identifier	  */
-    { 'n', FT_COORDS },		/* rel pos of name	  */
-    { 'N', FT_COORDS },		/* abs pos of name	  */
-    { 'b', FT_STRING },		/* meaning		  */
-    { 'a', FT_COORDS },		/* rel pos of meaning	  */
-    { 'A', FT_COORDS },		/* abs pos of meaning	  */
-    { 'M', FT_NUMBER },		/* initial marking (int)  */
-    { 'q', FT_NUMBER },		/* marking query (int)  */
-    { 'm', FT_NUMBER },		/* current marking (int) */
-    { 'u', FT_STRING },		/* block list		  */
-    { 'Z', FT_STRING },		/* type			  */
-    { 'B', FT_COORDS },		/* rel pos of type	  */
-    { 'z', FT_STRING },		/* initial marking (str)  */
-    { 'y', FT_STRING },		/* current marking (str)  */
-    { 'R', FT_STRING },		/* reference		  */
-    { 'k', FT_NUMBER },		/* capacity		  */
-    { 'e', FT_FLAG   },		/* entry place		  */
-    { 'x', FT_FLAG   },		/* exit place		  */
-    { 'v', FT_NUMBER },		/* flags		  */
-    { 's', FT_NUMBER },		/* object size		  */
-    { 't', FT_NUMBER },		/* line weight		  */
-    { 'c', FT_NUMBER },		/* colour		  */
-    { 'T', FT_STRING },		/* BPN->HL ref (obsolete) */
+  { { '\'',FT_STRING },   /* identifier     */
+    { '"', FT_STRING },   /*     "      */
+    { '@', FT_COORDS },   /* coordinates      */
+    { '0', FT_NUMBER },   /* numeric identifier   */
+    { 'n', FT_COORDS },   /* rel pos of name    */
+    { 'N', FT_COORDS },   /* abs pos of name    */
+    { 'b', FT_STRING },   /* meaning      */
+    { 'a', FT_COORDS },   /* rel pos of meaning   */
+    { 'A', FT_COORDS },   /* abs pos of meaning   */
+    { 'M', FT_NUMBER },   /* initial marking (int)  */
+    { 'q', FT_NUMBER },   /* marking query (int)  */
+    { 'm', FT_NUMBER },   /* current marking (int) */
+    { 'u', FT_STRING },   /* block list     */
+    { 'Z', FT_STRING },   /* type       */
+    { 'B', FT_COORDS },   /* rel pos of type    */
+    { 'z', FT_STRING },   /* initial marking (str)  */
+    { 'y', FT_STRING },   /* current marking (str)  */
+    { 'R', FT_STRING },   /* reference      */
+    { 'k', FT_NUMBER },   /* capacity     */
+    { 'e', FT_FLAG   },   /* entry place      */
+    { 'x', FT_FLAG   },   /* exit place     */
+    { 'v', FT_NUMBER },   /* flags      */
+    { 's', FT_NUMBER },   /* object size      */
+    { 't', FT_NUMBER },   /* line weight      */
+    { 'c', FT_NUMBER },   /* colour     */
+    { 'T', FT_STRING },   /* BPN->HL ref (obsolete) */
+    { 'h', FT_NUMBER },   /* harmful or bad place */
     {  0 ,  0 } };
   
 /* Data fields for transitions. */
 t_fieldinfo transfields[] =
-  { { 'S', FT_FLAG   },		/* synch transition	  */
-    { '\'',FT_STRING },		/* identifier		  */
-    { '"', FT_STRING },		/*     "		  */
-    { '@', FT_COORDS },		/* coordinates		  */
-    { '0', FT_NUMBER },		/* numeric identifier	  */
-    { 'n', FT_COORDS },		/* rel pos of name	  */
-    { 'N', FT_COORDS },		/* abs pos of name	  */
-    { 'b', FT_STRING },		/* meaning		  */
-    { 'a', FT_COORDS },		/* rel pos of meaning	  */
-    { 'A', FT_COORDS },		/* abs pos of meaning	  */
-    { 'B', FT_NUMBER },		/* enable blocking (int)  */
-    { 'v', FT_NUMBER },		/* flags		  */
-    { 'u', FT_STRING },		/* block list		  */
-    { 'P', FT_STRING },		/* list of phantom trs	  */
-    { 'g', FT_STRING },		/* value term		  */
-    { 'h', FT_COORDS },		/* rel pos of value term  */
-    { 'H', FT_COORDS },		/* rel pos of value term  */
-    { 'R', FT_STRING },		/* reference		  */
-    { 'i', FT_STRING },		/* action terms		  */
-    { 'j', FT_COORDS },		/* rel pos action terms   */
-    { 's', FT_NUMBER },		/* object size		  */
-    { 't', FT_NUMBER },		/* line weight		  */
-    { 'c', FT_NUMBER },		/* colour		  */
-    { 'T', FT_STRING },		/* BPN->HL ref (obsolete) */
-    { 'r', FT_FLAG   },		/* refined flag		  */
+  { { 'S', FT_FLAG   },   /* synch transition   */
+    { '\'',FT_STRING },   /* identifier     */
+    { '"', FT_STRING },   /*     "      */
+    { '@', FT_COORDS },   /* coordinates      */
+    { '0', FT_NUMBER },   /* numeric identifier   */
+    { 'n', FT_COORDS },   /* rel pos of name    */
+    { 'N', FT_COORDS },   /* abs pos of name    */
+    { 'b', FT_STRING },   /* meaning      */
+    { 'a', FT_COORDS },   /* rel pos of meaning   */
+    { 'A', FT_COORDS },   /* abs pos of meaning   */
+    { 'B', FT_NUMBER },   /* enable blocking (int)  */
+    { 'v', FT_NUMBER },   /* flags      */
+    { 'u', FT_STRING },   /* block list     */
+    { 'P', FT_STRING },   /* list of phantom trs    */
+    { 'g', FT_STRING },   /* value term     */
+    { 'h', FT_COORDS },   /* rel pos of value term  */
+    { 'H', FT_COORDS },   /* rel pos of value term  */
+    { 'R', FT_STRING },   /* reference      */
+    { 'i', FT_STRING },   /* action terms     */
+    { 'j', FT_COORDS },   /* rel pos action terms   */
+    { 's', FT_NUMBER },   /* object size      */
+    { 't', FT_NUMBER },   /* line weight      */
+    { 'c', FT_NUMBER },   /* colour     */
+    { 'T', FT_STRING },   /* BPN->HL ref (obsolete) */
+    { 'r', FT_FLAG   },   /* refined flag     */
     {  0 ,  0 } };
   
 /* Data fields for arcs. */
 t_fieldinfo arcfields[] =
-  { { '@', FT_COORDS },		/* source/dest		  */
-    { 'J', FT_COORDS },		/* coordinates		  */
-    { ',', FT_COORDS },		/* more coordinates	  */
-    { 'w', FT_NUMBER },		/* weight		  */
-    { 'n', FT_COORDS },		/* rel pos of weight	  */
-    { 'N', FT_COORDS },		/* abs pos of weight	  */
-    { 'p', FT_STRING },		/* inscription		  */
-    { 'q', FT_COORDS },		/* rel pos of inscription */
-    { 'Q', FT_COORDS },		/* abs pos of inscription */
-    { 'v', FT_NUMBER },		/* visibility		  */
-    { 't', FT_NUMBER },		/* line weight		  */
-    { 'c', FT_NUMBER },		/* colour		  */
+  { { '@', FT_COORDS },   /* source/dest      */
+    { 'J', FT_COORDS },   /* coordinates      */
+    { ',', FT_COORDS },   /* more coordinates   */
+    { 'w', FT_NUMBER },   /* weight     */
+    { 'n', FT_COORDS },   /* rel pos of weight    */
+    { 'N', FT_COORDS },   /* abs pos of weight    */
+    { 'p', FT_STRING },   /* inscription      */
+    { 'q', FT_COORDS },   /* rel pos of inscription */
+    { 'Q', FT_COORDS },   /* abs pos of inscription */
+    { 'v', FT_NUMBER },   /* visibility     */
+    { 't', FT_NUMBER },   /* line weight      */
+    { 'c', FT_NUMBER },   /* colour     */
     {  0 ,  0 } };
 
 /* Data fields for texts. */
 t_fieldinfo textfields[] =
-  { { '\'',FT_STRING },		/* text			  */
-    { '"', FT_STRING },		/*   "			  */
-    { 'N', FT_COORDS },		/* absolute position	  */
+  { { '\'',FT_STRING },   /* text       */
+    { '"', FT_STRING },   /*   "        */
+    { 'N', FT_COORDS },   /* absolute position    */
     {  0 ,  0 } };
 
 /* All the data blocks that may occur in the file. */
@@ -457,21 +458,21 @@ t_blockinfo netblocks[] =
 #define NAMES_START 2000
 #define NAMES_OFFSET 1000
 
-net_t	 *rd_net;
+net_t  *rd_net;
 t_coords *rd_co;
-place_t	**PlArray;
+place_t **PlArray;
 trans_t **TrArray;
 int  AnzPlNamen, MaxPlNamen, AnzTrNamen, MaxTrNamen;
 int  placecount, transcount, rd_ident, rd_marked, 
-  rd_blocked, rd_queried;
+  rd_blocked, rd_queried, rd_harmful;
 char autonumbering, *rd_name;
 
 /*****************************************************************************/
-/* insert_{place,trans,arc}						     */
+/* insert_{place,trans,arc}                */
 /* These functions are called from read_PEP_net whenever a place, transition */
 /* or an arc has been parsed in the net. The tables place_dest, trans_dest   */
-/* and arc_dest in read_HLnet determine where read_PEP_net should store	     */
-/* contents of certain fields prior to calling these functions.		     */
+/* and arc_dest in read_HLnet determine where read_PEP_net should store      */
+/* contents of certain fields prior to calling these functions.        */
 
 int insert_place()
 {
@@ -499,6 +500,7 @@ int insert_place()
   if (rd_marked > 1) nc_error("place %s has more than one token",rd_name);
   PlArray[rd_ident]->marked = !!rd_marked;
   PlArray[rd_ident]->queried = !!rd_queried;
+  PlArray[rd_ident]->harmful = !!rd_harmful;
   return 0;
 }
 
@@ -589,35 +591,36 @@ int insert_arc()
 net_t* read_pep_net(char *PEPfilename)
 {
   /* These tables instruct read_PEP_net where contents 
-     of certain fields should be stored.		    */
+     of certain fields should be stored.        */
   
   t_dest place_dest[] =
-    { { '\'',&rd_name },	/* identifier		*/
-      { '"', &rd_name },	/*     "		*/
-      { '0', &rd_ident },	/* numeric name		*/
-      { 'M', &rd_marked },	/* initial marking	*/
-      { 'q', &rd_queried },	/* initial marking	*/
+    { { '\'',&rd_name },  /* identifier   */
+      { '"', &rd_name },  /*     "    */
+      { '0', &rd_ident }, /* numeric name   */
+      { 'M', &rd_marked },  /* initial marking  */
+      { 'q', &rd_queried }, /* queried marking  */
+      { 'h', &rd_harmful }, /* harmful place  */
       {  0 ,  0 } };
     
   t_dest trans_dest[] =
-    { { '\'',&rd_name },	/* identifier		*/
-      { '"', &rd_name },	/*     "		*/
-      { '0', &rd_ident },	/* numeric name		*/
-      { 'B', &rd_blocked },	/* enable blocking	*/
+    { { '\'',&rd_name },  /* identifier   */
+      { '"', &rd_name },  /*     "    */
+      { '0', &rd_ident }, /* numeric name   */
+      { 'B', &rd_blocked }, /* enable blocking  */
       {  0 ,  0 } };
     
   t_dest marking_restr[] =
-    { { '\'',&rd_name },	/* identifier		*/
-      { '"', &rd_name },	/*     "		*/
+    { { '\'',&rd_name },  /* identifier   */
+      { '"', &rd_name },  /*     "    */
       {  0 ,  0 } };
 
   t_dest arc_dest[] =
-    { { '@', &rd_co },	/* source/destination	*/
+    { { '@', &rd_co },  /* source/destination */
       {  0 ,  0 } };
 
   /* This table is passed to read_PEP_net and instructs   */
-  /* it which "hook" functions (see below) should be	*/
-  /* called whenever a place, transition etc. is found.	*/
+  /* it which "hook" functions (see below) should be  */
+  /* called whenever a place, transition etc. is found. */
 
   t_blockdest netdest[] =
     { { "PL",  insert_place, NULL, place_dest },
