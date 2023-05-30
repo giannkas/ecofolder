@@ -1,0 +1,36 @@
+digraph test {
+  t1 -> p3;
+  t2 -> p4;
+  t3 -> p1;
+  t3 -> p5;
+  t3 -> p2;
+  t4 -> p7;
+  t5 -> p8;
+  t6 -> p5;
+  t6 -> p1;
+  t6 -> p6;
+  p2 -> t1;
+  p1 -> t1;
+  p3 -> t2;
+  p5 -> t2;
+  p4 -> t3;
+  p6 -> t4;
+  p5 -> t4;
+  p7 -> t5;
+  p1 -> t5;
+  p8 -> t6;
+  p1 [label=⬤ xlabel= <<FONT COLOR="red">fork1</FONT>> shape=circle ];
+  p2 [label=⬤ xlabel= <<FONT COLOR="red">think1</FONT>> shape=circle ];
+  p3 [label="" xlabel= <<FONT COLOR="red">wait1</FONT>> shape=circle ];
+  p4 [label="" xlabel= <<FONT COLOR="red">eat1</FONT>> shape=circle ];
+  p5 [label=⬤ xlabel= <<FONT COLOR="red">fork2</FONT>> shape=circle ];
+  p6 [label=⬤ xlabel= <<FONT COLOR="red">think2</FONT>> shape=circle ];
+  p7 [label="" xlabel= <<FONT COLOR="red">wait2</FONT>> shape=circle ];
+  p8 [label="" xlabel= <<FONT COLOR="red">eat2</FONT>> shape=circle ];
+  t1 [fillcolor=gray60 label="1-pick1" shape=box style=filled];
+  t2 [fillcolor=gray60 label="1-pick2" shape=box style=filled];
+  t3 [fillcolor=gray60 label="1-done" shape=box style=filled];
+  t4 [fillcolor=gray60 label="2-pick1" shape=box style=filled];
+  t5 [fillcolor=gray60 label="2-pick2" shape=box style=filled];
+  t6 [fillcolor=gray60 label="2-done" shape=box style=filled];
+}

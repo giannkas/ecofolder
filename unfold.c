@@ -420,7 +420,7 @@ void unfold ()
   event_t *ev, *stopev = NULL;
   cond_t  *co;
   querycell_t *qbuck;
-  int cutoff, repeat = 0, check_query = 1, harmful_check = 0;
+  int cutoff, repeat = 0, check_query, harmful_check;
   char trans_pool[(net->maxtrname+2)*(net->numtr)];
   memset( trans_pool, 0, (net->maxtrname+2)*(net->numtr)*sizeof(char) );
 
@@ -495,7 +495,7 @@ void unfold ()
   while (pe_qsize)
   {
     int i, e;
-    check_query = 1;
+    check_query = 1; harmful_check = 0;
     if (interactive) for (;;)
     {
       for (i = 1; i <= pe_qsize; i++)
@@ -526,10 +526,12 @@ void unfold ()
     //printf("ev name: %s\n", ev->origin->name);
     
     check_query = nodelist_compare(qu->marking, mark_qr);
+    // harmful_check = nodelist_compare(qu->marking, harmful_marking);
     for(list = harmful_marking; list && !harmful_check;
       list = list->next)
-      if(nodelist_find(qu->marking, list->node))
+      if(nodelist_find(qu->marking, list->node)){
         harmful_check = 1;
+      }
 
     if(!check_query)
     {
