@@ -135,18 +135,20 @@ void read_mci_file (char *filename, int m_repeat)
     do { fread(c,1,1,file); } while (*c++);
   fread(c,1,1,file);
 
-  char color1[] = "lightblue";
+  char color1[] = "#ccccff"; // or "lightblue";
   char color2[] = "gold";
   char color3[] = "orange";
-  char color4[] = "palegreen";
+  char color4[] = "#cce6cc"; // or "palegreen";
   char color5[] = "cornflowerblue";
   char color6[] = "black";
   char color7[] = "firebrick2";
+  char color8[] = "#4040ff";
+  char color9[] = "#409f40";
 
 
   for (i = 1; i <= numco; i++)
-    printf("  c%d [fillcolor=%s label= <%s<FONT COLOR=\"red\"><SUP>%d</SUP></FONT>&nbsp;(c%d)> shape=circle style=filled];\n",
-        i,queries_co[i] ? color2 : color1,plname[co2pl[i]],tokens[i],i);
+    printf("  c%d [color=\"%s\" fillcolor=\"%s\" label= <%s<FONT COLOR=\"red\"><SUP>%d</SUP></FONT>&nbsp;(c%d)> shape=circle style=filled];\n",
+        i,color8,queries_co[i] ? color2 : color1,plname[co2pl[i]],tokens[i],i);
   for (i = 1; i <= numev; i++)
     if (i == cutoffs[i])
       printf("  e%d [color=%s fillcolor=%s label=\"%s (e%d)\" shape=box style=filled];\n",
@@ -155,8 +157,8 @@ void read_mci_file (char *filename, int m_repeat)
       printf("  e%d [color=%s fillcolor=%s label=\"%s (e%d)\" shape=box style=filled];\n",
           i,queries_ev[i] ? color3 : color6,color7,trname[ev2tr[i]],i);
     else
-      printf("  e%d [fillcolor=%s label=\"%s (e%d)\" shape=box style=filled];\n",
-          i,queries_ev[i] ? color3 : color4,trname[ev2tr[i]],i);
+      printf("  e%d [color=\"%s\" fillcolor=\"%s\" label=\"%s (e%d)\" shape=box style=filled];\n",
+          i,color9,queries_ev[i] ? color3 : color4,trname[ev2tr[i]],i);
   printf("}\n");
 
   fclose(file);

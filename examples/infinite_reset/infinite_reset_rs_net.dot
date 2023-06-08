@@ -1,0 +1,10 @@
+digraph test {
+  t1 -> p3;
+  t1 -> p2;
+  p3 -> t1 [arrowhead=odot];
+  p1 -> t1 [arrowhead=odot];
+  p1 [label="" xlabel= <<FONT COLOR="red">1</FONT>> shape=circle ];
+  p2 [label="" xlabel= <<FONT COLOR="red">2</FONT>> shape=circle ];
+  p3 [label="" xlabel= <<FONT COLOR="red">¬1</FONT>> shape=circle ];
+  t1 [fillcolor="#cccccc" label="a" shape=box style=filled];
+}

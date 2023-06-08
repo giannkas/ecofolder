@@ -1,0 +1,223 @@
+\documentclass{article}
+\usepackage[x11names, svgnames, rgb]{xcolor}
+\usepackage[utf8]{inputenc}
+\usepackage{tikz}
+\usetikzlibrary{snakes,arrows,shapes}
+\usepackage{amsmath}
+%
+%
+
+%
+
+%
+
+\begin{document}
+\pagestyle{empty}
+%
+%
+%
+
+\enlargethispage{100cm}
+% Start of code
+% \begin{tikzpicture}[anchor=mid,>=latex',line join=bevel,]
+\begin{tikzpicture}[>=latex',line join=bevel,]
+  \pgfsetlinewidth{1bp}
+%%
+\pgfsetcolor{black}
+  % Edge: c1 -> e1
+  \draw [->] (129.05bp,546.11bp) .. controls (129.05bp,537.54bp) and (129.05bp,528.54bp)  .. (129.05bp,510.45bp);
+  % Edge: e1 -> c3
+  \draw [->] (111.31bp,474.11bp) .. controls (99.854bp,463.02bp) and (84.582bp,448.24bp)  .. (63.441bp,427.78bp);
+  % Edge: e1 -> c4
+  \draw [->] (129.05bp,474.11bp) .. controls (129.05bp,466.77bp) and (129.05bp,457.8bp)  .. (129.05bp,438.52bp);
+  % Edge: c2 -> e1
+  \draw [->] (194.93bp,557.05bp) .. controls (182.17bp,544.7bp) and (166.89bp,529.91bp)  .. (146.78bp,510.44bp);
+  % Edge: c2 -> e2
+  \draw [->] (221.05bp,546.11bp) .. controls (221.05bp,537.54bp) and (221.05bp,528.54bp)  .. (221.05bp,510.45bp);
+  % Edge: e2 -> c5
+  \draw [->] (221.05bp,474.11bp) .. controls (221.05bp,466.77bp) and (221.05bp,457.8bp)  .. (221.05bp,438.52bp);
+  % Edge: c3 -> e6
+  \draw [->] (37.047bp,364.01bp) .. controls (37.047bp,355.44bp) and (37.047bp,346.45bp)  .. (37.047bp,328.36bp);
+  % Edge: e6 -> c7
+  \draw [->] (37.047bp,292.02bp) .. controls (37.047bp,284.67bp) and (37.047bp,275.71bp)  .. (37.047bp,256.42bp);
+  % Edge: c4 -> e3
+  \draw [->] (129.05bp,364.01bp) .. controls (129.05bp,355.44bp) and (129.05bp,346.45bp)  .. (129.05bp,328.36bp);
+  % Edge: e3 -> c6
+  \draw [->] (129.05bp,292.02bp) .. controls (129.05bp,284.67bp) and (129.05bp,275.71bp)  .. (129.05bp,256.42bp);
+  % Edge: c5 -> e5
+  \draw [->] (221.05bp,364.01bp) .. controls (221.05bp,355.44bp) and (221.05bp,346.45bp)  .. (221.05bp,328.36bp);
+  % Edge: e5 -> c8
+  \draw [->] (221.05bp,292.02bp) .. controls (221.05bp,284.67bp) and (221.05bp,275.71bp)  .. (221.05bp,256.42bp);
+  % Edge: c6 -> e4
+  \draw [->] (129.05bp,181.92bp) .. controls (129.05bp,173.35bp) and (129.05bp,164.35bp)  .. (129.05bp,146.26bp);
+  % Edge: e4 -> c9
+  \draw [->] (129.05bp,109.92bp) .. controls (129.05bp,102.58bp) and (129.05bp,93.615bp)  .. (129.05bp,74.33bp);
+  % Node: c1
+\begin{scope}
+  \definecolor{strokecol}{rgb}{0.25,0.25,1.0}
+  \pgfsetstrokecolor{strokecol}
+  \definecolor{fillcol}{rgb}{0.8,0.8,1.0}
+  \pgfsetfillcolor{fillcol}
+  \filldraw [opacity=1] (129.05bp,583.33bp) ellipse (37.09bp and 37.09bp);
+  \definecolor{strokecol}{rgb}{0.0,0.0,0.0}
+  \pgfsetstrokecolor{strokecol}
+  \draw (129.05bp,583.33bp) node {4 (c1)};
+\end{scope}
+  % Node: e1
+\begin{scope}
+  \definecolor{strokecol}{rgb}{0.25,0.62,0.25}
+  \pgfsetstrokecolor{strokecol}
+  \definecolor{fillcol}{rgb}{0.8,0.9,0.8}
+  \pgfsetfillcolor{fillcol}
+  \filldraw (157.55bp,510.28bp) -- (100.55bp,510.28bp) -- (100.55bp,474.28bp) -- (157.55bp,474.28bp) -- cycle;
+  \definecolor{strokecol}{rgb}{0.0,0.0,0.0}
+  \pgfsetstrokecolor{strokecol}
+  \draw (129.05bp,492.28bp) node {a (e1)};
+\end{scope}
+  % Node: c3
+\begin{scope}
+  \definecolor{strokecol}{rgb}{0.25,0.25,1.0}
+  \pgfsetstrokecolor{strokecol}
+  \definecolor{fillcol}{rgb}{0.8,0.8,1.0}
+  \pgfsetfillcolor{fillcol}
+  \filldraw [opacity=1] (37.05bp,401.23bp) ellipse (37.09bp and 37.09bp);
+  \definecolor{strokecol}{rgb}{0.0,0.0,0.0}
+  \pgfsetstrokecolor{strokecol}
+  \draw (37.047bp,401.23bp) node {3 (c3)};
+\end{scope}
+  % Node: c4
+\begin{scope}
+  \definecolor{strokecol}{rgb}{0.25,0.25,1.0}
+  \pgfsetstrokecolor{strokecol}
+  \definecolor{fillcol}{rgb}{0.8,0.8,1.0}
+  \pgfsetfillcolor{fillcol}
+  \filldraw [opacity=1] (129.05bp,401.23bp) ellipse (37.09bp and 37.09bp);
+  \definecolor{strokecol}{rgb}{0.0,0.0,0.0}
+  \pgfsetstrokecolor{strokecol}
+  \draw (129.05bp,401.23bp) node {2 (c4)};
+\end{scope}
+  % Node: c2
+\begin{scope}
+  \definecolor{strokecol}{rgb}{0.25,0.25,1.0}
+  \pgfsetstrokecolor{strokecol}
+  \definecolor{fillcol}{rgb}{0.8,0.8,1.0}
+  \pgfsetfillcolor{fillcol}
+  \filldraw [opacity=1] (221.05bp,583.33bp) ellipse (37.09bp and 37.09bp);
+  \definecolor{strokecol}{rgb}{0.0,0.0,0.0}
+  \pgfsetstrokecolor{strokecol}
+  \draw (221.05bp,583.33bp) node {1 (c2)};
+\end{scope}
+  % Node: e2
+\begin{scope}
+  \definecolor{strokecol}{rgb}{0.25,0.62,0.25}
+  \pgfsetstrokecolor{strokecol}
+  \definecolor{fillcol}{rgb}{0.8,0.9,0.8}
+  \pgfsetfillcolor{fillcol}
+  \filldraw (250.05bp,510.28bp) -- (192.05bp,510.28bp) -- (192.05bp,474.28bp) -- (250.05bp,474.28bp) -- cycle;
+  \definecolor{strokecol}{rgb}{0.0,0.0,0.0}
+  \pgfsetstrokecolor{strokecol}
+  \draw (221.05bp,492.28bp) node {b (e2)};
+\end{scope}
+  % Node: c5
+\begin{scope}
+  \definecolor{strokecol}{rgb}{0.25,0.25,1.0}
+  \pgfsetstrokecolor{strokecol}
+  \definecolor{fillcol}{rgb}{0.8,0.8,1.0}
+  \pgfsetfillcolor{fillcol}
+  \filldraw [opacity=1] (221.05bp,401.23bp) ellipse (37.09bp and 37.09bp);
+  \definecolor{strokecol}{rgb}{0.0,0.0,0.0}
+  \pgfsetstrokecolor{strokecol}
+  \draw (221.05bp,401.23bp) node {2 (c5)};
+\end{scope}
+  % Node: e6
+\begin{scope}
+  \definecolor{strokecol}{rgb}{0.0,0.0,0.0}
+  \pgfsetstrokecolor{strokecol}
+  \definecolor{fillcol}{rgb}{0.8,0.9,0.8}
+  \pgfsetfillcolor{fillcol}
+  \filldraw (66.05bp,328.19bp) -- (8.05bp,328.19bp) -- (8.05bp,292.19bp) -- (66.05bp,292.19bp) -- cycle;
+  \draw (37.047bp,310.19bp) node {d (e6)};
+\end{scope}
+  % Node: c7
+\begin{scope}
+  \definecolor{strokecol}{rgb}{0.25,0.25,1.0}
+  \pgfsetstrokecolor{strokecol}
+  \definecolor{fillcol}{rgb}{0.8,0.8,1.0}
+  \pgfsetfillcolor{fillcol}
+  \filldraw [opacity=1] (37.05bp,219.14bp) ellipse (37.09bp and 37.09bp);
+  \definecolor{strokecol}{rgb}{0.0,0.0,0.0}
+  \pgfsetstrokecolor{strokecol}
+  \draw (37.047bp,219.14bp) node {4 (c7)};
+\end{scope}
+  % Node: e3
+\begin{scope}
+  \definecolor{strokecol}{rgb}{0.25,0.62,0.25}
+  \pgfsetstrokecolor{strokecol}
+  \definecolor{fillcol}{rgb}{0.8,0.9,0.8}
+  \pgfsetfillcolor{fillcol}
+  \filldraw (157.05bp,328.19bp) -- (101.05bp,328.19bp) -- (101.05bp,292.19bp) -- (157.05bp,292.19bp) -- cycle;
+  \definecolor{strokecol}{rgb}{0.0,0.0,0.0}
+  \pgfsetstrokecolor{strokecol}
+  \draw (129.05bp,310.19bp) node {c (e3)};
+\end{scope}
+  % Node: c6
+\begin{scope}
+  \definecolor{strokecol}{rgb}{0.25,0.25,1.0}
+  \pgfsetstrokecolor{strokecol}
+  \definecolor{fillcol}{rgb}{0.8,0.8,1.0}
+  \pgfsetfillcolor{fillcol}
+  \filldraw [opacity=1] (129.05bp,219.14bp) ellipse (37.09bp and 37.09bp);
+  \definecolor{strokecol}{rgb}{0.0,0.0,0.0}
+  \pgfsetstrokecolor{strokecol}
+  \draw (129.05bp,219.14bp) node {1 (c6)};
+\end{scope}
+  % Node: e5
+\begin{scope}
+  \definecolor{strokecol}{rgb}{0.0,0.0,0.0}
+  \pgfsetstrokecolor{strokecol}
+  \definecolor{fillcol}{rgb}{0.8,0.9,0.8}
+  \pgfsetfillcolor{fillcol}
+  \filldraw (249.05bp,328.19bp) -- (193.05bp,328.19bp) -- (193.05bp,292.19bp) -- (249.05bp,292.19bp) -- cycle;
+  \draw (221.05bp,310.19bp) node {c (e5)};
+\end{scope}
+  % Node: c8
+\begin{scope}
+  \definecolor{strokecol}{rgb}{0.25,0.25,1.0}
+  \pgfsetstrokecolor{strokecol}
+  \definecolor{fillcol}{rgb}{0.8,0.8,1.0}
+  \pgfsetfillcolor{fillcol}
+  \filldraw [opacity=1] (221.05bp,219.14bp) ellipse (37.09bp and 37.09bp);
+  \definecolor{strokecol}{rgb}{0.0,0.0,0.0}
+  \pgfsetstrokecolor{strokecol}
+  \draw (221.05bp,219.14bp) node {1 (c8)};
+\end{scope}
+  % Node: e4
+\begin{scope}
+  \definecolor{strokecol}{rgb}{0.0,0.0,0.0}
+  \pgfsetstrokecolor{strokecol}
+  \definecolor{fillcol}{rgb}{0.8,0.9,0.8}
+  \pgfsetfillcolor{fillcol}
+  \filldraw (158.05bp,146.09bp) -- (100.05bp,146.09bp) -- (100.05bp,110.09bp) -- (158.05bp,110.09bp) -- cycle;
+  \draw (129.05bp,128.09bp) node {b (e4)};
+\end{scope}
+  % Node: c9
+\begin{scope}
+  \definecolor{strokecol}{rgb}{0.25,0.25,1.0}
+  \pgfsetstrokecolor{strokecol}
+  \definecolor{fillcol}{rgb}{0.8,0.8,1.0}
+  \pgfsetfillcolor{fillcol}
+  \filldraw [opacity=1] (129.05bp,37.05bp) ellipse (37.09bp and 37.09bp);
+  \definecolor{strokecol}{rgb}{0.0,0.0,0.0}
+  \pgfsetstrokecolor{strokecol}
+  \draw (129.05bp,37.047bp) node {2 (c9)};
+\end{scope}
+%
+\end{tikzpicture}
+% End of code
+
+%
+\end{document}
+%
+
+
+
