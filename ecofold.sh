@@ -2,10 +2,10 @@
 
 echo "Unfolding..."
 #./ecofolder $1.ll_net
-./ecofolder -c -mcmillan $1.ll
+./ecofolder $1.ll_net
 
 echo "Converting to dot..."
-./mci2dot_cpr $1_unf.mci > $1_unf.dot
+./mci2dot $1_unf.mci > $1_unf.dot
 
 echo "Producing the pdf..."
 dot -T pdf $1_unf.dot > $1_unf.pdf

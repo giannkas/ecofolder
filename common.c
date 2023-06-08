@@ -14,13 +14,13 @@
 
 void nc_error (const char* msg, ...)
 {
-	va_list	the_args;
-	va_start(the_args,msg);
-	fprintf(stderr,"%s: ",PROGRAM_NAME);
-	vfprintf(stderr,msg,the_args);
-	fprintf(stderr,"\n");
-	va_end(the_args);
-	exit(1);
+  va_list	the_args;
+  va_start(the_args,msg);
+  fprintf(stderr,"%s: ",PROGRAM_NAME);
+  vfprintf(stderr,msg,the_args);
+  fprintf(stderr,"\n");
+  va_end(the_args);
+  exit(1);
 }
 
 /****************************************************************************/
@@ -29,12 +29,12 @@ void nc_error (const char* msg, ...)
 
 void nc_warning (const char* msg, ...)
 {
-	va_list	the_args;
-	va_start(the_args,msg);
-	fprintf(stderr,"%s warning: ",PROGRAM_NAME);
-	vfprintf(stderr,msg,the_args);
-	fprintf(stderr,"\n");
-	va_end(the_args);
+  va_list	the_args;
+  va_start(the_args,msg);
+  fprintf(stderr,"%s warning: ",PROGRAM_NAME);
+  vfprintf(stderr,msg,the_args);
+  fprintf(stderr,"\n");
+  va_end(the_args);
 }
 
 int strtoint(char *num) {
@@ -93,30 +93,30 @@ char* ltokstr(char *str, int ins, char delim){
 
 void* MYmalloc(size_t size)
 {
-	//printf("size: %lu\n", size);
-	void * m;
-	if (!(m = malloc(size))) nc_error("MYmalloc memory allocation rejected!");
-	return m;
+  //printf("size: %lu\n", size);
+  void * m;
+  if (!(m = malloc(size))) nc_error("MYmalloc memory allocation rejected!");
+  return m;
 }
 
 void* MYcalloc(size_t size)
 {
-	void * m;
-	if (!(m = calloc(size, 1))) nc_error("MYcalloc memory allocation rejected!");
-	memset(m,0,size);
-	return m;
+  void * m;
+  if (!(m = calloc(size, 1))) nc_error("MYcalloc memory allocation rejected!");
+  memset(m,0,size);
+  return m;
 }
 
 void* MYrealloc(void *ptr, size_t size)
 {
-	void *r;
-	if (!(r = realloc(ptr,size))) nc_error("MYrealloc memory allocation rejected!");
-	return r;
+  void *r;
+  if (!(r = realloc(ptr,size))) nc_error("MYrealloc memory allocation rejected!");
+  return r;
 }
 
 char* MYstrdup(char *string)
 {
-	char *str;
-	if (!(str = strdup(string))) nc_error("MYstrdup memory allocation rejected!");
-	return str;
+  char *str;
+  if (!(str = strdup(string))) nc_error("MYstrdup memory allocation rejected!");
+  return str;
 }

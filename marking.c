@@ -114,11 +114,11 @@ int add_marking (nodelist_t *marking, event_t *ev)
   while (*buck && (cmp = nodelist_compare(marking,(*buck)->marking)) > 0)
     buck = &((*buck)->next);
 
-  printf("hola\n");
+  /* printf("hola\n");
   if(ev) printf("creating marking: %s, %d\n", ev->origin->name, ev->id);
   for(list = marking; list; list = list->next)
     printf("%s, ", ((place_t*)(list->node))->name);
-  printf("\nchao\n");
+  printf("\nchao\n"); */
   
   if(!cmp && mcmillan) 
   {
@@ -176,20 +176,6 @@ nodelist_t* retrieve_list (char* attribute)
 
   return list;
 }
-
-/******************************************************/
-/* Format the marking query.     */
-
-/* nodelist_t* format_marking_query ()
-{
-  place_t *pl;
-  nodelist_t *list = NULL;
-
-  for (pl = net->places; pl; pl = pl->next)
-    if (pl->queried) nodelist_insert(&list,pl);
-  
-  return list;
-} */
 
 /******************************************************/
 

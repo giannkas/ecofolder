@@ -135,7 +135,7 @@ void llnet2dot(char* in_file){
       while(fgets(d_read, READ_PLACES, r_pointer) != NULL && strstr(d_read, "\"")){
         token = ftokstr(d_read, 1, '\"');
         if(i <= trans)
-          fprintf(w_pointer, "  t%d [fillcolor=gray60 label=\"%s\" shape=box style=filled];\n",i,token);
+          fprintf(w_pointer, "  t%d [fillcolor=\"#cccccc\" label=\"%s\" shape=box style=filled];\n",i,token);
         i++;
       }
     }

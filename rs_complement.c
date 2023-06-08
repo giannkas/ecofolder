@@ -12,16 +12,16 @@
 
 void usage(char *myname)
 {
-	fprintf(stderr,
-		"%s -- reset complemen encoding for reset nets\n\n"
-		"Usage: %s <LLnetfile> \n\n"
+  fprintf(stderr,
+    "%s -- reset complement encoding for reset nets\n\n"
+    "Usage: %s <LLnetfile> \n\n"
 
-	"Unless specified otherwise, all filenames will default to\n"
-	"the basename of <LLnetfile> plus appropriate extensions.\n\n"
+  "Unless specified otherwise, all filenames will default to\n"
+  "the basename of <LLnetfile> plus appropriate extensions.\n\n"
 
-	"Version 1.0.0 (29.04.2022)\n", myname, myname);
+  "Version 1.0.0 (29.04.2022)\n", myname, myname);
 
-	exit(1);
+  exit(1);
 }
 
 /*****************************************************************************/
@@ -34,8 +34,8 @@ char* rs_complement(char* in_file){
     
   // Variables that come along
   char d_read[MAX_RESET_PLACES];
-  char out_file[MAX_RESET_PLACES] = {0};  
-  char *token, *tmp, *tmp1, *token2;    
+  char out_file[MAX_RESET_PLACES] = {0};
+  char *token, *tmp, *tmp1, *token2;
   int header = 0, places = 0, trans = 0, complement_places = 0, num_tmp, num_tmp1, names = 1;
 
   // Open the existing file using fopen()
@@ -94,11 +94,11 @@ char* rs_complement(char* in_file){
         num_tmp = strtol(token, &token2, 10);        
         if(complement_place[num_tmp] == 0){
           if (!strcmp(ltokstr(place_names[num_tmp], 1, '\"'),"M1\n"))
-            sprintf(buf_arcs, "\"%s%s\"\n,", 
-              ftokstr(place_names[num_tmp], 1, '\"'), "¬");
+            sprintf(buf_arcs, "\"%s%s\"\n,", "¬", 
+              ftokstr(place_names[num_tmp], 1, '\"'));
           else
-            sprintf(buf_arcs, "\"%s%s\"%s\n,", 
-              ftokstr(place_names[num_tmp], 1, '\"'), "¬","M1");
+            sprintf(buf_arcs, "\"%s%s\"%s\n,", "¬", 
+              ftokstr(place_names[num_tmp], 1, '\"'),"M1");
           strcat(buffer_pl, buf_arcs);
           complement_places++;
           id_complement_place[complement_places] = num_tmp;
@@ -135,7 +135,7 @@ char* rs_complement(char* in_file){
             num_tmp = strtol(tmp, &token2, 10);
             num_tmp1 = strtol(tmp1, &token2, 10);
             if(complement_place[num_tmp1] > 0)
-              presets[num_tmp1][num_tmp] = num_tmp;              
+              presets[num_tmp1][num_tmp] = num_tmp;
           }
         }
       }
@@ -150,7 +150,7 @@ char* rs_complement(char* in_file){
             num_tmp = strtol(tmp, &token2, 10);
             num_tmp1 = strtol(tmp1, &token2, 10);
             if(complement_place[num_tmp] > 0)
-              postsets[num_tmp][num_tmp1] = num_tmp1;              
+              postsets[num_tmp][num_tmp1] = num_tmp1;
           }
         }
       }
@@ -165,7 +165,7 @@ char* rs_complement(char* in_file){
             num_tmp = strtol(tmp, &token2, 10);
             num_tmp1 = strtol(tmp1, &token2, 10);
             if(complement_place[num_tmp] > 0)
-              resets[num_tmp][num_tmp1] = num_tmp1;              
+              resets[num_tmp][num_tmp1] = num_tmp1;
           }
         }
       }
@@ -174,7 +174,7 @@ char* rs_complement(char* in_file){
       fseek( r_pointer, 0, SEEK_SET );
       while(fgets(d_read, MAX_RESET_PLACES, r_pointer) != NULL && !strstr(d_read, "TP")){}
       
-      /* Constructing the preset of p¬ according to p: pre(p¬) = (post(p) U res(p))\pre(p) */
+      /* Constructing the preset of ¬p according to p: pre(¬p) = (post(p) U res(p))\pre(p) */
       if(strstr(d_read, "TP")){
         fprintf(w_pointer, "%s", d_read);
         for (size_t i = 1; i <= complement_places; i++){
@@ -197,7 +197,7 @@ char* rs_complement(char* in_file){
           fprintf(w_pointer, "%s", d_read);
       }
 
-      /* Constructing the postset of p¬ according to p: post(p¬) = pre(p)\(post(p) U res(p)) */
+      /* Constructing the postset of ¬p according to p: post(¬p) = pre(p)\(post(p) U res(p)) */
       if(strstr(d_read, "PT")){
         fprintf(w_pointer, "%s", d_read);
         for (size_t i = 1; i <= complement_places; i++){
@@ -206,17 +206,17 @@ char* rs_complement(char* in_file){
             for (size_t k = 1; k <= trans; k++){
               if(presets[num_tmp][k] != 0 && presets[num_tmp][k] != postsets[num_tmp][k] && presets[num_tmp][k] != resets[num_tmp][k]){
                 sprintf(buf_arcs, "%d>%d", complement_place[num_tmp]*-1, presets[num_tmp][k]);
-                fprintf(w_pointer, "%s\n", buf_arcs);                  
-              }                
+                fprintf(w_pointer, "%s\n", buf_arcs);
+              }
             }
-            complement_place[num_tmp] *= -1;            
+            complement_place[num_tmp] *= -1;
           }
         }
         while(fgets(d_read, MAX_RESET_PLACES, r_pointer) && !strstr(d_read, "RS"))
-          fprintf(w_pointer, "%s", d_read);        
+          fprintf(w_pointer, "%s", d_read);
       }
 
-      /* Constructing the reset of p¬ according to p: res(p¬) = res(p) */
+      /* Constructing the reset of ¬p according to p: res(¬p) = res(p) */
       if(strstr(d_read, "RS")){
         fprintf(w_pointer, "%s", d_read);
         for (size_t i = 1; i <= complement_places; i++){
@@ -228,11 +228,11 @@ char* rs_complement(char* in_file){
                 fprintf(w_pointer, "%s\n", buf_arcs);
               }
             }
-            complement_place[num_tmp] *= -1;            
+            complement_place[num_tmp] *= -1;
           }
         }
         while(fgets(d_read, MAX_RESET_PLACES, r_pointer))
-          fprintf(w_pointer, "%s", d_read);        
+          fprintf(w_pointer, "%s", d_read);
       }
     }
     fclose(r_pointer);
@@ -243,10 +243,10 @@ char* rs_complement(char* in_file){
 
 int main (int argc, char **argv)
 {
-	if (argc != 2){
-		fprintf(stderr,"usage: rs_encoding <mcifile>\n");
-		exit(1);
-	}
-	rs_complement(argv[1]);
-	exit(0);
+  if (argc != 2){
+    fprintf(stderr,"usage: rs_encoding <mcifile>\n");
+    exit(1);
+  }
+  rs_complement(argv[1]);
+  exit(0);
 }
