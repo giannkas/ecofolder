@@ -140,7 +140,7 @@ char* pr_encoding(char* in_file){
       /* TP SECTION */
       /* Any transition t producing p in N produces p_i in N', i.e., p_i in postset(t)*/
       if(strstr(d_read, "TR")){
-        fprintf(w_pointer, "%s", d_read);        
+        fprintf(w_pointer, "%s", d_read);
         while(fgets(d_read, READ_PLACES, r_pointer) && !strstr(d_read, "PT")){
           if( strlen(d_read) > 2 && isdigit(d_read[0]) ){
             tmp1 = ltokstr(d_read, 0, '<');
