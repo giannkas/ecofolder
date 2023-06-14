@@ -85,6 +85,7 @@ typedef struct event_t
   coa_t  coarray;
   int    id;
   int queried;        /* non-zero if the event has a causal relation with a queried marking      */
+  int cutoff;
   short  foata_level;
   short  preset_size, postset_size;
 } event_t;

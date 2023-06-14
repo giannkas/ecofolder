@@ -22,6 +22,7 @@ extern void nc_warning (const char*,...);
 int strtoint(char*);
 char* ftokstr(char *, int, char);
 char* ltokstr(char *, int, char);
+char* bltokstr(char *, int, char);
 
 //#define MALLOC_CHECK_ = 2;
 

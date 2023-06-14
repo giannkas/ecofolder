@@ -68,6 +68,26 @@ char* ftokstr(char *str, int ins, char delim)
     return i == len && ins > c_delim ? NULL : tok;
 }
 
+char* bltokstr(char *str, int ins, char delim){
+    int len = strlen(str), pos, i = 0, c_delim = 0;
+    char *tok = malloc(len+1);
+
+    for (pos = len-1; pos >= 0 && c_delim <= ins; pos--){
+        if (str[pos] == delim){
+            if (c_delim == ins)
+                break;
+            c_delim++;
+        }
+    }
+
+    if(str[pos] == delim){
+      for (i = 0; i < pos; i++)
+        *(tok+i) = *(str+i);
+    }
+    *(tok+i) = '\0';
+    return tok;
+}
+
 char* ltokstr(char *str, int ins, char delim){
     int len = strlen(str), pos, i = 0, c_delim = 0;
     char *tok = malloc(len+1);
@@ -81,8 +101,8 @@ char* ltokstr(char *str, int ins, char delim){
     }
 
     if(str[pos] == delim){
-        for (i = 0; i < len && pos+1 < len; i++, pos++)
-            *(tok+i) = *(str+pos+1);
+      for (i = 0; i < len && pos+1 < len; i++, pos++)
+        *(tok+i) = *(str+pos+1);
     }
     *(tok+i) = '\0';
     return tok;

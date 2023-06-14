@@ -2,7 +2,7 @@
 
 echo "Unfolding..."
 #./ecofolder $1.ll_net
-./ecofolder $1.ll_net
+./ecofolder -csv $1.ll_net
 
 echo "Converting to dot..."
 ./mci2dot $1_unf.mci > $1_unf.dot

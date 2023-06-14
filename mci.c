@@ -24,16 +24,44 @@ void write_mci_file (char *filename)
 {
   #define write_int(x) fwrite(&(x),sizeof(int),1,file)
 
-  FILE *file;
+  FILE *file, *file_nodes, *file_edges;
   place_t *pl;
   trans_t *tr;
   cond_t *co;
   event_t *ev;
   nodelist_t *list1, *list2;
   int ev_num = 0, sz = 0, null = 0, once = 0, tmp = 0;
+  char *flname_nodes, *flname_edges;
+
+  flname_nodes = MYcalloc(sizeof(char) * (strlen(filename)+20));
+  flname_edges = MYcalloc(sizeof(char) * (strlen(filename)+20));
 
   if (!(file = fopen(filename,"wb")))
     nc_error("cannot write to file %s\n",filename);
+
+  if (csv)
+  {
+    filename = bltokstr(filename,0,'_');
+    printf("filename: %s", filename);
+    strcat(flname_nodes,filename);
+    strcat(flname_edges,filename);
+    strcat(flname_nodes, "_nodes.csv");
+    strcat(flname_edges, "_edges.csv");
+  
+    if (!(file_nodes = fopen(flname_nodes,"w")))
+    {
+      fprintf(stderr,
+        "cannot write file for nodes %s\n",flname_nodes);
+      exit(1);
+    }
+
+    if (!(file_edges = fopen(flname_edges,"w")))
+    {
+      fprintf(stderr,
+        "cannot write file_in %s\n",flname_edges);
+      exit(1);
+    }
+  }
 
   write_int(unf->numco);
   write_int(unf->numev);
@@ -121,6 +149,7 @@ void write_mci_file (char *filename)
   for (ev = unf->events; ev; ev = ev->next){
     write_int(ev->origin->num);
     write_int(ev->queried);
+    if (csv) fprintf(file_nodes,"e%d,event,%s,%d\n",ev->mark,ev->origin->name,ev->cutoff);
   }
 
   for (co = unf->conditions; co ; co = co->next)
@@ -128,10 +157,19 @@ void write_mci_file (char *filename)
     write_int(co->origin->num);
     write_int(co->token);
     write_int(co->queried);
-    if (co->pre_ev) write_int(co->pre_ev->mark);
+    if (csv) fprintf(file_nodes,"c%d,condition,%s,%d,%d\n",co->num+1,co->origin->name,co->token,0);
+
+    if (co->pre_ev) 
+    {
+      write_int(co->pre_ev->mark);
+      if (csv) fprintf(file_edges,"e%d,c%d\n",co->pre_ev->mark,co->num+1);
+    }
       else	write_int(null);
     for (list1 = co->postset; list1; list1 = list1->next)
+    {
       write_int((ev = list1->node)->mark);
+      if (csv) fprintf(file_edges,"c%d,e%d\n",co->num+1,ev->mark);
+    }
     write_int(null);
   }
   
@@ -163,4 +201,6 @@ void write_mci_file (char *filename)
   fwrite("",1,1,file);
 
   fclose(file);
+  fclose(file_nodes);
+  fclose(file_edges);
 }
