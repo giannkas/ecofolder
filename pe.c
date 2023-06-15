@@ -6,28 +6,28 @@
 
 /* The worklist of possible extensions is organized as a priority heap
    using an array (of pointers). The array is extended in steps of size
-   PE_ALLOC_STEP as needed.						*/
+   PE_ALLOC_STEP as needed.           */
 
 #define PE_ALLOC_STEP 1024
-pe_queue_t **pe_queue;		/* the priority array */
-int pe_qsize, pe_qalloc;	/* current/maximum capacity */
+pe_queue_t **pe_queue;    /* the priority array */
+int pe_qsize, pe_qalloc;  /* current/maximum capacity */
 
 /* This structure (a list of node lists) is used during the search for
    possible extensions to enumerate all potential sets conditions for a
-   given transition.							*/
+   given transition.              */
 typedef struct pe_comb_t
 {
   nodelist_t *current;
   nodelist_t *start;
 } pe_comb_t;
 
-pe_comb_t *pe_combs;	/* used in pe() */
-cond_t   **pe_conds;	/* array of conditions, given by pe() to pe_insert() */
-uchar     *pe0_conflicts;	/* conflicts of the initial conditions */
+pe_comb_t *pe_combs;  /* used in pe() */
+cond_t   **pe_conds;  /* array of conditions, given by pe() to pe_insert() */
+uchar     *pe0_conflicts; /* conflicts of the initial conditions */
 
 /*****************************************************************************/
 /* Simple functions: initialize queue, release a queue entry, and release    */
-/* memory allocated during initialization.				     */
+/* memory allocated during initialization.             */
 
 void pe_init (nodelist_t *m0)
 {
@@ -58,7 +58,7 @@ void pe_finish ()
 }
 
 /*****************************************************************************/
-/* Adds the possible extension (tr,pe_conds) to the priority queue.	     */
+/* Adds the possible extension (tr,pe_conds) to the priority queue.      */
 
 void pe_insert (trans_t *tr)
 {
@@ -69,7 +69,7 @@ void pe_insert (trans_t *tr)
   
   /* If -d is used, ignore the new event if its size exceeds the limit. */
   if (unfold_depth && qu_new->lc_size > unfold_depth)
-    {	pe_qsize--; return;	}
+    { pe_qsize--; return; }
   
   /* When the -T is used and stoptr is found, empty the queue to make
     sure that the corresponding event is processed immediately. Also,
@@ -98,11 +98,11 @@ void pe_insert (trans_t *tr)
     if (pe_compare(qu_new,pe_queue[index/2]) > 0) break;
     pe_queue[index] = pe_queue[index/2]; /* move parent downwards */
   }
-  pe_queue[index] = qu_new;	
+  pe_queue[index] = qu_new; 
 }
 
 /*****************************************************************************/
-/* Remove the minimal event from the queue and restore order.		     */
+/* Remove the minimal event from the queue and restore order.        */
 
 pe_queue_t* pe_pop (int where)
 {
@@ -112,7 +112,7 @@ pe_queue_t* pe_pop (int where)
 
   if (!pe_qsize) return NULL;
   last = pe_queue[pe_qsize--];
-  for (;;)	/* sift last element downwards */
+  for (;;)  /* sift last element downwards */
   {
     if (index > pe_qsize / 2) break;
     /* compare "last" and children of index */
@@ -128,7 +128,7 @@ pe_queue_t* pe_pop (int where)
       newindex = index * 2;
     else
       break;
-    pe_queue[index] = pe_queue[newindex];	/* move child upwards */
+    pe_queue[index] = pe_queue[newindex]; /* move child upwards */
     index = newindex;
   }
   pe_queue[index] = last;
@@ -138,7 +138,7 @@ pe_queue_t* pe_pop (int where)
 /*****************************************************************************/
 /* Check whether any pair of conditions downwards from curr is in conflict   */
 /* The check excludes the condition given to pe(), because we already know   */
-/* that that one is not in conflict with any of the others.		     */
+/* that that one is not in conflict with any of the others.        */
 
 char pe_conflict (pe_comb_t *curr)
 {
@@ -160,12 +160,12 @@ char pe_conflict (pe_comb_t *curr)
        (*++queue = ev)->mark = ev_mark;
   }
   
-  /* go upwards, try to find two paths converging at some condition */	
+  /* go upwards, try to find two paths converging at some condition */  
   while ((ev = *queue))
   {
-    queue--;		
+    queue--;
     for (sz = ev->origin->prereset_size, co_ptr = ev->preset; sz--; )
-    {			
+    {
       if ((co = *co_ptr++)->mark == ev_mark)
         return 1;
 
@@ -178,7 +178,7 @@ char pe_conflict (pe_comb_t *curr)
 }
 
 /*****************************************************************************/
-/* Find the new possible extensions created by the addition of co.	     */
+/* Find the new possible extensions created by the addition of co.       */
 
 void pe (cond_t *co)
 {
@@ -188,7 +188,7 @@ void pe (cond_t *co)
   place_t *pl = co->origin, *pl2;
   trans_t *tr;
   
-  *pe_conds = co;	/* any new PE contains co */
+  *pe_conds = co; /* any new PE contains co */
   nodelist_push(&(pl->conds),co);
   /* check the transitions in pl's postset */
   for (pl_post = nodelist_concatenate(pl->postset, pl->reset); pl_post; pl_post = pl_post->next)
@@ -232,7 +232,7 @@ void pe (cond_t *co)
       }
       
       cocoptr = co->co_private.conds - 1;
-      while (*++cocoptr){				
+      while (*++cocoptr){       
         if ((*cocoptr)->origin == pl2){
           if (((*cocoptr)->token && nodelist_find(tr->preset, (*cocoptr)->origin)) ||
             (nodelist_find(tr->reset, (*cocoptr)->origin))
@@ -264,7 +264,7 @@ void pe (cond_t *co)
         curr_comb--;
       }
       else if (!pe_conflict(curr_comb))
-      {				
+      {
         curr_comb++;
         continue;
       }
@@ -278,7 +278,7 @@ void pe (cond_t *co)
     
     /* release the comb lists */
     for (curr_comb = pe_combs; curr_comb->start; curr_comb++)
-      nodelist_delete(curr_comb->start);		
+      nodelist_delete(curr_comb->start);    
   }
   
 }

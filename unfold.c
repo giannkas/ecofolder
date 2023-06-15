@@ -117,7 +117,7 @@ cond_t* insert_condition (place_t *pl, event_t *ev, int queried,
 
   if (interactive)
   {
-    printf("Added condition C%d (%s)",co->num,pl->name);
+    printf("Added condition C%d (%s)",(co->num)+1,pl->name);
     if (ev) printf(" [event E%d]",ev->id);
     printf(".\n");
   }
@@ -496,8 +496,8 @@ void unfold ()
   /* take the next event from the queue */
   while (pe_qsize)
   {
-    int i, e;
-    check_query = 1; harmful_check = 0;
+    int i, e, ev_choice;
+    check_query = 1; harmful_check = 1;
     if (interactive) for (;;)
     {
       for (i = 1; i <= pe_qsize; i++)
@@ -511,9 +511,14 @@ void unfold ()
       }
       printf("\nCurrent event queue:");
       for (i = 1; i <= pe_qsize; i++)
-        printf(" E%d",pe_queue[i]->id);
+        printf(" E%d, %d",pe_queue[i]->id, i);
       printf("\nUnfold event E");
       scanf("%d",&e);
+
+      i = 1;
+      for (; i <= pe_qsize && pe_queue[i]->id != e; i++);
+      ev_choice = i;
+      printf("ev_choice: %d\n", ev_choice);
 
       for (i = 1; i <= pe_qsize; i++)
         if (pe_queue[i]->id == e) break;
@@ -529,10 +534,10 @@ void unfold ()
     
     check_query = nodelist_compare(qu->marking, mark_qr);
     // harmful_check = nodelist_compare(qu->marking, harmful_marking);
-    for(list = harmful_marking; list && !harmful_check;
+    for(list = harmful_marking; list && harmful_check;
       list = list->next)
-      if(nodelist_find(qu->marking, list->node)){
-        harmful_check = 1;
+      if(!nodelist_find(qu->marking, list->node)){
+        harmful_check = 0;
       }
 
     if(!check_query)
@@ -578,13 +583,12 @@ void unfold ()
     /* add post-conditions for cut-off events */
     if (!cutoff)
     { 
-      //printf("hola\n");
       unf->events = unf->events->next; 
       ev->cutoff = 1;
       add_post_conditions(ev,CUTOFF_YES, repeat, !check_query);
       continue;
     }
-    else if(harmful_check)
+    else if(harmful_marking && harmful_check)
     {
       unf->events = unf->events->next; 
       nodelist_push(&harmful_list,ev);
@@ -598,7 +602,6 @@ void unfold ()
     /* add post-conditions, compute possible extensions */
     pe_free(qu);
   }
-
 
   if(strlen(trans_pool) > 2){
     trans_pool[strlen(trans_pool)-2] = 0;

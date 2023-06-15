@@ -137,7 +137,7 @@ int nodelist_compare (nodelist_t *list1, nodelist_t *list2)
   return 1;
 }
 
-/*****************************************************************************/ 	//*** NEW FUNCTION ***//
+/*****************************************************************************/
 /* concatenate two lists and return the join    */
 
 nodelist_t* nodelist_concatenate(nodelist_t *list1, nodelist_t *list2)

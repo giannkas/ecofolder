@@ -137,7 +137,7 @@ pe_queue_t* create_queue_entry (trans_t *tr)
   parikh_reset();
   parikh_add(tr->num);
   /* add the input events of the pre-conditions into the queue */
-  for (sz = tr->prereset_size, co_ptr = pe_conds; sz--; ) 			//*** NEW ***//
+  for (sz = tr->prereset_size, co_ptr = pe_conds; sz--; )
   {
     (co = *co_ptr++)->mark = ev_mark;
     if ((ev = co->pre_ev) && ev->mark != ev_mark)
@@ -169,7 +169,7 @@ pe_queue_t* create_queue_entry (trans_t *tr)
     printf("Discovered new extension E%d (%s) [condition%s",
       qu_new->id, tr->name, tr->prereset_size == 1? "" : "s");
     int i = tr->prereset_size;
-    while (i) { printf(" C%d",pe_conds[--i]->num); }
+    while (i) { printf(" C%d",(pe_conds[--i]->num)+1); }
     printf("].\n");
   }
 
