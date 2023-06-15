@@ -65,7 +65,7 @@ extern void print_marking_co (nodelist_t*);
 typedef struct pe_queue_t
 {
   int lc_size;      /* size of local configuration  */
-        struct parikh_t *p_vector;  /* Parikh vector    */
+  struct parikh_t *p_vector;  /* Parikh vector    */
   trans_t  *trans;    /* transition           */
   cond_t  **conds;    /* input conditions     */
   nodelist_t *marking;    /* marking associated with [e]  */
