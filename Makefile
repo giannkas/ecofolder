@@ -17,8 +17,8 @@ SHELL = /bin/sh
 TMPFILES =
 
 OBJECTS = main.o common.o readlib.o \
-	  netconv.o nodelist.o readpep.o mci.o \
-	  mci_cpr.o unfold.o marking.o pe.o order.o
+    netconv.o nodelist.o readpep.o mci.o \
+    mci_cpr.o unfold.o marking.o pe.o order.o
 
 OBJECTS_EV = mci2dot_ev.o
 

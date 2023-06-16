@@ -129,7 +129,7 @@ void read_mci_file_ev (char *filename, int m_repeat)
                                             // to save the particular queries' events.
   ev2tr = malloc((numev+1) * sizeof(int)); // reserve empty memory for the total number 
                                            // events.
-  cutoffs = calloc(numev+1, sizeof(int));                                         
+  cutoffs = calloc(numev+1, sizeof(int));
   int (*co_postsets)[numev+1] = calloc(numco+1, sizeof *co_postsets); 
                                            // conditions' postsets to detect conflicts in events.
   int (*ev_succs)[numev+1] = calloc(numev+1, sizeof *ev_succs); // matrix to record events' successors.
