@@ -22,11 +22,14 @@ extern int conditions_size, events_size;
 extern int ev_mark;          /* needed for various procedures */
 extern int hash_buckets;
 extern event_t **events;
+extern int conflsteps;
+extern int** confl_evs;
 
 extern int exitcode;    /* proposed exit code of the program         */
 extern trans_t *stoptr;   /* the transition mentioned by the -T switch */
 extern int unfold_depth;  /* argument of the -d parameter */
 extern int interactive;   /* whether the -i switch has been supplied */
+extern int confmax;   /* whether the -confmax switch has been supplied */
 extern int compressed;    /* whether the -c switch has been supplied */
 extern int mcmillan;    /* whether the -mcmillan switch is enabled */
 extern int m_repeat;    /* whether the -r switch has been supplied */

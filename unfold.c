@@ -5,23 +5,29 @@
 #include "netconv.h"
 #include "unfold.h"
 
-net_t *net;	/* stores the net	*/
-unf_t *unf;	/* stores the unfolding */
+net_t *net; /* stores the net */
+unf_t *unf; /* stores the unfolding */
+
+#define CO_ALLOC_STEP 1024
 
 int exitcode = 0;
 int conditions_size, events_size, ce_alloc_step;
 int ev_mark;
-cond_t  **conditions;			/* condition queue in marking_of   */
-event_t **events;			/* event queue in pe_conflict etc. */
-trans_t *stoptr = NULL;			/* transition in -T switch         */
-int unfold_depth = 0;			/* argument of -d switch	   */
-int interactive = 0;			/* interactivem mode (-i)	   */
-int compressed = 0;			/* compressed unfolding view (-c)	   */
+cond_t  **conditions;     /* condition queue in marking_of   */
+event_t **events;     /* event queue in pe_conflict etc. */
+trans_t *stoptr = NULL;     /* transition in -T switch         */
+int unfold_depth = 0;     /* argument of -d switch     */
+int confmax = 0;      /* display maximal configurations, 
+                      it will automatically set interactive mode (-i)    */
+int interactive = 0;      /* interactive mode (-i)    */
+int compressed = 0;     /* compressed unfolding view (-c)    */
 int mcmillan = 0;      /* mcmillan criteria flag (-mcmillan) */
-int m_repeat = 0;			/* marking repeat to highlight (-r)	   */
+int m_repeat = 0;     /* marking repeat to highlight (-r)    */
 int csv = 0;
+int conflsteps = 0;
+int** confl_evs = NULL;
 
-nodelist_t *cutoff_list, *corr_list;	/* cut-off list, corresponding 
+nodelist_t *cutoff_list, *corr_list;  /* cut-off list, corresponding 
   events */
 nodelist_t *harmful_list; /* list of bad/harmful events */
 
@@ -146,7 +152,7 @@ event_t* insert_event (pe_queue_t *qu, char* trans_pool)
   ev->origin = qu->trans;
   if(!strstr(trans_pool, ev->origin->name))
     strcat(strcat(trans_pool,ev->origin->name), ", ");
-  ev->mark = 0;		/* for marking_of */
+  ev->mark = 0;   /* for marking_of */
   ev->queried = 0;
   ev->cutoff = 0;
   ev->foata_level = find_foata_level(qu);
@@ -214,7 +220,7 @@ void add_post_conditions (event_t *ev, char cutoff, int queried,
   /* Having computed the common part of the co-relation for all
      conditions in co_relation(), we create a copy that uses only
      the necessary amount of memory. */
-  newarray = coarray_copy(ev->coarray);	
+  newarray = coarray_copy(ev->coarray); 
   free(ev->coarray.conds);
   /* Add the reverse half of the concurrency relation. */
   cocoptr = newarray.conds-1;
@@ -282,9 +288,9 @@ void co_relation (event_t *ev, pe_queue_t *qu, int check,
   int queryable)
 {
   cond_t  **co_ptr, ***colists;
-  int	  evps = ev->preset_size, sz;
+  int   evps = ev->preset_size, sz;
   cqentry_t *queue = NULL;
-  char	finished = 0, *switched;
+  char  finished = 0, *switched;
   /* Find the maximal potential size of the intersection. */
   int min = 0xfffffff;
   for (sz = evps, co_ptr = ev->preset; sz--; co_ptr++)
@@ -412,6 +418,31 @@ void recursive_queried(querycell_t *qbuck, cond_t **co_ptr, int sz)
   }
 }
 
+//void conflict_ev()
+
+void check_conflict(cond_t **conds_ev1, cond_t **conds_ev2, 
+  int id_ev1, int id_ev2)
+{
+  cond_t **co1 = conds_ev1, **co2 = conds_ev2;
+
+  while(*co1){
+    if (!confl_evs[id_ev1][(*co1)->num]){
+      confl_evs[id_ev1][(*co1)->num] = (*co1)->num;
+      check_conflict((*co1)->pre_ev->preset, conds_ev2, id_ev1, id_ev2);
+    }
+    co1 = &((*co1)->next);
+  }
+
+  while(*co2){
+    if (!confl_evs[id_ev2][(*co2)->num]){
+      confl_evs[id_ev2][(*co2)->num] = (*co2)->num;
+      check_conflict(conds_ev1, (*co2)->pre_ev->preset, id_ev1, id_ev2);
+    }
+    co2 = &((*co2)->next);
+  }
+
+}
+
 /*******************************************************************/
 
 void unfold ()
@@ -422,7 +453,10 @@ void unfold ()
   event_t *ev, *stopev = NULL;
   cond_t  *co;
   querycell_t *qbuck;
-  int cutoff, repeat = 0, check_query, harmful_check;
+  int i, cutoff, repeat = 0, check_query, harmful_check;
+  int conflsteps = CO_ALLOC_STEP;
+  int** confl_evs = MYmalloc(CO_ALLOC_STEP * sizeof(int*));
+
   char trans_pool[(net->maxtrname+2)*(net->numtr)];
   memset( trans_pool, 0, (net->maxtrname+2)*(net->numtr)*sizeof(char) );
 
@@ -492,12 +526,23 @@ void unfold ()
   print_marking_co(nodelist_concatenate(unf->m0, unf->m0_unmarked));
   printf("\n");
   recursive_pe(nodelist_concatenate(unf->m0, unf->m0_unmarked));
+  if(confmax)
+    for (i = 0; i < conflsteps; i++) 
+      confl_evs[i] = MYcalloc(conflsteps * sizeof(confl_evs));
 
   /* take the next event from the queue */
   while (pe_qsize)
   {
-    int i, e, ev_choice;
+    int e, ev_choice;
     check_query = 1; harmful_check = 1;
+    if(confmax && (pe_qsize >= unf->numev || pe_qsize >= unf->numco))
+    {
+      conflsteps += CO_ALLOC_STEP;
+      confl_evs = MYrealloc(confl_evs, conflsteps * sizeof(int*));
+      for (i = conflsteps-CO_ALLOC_STEP; i < conflsteps; i++) 
+        confl_evs[i] = MYcalloc(conflsteps * sizeof(confl_evs));
+    }
+
     if (interactive) for (;;)
     {
       for (i = 1; i <= pe_qsize; i++)

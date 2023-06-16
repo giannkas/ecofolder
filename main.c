@@ -20,7 +20,8 @@ void usage(char *myname)
   "      -i             interactive mode\n"
   "      -r <instance>  highlight <instance> of a repeated marking\n"
   "      -c             compressed view\n"
-  "      -mcmillan      unfolds with mcmillan criteria\n\n"
+  "      -mcmillan      unfolds with mcmillan criteria\n"
+  "      -confmax       if used, it will enable interactive mode to display maximal configurations only\n\n"
 
   "     FileOptions:\n"
   "      -m <filename>  file to store the unfolding in\n"
@@ -53,6 +54,8 @@ int main (int argc, char **argv)
       unfold_depth = atoi(argv[++i]);
     else if (!strcmp(argv[i],"-i"))
       interactive = 1;
+    else if (!strcmp(argv[i],"-confmax"))
+      confmax = interactive = 1;
     else if (!strcmp(argv[i],"-r"))
       m_repeat = atoi(argv[++i]);
     else if (!strcmp(argv[i],"-c"))
