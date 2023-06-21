@@ -43,6 +43,8 @@ extern cond_t* insert_condition(place_t*, event_t*, int, int);
 /* insert a condition to the unfolding */
 extern coa_t alloc_coarray (int); /* Create an empty coarray with 'size'
  allocated events. */
+extern int check_conflict(int, int, int);
+extern void pred_conds( cond_t**, trans_t*, cond_t**, trans_t*, int, int);
 extern void print_conditions (cond_t*);
 extern void print_events (event_t*);
 

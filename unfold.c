@@ -144,8 +144,8 @@ event_t* insert_event (pe_queue_t *qu, char* trans_pool)
 {
   
   event_t *ev = MYmalloc(sizeof(event_t));
-  int sz = qu->trans->prereset_size;
-    cond_t **co_ptr;
+  int sz = qu->trans->prereset_size, i;
+    cond_t **co_ptr, **co_ptr2;
 
   ev->next = unf->events;
   unf->events = ev;
@@ -159,19 +159,25 @@ event_t* insert_event (pe_queue_t *qu, char* trans_pool)
   ev->preset_size = qu->trans->prereset_size;
   ev->postset_size = qu->trans->postreset_size;
 
+  /* co_ptr2 = qu->conds;
+  //printf("event name %s and its preset with size %d: \n", ev->origin->name, sz);
+  while(*co_ptr2){
+    printf("EVENT %s precondition name: %s, %d\n", 
+      ev->origin->name,(*co_ptr2)->origin->name, (*co_ptr2)->num + 1);
+    co_ptr2 = &((*co_ptr2)->next);
+  } */
   /* add preset (postset comes later) */
         ev->preset = co_ptr = MYmalloc(sz * sizeof(cond_t*));
   memcpy(ev->preset,qu->conds,sz * sizeof(cond_t*));
-  
-  /* co_ptr2 = ev->preset;
-  //printf("event name %s and its preset with size %d: \n", 
-    ev->origin->name, sz);
-  while(*co_ptr2){
-    printf("EVENT %s precondition name: %s, %d\n", 
-      ev->origin->name,(*co_ptr2)->origin->name, (*co_ptr2)->num);
-    co_ptr2 = &((*co_ptr2)->next);
-  } */
-  
+  //printf("local configuration size: %d\n", qu->lc_size);
+  printf("after copying preset on ev's preset\n");
+  if (ev) printf("ev name: %s\n", ev->origin->name);
+  co_ptr2 = ev->preset;
+  for(i = 0; i < ev->preset_size; i++)
+  {
+    printf("i: %d, co name: %s and num: %d\n", i, co_ptr2[i]->origin->name, co_ptr2[i]->num + 1);
+  }
+
   while (sz--) nodelist_push(&((*co_ptr++)->postset),ev);
   
   /* allocate memory for queue in conco_nt if necessary */
@@ -418,29 +424,66 @@ void recursive_queried(querycell_t *qbuck, cond_t **co_ptr, int sz)
   }
 }
 
-//void conflict_ev()
 
-void check_conflict(cond_t **conds_ev1, cond_t **conds_ev2, 
-  int id_ev1, int id_ev2)
+void pred_conds(cond_t **conds_ev1, trans_t *tr1, cond_t **conds_ev2, trans_t* tr2, int id_ev1, int id_ev2)
 {
+  int conum;
   cond_t **co1 = conds_ev1, **co2 = conds_ev2;
-
+  nodelist_t *list1 = tr1->preset, *list2 = tr2->preset;
+  event_t *ev;
+  
+  //printf("tr1 name: %s\n", tr1->name);
   while(*co1){
-    if (!confl_evs[id_ev1][(*co1)->num]){
-      confl_evs[id_ev1][(*co1)->num] = (*co1)->num;
-      check_conflict((*co1)->pre_ev->preset, conds_ev2, id_ev1, id_ev2);
+    conum = ((*co1)->num)+1;
+    //printf("precondition name: %s, num: %d\n", (*co1)->origin->name, conum);
+    //for(; list1; list1 = list1->next)
+      //if (!strcmp((*co1)->origin->name, ((place_t*)(list1->node))->name) && confl_evs[id_ev1][conum] == 0)
+    if (confl_evs[id_ev1][conum] == 0)
+    {
+      confl_evs[id_ev1][conum] = conum;
+      //printf("co1 - id_ev1: %d, conum: %d\n", id_ev1, conum);
+      /* ev = (*co1)->pre_ev;
+      if (ev) pred_conds((*co1)->pre_ev->preset, conds_ev2, id_ev1, id_ev2); */
     }
     co1 = &((*co1)->next);
   }
 
+  //printf("tr2 name: %s\n", tr2->name);
   while(*co2){
-    if (!confl_evs[id_ev2][(*co2)->num]){
-      confl_evs[id_ev2][(*co2)->num] = (*co2)->num;
-      check_conflict(conds_ev1, (*co2)->pre_ev->preset, id_ev1, id_ev2);
-    }
+    conum = ((*co2)->num)+1;
+    //printf("precondition name: %s, num: %d\n", (*co2)->origin->name, conum);
+    //for(; list2; list2 = list2->next)
+      //if (!strcmp((*co2)->origin->name, ((place_t*)(list2->node))->name) && confl_evs[id_ev2][conum] == 0){
+    if (confl_evs[id_ev2][conum] == 0)
+    {
+       confl_evs[id_ev2][conum] = conum;
+        //printf("co2 - id_ev2: %d, conum: %d\n", id_ev2, conum);
+        /* ev = (*co2)->pre_ev;
+        if (ev) pred_conds(conds_ev1, (*co2)->pre_ev->preset, id_ev1, id_ev2); */
+     }
     co2 = &((*co2)->next);
   }
+}
 
+int check_conflict(int id_ev1, int id_ev2, int size)
+{
+  int num1, num2, conflyes = 0;
+
+  for (int i = 1; i < size && !conflyes; i++)
+  {
+    num1 = confl_evs[id_ev1][i];
+    //printf("size: %d\n", size);
+    num2 = confl_evs[id_ev2][i];
+    if (num1 > 0 && num1 <= unf->numco && num1 == num2)
+    {
+      conflyes = 1;
+    }
+    /* printf("i: %d\n", i);
+    printf("id_ev1: %d, id_ev2: %d\n", id_ev1, id_ev2);
+    printf("num1: %d, num2: %d, conflyes: %d\n", num1, num2, conflyes); */
+  }
+  
+  return conflyes;
 }
 
 /*******************************************************************/
@@ -455,7 +498,7 @@ void unfold ()
   querycell_t *qbuck;
   int i, cutoff, repeat = 0, check_query, harmful_check;
   int conflsteps = CO_ALLOC_STEP;
-  int** confl_evs = MYmalloc(CO_ALLOC_STEP * sizeof(int*));
+  confl_evs = MYmalloc(CO_ALLOC_STEP * sizeof(int*));
 
   char trans_pool[(net->maxtrname+2)*(net->numtr)];
   memset( trans_pool, 0, (net->maxtrname+2)*(net->numtr)*sizeof(char) );
@@ -527,15 +570,19 @@ void unfold ()
   printf("\n");
   recursive_pe(nodelist_concatenate(unf->m0, unf->m0_unmarked));
   if(confmax)
-    for (i = 0; i < conflsteps; i++) 
+    for (i = 0; i < conflsteps; i++)
+    { 
       confl_evs[i] = MYcalloc(conflsteps * sizeof(confl_evs));
+      //confl_evs[i][3] =  500000;
+      //printf("confl_evs[%d][0]: %d ", i, confl_evs[i][3]);
+    }
 
   /* take the next event from the queue */
   while (pe_qsize)
   {
     int e, ev_choice;
     check_query = 1; harmful_check = 1;
-    if(confmax && (pe_qsize >= unf->numev || pe_qsize >= unf->numco))
+    if(confmax && pe_qsize > unf->numev + unf->numco)
     {
       conflsteps += CO_ALLOC_STEP;
       confl_evs = MYrealloc(confl_evs, conflsteps * sizeof(int*));
@@ -560,10 +607,23 @@ void unfold ()
       printf("\nUnfold event E");
       scanf("%d",&e);
 
-      i = 1;
-      for (; i <= pe_qsize && pe_queue[i]->id != e; i++);
-      ev_choice = i;
-      printf("ev_choice: %d\n", ev_choice);
+      ev_choice = 1;
+      if (confmax && pe_qsize > 1)
+      {
+        for (; ev_choice <= pe_qsize && pe_queue[ev_choice]->id != e; ev_choice++);
+        for (i = 1; i <= pe_qsize; i++)
+        {
+          if (i != ev_choice && pe_queue[i])
+          {
+            pred_conds(pe_queue[ev_choice]->conds, pe_queue[ev_choice]->trans, pe_queue[i]->conds, pe_queue[i]->trans, pe_queue[ev_choice]->id, pe_queue[i]->id);
+            if(check_conflict(pe_queue[ev_choice]->id, pe_queue[i]->id, conflsteps))
+            {
+              printf("ev_choice: %d, pe_qsize: %d\n", ev_choice, pe_qsize);
+              qu = pe_pop(i);
+            }
+          }
+        }
+      }
 
       for (i = 1; i <= pe_qsize; i++)
         if (pe_queue[i]->id == e) break;
