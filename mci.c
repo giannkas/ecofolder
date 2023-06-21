@@ -64,6 +64,7 @@ void write_mci_file (char *filename)
 
   write_int(unf->numco);
   write_int(unf->numev);
+  printf("unf->numev: %d\n", unf->numev);
   
   /* Reverse the lists of places, events etc. This is to maintain
     compatibility with RdlcheckMcM and mcsmodels, which expect events
@@ -160,27 +161,27 @@ void write_mci_file (char *filename)
 
     if (co->pre_ev) 
     {
-      write_int(co->pre_ev->id);
+      write_int(co->pre_ev->mark);
       if (csv) fprintf(file_edges,"\"e%d\",\"c%d\"\n",co->pre_ev->mark,(co->num)+1);
     }
       else	write_int(null);
     for (list1 = co->postset; list1; list1 = list1->next)
     {
-      write_int((ev = list1->node)->id);
+      write_int((ev = list1->node)->mark);
       if (csv) fprintf(file_edges,"\"c%d\",\"e%d\"\n",(co->num)+1,ev->mark);
     }
     write_int(null);
   }
   
   for (list1 = harmful_list; list1; list1 = list1->next)
-    write_int((ev = list1->node)->id);
+    write_int((ev = list1->node)->mark);
   write_int(null);
 
   for (list1 = cutoff_list, list2 = corr_list; list1;
     list1 = list1->next, list2 = list2->next)
   {
-    write_int((ev = list1->node)->id);
-    if ((ev = list2->node)) write_int(ev->id);
+    write_int((ev = list1->node)->mark);
+    if ((ev = list2->node)) write_int(ev->mark);
       else		write_int(null);
   }
   write_int(null);
