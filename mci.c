@@ -65,6 +65,7 @@ void write_mci_file (char *filename)
   write_int(unf->numco);
   write_int(unf->numev);
   printf("unf->numev: %d\n", unf->numev);
+  printf("unf->numco: %d\n", unf->numco);
   
   /* Reverse the lists of places, events etc. This is to maintain
     compatibility with RdlcheckMcM and mcsmodels, which expect events

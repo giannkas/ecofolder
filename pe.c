@@ -93,11 +93,12 @@ void pe_insert (trans_t *tr)
   }
 
   /* insert new element at the end, then move upwards as needed */
-  for (; index > 1; index /= 2)
-  {
-    if (pe_compare(qu_new,pe_queue[index/2]) > 0) break;
-    pe_queue[index] = pe_queue[index/2]; /* move parent downwards */
-  }
+  //if(!confmax)
+    for (; index > 1; index /= 2)
+    {
+      if (pe_compare(qu_new,pe_queue[index/2]) > 0) break;
+      pe_queue[index] = pe_queue[index/2]; /* move parent downwards */
+    }
   pe_queue[index] = qu_new; 
 }
 
@@ -202,6 +203,8 @@ void pe (cond_t *co)
     if ((co->pre_ev && !strcmp(co->pre_ev->origin->name,tr->name)) || 
       (net->rt_trans && strstr(net->rt_trans,tr->name)))
       continue;
+
+    if (confmax && co->postset) continue;
     
     /* co_ptr2 = pe_conds;
     printf("FROM place %s transition name %s  and its pe_conds: \n", pl->name, ((trans_t*)(pl_post->node))->name);
@@ -226,18 +229,28 @@ void pe (cond_t *co)
           
           if (((*cocoptr)->token && nodelist_find(tr->preset, (*cocoptr)->origin)) ||
             (nodelist_find(tr->reset, (*cocoptr)->origin))
-          ) 
-            nodelist_push(compat_conds,*cocoptr);
+          )
+          { 
+            if (confmax && !(*cocoptr)->postset)
+              nodelist_push(compat_conds,*cocoptr);
+            else if (!confmax)
+              nodelist_push(compat_conds,*cocoptr);
+          }
         }
       }
       
       cocoptr = co->co_private.conds - 1;
-      while (*++cocoptr){       
+      while (*++cocoptr){
         if ((*cocoptr)->origin == pl2){
           if (((*cocoptr)->token && nodelist_find(tr->preset, (*cocoptr)->origin)) ||
             (nodelist_find(tr->reset, (*cocoptr)->origin))
           )
-            nodelist_push(compat_conds,*cocoptr);
+          {
+            if (confmax && !(*cocoptr)->postset)
+              nodelist_push(compat_conds,*cocoptr);
+            else if (!confmax)
+              nodelist_push(compat_conds,*cocoptr);
+          }
         }
       }
       
