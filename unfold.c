@@ -23,9 +23,9 @@ int interactive = 0;      /* interactive mode (-i)    */
 int compressed = 0;     /* compressed unfolding view (-c)    */
 int mcmillan = 0;      /* mcmillan criteria flag (-mcmillan) */
 int m_repeat = 0;     /* marking repeat to highlight (-r)    */
-int csv = 0;
-int conflsteps = 0;
-int** confl_evs = NULL;
+int conflsteps = 0;   /* allocating blocks of CO_ALLOC_STEP Bytes */
+int** confl_evs = NULL;  /* matrix of events X conditions whether they are 
+                          in direct conflict*/
 
 nodelist_t *cutoff_list, *corr_list;  /* cut-off list, corresponding 
   events */
@@ -154,7 +154,6 @@ event_t* insert_event (pe_queue_t *qu, char* trans_pool)
     strcat(strcat(trans_pool,ev->origin->name), ", ");
   ev->mark = 0;   /* for marking_of */
   ev->queried = 0;
-  ev->cutoff = 0;
   ev->foata_level = find_foata_level(qu);
   ev->preset_size = qu->trans->prereset_size;
   ev->postset_size = qu->trans->postreset_size;
@@ -660,7 +659,6 @@ void unfold ()
     if (!cutoff)
     { 
       unf->events = unf->events->next; 
-      ev->cutoff = 1;
       add_post_conditions(ev,CUTOFF_YES, repeat, !check_query);
       continue;
     }

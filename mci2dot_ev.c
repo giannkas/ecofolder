@@ -375,7 +375,7 @@ int main (int argc, char **argv)
 
   if (!filename)
   {
-    fprintf(stderr,"usage: mci2dot <mcifile>\n");
+    fprintf(stderr,"usage: mci2dot_ev <mcifile>\n");
     exit(1);
   }
   read_mci_file_ev(filename, m_repeat);
