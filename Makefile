@@ -1,14 +1,14 @@
 ##############################################################
 # Makefile for Unfolder
 
-TARGET = ecofolder mci2dot mci2dot_ev mci2dot_cpr pr_encoding rs_complement llnet2dot
+TARGET = ecofolder mci2dot mci2dot_ev mci2dot_cpr mci2csv pr_encoding rs_complement llnet2dot
 LIBS = 
 FLAGS = 
 INCLUDES =
 
 ##############################################################
-
-DEBUG = -std=gnu11
+#https://gcc.gnu.org/onlinedocs/gcc/C-Dialect-Options.html
+DEBUG = -std=gnu18
 WARNINGS = -Wall -Wno-unused-result
 
 CC = gcc $(DEBUG) $(INCLUDES) $(WARNINGS) $(FLAGS)

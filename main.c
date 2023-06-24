@@ -24,8 +24,7 @@ void usage(char *myname)
   "      -confmax       if used, it will enable interactive mode to display maximal configurations only\n\n"
 
   "     FileOptions:\n"
-  "      -m <filename>  file to store the unfolding in\n"
-  "      -csv           indicate to save csv format file for nodes and edges in the unfolding\n\n"
+  "      -m <filename>  file to store the unfolding in\n\n"
 
   "Unless specified otherwise, all filenames will default to\n"
   "the basename of <LLnetfile> plus appropriate extensions.\n\n"
@@ -62,8 +61,6 @@ int main (int argc, char **argv)
       compressed = 1;
     else if (!strcmp(argv[i],"-mcmillan"))
       mcmillan = 1;
-    else if (!strcmp(argv[i],"-csv"))
-      csv = 1;
     else
     {
       if (!dptr) usage(argv[0]);
