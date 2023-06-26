@@ -172,7 +172,6 @@ pe_queue_t* create_queue_entry (trans_t *tr)
     while (i) { printf(" C%d",(pe_conds[--i]->num)+1); }
     printf("].\n");
   }
-  //printf("hola\n");
         /* copy the pre-conditions */
         qu_new->conds = MYmalloc((tr->prereset_size) * sizeof(cond_t*));
         memcpy(qu_new->conds,pe_conds,(tr->prereset_size)*sizeof(cond_t*));

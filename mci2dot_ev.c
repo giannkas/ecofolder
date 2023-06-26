@@ -101,9 +101,9 @@ void read_mci_file_ev (char *filename, int m_repeat)
   FILE *file;
   int nqure, nqure_, nquszcut, nquszevscut, szcuts,
     numco, numev, numpl, numtr, sz, i, ev1, ev2;
-  int pre_ev, post_ev, cutoff, dummy = 0;
+  int pre_ev, post_ev, cutoff, harmful, dummy = 0;
   int *co2pl, *ev2tr, *tokens, *queries_co,
-    *queries_ev, *cutoffs;
+    *queries_ev, *cutoffs, *harmfuls;
   char **plname, **trname, *c;
   cut_t **cuts;
 
@@ -130,6 +130,8 @@ void read_mci_file_ev (char *filename, int m_repeat)
   ev2tr = malloc((numev+1) * sizeof(int)); // reserve empty memory for the total number 
                                            // events.
   cutoffs = calloc(numev+1, sizeof(int));
+  harmfuls = calloc(numev+1, sizeof(int));
+
   int (*co_postsets)[numev+1] = calloc(numco+1, sizeof *co_postsets); 
                                            // conditions' postsets to detect conflicts in events.
   int (*ev_succs)[numev+1] = calloc(numev+1, sizeof *ev_succs); // matrix to record events' successors.
@@ -226,6 +228,12 @@ void read_mci_file_ev (char *filename, int m_repeat)
         queries_ev[cuts[m_repeat]->evscut[i]] = 1;
     }
   }
+
+  for (;;) {
+    read_int(harmful);
+    if (!harmful) break;
+    harmfuls[harmful] = harmful;
+  }
   
   // A loop over co_postsets matrix to fill ev_confl matrix with conflicts
   // among events part of the same condition's postset. We make a copy 
@@ -307,11 +315,10 @@ void read_mci_file_ev (char *filename, int m_repeat)
   for (int i = 1; i <= numev; i++){
     for (int j = i+1; j <= numev; j++){
       if (ev_confl_copy[i][j] > 0)
-        printf("  e%d -> e%d [arrowhead=none color=gray60 style=dashed constraint=false];\n",i,ev_confl_copy[i][j]);          
+        printf("  e%d -> e%d [arrowhead=none color=gray60 style=dashed constraint=false];\n",i,ev_confl_copy[i][j]);
     }
   }
   printf("\n");
-
 
   for (;;) {
     read_int(cutoff);
@@ -333,6 +340,7 @@ void read_mci_file_ev (char *filename, int m_repeat)
 
   plname = malloc((numpl+2) * sizeof(char*));
   trname = malloc((numtr+2) * sizeof(char*));
+
   for (i = 1; i <= numpl+1; i++) plname[i] = malloc(sz+1);
   for (i = 1; i <= numtr+1; i++) trname[i] = malloc(sz+1);
 
@@ -344,18 +352,23 @@ void read_mci_file_ev (char *filename, int m_repeat)
     do { fread(c,1,1,file); } while (*c++);
   fread(c,1,1,file);
 
-  char color1[] = "palegreen";
+  char color1[] = "#cce6cc"; // or "palegreen";
   char color2[] = "cornflowerblue";
   char color3[] = "orange";
   char color4[] = "black";
+  char color5[] = "firebrick2";
+  char color6[] = "#409f40";
 
   for (i = 1; i <= numev; i++)
-    if (i != cutoffs[i])
-      printf("  e%d [fillcolor=%s label=\"%s (e%d)\" shape=box style=filled];\n",
-          i,queries_ev[i] ? color3 : color1,trname[ev2tr[i]],i);
-    else
+    if (i == cutoffs[i])
       printf("  e%d [color=%s fillcolor=%s label=\"%s (e%d)\" shape=box style=filled];\n",
           i,queries_ev[i] ? color3 : color4,color2,trname[ev2tr[i]],i);
+    else if ( i == harmfuls[i])
+      printf("  e%d [color=%s fillcolor=%s label=\"%s (e%d)\" shape=box style=filled];\n",
+          i,queries_ev[i] ? color3 : color4,color5,trname[ev2tr[i]],i);
+    else
+      printf("  e%d [color=\"%s\" fillcolor=\"%s\" label=\"%s (e%d)\" shape=box style=filled];\n",
+          i,queries_ev[i] ? color4 : color6,queries_ev[i] ? color3 : color1,trname[ev2tr[i]],i);
   printf("  e0 [fillcolor=white label=\"⊥\" shape=box style=filled];\n");
   printf("}\n");
 
