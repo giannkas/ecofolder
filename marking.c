@@ -126,7 +126,7 @@ int add_marking (nodelist_t *marking, event_t *ev)
     printf("%s, ", ((place_t*)(list->node))->name);
   printf("\nchao\n"); */
   
-  if(!cmp && mcmillan) 
+  if(!cmp && mcmillan) /* marking is already present */
   {
     list = (*buck)->pre_evs;
     if(!list)
@@ -136,7 +136,7 @@ int add_marking (nodelist_t *marking, event_t *ev)
       nodelist_push(&corr_list, NULL);
     }
     else
-      for(list = (*buck)->pre_evs; list && !checked_back; list = list->next)
+      for(; list && !checked_back; list = list->next)
       {
         ev_mark++;
         if ((checked_back = check_back(ev->preset, ev->preset_size,
@@ -150,12 +150,15 @@ int add_marking (nodelist_t *marking, event_t *ev)
     (*buck)->repeat++;
     nodelist_push(&((*buck)->pre_evs),ev);
   }
-  else if (!cmp && !mcmillan) /* marking is already present */
+  else if (!cmp && !mcmillan)
   {
     (*buck)->repeat++;
     //nodelist_delete(marking);
     nodelist_push(&cutoff_list,ev);
-    nodelist_push(&corr_list,((event_t*)((*buck)->pre_evs->node)));
+    if ((*buck)->pre_evs)
+      nodelist_push(&corr_list,((event_t*)((*buck)->pre_evs->node)));
+    else
+      nodelist_push(&corr_list, NULL);
     nodelist_push(&((*buck)->pre_evs),ev);
   }
 
@@ -164,7 +167,7 @@ int add_marking (nodelist_t *marking, event_t *ev)
     newbuck = MYmalloc(sizeof(hashcell_t));
     newbuck->marking = marking;
     newbuck->pre_evs = NULL;
-    nodelist_push(&(newbuck->pre_evs),ev);
+    if (ev) nodelist_push(&(newbuck->pre_evs),ev);
     newbuck->repeat = 1;
     newbuck->next = *buck;
     *buck = newbuck;

@@ -60,7 +60,7 @@ digraph test {
   e2 [color="#409f40" fillcolor="#cce6cc" label="b (e2)" shape=box style=filled];
   e3 [color="#409f40" fillcolor="#cce6cc" label="c (e3)" shape=box style=filled];
   e4 [color="#409f40" fillcolor="#cce6cc" label="d (e4)" shape=box style=filled];
-  e5 [color="#409f40" fillcolor="#cce6cc" label="a (e5)" shape=box style=filled];
-  e6 [color="#409f40" fillcolor="#cce6cc" label="b (e6)" shape=box style=filled];
-  e7 [color="#409f40" fillcolor="#cce6cc" label="c (e7)" shape=box style=filled];
+  e5 [color=black fillcolor=cornflowerblue label="a (e5)" shape=box style=filled];
+  e6 [color=black fillcolor=cornflowerblue label="b (e6)" shape=box style=filled];
+  e7 [color=black fillcolor=cornflowerblue label="c (e7)" shape=box style=filled];
 }

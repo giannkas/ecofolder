@@ -100,7 +100,6 @@ void read_mci_file (char *filename, int m_repeat)
     read_int(harmful);
     if (!harmful) break;
     harmfuls[harmful] = harmful;
-    //printf("harmfuls[harmful]: %d\n", harmful);
   }
 
   for (;;) {
@@ -158,7 +157,7 @@ void read_mci_file (char *filename, int m_repeat)
           i,queries_ev[i] ? color3 : color6,color7,trname[ev2tr[i]],i);
     else
       printf("  e%d [color=\"%s\" fillcolor=\"%s\" label=\"%s (e%d)\" shape=box style=filled];\n",
-          i,color9,queries_ev[i] ? color3 : color4,trname[ev2tr[i]],i);
+          i,queries_ev[i] ? color6 : color9,queries_ev[i] ? color3 : color4,trname[ev2tr[i]],i);
   printf("}\n");
 
   fclose(file);

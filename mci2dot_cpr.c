@@ -158,13 +158,17 @@ void read_mci_file (char *filename, int m_repeat)
   char color1[] = "black";
   char color2[] = "orangered";
   char color3[] = "orange";
-  char color4[] = "palegreen";
+  char color4[] = "#cce6cc"; // or "palegreen";
   char color5[] = "cornflowerblue";
   char color6[] = "firebrick2";
+  char color7[] = "#ccccff"; // or "lightblue";
+  char color8[] = "#4040ff";
+  char color9[] = "#409f40";
+
 
   for (i = 1; i <= numco; i++)
   {
-    printf("  c%d [fillcolor=lightblue label= <", i);
+    printf("  c%d [color= \"%s\" fillcolor=\"%s\" label= <", i, color8, color7);
     dummy = 0;
     for (j = i+1; j <= numco && co2coo[i] == co2coo[j]; j++)
     {
@@ -185,8 +189,8 @@ void read_mci_file (char *filename, int m_repeat)
       printf("  e%d [color=%s fillcolor=%s label=\"%s (e%d)\" shape=box style=filled];\n",
           i,queries_ev[i] ? color3 : color1,color6,trname[ev2tr[i]],i);
     else
-      printf("  e%d [fillcolor=%s label=\"%s (e%d)\" shape=box style=filled];\n",
-          i,queries_ev[i] ? color3 : color4,trname[ev2tr[i]],i);
+      printf("  e%d [color=\"%s\" fillcolor=\"%s\" label=\"%s (e%d)\" shape=box style=filled];\n",
+          i,queries_ev[i] ? color1 : color9,queries_ev[i] ? color3 : color4,trname[ev2tr[i]],i);
   printf("}\n");
 
   fclose(file);
