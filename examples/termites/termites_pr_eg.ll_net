@@ -4,8 +4,8 @@ FORMAT_N2
 PL
 "wk+_1"M1
 "wk-_1"q1
-"sd+"
-"sd-"M1q1
+"sd+"M1
+"sd-"q1
 "wd+"q1
 "wd-"M1
 "ac+"M1q1
@@ -32,6 +32,8 @@ TR
 "r7"
 "r8"
 "r9"
+RT
+"wd+"
 TP
 1<20
 1<11
