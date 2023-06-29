@@ -560,26 +560,21 @@ void unfold ()
 
     if (interactive) for (;;)
     {
-      ev_choice = 1; cutoff = 0;
-      for (i = pe_qsize; i > 0 && !cutoff; i--)
-        if ((cutoff = find_marking(pe_queue[i]->marking, 0))) break;
-      if (cutoff)
-      {
-        printf("Event E%d is a cutoff.\n",
-          e = pe_queue[i]->id);
-      }
-      else
-      {
-        printf("\nCurrent event queue:");
-        for (i = 1; i <= pe_qsize; i++)
-          printf(" E%d (%s), %d",pe_queue[i]->id, pe_queue[i]->trans->name, i);
-        printf("\nUnfold event E");
-        scanf("%d",&e);
-      }
+      ev_choice = 1;
+      for (i = pe_qsize; i > 0; i--)
+        if (find_marking(pe_queue[i]->marking, 0))
+          printf("Event E%d (%s) is a cutoff.\n", pe_queue[i]->id, pe_queue[i]->trans->name);
+
+      printf("\nCurrent event queue:");
+      for (i = 1; i <= pe_qsize; i++)
+        printf(" E%d (%s)",pe_queue[i]->id, pe_queue[i]->trans->name);
+      printf("\nUnfold event E");
+      scanf("%d",&e);
 
       if (confmax && pe_qsize > 1)
       {
         for (; ev_choice <= pe_qsize && pe_queue[ev_choice]->id != e; ev_choice++);
+        if (ev_choice > pe_qsize) exit(1);
         for (i = 1; i <= pe_qsize; i++)
         {
           if (i != ev_choice)
@@ -589,7 +584,7 @@ void unfold ()
             {
               qu = pe_pop(i); 
               i = 0; 
-              if (ev_choice > 1) ev_choice--;
+              for (ev_choice = 1; ev_choice <= pe_qsize && pe_queue[ev_choice]->id != e; ev_choice++);
             }
           }
         }
@@ -598,6 +593,7 @@ void unfold ()
       for (i = 1; i <= pe_qsize; i++)
         if (pe_queue[i]->id == e) break;
       if (i <= pe_qsize) { qu = pe_pop(i); break; }
+      else exit(1);
     }
     else
       qu = pe_pop(1);
