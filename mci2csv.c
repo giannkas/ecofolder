@@ -12,16 +12,16 @@ typedef struct cut_t
   int *evscut;
 } cut_t;
 
-void read_mci_file (char *filename, int m_repeat)
+void read_mci_file (char *filename, int m_repeat, int compressed)
 {
   #define read_int(x) fread(&(x),sizeof(int),1,file_in)
 
   FILE *file_in, *file_nodes, *file_edges;
-  char fullfilename[LINE_SIZE];
+  char fullfilename[LINE_SIZE], *fname;
   int nqure, nqure_, nquszcut, nquszevscut, szcuts, 
-    numco, numev, numpl, numtr, sz, i;
-  int pre_ev, post_ev, cutoff, harmful, dummy = 0;
-  int *co2pl, *ev2tr, *tokens, *queries_co,
+    numco, numev, numpl, numtr, sz, i, j;
+  int pre_ev, post_ev, cutoff, harmful, dummy = 0, dummy_ = 0;
+  int *co2pl, *co2coo, *ev2tr, *tokens, *queries_co,
    *queries_ev, *cutoffs, *harmfuls;
   char **plname, **trname, *c;
   cut_t **cuts;
@@ -32,7 +32,8 @@ void read_mci_file (char *filename, int m_repeat)
     exit(1);
   }
 
-  sprintf(fullfilename,"%s_nodes.csv",filename);
+  fname = strtok(filename, ".");
+  sprintf(fullfilename,"%s_nodes.csv",fname);
   if (!(file_nodes = fopen(fullfilename,"w")))
   {
     fprintf(stderr,
@@ -40,7 +41,7 @@ void read_mci_file (char *filename, int m_repeat)
     exit(1);
   }
 
-  sprintf(fullfilename,"%s_edges.csv",filename);
+  sprintf(fullfilename,"%s_edges.csv",fname);
   if (!(file_edges = fopen(fullfilename,"w")))
   {
     fprintf(stderr,
@@ -52,6 +53,7 @@ void read_mci_file (char *filename, int m_repeat)
   read_int(numev);
 
   co2pl = malloc((numco+1) * sizeof(int));
+  co2coo = calloc(numco+1, sizeof(int));
   tokens = malloc((numco+1) * sizeof(int));
   queries_co = malloc((numco+1) * sizeof(int));
   queries_ev = malloc((numev+1) * sizeof(int));
@@ -63,7 +65,7 @@ void read_mci_file (char *filename, int m_repeat)
   nqure_ = abs(nqure);
   cuts = calloc((szcuts = nqure_+1), sizeof(cut_t*));
   if(nqure_ && m_repeat > 0 && m_repeat <= nqure_) 
-    dummy = 1;
+    dummy_ = 1;
   while(nqure_)
   {
     read_int(nquszcut);
@@ -90,19 +92,34 @@ void read_mci_file (char *filename, int m_repeat)
   for (i = 1; i <= numco; i++)
   {
     read_int(co2pl[i]);
-    read_int(tokens[i]);
-    read_int(queries_co[i]);
+    if(compressed){
+      dummy = 1; j = i;
+      while (co2pl[i] && dummy){
+        read_int(tokens[i]);
+        read_int(queries_co[i]);
+        read_int(co2coo[i]);
+        read_int(dummy);
+        if (dummy && i <= numco){
+          i++;
+          co2pl[i] = dummy;
+        }
+      }
+    }
+    else{
+      read_int(tokens[i]);
+      read_int(queries_co[i]);
+    }
     read_int(pre_ev);
     if (pre_ev)
-        fprintf(file_edges,"\"e%d\",\"c%d\"\n",pre_ev, i);
+        fprintf(file_edges,"\"e%d\",\"c%d\"\n",pre_ev, j);
     do {
       read_int(post_ev);
       if (post_ev)
-        fprintf(file_edges,"\"c%d\",\"e%d\"\n",i,post_ev);
+        fprintf(file_edges,"\"c%d\",\"e%d\"\n",j,post_ev);
     } while (post_ev);
   }
 
-  if(dummy)
+  if(dummy_)
   {
     if (cuts[m_repeat] && cuts[m_repeat]->repeat < 0)
     {
@@ -119,7 +136,6 @@ void read_mci_file (char *filename, int m_repeat)
     read_int(harmful);
     if (!harmful) break;
     harmfuls[harmful] = harmful;
-    //printf("harmfuls[harmful]: %d\n", harmful);
   }
 
   for (;;) {
@@ -154,19 +170,31 @@ void read_mci_file (char *filename, int m_repeat)
     do { fread(c,1,1,file_in); } while (*c++);
   fread(c,1,1,file_in);
 
-  /* char color1[] = "#ccccff"; // or "lightblue";
-  char color2[] = "gold";
-  char color3[] = "orange";
-  char color4[] = "#cce6cc"; // or "palegreen";
-  char color5[] = "cornflowerblue";
-  char color6[] = "black";
-  char color7[] = "firebrick2";
-  char color8[] = "#4040ff";
-  char color9[] = "#409f40"; */
-
-
   for (i = 1; i <= numco; i++)
-    fprintf(file_nodes,"\"c%d\",\"condition\",\"%s\",\"%d\",\"%d\"\n",i,plname[co2pl[i]],tokens[i],0);
+  {
+    fprintf(file_nodes,"\"c%d",i);
+    dummy = 0;
+    for (j = i+1; j <= numco && co2coo[i] == co2coo[j]; j++)
+    {
+      fprintf(file_nodes, ",c%d",j);
+      dummy = 1;
+    }
+    fprintf(file_nodes,"\",\"condition\",\"%s",plname[co2pl[i]]);
+
+    for (j = i+1; j <= numco && co2coo[i] == co2coo[j]; j++)
+      fprintf(file_nodes,",%s",plname[co2pl[j]]);
+    fprintf(file_nodes,"\",\"%d",tokens[i]);
+
+    for (j = i+1; j <= numco && co2coo[i] == co2coo[j]; j++)
+      fprintf(file_nodes,",%d",tokens[j]);
+    fprintf(file_nodes,"\",\"%d",0);
+
+    for (j = i+1; j <= numco && co2coo[i] == co2coo[j]; j++)
+      fprintf(file_nodes,",%d",0);
+    fprintf(file_nodes,"\"\n");
+    
+    if (dummy) i = j-1;
+  }
 
   for (i = 1; i <= numev; i++)
     if (i == cutoffs[i]){
@@ -183,12 +211,14 @@ void read_mci_file (char *filename, int m_repeat)
 
 int main (int argc, char **argv)
 {
-  int i, m_repeat = 0;
+  int i, m_repeat = 0, compressed = 0;
   char *filename;
 
   for (i = 1; i < argc; i++)
     if (!strcmp(argv[i],"-r"))
       m_repeat = atoi(argv[++i]);
+    else if (!strcmp(argv[i],"-c"))
+      compressed = 1;
     else
       filename = argv[i];
 
@@ -197,6 +227,6 @@ int main (int argc, char **argv)
     fprintf(stderr,"usage: mci2csv <mcifile>\n");
     exit(1);
   }
-  read_mci_file(filename, m_repeat);
+  read_mci_file(filename, m_repeat, compressed);
   exit(0);
 }

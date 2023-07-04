@@ -17,7 +17,7 @@ void read_mci_file (char *filename, int m_repeat)
   FILE *file;
   int nqure, nqure_, nquszcut, nquszevscut, szcuts, 
     numco, numev, numpl, numtr, sz, i, j;
-  int pre_ev, post_ev, cutoff, harmful, dummy = 0, dummyy = 0;
+  int pre_ev, post_ev, cutoff, harmful, dummy = 0, dummy_ = 0;
   int *co2pl, *co2coo, *ev2tr, *tokens, *queries_co,
     *queries_ev, *cutoffs, *harmfuls;
   char **plname, **trname, *c;
@@ -48,7 +48,7 @@ void read_mci_file (char *filename, int m_repeat)
   nqure_ = abs(nqure);
   cuts = calloc((szcuts = nqure_+1), sizeof(cut_t*));
   if(nqure_ && m_repeat > 0 && m_repeat <= nqure_) 
-    dummyy = 1;
+    dummy_ = 1;
   while(nqure_)
   {
     read_int(nquszcut);
@@ -58,20 +58,11 @@ void read_mci_file (char *filename, int m_repeat)
     cuts[nqure_]->szcut = nquszcut;
     cuts[nqure_]->szevscut = nquszevscut;
     cuts[nqure_]->cut = calloc(nquszcut+1, sizeof(int));
-    /* printf("nqure_: %d\n", nqure_);
-    printf("nquszcut: %d\n", nquszcut);
-    printf("nquszevscut: %d\n", nquszevscut); */
     cuts[nqure_]->evscut = calloc(nquszevscut+1, sizeof(int));
     for (i = 1; i <= nquszcut; i++)
-    {
       read_int(cuts[nqure_]->cut[i]);
-      //printf("cuts[nqure_]->cut[i]: %d\n", cuts[nqure_]->cut[i]);
-    }
     for (i = 1; i <= nquszevscut; i++)
-    {
       read_int(cuts[nqure_]->evscut[i]);
-      //printf("cuts[nqure_]->evscut[i]: %d\n", cuts[nqure_]->evscut[i]);
-    }
     read_int(nqure);
     nqure_ = abs(nqure);
   }
@@ -104,7 +95,7 @@ void read_mci_file (char *filename, int m_repeat)
     } while (post_ev);
   }
 
-  if(dummyy)
+  if(dummy_)
   {
     if (cuts[m_repeat] && cuts[m_repeat]->repeat < 0)
     {
