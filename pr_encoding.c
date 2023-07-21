@@ -223,7 +223,7 @@ char* pr_encoding(char* in_file){
             read_place_written[num_tmp]--;
           }else{
             if (read_place_written[num_tmp] > 0){
-              new_places++;              
+              new_places++;
               sprintf(buf_arcs, "%d>%s", new_places, token2);
               fprintf(w_pointer, "%s\n", buf_arcs);
               read_place_written[num_tmp]--;
@@ -265,7 +265,7 @@ char* pr_encoding(char* in_file){
 int main (int argc, char **argv)
 {
 	if (argc != 2){
-		fprintf(stderr,"usage: pr_encoding <mcifile>\n");
+		fprintf(stderr,"usage: pr_encoding <ll_netfile>\n");
 		exit(1);
 	}
 	pr_encoding(argv[1]);

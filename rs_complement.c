@@ -244,7 +244,7 @@ char* rs_complement(char* in_file){
 int main (int argc, char **argv)
 {
   if (argc != 2){
-    fprintf(stderr,"usage: rs_encoding <mcifile>\n");
+    fprintf(stderr,"usage: rs_encoding <ll_netfile>\n");
     exit(1);
   }
   rs_complement(argv[1]);
