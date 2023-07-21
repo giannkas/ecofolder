@@ -151,7 +151,7 @@ void llnet2dot(char* in_file){
 int main (int argc, char **argv)
 {
 	if (argc != 2){
-		fprintf(stderr,"usage: llnet2dot <mcifile>\n");
+		fprintf(stderr,"usage: llnet2dot <ll_netfile>\n");
 		exit(1);
 	}
 	llnet2dot(argv[1]);
