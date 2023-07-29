@@ -1,0 +1,7 @@
+digraph test {
+  c1 [label="Hum- (c1)" shape=circle];
+  c2 [label="For- (c2)" shape=circle];
+  c3 [label="Roa- (c3)" shape=circle];
+  c4 [label="Fir- (c4)" shape=circle];
+  c5 [label="Cig+ (c5)" shape=circle];
+}

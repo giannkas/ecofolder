@@ -37,8 +37,11 @@ void write_mci_file (char *filename)
 
   write_int(unf->numco);
   write_int(unf->numev);
-  printf("unf->numev: %d\n", unf->numev);
-  printf("unf->numco: %d\n", unf->numco);
+  if(!attractors)
+  {  
+    printf("unf->numev: %d\n", unf->numev);
+    printf("unf->numco: %d\n", unf->numco);
+  }
   
   /* Reverse the lists of places, events etc. This is to maintain
     compatibility with RdlcheckMcM and mcsmodels, which expect events
@@ -60,7 +63,7 @@ void write_mci_file (char *filename)
       printf("%s (e%d)  ", ev->origin->name, ev->mark);
     }
   }
-  printf("\n");
+  if(!attractors) printf("\n");
 
   querycell_t *qbuck;
   for(qbuck = *query; qbuck; qbuck = qbuck->next)
@@ -83,42 +86,6 @@ void write_mci_file (char *filename)
         write_int(ev->mark);
   }
   write_int(null);
-
-  /* for(qbuck = *query; qbuck; qbuck = qbuck->next)
-  {
-    printf("repeat: %d\n", qbuck->repeat);
-    printf("cut size: %d\n", qbuck->szcut);
-    printf("evscut size: %d\n", qbuck->szevscut);
-    for (list1 = qbuck->cut; list1; list1 = list1->next)
-    {
-      if((co = list1->node))
-        printf("condition name and condition number: %s num: %d\n", 
-         co->origin->name, co->num+1);
-    }
-    for (list1 = qbuck->evscut; list1; list1 = list1->next)
-    {
-      if((ev = list1->node))
-        printf("event name and event number: %s num: %d\n", 
-         ev->origin->name, ev->mark);
-    }
-  } */
-
-  /* hashcell_t *buck;
-   for (int i = 0; i < hash_buckets; i++)
-  {
-    for(buck = hash[i]; buck; buck = buck->next)
-    {
-      //print_marking_pl(buck->marking);
-      //printf("i: %d\n", i);
-      //printf("repeat: %d\n", buck->repeat);
-      for (list1 = buck->pre_evs; list1; list1 = list1->next)
-      {
-        if((ev = list1->node))
-          //printf("creator event: %s id: %d\n", 
-          //  ev->origin->name, ev->id);
-      }
-    }
-  } */
   
   for (ev = unf->events; ev; ev = ev->next){
     write_int(ev->origin->num);
@@ -154,6 +121,8 @@ void write_mci_file (char *filename)
   write_int(null);
   write_int(net->numpl);
   write_int(net->numtr);
+  /* printf("places: %d\n", net->numpl);
+  printf("transitions: %d\n", net->numtr); */
 
   sz = net->maxplname >= net->maxtrname ? 
     net->maxplname : net->maxtrname;

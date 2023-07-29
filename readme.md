@@ -32,24 +32,24 @@ Calling Ecofolder without any argument yields a usage summary.
 Currently, there are just four options:
 
 `-m <some.filename>`
-	Normally, if the input net is some.ll_net, then the resulting
-	unfolding will be written to some.mci. This option allows the
-	result to be written to some other file.
+  Normally, if the input net is some.ll_net, then the resulting
+  unfolding will be written to some.mci. This option allows the
+  result to be written to some other file.
 
 `-d <some.number>`
-	Unfolding is performed up to the given depth, i.e. the generated
-	prefix contains all events whose local configuration size does
-	not exceed some.number. No cutoff events will be generated.
+  Unfolding is performed up to the given depth, i.e. the generated
+  prefix contains all events whose local configuration size does
+  not exceed some.number. No cutoff events will be generated.
 
 `-T <some_transition_name>`
-	The unfolding process will abort as soon as an event is found
-	which is related to the named transition.
+  The unfolding process will abort as soon as an event is found
+  which is related to the named transition.
 
 `-i`	The program outputs verbose information about the discovered
-	events and conditions and allows the user to choose among the
-	potential extensions. (Cutoffs are added immediately without
-	asking because adding them at any other time would not change
-	the result.)
+  events and conditions and allows the user to choose among the
+  potential extensions. (Cutoffs are added immediately without
+  asking because adding them at any other time would not change
+  the result.)
 
 The distribution contains an additional utility
 called `mci2dot`. The input of this tool is an .mci file (as produced
@@ -118,24 +118,28 @@ RS
 
 Related publications:
 
-<a id=erv02>[ERV02]</a>: Javier Esparza, Stefan Römer, and Walter Vogler. An improvement of
-	McMillan's unfolding algorithm. Formal Methods in System Design,
-	20:285-310, 2002.
+<a id=erv02>[ERV02]</a> Javier Esparza, Stefan Römer, and Walter Vogler. An improvement of
+  McMillan's unfolding algorithm. Formal Methods in System Design,
+  20:285-310, 2002.
 
 <a id=sse03>[SSE03]</a> Claus Schröter, Stefan Schwoon, and Javier Esparza. The Model-Checking
-	Kit. In Wil van der Aalst and Eike Best, editors, Applications and
-	Theory of Petri Nets 2003, volume 2679 of Lecture Notes in Computer
-	Science, pages 463-472. Springer, June 2003. [See also.](https://doi.org/10.1007/3-540-44919-1_29)
+  Kit. In Wil van der Aalst and Eike Best, editors, Applications and
+  Theory of Petri Nets 2003, volume 2679 of Lecture Notes in Computer
+  Science, pages 463-472. Springer, June 2003. doi: https://doi.org/10.1007/3-540-44919-1_29
 
 <a id=ste01>[STE01]</a> C. Stehno. PEP Version 2.0. Tool demonstration ICATPN 2001.
-	Newcastle upon Tyne 2001.
+  Newcastle upon Tyne 2001.
+
+<a id=chjps14>[CHJPS14]</a> 
+  Thomas Chatain, Stefan Haar, Loïg Jezequel, Loïc Paulevé, and Stefan Schwoon. Characterization of reachable attractors using Petri net unfoldings. In Pedro Mendes, Joseph Dada, and Kieran Smallbone, editors, Computational Methods in Systems Biology, volume 8859 of Lecture Notes in Computer Science, pages 129–142. Springer Berlin Heidelberg, Cham, 2014. doi: http://dx.doi.org/10.1007/978-3-319-12982-2_10
 
 ## History
 
-Previous versions of Ecofolder are [**Mole - A Petri Net Unfolder**](http://www.lsv.fr/~schwoon/tools/mole/), then you can check for a more detailed version history in Mole's documentation.
-
-Version 1.0.0 (22.03.2022)
-	First public release.
+Previous versions of Ecofolder are [**Mole - A Petri Net Unfolder**](http://www.lsv.fr/~schwoon/tools/mole/). Ecofolder uses several contributions to the scope of unfoldings from different authors: 
+  
+  César Rodríguez: mci2sat.c
+  Thomas Chatain, Stefan Haar, Loïg Jezequel, Loïc Paulevé, and Stefan Schowoon: allfinals.pl, attractors.py [SSE03](#CHJPS14)
+  Stefan Römer, Stefan Schwoon: main core of the unfolding algorithm.
 
 ## License
 
