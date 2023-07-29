@@ -23,6 +23,7 @@ int interactive = 0;      /* interactive mode (-i)    */
 int compressed = 0;     /* compressed unfolding view (-c)    */
 int mcmillan = 0;      /* mcmillan criteria flag (-mcmillan) */
 int m_repeat = 0;     /* marking repeat to highlight (-r)    */
+int attractors = 0;     /* enabling Ecofolder to extract attractors (-att)    */
 int conflsteps = 0;   /* allocating blocks of CO_ALLOC_STEP Bytes */
 int** confl_evs = NULL;  /* matrix of events X conditions whether they are 
                           in direct conflict*/
@@ -472,7 +473,6 @@ void unfold ()
   int i, cutoff, repeat = 0, check_query, harmful_check;
   int conflsteps = CO_ALLOC_STEP;
   confl_evs = MYmalloc(CO_ALLOC_STEP * sizeof(int*));
-
   char trans_pool[(net->maxtrname+2)*(net->numtr)];
   memset( trans_pool, 0, (net->maxtrname+2)*(net->numtr)*sizeof(char) );
 
@@ -512,9 +512,12 @@ void unfold ()
     printf("\n");
   }
 
-  printf("Print initial marking\n");
-  print_marking_pl(list);
-  printf("\n");
+  if(!attractors)
+  {  
+    printf("Print initial marking\n");
+    print_marking_pl(list);
+    printf("\n"); 
+  }
 
   /* initialize PE computation */
   pe_init(list);
@@ -538,10 +541,15 @@ void unfold ()
     nodelist_push(&(unf->m0),co);
   }
   
-  printf("Unfolding initial marking plus resets\n");
-  print_marking_co(nodelist_concatenate(unf->m0, unf->m0_unmarked));
-  printf("\n");
+  if(!attractors)
+  {
+    printf("Unfolding initial marking plus resets\n");
+    print_marking_co(nodelist_concatenate(unf->m0, unf->m0_unmarked));
+    printf("\n");
+  }
+
   recursive_pe(nodelist_concatenate(unf->m0, unf->m0_unmarked));
+
   if(confmax)
     for (i = 0; i < conflsteps; i++)
       confl_evs[i] = MYcalloc(conflsteps * sizeof(confl_evs));

@@ -33,6 +33,7 @@ extern int confmax;   /* whether the -confmax switch has been supplied */
 extern int compressed;    /* whether the -c switch has been supplied */
 extern int mcmillan;    /* whether the -mcmillan switch is enabled */
 extern int m_repeat;    /* whether the -r switch has been supplied */
+extern int attractors;    /* whether the -att switch has been supplied */
 
 extern nodelist_t *cutoff_list, *corr_list;  /* cut-off/corresponding list */
 extern nodelist_t *harmful_list;  /* bad or harmful events in a list */

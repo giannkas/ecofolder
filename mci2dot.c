@@ -10,7 +10,7 @@ typedef struct cut_t
   int *evscut;
 } cut_t;
 
-void read_mci_file (char *filename, int m_repeat)
+int read_mci_file (char *filename, int m_repeat, char* evname)
 {
   #define read_int(x) fread(&(x),sizeof(int),1,file)
 
@@ -29,7 +29,8 @@ void read_mci_file (char *filename, int m_repeat)
     exit(1);
   }
 
-  printf("digraph test {\n");
+  if(!evname) 
+    printf("digraph test {\n");
 
   read_int(numco);
   read_int(numev);
@@ -76,10 +77,10 @@ void read_mci_file (char *filename, int m_repeat)
     read_int(tokens[i]);
     read_int(queries_co[i]);
     read_int(pre_ev);
-    if (pre_ev) printf("  e%d -> c%d;\n",pre_ev,i);
+    if (pre_ev && !evname) printf("  e%d -> c%d;\n",pre_ev,i);
     do {
       read_int(post_ev);
-      if (post_ev) printf("  c%d -> e%d;\n",i,post_ev);
+      if (post_ev && !evname) printf("  c%d -> e%d;\n",i,post_ev);
     } while (post_ev);
   }
 
@@ -144,41 +145,56 @@ void read_mci_file (char *filename, int m_repeat)
   char color8[] = "#4040ff";
   char color9[] = "#409f40";
 
-
-  for (i = 1; i <= numco; i++)
-    printf("  c%d [color=\"%s\" fillcolor=\"%s\" label= <%s<FONT COLOR=\"red\"><SUP>%d</SUP></FONT>&nbsp;(c%d)> shape=circle style=filled];\n",
-        i,color8,queries_co[i] ? color2 : color1,plname[co2pl[i]],tokens[i],i);
-  for (i = 1; i <= numev; i++)
-    if (i == cutoffs[i])
-      printf("  e%d [color=%s fillcolor=%s label=\"%s (e%d)\" shape=box style=filled];\n",
-          i,queries_ev[i] ? color3 : color6,color5,trname[ev2tr[i]],i);
-    else if ( i == harmfuls[i])
-      printf("  e%d [color=%s fillcolor=%s label=\"%s (e%d)\" shape=box style=filled];\n",
-          i,queries_ev[i] ? color3 : color6,color7,trname[ev2tr[i]],i);
-    else
-      printf("  e%d [color=\"%s\" fillcolor=\"%s\" label=\"%s (e%d)\" shape=box style=filled];\n",
-          i,queries_ev[i] ? color6 : color9,queries_ev[i] ? color3 : color4,trname[ev2tr[i]],i);
-  printf("}\n");
+  int found = 0;
+  if(!evname)
+  {
+    for (i = 1; i <= numco; i++)
+      printf("  c%d [color=\"%s\" fillcolor=\"%s\" label= <%s<FONT COLOR=\"red\"><SUP>%d</SUP></FONT>&nbsp;(c%d)> shape=circle style=filled];\n",
+          i,color8,queries_co[i] ? color2 : color1,plname[co2pl[i]],tokens[i],i);
+    for (i = 1; i <= numev; i++)
+      if (i == cutoffs[i])
+        printf("  e%d [color=%s fillcolor=%s label=\"%s (e%d)\" shape=box style=filled];\n",
+            i,queries_ev[i] ? color3 : color6,color5,trname[ev2tr[i]],i);
+      else if ( i == harmfuls[i])
+        printf("  e%d [color=%s fillcolor=%s label=\"%s (e%d)\" shape=box style=filled];\n",
+            i,queries_ev[i] ? color3 : color6,color7,trname[ev2tr[i]],i);
+      else
+        printf("  e%d [color=\"%s\" fillcolor=\"%s\" label=\"%s (e%d)\" shape=box style=filled];\n",
+            i,queries_ev[i] ? color6 : color9,queries_ev[i] ? color3 : color4,trname[ev2tr[i]],i);
+    printf("}\n");
+  }
+  else{
+    for (i = 1; i <= numev && !found && evname; i++)
+      if (!strcmp(trname[ev2tr[i]], evname))
+        found = 1;
+  }
 
   fclose(file);
+  return found;
 }
 
 int main (int argc, char **argv)
 {
   int i, m_repeat = 0;
-  char *filename;
+  char *filename, *evname = NULL;
 
   for (i = 1; i < argc; i++)
     if (!strcmp(argv[i],"-r"))
       m_repeat = atoi(argv[++i]);
+    else if (!strcmp(argv[i],"-reach"))
+      evname = argv[++i];
     else
       filename = argv[i];
 
   if (!filename)
   {
-    fprintf(stderr,"usage: mci2dot <mcifile>\n");
+    fprintf(stderr,"usage: mci2dot [options] <mcifile>\n\n"
+
+    "     Options:\n"
+    "      -r <instance>  highlight <instance> of a repeated marking\n"
+    "      -reach <evname>  if used, it will look for an event related to an attractor to return whether such event was found\n\n"
+    );
     exit(1);
   }
-  read_mci_file(filename, m_repeat);
-  exit(0);
+  exit(!read_mci_file(filename, m_repeat, evname));
 }

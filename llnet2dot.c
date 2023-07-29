@@ -15,16 +15,16 @@
 
 void usage(char *myname)
 {
-	fprintf(stderr,
-		"%s -- llnet format to dot format for depicting nets\n\n"
-		"Usage: %s <LLnetfile> \n\n"
+  fprintf(stderr,
+    "%s -- llnet format to dot format for depicting nets\n\n"
+    "Usage: %s <LLnetfile> \n\n"
 
-	"Unless specified otherwise, all filenames will default to\n"
-	"the basename of <LLnetfile> plus appropriate extensions.\n\n"
+  "Unless specified otherwise, all filenames will default to\n"
+  "the basename of <LLnetfile> plus appropriate extensions.\n\n"
 
-	"Version 1.1.0 (17.01.2023)\n", myname, myname);
+  "Version 1.1.0 (17.01.2023)\n", myname, myname);
 
-	exit(1);
+  exit(1);
 }
 
 /*****************************************************************************/
@@ -150,10 +150,10 @@ void llnet2dot(char* in_file){
 
 int main (int argc, char **argv)
 {
-	if (argc != 2){
-		fprintf(stderr,"usage: llnet2dot <ll_netfile>\n");
-		exit(1);
-	}
-	llnet2dot(argv[1]);
-	exit(0);
+  if (argc != 2){
+    fprintf(stderr,"usage: llnet2dot <ll_netfile>\n");
+    exit(1);
+  }
+  llnet2dot(argv[1]);
+  exit(0);
 }
