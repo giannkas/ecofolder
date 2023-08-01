@@ -114,6 +114,15 @@ RS
 2>2
 ...
 ```
+
+## History
+
+Previous versions of Ecofolder are [**Mole - A Petri Net Unfolder**](http://www.lsv.fr/~schwoon/tools/mole/). Ecofolder uses several contributions to the scope of unfoldings from different authors: 
+  
+  César Rodríguez: mci2sat.c <br/>
+  Thomas Chatain, Stefan Haar, Loïg Jezequel, Loïc Paulevé, and Stefan Schowoon: allfinals.pl, attractors.py [SSE03](#CHJPS14) <br/>
+  Stefan Römer, Stefan Schwoon: main core of the unfolding algorithm.
+  
 ## References
 
 Related publications:
@@ -133,13 +142,6 @@ Related publications:
 <a id=chjps14>[CHJPS14]</a> 
   Thomas Chatain, Stefan Haar, Loïg Jezequel, Loïc Paulevé, and Stefan Schwoon. Characterization of reachable attractors using Petri net unfoldings. In Pedro Mendes, Joseph Dada, and Kieran Smallbone, editors, Computational Methods in Systems Biology, volume 8859 of Lecture Notes in Computer Science, pages 129–142. Springer Berlin Heidelberg, Cham, 2014. doi: http://dx.doi.org/10.1007/978-3-319-12982-2_10
 
-## History
-
-Previous versions of Ecofolder are [**Mole - A Petri Net Unfolder**](http://www.lsv.fr/~schwoon/tools/mole/). Ecofolder uses several contributions to the scope of unfoldings from different authors: 
-  
-  César Rodríguez: mci2sat.c <br/>
-  Thomas Chatain, Stefan Haar, Loïg Jezequel, Loïc Paulevé, and Stefan Schowoon: allfinals.pl, attractors.py [SSE03](#CHJPS14) <br/>
-  Stefan Römer, Stefan Schwoon: main core of the unfolding algorithm.
 
 ## License
 
