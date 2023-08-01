@@ -137,8 +137,8 @@ Related publications:
 
 Previous versions of Ecofolder are [**Mole - A Petri Net Unfolder**](http://www.lsv.fr/~schwoon/tools/mole/). Ecofolder uses several contributions to the scope of unfoldings from different authors: 
   
-  César Rodríguez: mci2sat.c
-  Thomas Chatain, Stefan Haar, Loïg Jezequel, Loïc Paulevé, and Stefan Schowoon: allfinals.pl, attractors.py [SSE03](#CHJPS14)
+  César Rodríguez: mci2sat.c <br/>
+  Thomas Chatain, Stefan Haar, Loïg Jezequel, Loïc Paulevé, and Stefan Schowoon: allfinals.pl, attractors.py [SSE03](#CHJPS14) <br/>
   Stefan Römer, Stefan Schwoon: main core of the unfolding algorithm.
 
 ## License

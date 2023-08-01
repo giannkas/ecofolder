@@ -15,14 +15,14 @@ void usage(char *myname)
     "Usage: %s [options] <LLnetfile> [FileOptions]\n\n"
 
   "     Options:\n"
-  "      -T <name>      stop when transition <name> is inserted\n"
-  "      -d <depth>     unfold up to given <depth>\n"
-  "      -i             interactive mode\n"
-  "      -r <instance>  highlight <instance> of a repeated marking\n"
+  "      -T <name>      stop when transition <name> is inserted.\n"
+  "      -d <depth>     unfold up to given <depth>.\n"
+  "      -i             interactive mode.\n"
+  "      -r <instance>  highlight <instance> of a repeated marking.\n"
   "      -c             compressed view\n"
-  "      -mcmillan      unfolds with mcmillan criteria\n"
-  "      -confmax       if used, it will enable interactive mode to display maximal configurations only"
-  "      -att           if used, Ecofolder will be used as an internal tool to extract attractors so it won't print anything but the mci file. Note that the interactive mode cannot be enabled when finding attractors.\n\n"
+  "      -mcmillan      unfolds with mcmillan criteria.\n"
+  "      -confmax       when used, it will enable interactive mode to display maximal configurations only.\n"
+  "      -att           if used, Ecofolder will be used as an internal tool to extract attractors so\n                     it won't print anything but the mci file. Note that the interactive mode cannot\n                     be enabled when finding attractors.\n\n"
 
   "     FileOptions:\n"
   "      -m <filename>  file to store the unfolding in\n\n"
@@ -88,7 +88,7 @@ int main (int argc, char **argv)
   if (!llnet) usage(argv[0]);
   
   if(attractors)
-    assert(attractors != interactive);
+    assert(attractors != interactive && attractors != compressed);
   net = read_pep_net(llnet);
 
   nc_static_checks(net,stoptr_name);
