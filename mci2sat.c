@@ -493,7 +493,7 @@ int main (int argc, char ** argv)
     strcpy(outfile + l - 3, "sat");
   }
 
-        mci2sat (filename,outfile);
+  mci2sat (filename,outfile);
 
-        return 0;
+  return 0;
 }

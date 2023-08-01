@@ -10,23 +10,32 @@ typedef struct cut_t
   int *evscut;
 } cut_t;
 
-int read_mci_file (char *filename, int m_repeat, char* evname)
+int read_mci_file (char *mcifile, char *evcofile, int m_repeat, char* evname)
 {
-  #define read_int(x) fread(&(x),sizeof(int),1,file)
+  #define read_int(x) fread(&(x),sizeof(int),1,mcif)
 
-  FILE *file;
+  FILE *mcif, *evcof;
   int nqure, nqure_, nquszcut, nquszevscut, szcuts, 
-    numco, numev, numpl, numtr, sz, i;
+    numco, numev, numpl, numtr, sz, i, value;
   int pre_ev, post_ev, cutoff, harmful, dummy = 0;
   int *co2pl, *ev2tr, *tokens, *queries_co,
    *queries_ev, *cutoffs, *harmfuls;
   char **plname, **trname, *c;
   cut_t **cuts;
 
-  if (!(file = fopen(filename,"rb")))
+  if (!(mcif = fopen(mcifile,"rb")))
   {
-    fprintf(stderr,"cannot read file %s\n",filename);
+    fprintf(stderr,"cannot read file %s\n",mcifile);
     exit(1);
+  }
+
+  if (evcofile)
+  {
+    if (!(evcof = fopen(evcofile, "r")))
+    {
+      fprintf(stderr,"cannot read file %s\n",evcofile);
+      exit(1);
+    }
   }
 
   if(!evname) 
@@ -69,6 +78,7 @@ int read_mci_file (char *filename, int m_repeat, char* evname)
   for (i = 1; i <= numev; i++){
     read_int(ev2tr[i]);
     read_int(queries_ev[i]);
+    if (evcofile) queries_ev[i] = 0;
   }
 
   for (i = 1; i <= numco; i++)
@@ -76,6 +86,7 @@ int read_mci_file (char *filename, int m_repeat, char* evname)
     read_int(co2pl[i]);
     read_int(tokens[i]);
     read_int(queries_co[i]);
+    if (evcofile) queries_co[i] = 0;
     read_int(pre_ev);
     if (pre_ev && !evname) printf("  e%d -> c%d;\n",pre_ev,i);
     do {
@@ -84,7 +95,7 @@ int read_mci_file (char *filename, int m_repeat, char* evname)
     } while (post_ev);
   }
 
-  if(dummy)
+  if(dummy && !evcofile)
   {
     if (cuts[m_repeat] && cuts[m_repeat]->repeat < 0)
     {
@@ -128,12 +139,12 @@ int read_mci_file (char *filename, int m_repeat, char* evname)
   for (i = 1; i <= numtr+1; i++) trname[i] = malloc(sz+1);
 
   for (c = plname[i=1]; i <= numpl; c = plname[++i])
-    do { fread(c,1,1,file); } while (*c++);
-  fread(c,1,1,file);
+    do { fread(c,1,1,mcif); } while (*c++);
+  fread(c,1,1,mcif);
 
   for (c = trname[i=1]; c = trname[i], i <= numtr; c = trname[++i])
-    do { fread(c,1,1,file); } while (*c++);
-  fread(c,1,1,file);
+    do { fread(c,1,1,mcif); } while (*c++);
+  fread(c,1,1,mcif);
 
   char color1[] = "#ccccff"; // or "lightblue";
   char color2[] = "gold";
@@ -144,6 +155,15 @@ int read_mci_file (char *filename, int m_repeat, char* evname)
   char color7[] = "firebrick2";
   char color8[] = "#4040ff";
   char color9[] = "#409f40";
+
+  dummy = 0;
+  while (fscanf(evcof," %d",&value) != EOF)
+  {
+    if (value != 0 && !dummy)
+      queries_ev[value] = 1;
+    else
+      {queries_co[value] = 1; dummy = 1;}
+  }
 
   int found = 0;
   if(!evname)
@@ -169,32 +189,38 @@ int read_mci_file (char *filename, int m_repeat, char* evname)
         found = 1;
   }
 
-  fclose(file);
+  fclose(mcif);
+  fclose(evcof);
   return found;
 }
 
 int main (int argc, char **argv)
 {
   int i, m_repeat = 0;
-  char *filename, *evname = NULL;
+  char *mcifile = NULL, *evcofile = NULL, *evname = NULL;
 
   for (i = 1; i < argc; i++)
     if (!strcmp(argv[i],"-r"))
       m_repeat = atoi(argv[++i]);
     else if (!strcmp(argv[i],"-reach"))
       evname = argv[++i];
+    else if(!mcifile)
+      mcifile = argv[i];
     else
-      filename = argv[i];
+      evcofile = argv[i];
 
-  if (!filename)
+  if (!mcifile)
   {
-    fprintf(stderr,"usage: mci2dot [options] <mcifile>\n\n"
+    fprintf(stderr,"usage: mci2dot [options] <mcifile> <evcofile>\n\n"
 
     "     Options:\n"
     "      -r <instance>  highlight <instance> of a repeated marking\n"
     "      -reach <evname>  if used, it will look for an event related to an attractor to return whether such event was found\n\n"
-    );
+
+    "<evcofile> is an optional file whose first line contains\n"
+    "the IDs of a firing sequence of events and the second line\n"
+    "represents IDs of conditions in the cut.\n\n");
     exit(1);
   }
-  exit(!read_mci_file(filename, m_repeat, evname));
+  exit(!read_mci_file(mcifile, evcofile, m_repeat, evname));
 }
