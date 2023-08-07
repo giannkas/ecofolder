@@ -28,7 +28,9 @@ void usage(char *myname)
   "      -m <filename>  file to store the unfolding in\n\n"
 
   "Unless specified otherwise, all filenames will default to\n"
-  "the basename of <LLnetfile> plus appropriate extensions.\n\n"
+  "the basename of <LLnetfile> plus appropriate extensions.\n"
+  "confmax, interactive and compressed are mutually exclusive\n"
+  "with att (finding attractors).\n\n"
 
   "Version 1.0.0 (22.03.2022)\n", myname, myname);
 
@@ -39,7 +41,7 @@ void usage(char *myname)
 
 int main (int argc, char **argv)
 {
-  int	 i, given_name = 0;
+  int  i, given_name = 0;
   char    *llnet = NULL, *mcifile;
   char    **dptr = &llnet;
   char	*tmpname, *idx;
@@ -47,17 +49,29 @@ int main (int argc, char **argv)
 
   for (i = 1; i < argc; i++)
     if (!strcmp(argv[i],"-m"))
-      {dptr = &mcifile; given_name = 1;}
+    {
+      dptr = &mcifile; 
+      given_name = 1;
+    }
     else if (!strcmp(argv[i],"-T"))
-      stoptr_name = argv[++i];
+    {
+      if (++i == argc) usage(argv[0]);
+      stoptr_name = argv[i];
+    }
     else if (!strcmp(argv[i],"-d"))
-      unfold_depth = atoi(argv[++i]);
+    {
+      if (++i == argc) usage(argv[0]);
+      unfold_depth = atoi(argv[i]);
+    }
     else if (!strcmp(argv[i],"-i"))
       interactive = 1;
     else if (!strcmp(argv[i],"-confmax"))
       confmax = interactive = 1;
     else if (!strcmp(argv[i],"-r"))
-      m_repeat = atoi(argv[++i]);
+    {
+      if (++i == argc) usage(argv[0]);
+      m_repeat = atoi(argv[i]);
+    }
     else if (!strcmp(argv[i],"-c"))
       compressed = 1;
     else if (!strcmp(argv[i],"-mcmillan"))
@@ -87,8 +101,9 @@ int main (int argc, char **argv)
 
   if (!llnet) usage(argv[0]);
   
-  if(attractors)
-    assert(attractors != interactive && attractors != compressed);
+  if (attractors)
+    if(interactive || compressed || confmax) 
+      usage(argv[0]);
   net = read_pep_net(llnet);
 
   nc_static_checks(net,stoptr_name);

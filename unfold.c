@@ -512,7 +512,7 @@ void unfold ()
     printf("\n");
   }
 
-  if(!attractors)
+  if(!attractors && !interactive)
   {  
     printf("Print initial marking\n");
     print_marking_pl(list);

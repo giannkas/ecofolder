@@ -401,7 +401,7 @@ void mci2sat (const char * infile, const char *outfile)
   {
     reachable();
   }
-    
+
 
   free(blob);
 
