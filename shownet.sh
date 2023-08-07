@@ -2,7 +2,7 @@
 
 echo "Converting to dot..."
 #./llnet2dot $1.ll_net
-./llnet2dot $1.ll_net
+./llnet2dot $1.ll
 
 echo "Producing the pdf..."
 dot -T pdf $1_net.dot > $1_net.pdf

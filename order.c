@@ -169,7 +169,10 @@ pe_queue_t* create_queue_entry (trans_t *tr)
     printf("Discovered new extension E%d (%s) [condition%s",
       qu_new->id, tr->name, tr->prereset_size == 1? "" : "s");
     int i = tr->prereset_size;
-    while (i) { printf(" C%d",(pe_conds[--i]->num)+1); }
+    while (i) { 
+      i--;
+      printf(" C%d (%s)",(pe_conds[i]->num)+1, pe_conds[i]->origin->name); 
+    }
     printf("].\n");
   }
         /* copy the pre-conditions */
