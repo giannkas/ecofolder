@@ -156,13 +156,19 @@ int read_mci_file (char *mcifile, char *evcofile, int m_repeat, char* evname)
   char color8[] = "#4040ff";
   char color9[] = "#409f40";
 
-  dummy = 0;
-  while (fscanf(evcof," %d",&value) != EOF)
-  {
-    if (value != 0 && !dummy)
-      queries_ev[value] = 1;
-    else
-      {queries_co[value] = 1; dummy = 1;}
+  if(evcofile)
+  {  
+    dummy = 0;
+    while (fscanf(evcof," %d",&value) != EOF)
+    {
+      if (value != 0 && !dummy)
+        queries_ev[value] = 1;
+      else
+      {
+        queries_co[value] = 1; 
+        dummy = 1;
+      }
+    }
   }
 
   int found = 0;
@@ -190,8 +196,23 @@ int read_mci_file (char *mcifile, char *evcofile, int m_repeat, char* evname)
   }
 
   fclose(mcif);
-  fclose(evcof);
+  if (evcofile) fclose(evcof);
   return found;
+}
+
+void usage ()
+{
+  fprintf(stderr,"usage: mci2dot [options] <mcifile> <evcofile>\n\n"
+
+    "     Options:\n"
+    "      -r <instance>  highlight <instance> of a repeated marking\n"
+    "      -reach <evname>  if used, it will look for an event related to an attractor to return whether such event was found\n\n"
+
+    "<evcofile> is an optional file whose first line contains\n"
+    "the IDs of a firing sequence of events and the second line\n"
+    "represents IDs of conditions in the cut.\n"
+    "-r and -reach are mutually exclusive.\n\n");
+    exit(1);
 }
 
 int main (int argc, char **argv)
@@ -201,26 +222,21 @@ int main (int argc, char **argv)
 
   for (i = 1; i < argc; i++)
     if (!strcmp(argv[i],"-r"))
-      m_repeat = atoi(argv[++i]);
+    {
+      if (++i == argc) usage();
+      m_repeat = atoi(argv[i]);
+    }
     else if (!strcmp(argv[i],"-reach"))
-      evname = argv[++i];
+    {
+      if (++i == argc) usage();
+      evname = argv[i];
+    }
     else if(!mcifile)
       mcifile = argv[i];
     else
       evcofile = argv[i];
 
-  if (!mcifile)
-  {
-    fprintf(stderr,"usage: mci2dot [options] <mcifile> <evcofile>\n\n"
+  if (!mcifile || (evname && m_repeat)) usage();
 
-    "     Options:\n"
-    "      -r <instance>  highlight <instance> of a repeated marking\n"
-    "      -reach <evname>  if used, it will look for an event related to an attractor to return whether such event was found\n\n"
-
-    "<evcofile> is an optional file whose first line contains\n"
-    "the IDs of a firing sequence of events and the second line\n"
-    "represents IDs of conditions in the cut.\n\n");
-    exit(1);
-  }
   exit(!read_mci_file(mcifile, evcofile, m_repeat, evname));
 }
