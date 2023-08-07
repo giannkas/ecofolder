@@ -372,6 +372,8 @@ void mci2sat (const char * infile, const char *outfile)
     int place = read_int();
     token = read_int();
     queried = read_int();
+    token = queried; //rm warning unused variables
+    queried = token; //same 
     int gen = read_int();
 
     /* printf("place: %d\n", place);

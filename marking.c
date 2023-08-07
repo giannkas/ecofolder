@@ -119,7 +119,7 @@ int add_marking (nodelist_t *marking, event_t *ev)
 
   while (*buck && (cmp = nodelist_compare(marking,(*buck)->marking)) > 0)
     buck = &((*buck)->next);
-
+  
   /* printf("\nhola\n");
   if(ev) printf("creating marking: %s, %d\n", ev->origin->name, ev->id);
   for(list = marking; list; list = list->next)
@@ -176,7 +176,6 @@ int add_marking (nodelist_t *marking, event_t *ev)
     *buck = newbuck;
     not_present = 1;
   }
-
   return not_present;
 }
 

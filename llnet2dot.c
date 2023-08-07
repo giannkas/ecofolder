@@ -5,11 +5,7 @@
 
 #include "common.h"
 
-#define MAX_LINE_SIZE 10000
-#define LINE_SIZE 50
-#define MAX_READ_PLACES 200
-#define READ_PLACES 100
-#define MAX_REPLICATED_PLACES_PER_PLACE 100
+#define READ_PLACES 500
 
 /*****************************************************************************/
 
@@ -54,8 +50,9 @@ void llnet2dot(char* in_file){
   else
   {
     /* Read up to RD label and get number of transitions and places*/
-    while(fgets(d_read, READ_PLACES, r_pointer) != NULL && !strstr(d_read, "RD")
-       && !strstr(d_read, "TP")){
+    while(fgets(d_read, READ_PLACES, r_pointer) != NULL && !strstr(d_read, "RD\n")
+       && !strstr(d_read, "TP\n"))
+    {
       if (d_read[0] == 'P' && d_read[1] == 'L');
       else if (places == header) header++;
       if (d_read[0] == 'T' && d_read[1] == 'R');
@@ -75,8 +72,8 @@ void llnet2dot(char* in_file){
     w_pointer = fopen(out_file, "w"); // if we have read arcs then create a new file.      
     fprintf(w_pointer, "digraph test {\n");
 
-    if(strstr(d_read, "RD")){
-      while(fgets(d_read, READ_PLACES, r_pointer) != NULL && !strstr(d_read, "TP")){
+    if(strstr(d_read, "RD\n")){
+      while(fgets(d_read, READ_PLACES, r_pointer) != NULL && !strstr(d_read, "TP\n")){
         left = ftokstr(d_read, 0, '>');
         right = ltokstr(d_read, 0, '>');
         num_left = strtol(left, &token, 10);
@@ -85,8 +82,8 @@ void llnet2dot(char* in_file){
       }
     }
 
-    if(strstr(d_read, "TP")){
-      while(fgets(d_read, READ_PLACES, r_pointer) != NULL && !strstr(d_read, "PT")){
+    if(strstr(d_read, "TP\n")){
+      while(fgets(d_read, READ_PLACES, r_pointer) != NULL && !strstr(d_read, "PT\n")){
         left = ftokstr(d_read, 0, '<');
         right = ltokstr(d_read, 0, '<');
         num_left = strtol(left, &token, 10);
@@ -95,8 +92,8 @@ void llnet2dot(char* in_file){
       }
     }
 
-    if(strstr(d_read, "PT")){
-      while(fgets(d_read, READ_PLACES, r_pointer) != NULL && !strstr(d_read, "RS")){
+    if(strstr(d_read, "PT\n")){
+      while(fgets(d_read, READ_PLACES, r_pointer) != NULL && !strstr(d_read, "RS\n")){
         left = ftokstr(d_read, 0, '>');
         right = ltokstr(d_read, 0, '>');
         num_left = strtol(left, &token, 10);
@@ -105,7 +102,7 @@ void llnet2dot(char* in_file){
       }
     }
 
-    if(strstr(d_read, "RS")){
+    if(strstr(d_read, "RS\n")){
       while(fgets(d_read, READ_PLACES, r_pointer) != NULL){
         left = ftokstr(d_read, 0, '>');
         right = ltokstr(d_read, 0, '>');
@@ -117,7 +114,7 @@ void llnet2dot(char* in_file){
 
     fseek( r_pointer, 0, SEEK_SET );
     int i = 1;
-    while(fgets(d_read, READ_PLACES, r_pointer) != NULL && !strstr(d_read, "TR")){
+    while(fgets(d_read, READ_PLACES, r_pointer) != NULL && !strstr(d_read, "TR\n")){
       if(strstr(d_read, "\"")){
         token = ftokstr(d_read, 1, '\"');
         if(i <= places){
@@ -131,7 +128,7 @@ void llnet2dot(char* in_file){
     }
 
     i = 1;
-    if(strstr(d_read, "TR")){
+    if(strstr(d_read, "TR\n")){
       while(fgets(d_read, READ_PLACES, r_pointer) != NULL && strstr(d_read, "\"")){
         token = ftokstr(d_read, 1, '\"');
         if(i <= trans)
