@@ -3,11 +3,11 @@
 
 nodes:
  Alg+: Sea weed bed (algae), '-' bare rock or '+' algal canopy  
- Urc-: Urchin '+' High densities facilating destructing grazing, '-' marginal densities  
- Lob+: Lobster '+' High densities of large predatory individuals, '-' marginal densities of such predators   
- Aba+: Abalone '+' High densities supporting commercial harvesting, '-' marginal densities    
- Oct-: Octopus '+' High densities of top-predatory individuals, '-' marginal densities  
- Fis-: Reef (tropical) fishes '+' High abundance/biomass of fish populations, '-' low biomass   
+ Urc-: Urchin '+' High densities facilating destructing grazing, '-' marginal densities
+ Lob+: Lobster '+' High densities of large predatory individuals, '-' marginal densities of such predators
+ Aba+: Abalone '+' High densities supporting commercial harvesting, '-' marginal densities
+ Oct-: Octopus '+' High densities of top-predatory individuals, '-' marginal densities
+ Fis-: Reef (tropical) fishes '+' High abundance/biomass of fish populations, '-' low biomass
 
 #constraints:
 # Alg- >> Fis-, Lob-, Aba-, Oct-   # Baren (Desertification)  

@@ -1,0 +1,823 @@
+Reset set of the transitions
+32:
+
+31:
+
+30:
+
+29:
+
+28:
+
+27:
+
+26:
+
+25:
+
+24:
+
+23:
+
+22:
+
+21:
+
+20:
+
+19:
+
+18:
+
+17:
+
+16:
+
+15:
+
+14:
+
+13:
+
+12:
+
+11:
+
+10:
+
+9:
+
+8:
+
+7:
+
+6:
+
+5:
+
+4:
+
+3:
+
+2:
+
+1:
+
+
+Context set of the transitions
+32:
+
+31:
+
+30:
+
+29:
+
+28:
+
+27:
+
+26:
+
+25:
+
+24:
+
+23:
+
+22:
+
+21:
+
+20:
+
+19:
+
+18:
+
+17:
+
+16:
+
+15:
+
+14:
+
+13:
+
+12:
+
+11:
+
+10:
+
+9:
+
+8:
+
+7:
+
+6:
+
+5:
+
+4:
+
+3:
+
+2:
+
+1:
+
+
+Preset of the transitions
+32:
+  YOX1=1
+  SBF=0
+  MBF=1
+
+31:
+  YOX1=1
+  MBF=0
+
+30:
+  SFF=1
+  HCM1=0
+  SBF=1
+
+29:
+  SFF=1
+  SBF=0
+
+28:
+  SWI5=0
+  SFF=1
+
+27:
+  CLN3=1
+  YHP1=1
+  YOX1=1
+
+26:
+  CLN3=1
+  SWI5=0
+  ACE2=1
+  YHP1=0
+  YOX1=1
+
+25:
+  CLN3=1
+  ACE2=0
+  YHP1=0
+  YOX1=1
+
+24:
+  CLN3=1
+  SWI5=0
+  ACE2=1
+  YOX1=0
+
+23:
+  CLN3=1
+  ACE2=0
+  YOX1=0
+
+22:
+  YHP1=0
+  YOX1=1
+  SBF=0
+  MBF=1
+
+21:
+  YOX1=0
+  SBF=0
+  MBF=1
+
+20:
+  CLN3=1
+  YHP1=0
+  YOX1=1
+  SBF=0
+  MBF=0
+
+19:
+  CLN3=1
+  YOX1=0
+  SBF=0
+  MBF=0
+
+18:
+  CLN3=1
+  MBF=0
+
+17:
+  YHP1=1
+  SBF=0
+  MBF=0
+
+16:
+  CLN3=0
+  MBF=1
+
+15:
+  CLN3=0
+  SWI5=1
+  ACE2=1
+  YHP1=0
+  YOX1=1
+
+14:
+  CLN3=0
+  SWI5=1
+  ACE2=1
+  YOX1=0
+
+13:
+  ACE2=0
+  SFF=1
+
+12:
+  HCM1=1
+  SBF=0
+  MBF=1
+
+11:
+  HCM1=1
+  MBF=0
+
+10:
+  CLN3=0
+  YHP1=0
+  YOX1=1
+  SBF=1
+  MBF=0
+
+9:
+  CLN3=0
+  YOX1=0
+  SBF=1
+  MBF=0
+
+8:
+  YHP1=1
+  YOX1=1
+  SBF=1
+
+7:
+  YHP1=0
+  MBF=1
+
+6:
+  YHP1=0
+  SBF=1
+  MBF=0
+
+5:
+  YOX1=0
+  SBF=1
+  MBF=1
+
+4:
+  SWI5=1
+  SFF=0
+
+3:
+  SFF=0
+  HCM1=1
+  SBF=1
+
+2:
+  HCM1=0
+  SBF=1
+  MBF=1
+
+1:
+  ACE2=1
+  SFF=0
+
+
+Postset of the transitions
+32:
+  YOX1=0
+  SBF=0
+  MBF=1
+
+31:
+  YOX1=0
+  MBF=0
+
+30:
+  SFF=0
+  HCM1=0
+  SBF=1
+
+29:
+  SFF=0
+  SBF=0
+
+28:
+  SWI5=1
+  SFF=1
+
+27:
+  CLN3=0
+  YHP1=1
+  YOX1=1
+
+26:
+  CLN3=0
+  SWI5=0
+  ACE2=1
+  YHP1=0
+  YOX1=1
+
+25:
+  CLN3=0
+  ACE2=0
+  YHP1=0
+  YOX1=1
+
+24:
+  CLN3=0
+  SWI5=0
+  ACE2=1
+  YOX1=0
+
+23:
+  CLN3=0
+  ACE2=0
+  YOX1=0
+
+22:
+  YHP1=0
+  YOX1=1
+  SBF=1
+  MBF=1
+
+21:
+  YOX1=0
+  SBF=1
+  MBF=1
+
+20:
+  CLN3=1
+  YHP1=0
+  YOX1=1
+  SBF=1
+  MBF=0
+
+19:
+  CLN3=1
+  YOX1=0
+  SBF=1
+  MBF=0
+
+18:
+  CLN3=1
+  MBF=1
+
+17:
+  YHP1=0
+  SBF=0
+  MBF=0
+
+16:
+  CLN3=0
+  MBF=0
+
+15:
+  CLN3=1
+  SWI5=1
+  ACE2=1
+  YHP1=0
+  YOX1=1
+
+14:
+  CLN3=1
+  SWI5=1
+  ACE2=1
+  YOX1=0
+
+13:
+  ACE2=1
+  SFF=1
+
+12:
+  HCM1=0
+  SBF=0
+  MBF=1
+
+11:
+  HCM1=0
+  MBF=0
+
+10:
+  CLN3=0
+  YHP1=0
+  YOX1=1
+  SBF=0
+  MBF=0
+
+9:
+  CLN3=0
+  YOX1=0
+  SBF=0
+  MBF=0
+
+8:
+  YHP1=1
+  YOX1=1
+  SBF=0
+
+7:
+  YHP1=1
+  MBF=1
+
+6:
+  YHP1=1
+  SBF=1
+  MBF=0
+
+5:
+  YOX1=1
+  SBF=1
+  MBF=1
+
+4:
+  SWI5=0
+  SFF=0
+
+3:
+  SFF=1
+  HCM1=1
+  SBF=1
+
+2:
+  HCM1=1
+  SBF=1
+  MBF=1
+
+1:
+  ACE2=0
+  SFF=0
+
+
+Reset set of the places
+CLN3=1:
+
+CLN3=0:
+
+SWI5=1:
+
+SWI5=0:
+
+ACE2=1:
+
+ACE2=0:
+
+SFF=1:
+
+SFF=0:
+
+YHP1=1:
+
+YHP1=0:
+
+HCM1=1:
+
+HCM1=0:
+
+YOX1=1:
+
+YOX1=0:
+
+SBF=1:
+
+SBF=0:
+
+MBF=1:
+
+MBF=0:
+
+
+Context set of the places
+CLN3=1:
+
+CLN3=0:
+
+SWI5=1:
+
+SWI5=0:
+
+ACE2=1:
+
+ACE2=0:
+
+SFF=1:
+
+SFF=0:
+
+YHP1=1:
+
+YHP1=0:
+
+HCM1=1:
+
+HCM1=0:
+
+YOX1=1:
+
+YOX1=0:
+
+SBF=1:
+
+SBF=0:
+
+MBF=1:
+
+MBF=0:
+
+
+Preset  of the places
+CLN3=1:
+  20
+  19
+  18
+  15
+  14
+
+CLN3=0:
+  27
+  26
+  25
+  24
+  23
+  16
+  10
+  9
+
+SWI5=1:
+  28
+  15
+  14
+
+SWI5=0:
+  26
+  24
+  4
+
+ACE2=1:
+  26
+  24
+  15
+  14
+  13
+
+ACE2=0:
+  25
+  23
+  1
+
+SFF=1:
+  28
+  13
+  3
+
+SFF=0:
+  30
+  29
+  4
+  1
+
+YHP1=1:
+  27
+  8
+  7
+  6
+
+YHP1=0:
+  26
+  25
+  22
+  20
+  17
+  15
+  10
+
+HCM1=1:
+  3
+  2
+
+HCM1=0:
+  30
+  12
+  11
+
+YOX1=1:
+  27
+  26
+  25
+  22
+  20
+  15
+  10
+  8
+  5
+
+YOX1=0:
+  32
+  31
+  24
+  23
+  21
+  19
+  14
+  9
+
+SBF=1:
+  30
+  22
+  21
+  20
+  19
+  6
+  5
+  3
+  2
+
+SBF=0:
+  32
+  29
+  17
+  12
+  10
+  9
+  8
+
+MBF=1:
+  32
+  22
+  21
+  18
+  12
+  7
+  5
+  2
+
+MBF=0:
+  31
+  20
+  19
+  17
+  16
+  11
+  10
+  9
+  6
+
+
+Postset set of the places
+CLN3=1:
+  27
+  26
+  25
+  24
+  23
+  20
+  19
+  18
+
+CLN3=0:
+  16
+  15
+  14
+  10
+  9
+
+SWI5=1:
+  15
+  14
+  4
+
+SWI5=0:
+  28
+  26
+  24
+
+ACE2=1:
+  26
+  24
+  15
+  14
+  1
+
+ACE2=0:
+  25
+  23
+  13
+
+SFF=1:
+  30
+  29
+  28
+  13
+
+SFF=0:
+  4
+  3
+  1
+
+YHP1=1:
+  27
+  17
+  8
+
+YHP1=0:
+  26
+  25
+  22
+  20
+  15
+  10
+  7
+  6
+
+HCM1=1:
+  12
+  11
+  3
+
+HCM1=0:
+  30
+  2
+
+YOX1=1:
+  32
+  31
+  27
+  26
+  25
+  22
+  20
+  15
+  10
+  8
+
+YOX1=0:
+  24
+  23
+  21
+  19
+  14
+  9
+  5
+
+SBF=1:
+  30
+  10
+  9
+  8
+  6
+  5
+  3
+  2
+
+SBF=0:
+  32
+  29
+  22
+  21
+  20
+  19
+  17
+  12
+
+MBF=1:
+  32
+  22
+  21
+  16
+  12
+  7
+  5
+  2
+
+MBF=0:
+  31
+  20
+  19
+  18
+  17
+  11
+  10
+  9
+  6
+
+
+Restrictions of net's unfolding
+
+Print initial marking
+CLN3=0 SWI5=0 ACE2=0 SFF=1 YHP1=0 HCM1=0 YOX1=0 SBF=0 MBF=0 
+Unfolding initial marking plus resets
+MBF=0 SBF=0 YOX1=0 HCM1=0 YHP1=0 SFF=1 ACE2=0 SWI5=0 CLN3=0 
+ev name: 1,2,3,4,5,6,7,8,9,11,12,13,14,16,17,18,19,20,21,22,23,24,25,26,27,28,29,30,31,32

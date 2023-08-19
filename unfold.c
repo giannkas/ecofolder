@@ -609,8 +609,8 @@ void unfold ()
     /* add event to the unfolding */
     ev = insert_event(qu, trans_pool);
     cutoff = add_marking(qu->marking,ev);
-    //if(!cutoff)
-      //printf("ev name: %s\n", ev->origin->name);
+/*     if(!cutoff)
+      printf("ev name: %s\n", ev->origin->name); */
     
     check_query = nodelist_compare(qu->marking, mark_qr);
     // harmful_check = nodelist_compare(qu->marking, harmful_marking);
