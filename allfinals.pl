@@ -26,7 +26,7 @@ testfile($satfile);
 testfile($resfile);
 
 # first step, generate sat formula from mci file
-
+#print "$mcifile\n";
 system "./mci2sat -c -f $mcifile" || die "could not execute mci2sat";
 die "cannot open $satfile" unless -r $satfile;
 

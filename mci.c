@@ -53,7 +53,7 @@ void write_mci_file (char *filename)
 
   for (ev = unf->events; ev; ev = ev->next){
     ev->mark = ++ev_num;
-    if(ev->queried)
+    if(ev->queried && !attractors)
     {
       if(!once)
       {

@@ -9,8 +9,11 @@ DEVNULL = open(os.devnull, 'wb')
 
 class Model:
   def __init__(self, filename):
-    self.filename = filename
-    self.suffix = filename.split('.')[-1]
+    if os.path.isfile(filename + ".ll_net"):
+      self.filename = filename + ".ll_net"
+    else:
+      self.filename = filename + ".ll"
+    self.suffix = self.filename.split('.')[-1]
     self.read(open(self.filename))
 
   def read(self, f):
