@@ -1,0 +1,29 @@
+#!/bin/bash
+
+# echo "Unfolding..."
+# if [ -f $1.ll_net ]; then
+#   ./ecofolder $1.ll_net
+# else
+#   ./ecofolder $1.ll
+# fi
+
+echo "Translation to SAT..."
+./mci2sat -r "$2" $1.mci
+
+echo "SAT checking..."
+minisat $1.sat $1.res > /dev/null
+
+echo "Evaluating SAT..."
+./sateval -r $1.mci $1.res
+
+echo "Converting to dot..."
+./mci2dot -c $1.mci $1.evco > $1.dot
+
+echo "Producing the pdf..."
+dot -T pdf $1.dot > $1.pdf
+
+echo "Displaying the pdf..."
+evince $1.pdf
+
+
+#rm -f $1.mci $1.sat $1.res
