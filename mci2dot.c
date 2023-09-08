@@ -10,7 +10,7 @@ typedef struct cut_t
   int *evscut;
 } cut_t;
 
-int read_mci_file (char *mcifile, char *evcofile, int m_repeat, char* evname)
+int read_mci_file (char *mcifile, char *evcofile, int m_repeat, char* evname, int cutout)
 {
   #define read_int(x) fread(&(x),sizeof(int),1,mcif)
 
@@ -19,7 +19,7 @@ int read_mci_file (char *mcifile, char *evcofile, int m_repeat, char* evname)
     numco, numev, numpl, numtr, sz, i, value;
   int pre_ev, post_ev, cutoff, harmful, dummy = 0;
   int *co2pl, *ev2tr, *tokens, *queries_co,
-   *queries_ev, *cutoffs, *harmfuls;
+   *queries_ev, *cutoffs, *harmfuls, *queries_coset;
   char **plname, **trname, *c;
   cut_t **cuts;
 
@@ -41,6 +41,7 @@ int read_mci_file (char *mcifile, char *evcofile, int m_repeat, char* evname)
   if(!evname) 
     printf("digraph test {\n");
 
+
   read_int(numco);
   read_int(numev);
 
@@ -48,9 +49,11 @@ int read_mci_file (char *mcifile, char *evcofile, int m_repeat, char* evname)
   tokens = malloc((numco+1) * sizeof(int));
   queries_co = malloc((numco+1) * sizeof(int));
   queries_ev = malloc((numev+1) * sizeof(int));
+  queries_coset = malloc((numco+1) * sizeof(int));
   ev2tr = malloc((numev+1) * sizeof(int));
   cutoffs = calloc(numev+1, sizeof(int));
   harmfuls = calloc(numev+1, sizeof(int));
+  
 
   read_int(nqure);
   nqure_ = abs(nqure);
@@ -75,23 +78,48 @@ int read_mci_file (char *mcifile, char *evcofile, int m_repeat, char* evname)
     nqure_ = abs(nqure);
   }
 
+  if(evcofile)
+  {  
+    dummy = 0;
+    while (fscanf(evcof," %d",&value) != EOF)
+    {
+      if (value != 0 && !dummy)
+        queries_ev[value] = 1;
+      else
+      {
+        queries_co[value] = 1; 
+        dummy = 1;
+      }
+    }
+  }
+
   for (i = 1; i <= numev; i++){
     read_int(ev2tr[i]);
-    read_int(queries_ev[i]);
-    if (evcofile) queries_ev[i] = 0;
+    read_int(dummy);
+    if (!evcofile) queries_ev[i] = dummy;
   }
 
   for (i = 1; i <= numco; i++)
   {
     read_int(co2pl[i]);
     read_int(tokens[i]);
-    read_int(queries_co[i]);
-    if (evcofile) queries_co[i] = 0;
+    read_int(dummy);
+    if (!evcofile) queries_co[i] = dummy;
     read_int(pre_ev);
-    if (pre_ev && !evname) printf("  e%d -> c%d;\n",pre_ev,i);
+    if (cutout && pre_ev && !evname && (queries_ev[pre_ev] || queries_co[i]))
+    {
+      printf("  e%d -> c%d;\n",pre_ev,i);
+      queries_coset[i] = 1;
+    }
+    else if (!cutout && pre_ev && !evname) printf("  e%d -> c%d;\n",pre_ev,i);
     do {
       read_int(post_ev);
-      if (post_ev && !evname) printf("  c%d -> e%d;\n",i,post_ev);
+      if (cutout && post_ev && !evname && queries_ev[post_ev])
+      {
+        printf("  c%d -> e%d;\n",i,post_ev);
+        queries_coset[i] = 1;
+      }
+      else if (!cutout && post_ev && !evname) printf("  c%d -> e%d;\n",i,post_ev);
     } while (post_ev);
   }
 
@@ -156,37 +184,41 @@ int read_mci_file (char *mcifile, char *evcofile, int m_repeat, char* evname)
   char color8[] = "#4040ff";
   char color9[] = "#409f40";
 
-  if(evcofile)
-  {  
-    dummy = 0;
-    while (fscanf(evcof," %d",&value) != EOF)
-    {
-      if (value != 0 && !dummy)
-        queries_ev[value] = 1;
-      else
-      {
-        queries_co[value] = 1; 
-        dummy = 1;
-      }
-    }
-  }
-
   int found = 0;
   if(!evname)
   {
     for (i = 1; i <= numco; i++)
-      printf("  c%d [color=\"%s\" fillcolor=\"%s\" label= <%s<FONT COLOR=\"red\"><SUP>%d</SUP></FONT>&nbsp;(c%d)> shape=circle style=filled];\n",
+      if (cutout && queries_coset[i])
+        printf("  c%d [color=\"%s\" fillcolor=\"%s\" label= <%s<FONT COLOR=\"red\"><SUP>%d</SUP></FONT>&nbsp;(c%d)> shape=circle style=filled];\n",
+            i,color8,queries_co[i] ? color2 : color1,plname[co2pl[i]],tokens[i],i);
+      else if (!cutout)
+        printf("  c%d [color=\"%s\" fillcolor=\"%s\" label= <%s<FONT COLOR=\"red\"><SUP>%d</SUP></FONT>&nbsp;(c%d)> shape=circle style=filled];\n",
           i,color8,queries_co[i] ? color2 : color1,plname[co2pl[i]],tokens[i],i);
     for (i = 1; i <= numev; i++)
-      if (i == cutoffs[i])
-        printf("  e%d [color=%s fillcolor=%s label=\"%s (e%d)\" shape=box style=filled];\n",
-            i,queries_ev[i] ? color3 : color6,color5,trname[ev2tr[i]],i);
-      else if ( i == harmfuls[i])
-        printf("  e%d [color=%s fillcolor=%s label=\"%s (e%d)\" shape=box style=filled];\n",
-            i,queries_ev[i] ? color3 : color6,color7,trname[ev2tr[i]],i);
-      else
-        printf("  e%d [color=\"%s\" fillcolor=\"%s\" label=\"%s (e%d)\" shape=box style=filled];\n",
-            i,queries_ev[i] ? color6 : color9,queries_ev[i] ? color3 : color4,trname[ev2tr[i]],i);
+      if (cutout && queries_ev[i])
+      {
+        if (i == cutoffs[i])
+          printf("  e%d [color=%s fillcolor=%s label=\"%s (e%d)\" shape=box style=filled];\n",
+              i,queries_ev[i] ? color3 : color6,color5,trname[ev2tr[i]],i);
+        else if ( i == harmfuls[i])
+          printf("  e%d [color=%s fillcolor=%s label=\"%s (e%d)\" shape=box style=filled];\n",
+              i,queries_ev[i] ? color3 : color6,color7,trname[ev2tr[i]],i);
+        else
+          printf("  e%d [color=\"%s\" fillcolor=\"%s\" label=\"%s (e%d)\" shape=box style=filled];\n",
+              i,queries_ev[i] ? color6 : color9,queries_ev[i] ? color3 : color4,trname[ev2tr[i]],i);
+      }
+      else if (!cutout)
+      {
+        if (i == cutoffs[i])
+          printf("  e%d [color=%s fillcolor=%s label=\"%s (e%d)\" shape=box style=filled];\n",
+              i,queries_ev[i] ? color3 : color6,color5,trname[ev2tr[i]],i);
+        else if ( i == harmfuls[i])
+          printf("  e%d [color=%s fillcolor=%s label=\"%s (e%d)\" shape=box style=filled];\n",
+              i,queries_ev[i] ? color3 : color6,color7,trname[ev2tr[i]],i);
+        else
+          printf("  e%d [color=\"%s\" fillcolor=\"%s\" label=\"%s (e%d)\" shape=box style=filled];\n",
+              i,queries_ev[i] ? color6 : color9,queries_ev[i] ? color3 : color4,trname[ev2tr[i]],i);
+      }
     printf("}\n");
   }
   else{
@@ -205,8 +237,9 @@ void usage ()
   fprintf(stderr,"usage: mci2dot [options] <mcifile> <evcofile>\n\n"
 
     "     Options:\n"
+    "      -c --cutout  if a marking is queried or \n                  part of a reachability check then\n                  it will show a cutout of\n                  the whole unfolding\n"
     "      -r <instance>  highlight <instance> of a repeated marking\n"
-    "      -reach <evname>  if used, it will look for an event related to an attractor to return whether such event was found\n\n"
+    "      -reach <evname>  if used, it will look for\n                  an event related to an attractor\n                  to return whether such event was found\n\n"
 
     "<evcofile> is an optional file whose first line contains\n"
     "the IDs of a firing sequence of events and the second line\n"
@@ -217,7 +250,7 @@ void usage ()
 
 int main (int argc, char **argv)
 {
-  int i, m_repeat = 0;
+  int i, m_repeat = 0, cutout = 0;
   char *mcifile = NULL, *evcofile = NULL, *evname = NULL;
 
   for (i = 1; i < argc; i++)
@@ -231,6 +264,10 @@ int main (int argc, char **argv)
       if (++i == argc) usage();
       evname = argv[i];
     }
+    else if (!strcmp(argv[i],"-c") || !strcmp(argv[i],"--cutout"))
+    {
+      cutout = 1;
+    }
     else if(!mcifile)
       mcifile = argv[i];
     else
@@ -238,5 +275,5 @@ int main (int argc, char **argv)
 
   if (!mcifile || (evname && m_repeat)) usage();
 
-  exit(!read_mci_file(mcifile, evcofile, m_repeat, evname));
+  exit(!read_mci_file(mcifile, evcofile, m_repeat, evname, cutout));
 }

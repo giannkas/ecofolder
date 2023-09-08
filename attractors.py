@@ -20,12 +20,18 @@ class Model:
     self.header = ''
     self.PL = {}
     self.TR = []
+    self.RT = []
+    self.RD = []
     self.TP = []
     self.PT = []
+    self.RS = []
     self.PL_ = {}
     self.TR_ = []
+    self.RT_ = []
+    self.RD_ = []
     self.TP_ = []
     self.PT_ = []
+    self.RS_ = []
     state = "header"
     max_pid = 0
     max_tid = 0
@@ -50,10 +56,16 @@ class Model:
         else: tid = int(parts[0])
         max_tid = max(max_tid, tid)
         self.TR.append(r)
+      elif state == "RT":
+        self.RT.append(r)
+      elif state == "RD":
+        self.RD.append(r)
       elif state == "TP":
         self.TP.append(r)
       elif state == "PT":
         self.PT.append(r)
+      elif state == "RS":
+        self.RS.append(r)
     self.max_pid = max_pid
     self.max_tid = max_tid
 
@@ -64,8 +76,11 @@ class Model:
             for k, v in self.PL.items()] + self.PL_
     f.write("PL\n%s\n" % ("\n".join(PL)))
     f.write("TR\n%s\n" % ("\n".join(self.TR + self.TR_)))
+    f.write("RT\n%s\n" % ("\n".join(self.RT + self.RT_)))
+    f.write("RD\n%s\n" % ("\n".join(self.RD + self.RD_)))
     f.write("TP\n%s\n" % ("\n".join(self.TP + self.TP_)))
     f.write("PT\n%s\n" % ("\n".join(self.PT + self.PT_)))
+    f.write("RS\n%s\n" % ("\n".join(self.RS + self.RS_)))
 
   def set_marking(self, m0):
     for k in self.PL:
@@ -111,10 +126,13 @@ class Model:
   def reach_any(self, m0, markings, num=0):
     self.set_marking(m0)
     t = []
-    self.TR_ = []
-    self.PT_ = []
-    self.TP_ = []
     self.PL_ = []
+    self.TR_ = []
+    self.RT_ = []
+    self.RD_ = []
+    self.TP_ = []
+    self.PT_ = []
+    self.RS_ = []
     for m in markings:
       t.append(self.marking_to_transition(m))
     rid = self.max_pid + 1

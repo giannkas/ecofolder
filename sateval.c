@@ -138,7 +138,7 @@ void readmci (const char * infile)
   /* for (i = 1; i <= conds; i++){
     if (i<10) printf("%d:  ", i);
     else printf("%d: ", i);
-    for (j = 0; j <= events; j++)
+    for (int j = 0; j <= events; j++)
       printf("%d ", coxev[i][j]);
     printf("\n");
   } */
@@ -199,7 +199,7 @@ void sateval (char *satfile)
     if (opt_reach)
       printf("Marking unreachable.\n");
     else
-      printf("The net is live.\n");
+      printf("The net is alive.\n");
     fclose(f);
     return;
   }
