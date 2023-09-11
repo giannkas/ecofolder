@@ -4,8 +4,8 @@ FORMAT_N2
 PL
 1"Alg+_1"M0
 2"Alg-"M1
-3"Urc+_1"M0
-4"Urc-_1"M1
+3"Urc+_1"M1
+4"Urc-_1"M0
 5"Lob+_1"M0
 6"Lob-_1"M1
 7"Aba+"M1
@@ -20,10 +20,10 @@ PL
 16"Oct+_2"M1
 17"Lob+_2"M0
 18"Lob+_3"M0
-19"Urc+_2"M0
+19"Urc+_2"M1
 20"Oct+_3"M1
 21"Fis+_2"M0
-22"Urc-_2"M1
+22"Urc-_2"M0
 23"Lob-_2"M1
 24"reach_any"
 TR

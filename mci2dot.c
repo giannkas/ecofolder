@@ -114,9 +114,9 @@ int read_mci_file (char *mcifile, char *evcofile, int m_repeat, char* evname, in
     else if (!cutout && pre_ev && !evname) printf("  e%d -> c%d;\n",pre_ev,i);
     do {
       read_int(post_ev);
-      if (cutout && post_ev && !evname && queries_ev[post_ev])
+      if (cutout && post_ev && !evname && (queries_ev[post_ev] || queries_co[i]))
       {
-        printf("  c%d -> e%d;\n",i,post_ev);
+        if (queries_ev[post_ev]) printf("  c%d -> e%d;\n",i,post_ev);
         queries_coset[i] = 1;
       }
       else if (!cutout && post_ev && !evname) printf("  c%d -> e%d;\n",i,post_ev);
