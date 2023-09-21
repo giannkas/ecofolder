@@ -18,7 +18,7 @@ int read_mci_file (char *mcifile, char *evcofile, int m_repeat, char* evname, in
   int nqure, nqure_, nquszcut, nquszevscut, szcuts, 
     numco, numev, numpl, numtr, sz, i, value;
   int pre_ev, post_ev, cutoff, harmful, dummy = 0;
-  int *co2pl, *ev2tr, *tokens, *queries_co,
+  int *co2pl, *ev2tr, *tokens, *cut0, *queries_co,
    *queries_ev, *cutoffs, *harmfuls, *queries_coset;
   char **plname, **trname, *c;
   cut_t **cuts;
@@ -47,6 +47,7 @@ int read_mci_file (char *mcifile, char *evcofile, int m_repeat, char* evname, in
 
   co2pl = malloc((numco+1) * sizeof(int));
   tokens = malloc((numco+1) * sizeof(int));
+  cut0 = malloc((numco+1) * sizeof(int));
   queries_co = malloc((numco+1) * sizeof(int));
   queries_ev = malloc((numev+1) * sizeof(int));
   queries_coset = malloc((numco+1) * sizeof(int));
@@ -120,6 +121,7 @@ int read_mci_file (char *mcifile, char *evcofile, int m_repeat, char* evname, in
         queries_coset[i] = 1;
       }
       else if (!cutout && post_ev && !evname) printf("  c%d -> e%d;\n",i,post_ev);
+      if (!pre_ev) cut0[i] = 1;
     } while (post_ev);
   }
 
@@ -174,6 +176,7 @@ int read_mci_file (char *mcifile, char *evcofile, int m_repeat, char* evname, in
     do { fread(c,1,1,mcif); } while (*c++);
   fread(c,1,1,mcif);
 
+  char color0[] = "transparent";
   char color1[] = "#ccccff"; // or "lightblue";
   char color2[] = "gold";
   char color3[] = "orange";
@@ -190,10 +193,10 @@ int read_mci_file (char *mcifile, char *evcofile, int m_repeat, char* evname, in
     for (i = 1; i <= numco; i++)
       if (cutout && queries_coset[i])
         printf("  c%d [color=\"%s\" fillcolor=\"%s\" label= <%s<FONT COLOR=\"red\"><SUP>%d</SUP></FONT>&nbsp;(c%d)> shape=circle style=filled];\n",
-            i,color8,queries_co[i] ? color2 : color1,plname[co2pl[i]],tokens[i],i);
+            i,color8,queries_co[i] ? color2 : cut0[i] ? color0 : color1,plname[co2pl[i]],tokens[i],i);
       else if (!cutout)
         printf("  c%d [color=\"%s\" fillcolor=\"%s\" label= <%s<FONT COLOR=\"red\"><SUP>%d</SUP></FONT>&nbsp;(c%d)> shape=circle style=filled];\n",
-          i,color8,queries_co[i] ? color2 : color1,plname[co2pl[i]],tokens[i],i);
+          i,color8,queries_co[i] ? color2 : cut0[i] ? color0 : color1,plname[co2pl[i]],tokens[i],i);
     for (i = 1; i <= numev; i++)
       if (cutout && queries_ev[i])
       {

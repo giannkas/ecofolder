@@ -6,8 +6,8 @@ PL
 2"wk-_1"M1
 3"sd+"M0
 4"sd-"M1
-5"wd+"M0
-6"wd-"M1
+5"wd+"M1
+6"wd-"M0
 7"ac+"M1
 8"ac-"M0
 9"rp+_1"M0
@@ -34,7 +34,7 @@ TR
 "r8"
 "r9"
 10"ac+ ec- fg+ rp- sd- te+ wd- wk-_1 wk-_2"
-11"ac+ ec- fg- rp- sd- te- wd+ wk-_1 wk-_2"
+11"ac+ ec- fg- rp- sd- te- wd- wk-_1 wk-_2"
 12"reached_any"
 RT
 
@@ -109,7 +109,7 @@ PT
 10>11
 4>11
 14>11
-5>11
+6>11
 2>11
 19>11
 21>12
