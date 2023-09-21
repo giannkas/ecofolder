@@ -18,7 +18,7 @@ void read_mci_file (char *filename, int m_repeat)
   int nqure, nqure_, nquszcut, nquszevscut, szcuts, 
     numco, numev, numpl, numtr, sz, i, j;
   int pre_ev, post_ev, cutoff, harmful, dummy = 0, dummy_ = 0;
-  int *co2pl, *co2coo, *ev2tr, *tokens, *queries_co,
+  int *co2pl, *co2coo, *ev2tr, *tokens, *cut0, *queries_co,
     *queries_ev, *cutoffs, *harmfuls;
   char **plname, **trname, *c;
   cut_t **cuts;
@@ -37,6 +37,7 @@ void read_mci_file (char *filename, int m_repeat)
   co2pl = malloc((numco+1) * sizeof(int));
   co2coo = calloc(numco+1, sizeof(int));
   tokens = malloc((numco+1) * sizeof(int));
+  cut0 = malloc((numco+1) * sizeof(int));
   queries_co = malloc((numco+1) * sizeof(int));
   queries_ev = malloc((numev+1) * sizeof(int));
   ev2tr = malloc((numev+1) * sizeof(int));
@@ -92,6 +93,7 @@ void read_mci_file (char *filename, int m_repeat)
     do {
       read_int(post_ev);
       if (post_ev) printf("  c%d -> e%d;\n",j,post_ev);
+      if (!pre_ev) cut0[i] = 1;
     } while (post_ev);
   }
 
@@ -146,6 +148,7 @@ void read_mci_file (char *filename, int m_repeat)
     do { fread(c,1,1,file); } while (*c++);
   fread(c,1,1,file);
 
+  char color0[] = "transparent";
   char color1[] = "black";
   char color2[] = "orangered";
   char color3[] = "orange";
@@ -159,7 +162,7 @@ void read_mci_file (char *filename, int m_repeat)
 
   for (i = 1; i <= numco; i++)
   {
-    printf("  c%d [color= \"%s\" fillcolor=\"%s\" label= <", i, color8, color7);
+    printf("  c%d [color= \"%s\" fillcolor=\"%s\" label= <", i, color8, cut0[i] ? color0 : color7);
     dummy = 0;
     for (j = i+1; j <= numco && co2coo[i] == co2coo[j]; j++)
     {

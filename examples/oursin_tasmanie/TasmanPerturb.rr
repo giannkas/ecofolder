@@ -52,7 +52,7 @@ rules:              ####### Without PERTURBATIONS (First Model)  #########
  Lob+ >> Lob-       # Lobster fishing (Human PERTURBATION 2' Other paper) 
 
 ####### With PERTURBATIONS (Third Model)  #########
-# Oct+ >> Oct-       # endemic weed targeted harvesting (Human PERTURBATION 1'') 
-# Urc+ >> Urc-       # endemic Urchin targeted harvesting (Human PERTURBATION 3'') 
+ Oct+ >> Oct-       # endemic weed targeted harvesting (Human PERTURBATION 1'') 
+ Urc+ >> Urc-       # endemic Urchin targeted harvesting (Human PERTURBATION 3'') 
  Lob- >> Lob+       # endemic Lobster targeted harvesting (Human PERTURBATION 2'') 
     

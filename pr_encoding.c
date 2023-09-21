@@ -15,16 +15,16 @@
 
 void usage(char *myname)
 {
-	fprintf(stderr,
-		"%s -- place replication encoding for contextual nets\n\n"
-		"Usage: %s <LLnetfile> \n\n"
+  fprintf(stderr,
+    "%s -- place replication encoding for contextual nets\n\n"
+    "Usage: %s <LLnetfile> \n\n"
 
-	"Unless specified otherwise, all filenames will default to\n"
-	"the basename of <LLnetfile> plus appropriate extensions.\n\n"
+  "Unless specified otherwise, all filenames will default to\n"
+  "the basename of <LLnetfile> plus appropriate extensions.\n\n"
 
-	"Version 1.0.0 (22.03.2022)\n", myname, myname);
+  "Version 1.0.0 (22.03.2022)\n", myname, myname);
 
-	exit(1);
+  exit(1);
 }
 
 /*****************************************************************************/
@@ -264,10 +264,10 @@ char* pr_encoding(char* in_file){
 
 int main (int argc, char **argv)
 {
-	if (argc != 2){
-		fprintf(stderr,"usage: pr_encoding <ll_netfile>\n");
-		exit(1);
-	}
-	pr_encoding(argv[1]);
-	exit(0);
+  if (argc != 2){
+    fprintf(stderr,"usage: pr_encoding <ll_netfile>\n");
+    exit(1);
+  }
+  pr_encoding(argv[1]);
+  exit(0);
 }
