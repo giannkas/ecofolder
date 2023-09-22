@@ -50,62 +50,61 @@ int strtoint(char *num) {
 
 char* ftokstr(char *str, int ins, char delim)
 {    
-    int len = strlen(str), i = 0, c_delim = 0;
-    char *tok = malloc(len+1);
+  int len = strlen(str), i = 0, c_delim = 0;
+  char *tok = malloc(len+1);
 
-    for (int j = 0; i < len && c_delim <= ins; i++){
-        if(str[i] == delim && c_delim != ins){
-            *tok = '\0';
-            c_delim++; j = 0;
-        }else if(str[i] == delim){
-            c_delim++; *(tok+j) = '\0';
-        }
-        else{
-            *(tok+j) = str[i];
-            j++;
-        }
+  for (int j = 0; i < len && c_delim <= ins; i++){
+    if(str[i] == delim && c_delim != ins){
+      *tok = '\0';
+      c_delim++; j = 0;
+    }else if(str[i] == delim){
+      c_delim++; *(tok+j) = '\0';
     }
-    return i == len && ins > c_delim ? NULL : tok;
+    else{
+      *(tok+j) = str[i];
+      j++;
+    }
+  }
+  return i == len && ins > c_delim ? NULL : tok;
 }
 
 char* bltokstr(char *str, int ins, char delim){
-    int len = strlen(str), pos, i = 0, c_delim = 0;
-    char *tok = malloc(len+1);
+  int len = strlen(str), pos, i = 0, c_delim = 0;
+  char *tok = malloc(len+1);
 
-    for (pos = len-1; pos >= 0 && c_delim <= ins; pos--){
-        if (str[pos] == delim){
-            if (c_delim == ins)
-                break;
-            c_delim++;
-        }
+  for (pos = len-1; pos >= 0 && c_delim <= ins; pos--){
+    if (str[pos] == delim){
+      if (c_delim == ins) break;
+      c_delim++;
     }
+  }
 
-    if(str[pos] == delim){
-      for (i = 0; i < pos; i++)
-        *(tok+i) = *(str+i);
-    }
-    *(tok+i) = '\0';
-    return tok;
+  if(str[pos] == delim){
+    for (i = 0; i < pos; i++)
+      *(tok+i) = *(str+i);
+  }
+  *(tok+i) = '\0';
+  return tok;
 }
 
 char* ltokstr(char *str, int ins, char delim){
-    int len = strlen(str), pos, i = 0, c_delim = 0;
-    char *tok = malloc(len+1);
+  int len = strlen(str), pos, i = 0, c_delim = 0;
+  char *tok = malloc(len+1);
 
-    for (pos = 0; pos < len && c_delim <= ins; pos++){
-        if (str[pos] == delim){
-            if (c_delim == ins)
-                break;
-            c_delim++;
-        }
+  for (pos = 0; pos < len && c_delim <= ins; pos++){
+    if (str[pos] == delim){
+      if (c_delim == ins)
+        break;
+      c_delim++;
     }
+  }
 
-    if(str[pos] == delim){
-      for (i = 0; i < len && pos+1 < len; i++, pos++)
-        *(tok+i) = *(str+pos+1);
-    }
-    *(tok+i) = '\0';
-    return tok;
+  if(str[pos] == delim){
+    for (i = 0; i < len && pos+1 < len; i++, pos++)
+      *(tok+i) = *(str+pos+1);
+  }
+  *(tok+i) = '\0';
+  return tok;
 }
 
 /****************************************************************************/

@@ -30,11 +30,13 @@ OBJECTS_PR = pr_encoding.o common.o
 OBJECTS_RS = rs_complement.o common.o
 
 OBJECTS_LD = llnet2dot.o common.o
+
+OBJECTS_SAT = mci2sat.o common.o
 	  
 default: $(TARGET)
 
 clean:
-	rm -f $(OBJECTS) $(OBJECTS_EV) $(OBJECTS_CPR) $(OBJECTS_PR) $(OBJECTS_RS) $(OBJECTS_LD) $(TMPFILES) $(TARGET) core* *.output *.d .deps gmon.out
+	rm -f $(OBJECTS) $(OBJECTS_EV) $(OBJECTS_CPR) $(OBJECTS_PR) $(OBJECTS_RS) $(OBJECTS_LD) $(OBJECTS_SAT) $(TMPFILES) $(TARGET) core* *.output *.d .deps gmon.out
 
 ecofolder: $(OBJECTS)
 	$(CC) $(OBJECTS) -o ecofolder
@@ -53,6 +55,9 @@ rs_complement: $(OBJECTS_RS)
 
 llnet2dot: $(OBJECTS_LD)
 	$(CC) $(OBJECTS_LD) -o llnet2dot
+
+mci2sat: $(OBJECTS_SAT)
+	$(CC) $(OBJECTS_SAT) -o mci2sat
 
 # Dependencies
 

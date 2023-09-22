@@ -16,6 +16,8 @@
 #include <stdarg.h>
 #include <assert.h>
 
+#include "common.h"
+
 #define P(args...) fprintf (fout, ##args)
 
 void error (const char * fmt, ...)
@@ -99,6 +101,16 @@ void c_add (clist_t **l, char *e)
   }
   char **c = &((*l)->contents);
   c[(*l)->size++] = e;
+  //printf("e: %s\n", c[3]);
+}
+
+void print_clist(clist_t *l)
+{
+  char **jptr;
+
+  jptr = &(l->contents);
+  for (int j = 0; j < l->size; j++)
+    printf("content: %s\n", jptr[j]);
 }
 
 FILE *fout;
@@ -112,6 +124,7 @@ list_t **plcond;	// for each place, non-cutoff conditions labelled by it
 char **plname;		// names of places
 int vars = 0;		// variables used so far in the formula
 int clauses = 0;	// number of clauses
+int nosense = 1;
 signed char *plwanted;	// for reachability: 1=positive, -1=negative, 0=dontcare
 
 clist_t *p_reach, *n_reach; // positive and negative reachability targets
@@ -274,7 +287,7 @@ void mci2sat (const char * infile, const char *outfile)
   if (fout == 0) error("'%s': %s", outfile, strerror (errno));
 
   // leave space for number of vars and clauses
-  P("p cnf                              \n");
+  if (opt_comments) P("p cnf                              \n");
 
   // start reading mci file
   conds = read_int();
@@ -354,15 +367,43 @@ void mci2sat (const char * infile, const char *outfile)
 
     jptr = &(p_reach->contents);
     for (j = 0; j < p_reach->size; j++)
-      if (!strcmp(bpos,jptr[j])) plwanted[i] = 1;
+      if (!strcmp(bpos,jptr[j])) 
+      {
+        plwanted[i] = 1;
+        nosense = 0;
+      }
+      else
+      {
+        char* bpos_ = bltokstr(bpos, 0, '_');
+        if (!strcmp(bpos_,jptr[j]))
+        {
+          plwanted[i] = 1;
+          nosense = 0;
+        }
+      }
     jptr = &(n_reach->contents);
     for (j = 0; j < n_reach->size; j++)
-      if (!strcmp(bpos,jptr[j])) plwanted[i] = -1;
+      if (!strcmp(bpos,jptr[j])) 
+      {
+        plwanted[i] = -1;
+        nosense = 0;
+      }
+      else
+      {
+        char* bpos_ = bltokstr(bpos, 0, '_');
+        if (!strcmp(bpos_,jptr[j]))
+        {
+          plwanted[i] = -1;
+          nosense = 0;
+        }
+      }
 
     plname[i] = bpos;
     read_str();
   }
 
+  if (nosense) exit(1);
+  if (!opt_comments) P("p cnf                              \n");
   /* go back and read conditions */
   l_init(&post);
   bpos = bconds;
@@ -424,6 +465,7 @@ void find_targets (clist_t **list, char *string)
     *c = 0;
     c_add(list,tmp);
     tmp = c+1;
+    //printf("tmp: %s\n", tmp);
   }
   c_add(list,tmp);
 }
@@ -466,6 +508,7 @@ int main (int argc, char ** argv)
     {
       if (++i == argc) usage();
       find_targets(&p_reach,argv[i]);
+      //print_clist(p_reach);
     }
     else if (!strcmp(argv[i],"-n"))
     {
