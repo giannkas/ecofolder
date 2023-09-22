@@ -205,13 +205,22 @@ void sateval (char *satfile)
   }
   else
   {
-    if (opt_reach)
+    while (getc(f) != '\n');
+    c = getc(f);
+    fseek(f, -1, SEEK_CUR);
+
+    if (c == ' ')
+    {
+      if (opt_reach) printf("Marking unreachable.\n");
+      fclose(f);
+      return;
+    }
+    else if (opt_reach)
       printf("Marking reachable:\n");
     else
       printf("Deadlock sequence:");
   }
 
-  while (getc(f) != '\n');
   for (i = 1; i <= conds; i++)
     if (coxev[i][0]){
       marking[coxev[i][0]] = coxev[i][0];

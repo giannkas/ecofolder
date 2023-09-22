@@ -37,7 +37,7 @@ void read_mci_file (char *filename, int m_repeat)
   co2pl = malloc((numco+1) * sizeof(int));
   co2coo = calloc(numco+1, sizeof(int));
   tokens = malloc((numco+1) * sizeof(int));
-  cut0 = malloc((numco+1) * sizeof(int));
+  cut0 = calloc(numco+1, sizeof(int));
   queries_co = malloc((numco+1) * sizeof(int));
   queries_ev = malloc((numev+1) * sizeof(int));
   ev2tr = malloc((numev+1) * sizeof(int));
@@ -90,10 +90,10 @@ void read_mci_file (char *filename, int m_repeat)
     read_int(pre_ev);
     if (pre_ev)
       printf("  e%d -> c%d;\n",pre_ev,j);
+    if (!pre_ev) cut0[i] = 1;
     do {
       read_int(post_ev);
       if (post_ev) printf("  c%d -> e%d;\n",j,post_ev);
-      if (!pre_ev) cut0[i] = 1;
     } while (post_ev);
   }
 
@@ -162,7 +162,17 @@ void read_mci_file (char *filename, int m_repeat)
 
   for (i = 1; i <= numco; i++)
   {
-    printf("  c%d [color= \"%s\" fillcolor=\"%s\" label= <", i, color8, cut0[i] ? color0 : color7);
+    printf("  c%d [color= \"%s\"", i, color8);
+    dummy = 0;
+    for (j = i+1; j <= numco && co2coo[i] == co2coo[j]; j++)
+    {
+      if (j+1 <= numco && co2coo[i] == co2coo[j] && co2coo[i] != co2coo[j+1])
+      {
+        printf("fillcolor=\"%s\" label= <", cut0[j] ? color0 : color7);
+        dummy = 1;
+      }
+    }
+    if (!dummy) printf("fillcolor=\"%s\" label= <", cut0[i] ? color0 : color7);
     dummy = 0;
     for (j = i+1; j <= numco && co2coo[i] == co2coo[j]; j++)
     {

@@ -47,7 +47,7 @@ int read_mci_file (char *mcifile, char *evcofile, int m_repeat, char* evname, in
 
   co2pl = malloc((numco+1) * sizeof(int));
   tokens = malloc((numco+1) * sizeof(int));
-  cut0 = malloc((numco+1) * sizeof(int));
+  cut0 = calloc(numco+1, sizeof(int));
   queries_co = malloc((numco+1) * sizeof(int));
   queries_ev = malloc((numev+1) * sizeof(int));
   queries_coset = malloc((numco+1) * sizeof(int));
@@ -113,6 +113,7 @@ int read_mci_file (char *mcifile, char *evcofile, int m_repeat, char* evname, in
       queries_coset[i] = 1;
     }
     else if (!cutout && pre_ev && !evname) printf("  e%d -> c%d;\n",pre_ev,i);
+    if (!pre_ev) cut0[i] = 1;
     do {
       read_int(post_ev);
       if (cutout && post_ev && !evname && (queries_ev[post_ev] || queries_co[i]))
@@ -121,7 +122,6 @@ int read_mci_file (char *mcifile, char *evcofile, int m_repeat, char* evname, in
         queries_coset[i] = 1;
       }
       else if (!cutout && post_ev && !evname) printf("  c%d -> e%d;\n",i,post_ev);
-      if (!pre_ev) cut0[i] = 1;
     } while (post_ev);
   }
 
