@@ -402,7 +402,14 @@ void mci2sat (const char * infile, const char *outfile)
     read_str();
   }
 
-  if (nosense) exit(1);
+  if (nosense)
+  { 
+    if (p_reach->size == 0 || n_reach->size == 0)
+      nosense = 0;
+    else
+      exit(1);
+  }
+  
   if (!opt_comments) P("p cnf                              \n");
   /* go back and read conditions */
   l_init(&post);
