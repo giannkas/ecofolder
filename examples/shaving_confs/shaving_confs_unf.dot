@@ -1,0 +1,38 @@
+digraph test {
+  c1 -> e1;
+  e1 -> c2;
+  c2 -> e3;
+  e1 -> c3;
+  c3 -> e2;
+  e2 -> c4;
+  c4 -> e5;
+  c4 -> e4;
+  e3 -> c5;
+  c5 -> e7;
+  c5 -> e6;
+  e4 -> c6;
+  e5 -> c7;
+  c7 -> e8;
+  e6 -> c8;
+  c8 -> e8;
+  e7 -> c9;
+  e8 -> c10;
+  c1 [color= "#4040ff"fillcolor="transparent" label= <<FONT COLOR ="black">P1</FONT><FONT COLOR="red"><SUP>1</SUP></FONT><FONT COLOR="black"> (c1)</FONT>> shape=circle style=filled];
+  c2 [color= "#4040ff"fillcolor="#ccccff" label= <<FONT COLOR ="black">P3</FONT><FONT COLOR="red"><SUP>1</SUP></FONT><FONT COLOR="black"> (c2)</FONT>> shape=circle style=filled];
+  c3 [color= "#4040ff"fillcolor="#ccccff" label= <<FONT COLOR ="black">P2</FONT><FONT COLOR="red"><SUP>1</SUP></FONT><FONT COLOR="black"> (c3)</FONT>> shape=circle style=filled];
+  c4 [color= "#4040ff"fillcolor="#ccccff" label= <<FONT COLOR ="black">P4</FONT><FONT COLOR="red"><SUP>1</SUP></FONT><FONT COLOR="black"> (c4)</FONT>> shape=circle style=filled];
+  c5 [color= "#4040ff"fillcolor="#ccccff" label= <<FONT COLOR ="black">P5</FONT><FONT COLOR="red"><SUP>1</SUP></FONT><FONT COLOR="black"> (c5)</FONT>> shape=circle style=filled];
+  c6 [color= "#4040ff"fillcolor="#ccccff" label= <<FONT COLOR ="black">P6</FONT><FONT COLOR="red"><SUP>1</SUP></FONT><FONT COLOR="black"> (c6)</FONT>> shape=circle style=filled];
+  c7 [color= "#4040ff"fillcolor="#ccccff" label= <<FONT COLOR ="black">P7</FONT><FONT COLOR="red"><SUP>1</SUP></FONT><FONT COLOR="black"> (c7)</FONT>> shape=circle style=filled];
+  c8 [color= "#4040ff"fillcolor="#ccccff" label= <<FONT COLOR ="black">P8</FONT><FONT COLOR="red"><SUP>1</SUP></FONT><FONT COLOR="black"> (c8)</FONT>> shape=circle style=filled];
+  c9 [color= "#4040ff"fillcolor="#ccccff" label= <<FONT COLOR ="black">P9</FONT><FONT COLOR="red"><SUP>1</SUP></FONT><FONT COLOR="black"> (c9)</FONT>> shape=circle style=filled];
+  c10 [color= "#4040ff"fillcolor="#ccccff" label= <<FONT COLOR ="black">P10</FONT><FONT COLOR="red"><SUP>1</SUP></FONT><FONT COLOR="black"> (c10)</FONT>> shape=circle style=filled];
+  e1 [color="#409f40" fillcolor="#cce6cc" label="x (e1)" shape=box style=filled];
+  e2 [color="#409f40" fillcolor="#cce6cc" label="y (e2)" shape=box style=filled];
+  e3 [color="#409f40" fillcolor="#cce6cc" label="z (e3)" shape=box style=filled];
+  e4 [color="#409f40" fillcolor="#cce6cc" label="α (e4)" shape=box style=filled];
+  e5 [color="#409f40" fillcolor="#cce6cc" label="β (e5)" shape=box style=filled];
+  e6 [color="#409f40" fillcolor="#cce6cc" label="γ (e6)" shape=box style=filled];
+  e7 [color="#409f40" fillcolor="#cce6cc" label="δ (e7)" shape=box style=filled];
+  e8 [color="#409f40" fillcolor="#cce6cc" label="u (e8)" shape=box style=filled];
+}
