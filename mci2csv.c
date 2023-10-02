@@ -111,11 +111,11 @@ void read_mci_file (char *filename, int m_repeat, int compressed)
     }
     read_int(pre_ev);
     if (pre_ev)
-        fprintf(file_edges,"\"e%d\",\"c%d\"\n",pre_ev, j);
+        fprintf(file_edges,"\"e%d\",\"c%d\"\n",pre_ev, i);
     do {
       read_int(post_ev);
       if (post_ev)
-        fprintf(file_edges,"\"c%d\",\"e%d\"\n",j,post_ev);
+        fprintf(file_edges,"\"c%d\",\"e%d\"\n",i,post_ev);
     } while (post_ev);
   }
 
@@ -172,28 +172,35 @@ void read_mci_file (char *filename, int m_repeat, int compressed)
 
   for (i = 1; i <= numco; i++)
   {
-    fprintf(file_nodes,"\"c%d",i);
-    dummy = 0;
-    for (j = i+1; j <= numco && co2coo[i] == co2coo[j]; j++)
-    {
-      fprintf(file_nodes, ",c%d",j);
-      dummy = 1;
+    if (compressed)
+    {  
+      fprintf(file_nodes,"\"c%d",i);
+      dummy = 0;
+      for (j = i+1; j <= numco && co2coo[i] == co2coo[j]; j++)
+      {
+        fprintf(file_nodes, ",c%d",j);
+        dummy = 1;
+      }
+      fprintf(file_nodes,"\",\"condition\",\"%s",plname[co2pl[i]]);
+
+      for (j = i+1; j <= numco && co2coo[i] == co2coo[j]; j++)
+        fprintf(file_nodes,",%s",plname[co2pl[j]]);
+      fprintf(file_nodes,"\",\"%d",tokens[i]);
+
+      for (j = i+1; j <= numco && co2coo[i] == co2coo[j]; j++)
+        fprintf(file_nodes,",%d",tokens[j]);
+      fprintf(file_nodes,"\",\"%d",0);
+
+      for (j = i+1; j <= numco && co2coo[i] == co2coo[j]; j++)
+        fprintf(file_nodes,",%d",0);
+      fprintf(file_nodes,"\"\n");
+      
+      if (dummy) i = j-1;
     }
-    fprintf(file_nodes,"\",\"condition\",\"%s",plname[co2pl[i]]);
-
-    for (j = i+1; j <= numco && co2coo[i] == co2coo[j]; j++)
-      fprintf(file_nodes,",%s",plname[co2pl[j]]);
-    fprintf(file_nodes,"\",\"%d",tokens[i]);
-
-    for (j = i+1; j <= numco && co2coo[i] == co2coo[j]; j++)
-      fprintf(file_nodes,",%d",tokens[j]);
-    fprintf(file_nodes,"\",\"%d",0);
-
-    for (j = i+1; j <= numco && co2coo[i] == co2coo[j]; j++)
-      fprintf(file_nodes,",%d",0);
-    fprintf(file_nodes,"\"\n");
-    
-    if (dummy) i = j-1;
+    else
+    {
+      fprintf(file_nodes,"\"c%d\",\"condition\",\"%s\",\"%d\",\"%d\"\n",i,plname[co2pl[i]],tokens[i],0);
+    }
   }
 
   for (i = 1; i <= numev; i++)
