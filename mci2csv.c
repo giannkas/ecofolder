@@ -40,6 +40,7 @@ void read_mci_file (char *filename, int m_repeat, int compressed)
       "cannot write file_in %s\n",fullfilename);
     exit(1);
   }
+  fprintf(file_nodes, "id,type,name,tokens,cutoff\n");
 
   sprintf(fullfilename,"%s_edges.csv",fname);
   if (!(file_edges = fopen(fullfilename,"w")))
@@ -48,6 +49,7 @@ void read_mci_file (char *filename, int m_repeat, int compressed)
       "cannot write file_in %s\n",fullfilename);
     exit(1);
   }
+  fprintf(file_edges,"src,dst\n");
 
   read_int(numco);
   read_int(numev);
@@ -199,16 +201,16 @@ void read_mci_file (char *filename, int m_repeat, int compressed)
     }
     else
     {
-      fprintf(file_nodes,"\"c%d\",\"condition\",\"%s\",\"%d\",\"%d\"\n",i,plname[co2pl[i]],tokens[i],0);
+      fprintf(file_nodes,"\"c%d\",\"condition\",\"%s\",\"%d\",\n",i,plname[co2pl[i]],tokens[i]);
     }
   }
 
   for (i = 1; i <= numev; i++)
     if (i == cutoffs[i]){
-      fprintf(file_nodes,"\"e%d\",\"event\",\"%s\",\"%d\"\n",i,trname[ev2tr[i]],1);
+      fprintf(file_nodes,"\"e%d\",\"event\",\"%s\",,\"%d\"\n",i,trname[ev2tr[i]],1);
     }
     else{
-      fprintf(file_nodes,"\"e%d\",\"event\",\"%s\",\"%d\"\n",i,trname[ev2tr[i]],0);
+      fprintf(file_nodes,"\"e%d\",\"event\",\"%s\",,\"%d\"\n",i,trname[ev2tr[i]],0);
     }
 
   fclose(file_in);
