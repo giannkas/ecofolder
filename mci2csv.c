@@ -191,11 +191,8 @@ void read_mci_file (char *filename, int m_repeat, int compressed)
 
       for (j = i+1; j <= numco && co2coo[i] == co2coo[j]; j++)
         fprintf(file_nodes,",%d",tokens[j]);
-      fprintf(file_nodes,"\",\"%d",0);
-
-      for (j = i+1; j <= numco && co2coo[i] == co2coo[j]; j++)
-        fprintf(file_nodes,",%d",0);
-      fprintf(file_nodes,"\"\n");
+        
+      fprintf(file_nodes,"\",\n");
       
       if (dummy) i = j-1;
     }
