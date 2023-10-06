@@ -222,7 +222,10 @@ int main (int argc, char **argv)
 
   for (i = 1; i < argc; i++)
     if (!strcmp(argv[i],"-r"))
-      m_repeat = atoi(argv[++i]);
+    {
+      if (++i == argc) filename = NULL;
+      m_repeat = atoi(argv[i]);
+    }
     else if (!strcmp(argv[i],"-c"))
       compressed = 1;
     else
@@ -230,7 +233,7 @@ int main (int argc, char **argv)
 
   if (!filename)
   {
-    fprintf(stderr,"usage: mci2csv <mcifile>\n");
+    fprintf(stderr,"usage: mci2csv [options] <mcifile>\n");
     exit(1);
   }
   read_mci_file(filename, m_repeat, compressed);

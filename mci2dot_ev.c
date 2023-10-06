@@ -231,14 +231,14 @@ void read_mci_file_ev (char *mcifile, char* evcofile, int m_repeat, int cutout)
         else if (!cutout)
           printf("  e%d -> e%d;\n",pre_ev,post_ev); // write the connection.
       }
-      else if (!pre_ev && post_ev && ev_succs[0][post_ev] == 0)
+      /* else if (!pre_ev && post_ev && ev_succs[0][post_ev] == 0)
       {
         ev_succs[0][post_ev] = post_ev;
         if (!cutout)
           printf("  e0 -> e%d;\n", post_ev);
         else if (cutout && queries_ev[post_ev])
           printf("  e0 -> e%d;\n", post_ev);
-      }
+      } */
       if (post_ev) co_postsets[i][post_ev] = post_ev; // assign in the ith
                                                       // (which corresponds
                                                       // to the ith condition)
@@ -331,7 +331,7 @@ void read_mci_file_ev (char *mcifile, char* evcofile, int m_repeat, int cutout)
   the empty vector of index 0 in ev_succs matrix to collect all events 
   that have predecesors and hence to depict the arcs in the resulting 
   dot file */
-  /* for (int i = 1; i <= numev; i++){
+  for (int i = 1; i <= numev; i++){
     for (int j = i+1; j <= numev; j++){
       if (ev_succs[i][j] > 0 && ev_succs[0][j] == 0) 
         ev_succs[0][j] = ev_succs[i][j];
@@ -342,7 +342,7 @@ void read_mci_file_ev (char *mcifile, char* evcofile, int m_repeat, int cutout)
     if (!cutout && ev_succs[0][i] == 0) printf("  e0 -> e%d;\n", i);
     else if (cutout && ev_succs[0][i] == 0 && queries_ev[i])
       printf("  e0 -> e%d;\n", i);
-  } */
+  }
   
   if(!cutout)
   {  

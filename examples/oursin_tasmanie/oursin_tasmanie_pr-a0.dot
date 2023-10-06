@@ -1,11 +1,9 @@
 digraph test {
-  e0 -> e13;
-  e0 -> e7;
-  e0 -> e4;
   e4 -> e15;
   e4 -> e7;
   e7 -> e13;
   e7 -> e15;
+  e0 -> e4;
   e4 [color="black" fillcolor="orange" label="R28 (e4)" shape=box style=filled];
   e7 [color="black" fillcolor="orange" label="R17 (e7)" shape=box style=filled];
   e13 [color="black" fillcolor="orange" label="R18 (e13)" shape=box style=filled];
