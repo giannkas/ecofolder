@@ -233,7 +233,7 @@ int main (int argc, char **argv)
 
   if (!filename)
   {
-    fprintf(stderr,"usage: mci2csv [options] <mcifile>\n");
+    fprintf(stderr,"usage: mci2csv <mcifile>\n");
     exit(1);
   }
   read_mci_file(filename, m_repeat, compressed);

@@ -65,6 +65,7 @@ char* ftokstr(char *str, int ins, char delim)
       j++;
     }
   }
+  if (strchr(tok, '\n')) ins = c_delim + 1;
   return i == len && ins > c_delim ? NULL : tok;
 }
 
@@ -101,7 +102,10 @@ char* ltokstr(char *str, int ins, char delim){
 
   if(str[pos] == delim){
     for (i = 0; i < len && pos+1 < len; i++, pos++)
-      *(tok+i) = *(str+pos+1);
+      if (str[pos+1] == '\n')
+        pos = len;
+      else
+        *(tok+i) = *(str+pos+1);
   }
   *(tok+i) = '\0';
   return tok;

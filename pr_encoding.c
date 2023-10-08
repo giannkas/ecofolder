@@ -110,7 +110,7 @@ char* pr_encoding(char* in_file){
           strcat(buffer_pl, buf_arcs);
           new_places++;
           replicated_places_per_place[num_tmp][read_place_arcs[num_tmp]] = places+new_places;
-        }        
+        }
       }
 
       /* Print into the output file the places that come from the input file plus

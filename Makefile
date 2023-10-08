@@ -1,7 +1,7 @@
 ##############################################################
 # Makefile for Unfolder
 
-TARGET = ecofolder mci2dot mci2dot_ev mci2dot_cpr mci2csv pr_encoding rs_complement llnet2dot mci2sat sateval
+TARGET = ecofolder mci2dot mci2dot_ev mci2dot_cpr mci2csv pr_encoding rs_complement llnet2dot mci2sat sateval bad_net
 LIBS = 
 FLAGS = 
 INCLUDES =
@@ -32,11 +32,13 @@ OBJECTS_RS = rs_complement.o common.o
 OBJECTS_LD = llnet2dot.o common.o
 
 OBJECTS_SAT = mci2sat.o common.o
+
+OBJECTS_BAD = bad_net.o common.o
 	  
 default: $(TARGET)
 
 clean:
-	rm -f $(OBJECTS) $(OBJECTS_EV) $(OBJECTS_CPR) $(OBJECTS_PR) $(OBJECTS_RS) $(OBJECTS_LD) $(OBJECTS_SAT) $(TMPFILES) $(TARGET) core* *.output *.d .deps gmon.out
+	rm -f $(OBJECTS) $(OBJECTS_EV) $(OBJECTS_CPR) $(OBJECTS_PR) $(OBJECTS_RS) $(OBJECTS_LD) $(OBJECTS_SAT) $(OBJECTS_BAD) $(TMPFILES) $(TARGET) core* *.output *.d .deps gmon.out
 
 ecofolder: $(OBJECTS)
 	$(CC) $(OBJECTS) -o ecofolder
@@ -58,6 +60,9 @@ llnet2dot: $(OBJECTS_LD)
 
 mci2sat: $(OBJECTS_SAT)
 	$(CC) $(OBJECTS_SAT) -o mci2sat
+
+bad_net: $(OBJECTS_BAD)
+	$(CC) $(OBJECTS_BAD) -o bad_net
 
 # Dependencies
 
