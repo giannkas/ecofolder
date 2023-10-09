@@ -122,15 +122,16 @@ void readmci (const char * infile)
       continue;
     }
 
-    if(pre_ev) coxev[i][pre_ev] = co2pl[i];
     post_ev = read_int();
+    if(pre_ev) coxev[i][pre_ev] = co2pl[i];
+    else if (!pre_ev && !post_ev) coxev[i][0] = co2pl[i];
     while(token && post_ev)
     {
-      if (post_ev && !pre_ev){ 
+      if (!pre_ev){ 
         coxev[i][0] = co2pl[i];
         coxev[i][post_ev] = co2pl[i]*-1;
       }
-      else if (post_ev && pre_ev) coxev[i][post_ev] = co2pl[i]*-1;
+      else coxev[i][post_ev] = co2pl[i]*-1;
       post_ev = read_int();
     }
   }

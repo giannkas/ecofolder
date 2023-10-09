@@ -37,7 +37,7 @@ void write_mci_file (char *filename)
 
   write_int(unf->numco);
   write_int(unf->numev);
-  if(!attractors)
+  if(!data)
   {  
     printf("unf->numev: %d\n", unf->numev);
     printf("unf->numco: %d\n", unf->numco);
@@ -53,7 +53,7 @@ void write_mci_file (char *filename)
 
   for (ev = unf->events; ev; ev = ev->next){
     ev->mark = ++ev_num;
-    if(ev->queried && !attractors)
+    if(ev->queried && !data)
     {
       if(!once)
       {
@@ -63,7 +63,7 @@ void write_mci_file (char *filename)
       printf("%s (e%d)  ", ev->origin->name, ev->mark);
     }
   }
-  if(!attractors) printf("\n");
+  if(!data) printf("\n");
 
   querycell_t *qbuck;
   for(qbuck = *query; qbuck; qbuck = qbuck->next)

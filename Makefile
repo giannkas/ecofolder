@@ -1,7 +1,7 @@
 ##############################################################
 # Makefile for Unfolder
 
-TARGET = ecofolder mci2dot mci2dot_ev mci2dot_cpr mci2csv pr_encoding rs_complement llnet2dot mci2sat sateval bad_net
+TARGET = ecofolder mci2dot mci2dot_ev mci2dot_cpr mci2csv pr_encoding rs_complement llnet2dot mci2sat sateval bad_net mci2asp
 LIBS = 
 FLAGS = 
 INCLUDES =
