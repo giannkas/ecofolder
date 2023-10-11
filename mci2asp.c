@@ -10,15 +10,39 @@ typedef struct cut_t
   int *evscut;
 } cut_t;
 
+typedef struct clist_t
+{
+  int   idplace;
+  struct clist_t* next;
+} clist_t;
+
+typedef struct evprepost
+{
+  clist_t *preset;
+  clist_t *postset;
+  struct evprepost *next;
+} evprepost;
+
+evprepost **evprps;
+
+clist_t* clist_add(clist_t** list, int idpl)
+{
+  clist_t* newco = malloc(sizeof(clist_t));
+  newco->idplace = idpl;
+  newco->next = *list;
+  //printf("list idplace: %d\n", list->idplace);
+  return *list = newco;
+}
+
 void read_mci_file (char *mcifile, int m_repeat, const char* ns)
 {
   #define read_int(x) fread(&(x),sizeof(int),1,mcif)
 
-  FILE *mcif, *evcof;
+  FILE *mcif;
   int nqure, nqure_, nquszcut, nquszevscut, szcuts, 
-    numco, numev, numpl, numtr, sz, i, value;
+    numco, numev, numpl, numtr, sz, i;
   int pre_ev, post_ev, cutoff, harmful, dummy = 0;
-  int *co2pl, *ev2tr, *tokens, *cut0, *queries_co,
+  int *co2pl, *ev2tr, *tokens, *queries_co,
    *queries_ev, *cutoffs, *harmfuls, *queries_coset;
   char **plname, **trname, *c;
   cut_t **cuts;
@@ -34,13 +58,18 @@ void read_mci_file (char *mcifile, int m_repeat, const char* ns)
 
   co2pl = malloc((numco+1) * sizeof(int));
   tokens = malloc((numco+1) * sizeof(int));
-  cut0 = calloc(numco+1, sizeof(int));
   queries_co = malloc((numco+1) * sizeof(int));
   queries_ev = malloc((numev+1) * sizeof(int));
   queries_coset = malloc((numco+1) * sizeof(int));
   ev2tr = malloc((numev+1) * sizeof(int));
   cutoffs = calloc(numev+1, sizeof(int));
   harmfuls = calloc(numev+1, sizeof(int));
+  evprps = calloc(numev+1, sizeof(evprepost*));
+  for (i = 0; i <= numev; i++) {
+    evprps[i] = malloc(sizeof(evprepost));
+    evprps[i]->preset = NULL;
+    evprps[i]->postset = NULL;
+  }
 
   read_int(nqure);
   nqure_ = abs(nqure);
@@ -77,10 +106,23 @@ void read_mci_file (char *mcifile, int m_repeat, const char* ns)
     read_int(tokens[i]);
     read_int(queries_co[i]);
     read_int(pre_ev);
-    if (pre_ev) printf("edge((%s,e%d),(%s,c%d)).\n",ns,pre_ev,ns,i);
+    if (pre_ev){
+      printf("edge((%s,e%d),(%s,c%d)).\n",ns,pre_ev,ns,i);
+      clist_add(&evprps[pre_ev]->postset, co2pl[i]);
+      //evprps[pre_ev]->preset[i] = co2pl[i];
+    }
+    else{ 
+      clist_add(&evprps[0]->postset, co2pl[i]); 
+    }
+    //evprps[0]->postset[i] = co2pl[i];
     do {
       read_int(post_ev);
-      if (post_ev) printf("edge((%s,c%d),(%s,e%d)).\n",ns,i,ns,post_ev);
+      if (post_ev)
+      {
+        printf("edge((%s,c%d),(%s,e%d)).\n",ns,i,ns,post_ev);
+        clist_add(&evprps[post_ev]->preset, co2pl[i]);
+        //evprps[post_ev]->postset[i] = co2pl[i];
+      }
     } while (post_ev);
   }
 
@@ -126,6 +168,16 @@ void read_mci_file (char *mcifile, int m_repeat, const char* ns)
     }
   for (i = 1; i <= numtr; i++)
         printf("name(t%d,\"%s\").\n",i,trname[i]);
+
+  clist_t *j;
+  for (i = 0; i <= numev; i++) {
+    for (j = evprps[i]->preset; j; j = j->next)
+      printf("%d,", j->idplace);
+    printf(" e%d ", i);
+    for (j = evprps[i]->postset; j; j = j->next)
+      printf("%d,", j->idplace);
+    printf("\n");
+  }
 
   fclose(mcif);
 }

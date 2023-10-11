@@ -211,3 +211,16 @@ void print_marking_co (nodelist_t* list)
   printf("%s ",((cond_t*)(list->node))->origin->name);
   print_marking_co(list->next);
 }
+
+char *mrk2str (nodelist_t* list)
+{
+  if (!list) return NULL;
+  char *str_marking = calloc((net->maxplname*(net->numpl-1)), sizeof(char));
+  while(list)
+  {
+    strcat(str_marking, ((place_t*)(list->node))->name);
+    list = list->next;
+    if (list) strcat(str_marking, ",");
+  }
+  return str_marking;
+}

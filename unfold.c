@@ -24,9 +24,11 @@ int compressed = 0;     /* compressed unfolding view (-c)    */
 int mcmillan = 0;      /* mcmillan criteria flag (-mcmillan) */
 int m_repeat = 0;     /* marking repeat to highlight (-r)    */
 int data = 0;     /* enabling Ecofolder to extract data (-data)    */
+int freechk = 0;       /* enabling Ecofolder to do a freeness check */
 int conflsteps = 0;   /* allocating blocks of CO_ALLOC_STEP Bytes */
 int** confl_evs = NULL;  /* matrix of events X conditions whether they are 
                           in direct conflict*/
+char* badunf = NULL;
 
 nodelist_t *cutoff_list, *corr_list;  /* cut-off list, corresponding 
   events */
@@ -464,10 +466,10 @@ int check_conflict(int id_ev1, int id_ev2, int size)
 
 void unfold ()
 {
-  nodelist_t *list, *mark_qr = NULL, *harmful_marking = NULL;
+  nodelist_t *list, *list2, *mark_qr = NULL, *harmful_marking = NULL;
   pe_queue_t *qu;
   place_t *pl;
-  event_t *ev, *stopev = NULL;
+  event_t *ev, *ev2, *stopev = NULL;
   cond_t  *co;
   querycell_t *qbuck;
   int i, cutoff, repeat = 0, check_query, harmful_check;
@@ -475,6 +477,8 @@ void unfold ()
   confl_evs = MYmalloc(CO_ALLOC_STEP * sizeof(int*));
   char trans_pool[(net->maxtrname+2)*(net->numtr)];
   memset( trans_pool, 0, (net->maxtrname+2)*(net->numtr)*sizeof(char) );
+  char* command = NULL;
+  if (badunf) command = calloc((net->maxplname*net->numpl)+strlen(badunf)+2, sizeof(char));
 
   /* create empty unfolding structure */
   unf = nc_create_unfolding();
@@ -609,16 +613,19 @@ void unfold ()
     /* add event to the unfolding */
     ev = insert_event(qu, trans_pool);
     cutoff = add_marking(qu->marking,ev);
-/*     if(!cutoff)
-      printf("ev name: %s\n", ev->origin->name); */
     
     check_query = nodelist_compare(qu->marking, mark_qr);
-    // harmful_check = nodelist_compare(qu->marking, harmful_marking);
     for(list = harmful_marking; list && harmful_check;
       list = list->next)
       if(!nodelist_find(qu->marking, list->node)){
         harmful_check = 0;
       }
+    if (badunf)
+    {
+      sprintf(command, "./badness_check \"%s\" \"%s\"", badunf, mrk2str(qu->marking));
+      harmful_check = system(command)/256;
+      harmful_marking = qu->marking;
+    }
 
     if(!check_query)
     {
@@ -664,6 +671,10 @@ void unfold ()
     if (!cutoff)
     { 
       unf->events = unf->events->next; 
+      if(harmful_marking && harmful_check)
+        nodelist_push(&harmful_list,ev);
+      else if(freechk && badunf)
+        {stopev = ev; break;}
       add_post_conditions(ev,CUTOFF_YES, repeat, !check_query);
       continue;
     }
@@ -687,17 +698,27 @@ void unfold ()
     net->unf_trans = MYstrdup(trans_pool);
   }
 
+
   for (list = harmful_list; list; list = list->next)
   {
     ev = list->node;
     ev->next = unf->events; unf->events = ev;
   }
 
-  for (list = cutoff_list; list; list = list->next)
+  for(list = cutoff_list; list; list = list->next)
+  {
+    ev = list->node;
+    for(list2 = harmful_list; list2 && ev; list2 = list2->next) 
+      if (ev == (ev2 = list2->node)) ev = NULL;
+    if (ev)
+      {ev->next = unf->events; unf->events = ev;}
+  }
+
+  /* for (list = cutoff_list; list; list = list->next)
   {
     ev = list->node;
     ev->next = unf->events; unf->events = ev;
-  }
+  } */
 
   for(qbuck = *query; qbuck; qbuck = qbuck->next)
   {
@@ -713,8 +734,9 @@ void unfold ()
   if (stopev)
   {
     exitcode = 2;
-    stopev->next = unf->events;
-    unf->events = stopev;
+    if (!nodelist_find(cutoff_list, stopev) && 
+        !nodelist_find(harmful_list, stopev))
+    {stopev->next = unf->events; unf->events = stopev;}
   }
 
   /* release memory that is no longer needed (probably incomplete) */

@@ -168,7 +168,7 @@ void readmci (const char * infile)
   for (i = 1; i <= numtr; i++) { trname[i] = bpos; read_str(); }
 }
 
-void sateval (char *satfile)
+int sateval (char *satfile, int data)
 {
   char *tmpname, *idx, *evcofile;
 
@@ -197,12 +197,12 @@ void sateval (char *satfile)
 
   if (c == 'U')
   {
-    if (opt_reach)
+    if (opt_reach && data)
       printf("Marking unreachable.\n");
-    else
+    else if (data)
       printf("The net is alive.\n");
     fclose(f);
-    return;
+    return 0;
   }
   else
   {
@@ -212,13 +212,13 @@ void sateval (char *satfile)
 
     if (c == ' ')
     {
-      if (opt_reach) printf("Marking unreachable.\n");
+      if (opt_reach && data) printf("Marking unreachable.\n");
       fclose(f);
-      return;
+      return 0;
     }
-    else if (opt_reach)
+    else if (opt_reach && data)
       printf("Marking reachable:\n");
-    else
+    else if (data)
       printf("Deadlock sequence:");
   }
 
@@ -235,7 +235,7 @@ void sateval (char *satfile)
     if (vnr > evars) break;
 
     if (v < 0) continue;
-    printf(" %s (e%d)",trname[ev2tr[v]],v);
+    if (data) printf(" %s (e%d)",trname[ev2tr[v]],v);
     fprintf(fo,"%d ",v);
     for (i = 1; i <= conds; i++)
     {
@@ -249,21 +249,21 @@ void sateval (char *satfile)
       }
     }
   }
-  printf("\n\t");
+  if (data) printf("\n\t");
   fprintf(fo,"0\n");
   for (i = 1; i <= numpl; i++)
   {
     if (marking[i] > 0 ){
-      printf("%s (c%d) ", plname[i], cut[i]);
+      if (data) printf("%s (c%d) ", plname[i], cut[i]);
       fprintf(fo,"%d ", cut[i]);
     }
   }
-  printf("\n");
+  if (data) printf("\n");
   fprintf(fo,"0\n");
 
   fclose(f);
   fclose(fo);
-  return;
+  return 1;
 }
 
 void usage ()
@@ -271,7 +271,8 @@ void usage ()
   fprintf(stderr,
   "\nusage: sateval {-d|-r} <mcifile> <satfile>\n\n"
   "  options:\n"
-  "\t-d or -r: output for deadlock or reachability checking\n\n"
+  "\t-d or -r: output for deadlock or reachability checking\n"
+  "\t-data: no data printed but evco file is still created.\n\n"
   );
   exit(1);
 }
@@ -279,15 +280,26 @@ void usage ()
 int main (int argc, char ** argv)
 {
   char outfile[1024];
+  int reachable = 0;
+  int data = 1;
+  char *mcifile = NULL;
+  char *resfile = NULL;
 
   *outfile = 0;
 
-  if (argc != 4) usage();
-  if (strcmp(argv[1],"-d") && strcmp(argv[1],"-r")) usage();
-  if (!strcmp(argv[1],"-r")) opt_reach = 1;
-  
-  readmci(argv[2]);
-  sateval(argv[3]);
+  for (int i = 1; i < argc; i++)
+    if (argc != 4 && argc != 5) usage();
+    else if (!strcmp(argv[i],"-r")) opt_reach = 1;
+    else if (!strcmp(argv[i],"-data")) data = 0;
+    else if (i == 3) mcifile = argv[i];
+    else resfile = argv[i];
 
-  return 0;
+  /* if (strcmp(argv[1],"-d") && strcmp(argv[1],"-r")) usage();
+  if (!strcmp(argv[1],"-r")) opt_reach = 1; */
+  
+  readmci(mcifile);
+  reachable = sateval(resfile, data);
+  //printf("sateval is: %d\n", reachable);
+
+  return reachable;
 }

@@ -24,6 +24,7 @@ extern int hash_buckets;
 extern event_t **events;
 extern int conflsteps;
 extern int** confl_evs;
+extern char* badunf;
 
 extern int exitcode;    /* proposed exit code of the program         */
 extern trans_t *stoptr;   /* the transition mentioned by the -T switch */
@@ -34,6 +35,7 @@ extern int compressed;    /* whether the -c switch has been supplied */
 extern int mcmillan;    /* whether the -mcmillan switch is enabled */
 extern int m_repeat;    /* whether the -r switch has been supplied */
 extern int data;    /* whether the -att switch has been supplied */
+extern int freechk;  /* whether the -freechk has been supplied */
 
 extern nodelist_t *cutoff_list, *corr_list;  /* cut-off/corresponding list */
 extern nodelist_t *harmful_list;  /* bad or harmful events in a list */
@@ -60,6 +62,7 @@ extern nodelist_t* retrieve_list (char*); /* values among "marked", "queried"
 // extern nodelist_t* format_marking_query ();
 extern void print_marking_pl (nodelist_t*);
 extern void print_marking_co (nodelist_t*);
+extern char* mrk2str (nodelist_t*);
 
 
 /***************************************************************************/

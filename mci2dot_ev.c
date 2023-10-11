@@ -402,24 +402,24 @@ void read_mci_file_ev (char *mcifile, char* evcofile, int m_repeat, int cutout)
   for (i = 1; i <= numev; i++)
     if (cutout && queries_ev[i])
     {  
-      if (i == cutoffs[i])
-        printf("  e%d [color=%s fillcolor=%s label=\"%s (e%d)\" shape=box style=filled];\n",
-            i,queries_ev[i] ? color3 : color4,color2,trname[ev2tr[i]],i);
-      else if ( i == harmfuls[i])
+      if ( i == harmfuls[i])
         printf("  e%d [color=%s fillcolor=%s label=\"%s (e%d)\" shape=box style=filled];\n",
             i,queries_ev[i] ? color3 : color4,color5,trname[ev2tr[i]],i);
+      else if (i == cutoffs[i])
+        printf("  e%d [color=%s fillcolor=%s label=\"%s (e%d)\" shape=box style=filled];\n",
+            i,queries_ev[i] ? color3 : color4,color2,trname[ev2tr[i]],i);
       else
         printf("  e%d [color=\"%s\" fillcolor=\"%s\" label=\"%s (e%d)\" shape=box style=filled];\n",
             i,queries_ev[i] ? color4 : color6,queries_ev[i] ? color3 : color1,trname[ev2tr[i]],i);
     }
     else if (!cutout)
     {
-      if (i == cutoffs[i])
-        printf("  e%d [color=%s fillcolor=%s label=\"%s (e%d)\" shape=box style=filled];\n",
-            i,queries_ev[i] ? color3 : color4,color2,trname[ev2tr[i]],i);
-      else if ( i == harmfuls[i])
+      if ( i == harmfuls[i])
         printf("  e%d [color=%s fillcolor=%s label=\"%s (e%d)\" shape=box style=filled];\n",
             i,queries_ev[i] ? color3 : color4,color5,trname[ev2tr[i]],i);
+      else if (i == cutoffs[i])
+        printf("  e%d [color=%s fillcolor=%s label=\"%s (e%d)\" shape=box style=filled];\n",
+            i,queries_ev[i] ? color3 : color4,color2,trname[ev2tr[i]],i);
       else
         printf("  e%d [color=\"%s\" fillcolor=\"%s\" label=\"%s (e%d)\" shape=box style=filled];\n",
             i,queries_ev[i] ? color4 : color6,queries_ev[i] ? color3 : color1,trname[ev2tr[i]],i);
