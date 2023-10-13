@@ -83,6 +83,7 @@ class Model:
     f.write("RS\n%s\n" % ("\n".join(self.RS + self.RS_)))
 
   def set_marking(self, m0):
+    print(m0)
     for k in self.PL:
       self.PL[k]["m0"] = k in m0
 

@@ -24,17 +24,28 @@ typedef struct evprepost
 } evprepost;
 
 evprepost **evprps;
+int numplaces = 0;
 
 clist_t* clist_add(clist_t** list, int idpl)
 {
   clist_t* newco = malloc(sizeof(clist_t));
   newco->idplace = idpl;
   newco->next = *list;
-  //printf("list idplace: %d\n", list->idplace);
   return *list = newco;
 }
 
-void read_mci_file (char *mcifile, int m_repeat, const char* ns)
+int strtoint(char *num) {
+  int  i, len;
+  int result = 0;
+
+  len = strlen(num);
+
+  for(i=0; i<len; i++)
+    result = result * 10 + ( num[i] - '0' );
+  return result;
+}
+
+void read_mci_file (char *mcifile, int m_repeat, char* ns, char* conf)
 {
   #define read_int(x) fread(&(x),sizeof(int),1,mcif)
 
@@ -95,7 +106,7 @@ void read_mci_file (char *mcifile, int m_repeat, const char* ns)
   }
 
   for (i = 1; i <= numev; i++) {
-    printf("event((%s,e%d)).\n", ns, i);
+    if (!conf) printf("event((%s,e%d)).\n", ns, i);
     read_int(ev2tr[i]);
     read_int(queries_ev[i]);
   }
@@ -107,7 +118,7 @@ void read_mci_file (char *mcifile, int m_repeat, const char* ns)
     read_int(queries_co[i]);
     read_int(pre_ev);
     if (pre_ev){
-      printf("edge((%s,e%d),(%s,c%d)).\n",ns,pre_ev,ns,i);
+      if (!conf) printf("edge((%s,e%d),(%s,c%d)).\n",ns,pre_ev,ns,i);
       clist_add(&evprps[pre_ev]->postset, co2pl[i]);
       //evprps[pre_ev]->preset[i] = co2pl[i];
     }
@@ -119,7 +130,7 @@ void read_mci_file (char *mcifile, int m_repeat, const char* ns)
       read_int(post_ev);
       if (post_ev)
       {
-        printf("edge((%s,c%d),(%s,e%d)).\n",ns,i,ns,post_ev);
+        if (!conf) printf("edge((%s,c%d),(%s,e%d)).\n",ns,i,ns,post_ev);
         clist_add(&evprps[post_ev]->preset, co2pl[i]);
         //evprps[post_ev]->postset[i] = co2pl[i];
       }
@@ -136,12 +147,12 @@ void read_mci_file (char *mcifile, int m_repeat, const char* ns)
     read_int(cutoff);
     if (!cutoff) break;
     cutoffs[cutoff] = cutoff;
-    printf("cutoff((%s,e%d)).\n", ns, cutoff);
+    if (!conf) printf("cutoff((%s,e%d)).\n", ns, cutoff);
     read_int(dummy);
   }
 
   do { read_int(dummy); } while(dummy);
-  read_int(numpl);
+  read_int(numpl); numplaces = numpl;
   read_int(numtr);
   read_int(sz);
 
@@ -159,17 +170,16 @@ void read_mci_file (char *mcifile, int m_repeat, const char* ns)
   fread(c,1,1,mcif);
 
   for (i = 1; i <= numco; i++)
-    printf("h((%s,c%d),p%d).\n", ns,i,co2pl[i]);
+    if (!conf) printf("h((%s,c%d),p%d).\n", ns,i,co2pl[i]);
   for (i = 1; i <= numev; i++)
-    printf("h((%s,e%d),t%d).\n", ns,i,ev2tr[i]);
+    if (!conf) printf("h((%s,e%d),t%d).\n", ns,i,ev2tr[i]);
 
-  for (i = 1; i <= numpl; i++) {
-        printf("name(p%d,\"%s\").\n",i,plname[i]);
-    }
+  for (i = 1; i <= numpl; i++)
+    if (!conf)  printf("name(p%d,\"%s\").\n",i,plname[i]);
   for (i = 1; i <= numtr; i++)
-        printf("name(t%d,\"%s\").\n",i,trname[i]);
+    if (!conf)  printf("name(t%d,\"%s\").\n",i,trname[i]);
 
-  clist_t *j;
+  /* clist_t *j;
   for (i = 0; i <= numev; i++) {
     for (j = evprps[i]->preset; j; j = j->next)
       printf("%d,", j->idplace);
@@ -177,19 +187,93 @@ void read_mci_file (char *mcifile, int m_repeat, const char* ns)
     for (j = evprps[i]->postset; j; j = j->next)
       printf("%d,", j->idplace);
     printf("\n");
-  }
+  } */
 
   fclose(mcif);
 }
 
+void get_marking(char* confg)
+{
+  clist_t *list;
+  char* sub;
+  char* confg_copy = strdup(confg);
+  int subint;
+
+  int *marking = calloc(numplaces+1, sizeof(int));
+  char *markingstr = calloc(numplaces*5, sizeof(char));
+  int length = snprintf(NULL, 0, "%d", numplaces);
+  char* plidstr = malloc(length);
+  int plid;
+
+  /* Add initial marking */
+  for(list = evprps[0]->postset; list; list = list->next)
+  {
+    plid = list->idplace;
+    marking[plid] = plid;
+  }
+
+  sub = strtok(confg_copy, ",");
+  while (sub != NULL)
+  {
+    subint = strtoint(sub);
+    /* remove event's preset */
+    for(list = evprps[subint]->preset; list; list = list->next)
+    {
+      plid = list->idplace;
+      marking[plid] = 0;
+    }
+    /* Add event's poset */
+    for(list = evprps[subint]->postset; list; list = list->next)
+    {
+      plid = list->idplace;
+      marking[plid] = plid;
+    }
+    sub = strtok(NULL, ",");
+  }
+
+  for(int i = 1; i <= numplaces; i++)
+  {
+    if (marking[i] > 0)
+    {
+      sprintf(plidstr, "%d,", marking[i]);
+      strcat(markingstr, plidstr);
+    }
+  }
+
+  printf("%s",markingstr);
+}
+
+void usage ()
+{
+  fprintf(stderr,"usage: mci2asp [options] <mcifile> -p [ns]\n"
+    "\t options:\n"
+    "\t -cf <confg>:\t used to return the marking led by the configuration <confg>(string type).\n"
+    "\t -p <prefixname>:\t used to tag elements in the prefix. \n");
+  exit(1);
+}
+
 int main (int argc, char **argv)
 {
-  if (argc != 2 && argc != 3)
-  {
-    fprintf(stderr,"usage: mci2asp <mcifile> [<ns>]\n");
-    exit(1);
-  }
-  char* ns = argc == 3 ? argv[2] : "pi0";
-  read_mci_file(argv[1], 0, ns);
+  int i;
+  char *configuration = NULL, *prefix_name = NULL;
+  char* mcifile = NULL;
+
+  for (i = 1; i < argc; i++)
+    if (!strcmp(argv[i], "-cf"))
+    {
+      if (++i == argc) usage();
+      configuration = argv[i];
+    }
+    else if (!strcmp(argv[i], "-p"))
+      prefix_name = ++i == argc ? NULL : argv[i];
+    else
+      mcifile = argv[i];
+
+  if (!prefix_name) prefix_name = "pi0";
+  if (!mcifile) usage ();
+
+  read_mci_file(mcifile, 0, prefix_name, configuration);
+  if (configuration)
+    get_marking(configuration);
   exit(0);
 }

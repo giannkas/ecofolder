@@ -272,6 +272,7 @@ int main (int argc, char **argv)
   else
     write_mci_file(mcifile);
   
-
-  return exitcode;
+  
+  if(badunf && freechk) printf("%d", exitcode);
+  return 0;
 }

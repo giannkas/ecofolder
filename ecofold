@@ -2,9 +2,9 @@
 
 echo "Unfolding..."
 if [ -f $1.ll_net ]; then
-  ./ecofolder -freechk -data -c -badchk $2 $1.ll_net
+  ./ecofolder -c $2 $1.ll_net
 else
-  ./ecofolder -freechk -data -c -badchk $2 $1.ll
+  ./ecofolder -c $2 $1.ll
 fi
 #../ecofolder/ecofolder
 

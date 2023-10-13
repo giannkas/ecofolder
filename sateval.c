@@ -291,7 +291,7 @@ int main (int argc, char ** argv)
     if (argc != 4 && argc != 5) usage();
     else if (!strcmp(argv[i],"-r")) opt_reach = 1;
     else if (!strcmp(argv[i],"-data")) data = 0;
-    else if (i == 3) mcifile = argv[i];
+    else if (i+1 < argc) mcifile = argv[i];
     else resfile = argv[i];
 
   /* if (strcmp(argv[1],"-d") && strcmp(argv[1],"-r")) usage();

@@ -35,6 +35,7 @@ void write_mci_file (char *filename)
   if (!(file = fopen(filename,"wb")))
     nc_error("cannot write to file %s\n",filename);
 
+
   write_int(unf->numco);
   write_int(unf->numev);
   if(!data)
@@ -51,6 +52,7 @@ void write_mci_file (char *filename)
   unf->conditions = reverse_list(unf->conditions);
   unf->events = reverse_list(unf->events);
 
+
   for (ev = unf->events; ev; ev = ev->next){
     ev->mark = ++ev_num;
     if(ev->queried && !data)
@@ -63,7 +65,8 @@ void write_mci_file (char *filename)
       printf("%s (e%d)  ", ev->origin->name, ev->mark);
     }
   }
-  if(!data) printf("\n");
+  //if(!data) printf("\n");
+
 
   querycell_t *qbuck;
   for(qbuck = *query; qbuck; qbuck = qbuck->next)
@@ -86,8 +89,10 @@ void write_mci_file (char *filename)
         write_int(ev->mark);
   }
   write_int(null);
+
   
   for (ev = unf->events; ev; ev = ev->next){
+    //printf("ev name: %s\n", ev->origin->name);
     write_int(ev->origin->num);
     write_int(ev->queried);
   }

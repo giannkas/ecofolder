@@ -111,11 +111,12 @@ cond_t* insert_condition (place_t *pl, event_t *ev, int queried,
   /* the other direction is done in pe() */
   co->origin = pl;
   co->flag = 0;
-
   co->postset = NULL;
   co->pre_ev = ev;
   co->mark = 0;
   co->num = unf->numco++;
+  //if(unf->conditions) printf("plname: %s\n", ((cond_t*)(unf->conditions))->origin->name);
+  //if(unf->conditions) printf("conum: %d\n", ((cond_t*)(unf->conditions))->num);
   co->queried = queried ? 1 : 0;
   if(ev && co->queried) co->pre_ev->queried = 1;
   if ((ev && nodelist_find(ev->origin->postset, pl)) ||
@@ -478,7 +479,7 @@ void unfold ()
   char trans_pool[(net->maxtrname+2)*(net->numtr)];
   memset( trans_pool, 0, (net->maxtrname+2)*(net->numtr)*sizeof(char) );
   char* command = NULL;
-  if (badunf) command = calloc((net->maxplname*net->numpl)+strlen(badunf)+2, sizeof(char));
+  if (badunf) command = calloc((net->maxplname*net->numpl)+strlen(badunf)*2, sizeof(char));
 
   /* create empty unfolding structure */
   unf = nc_create_unfolding();
@@ -659,6 +660,14 @@ void unfold ()
       unf->events = unf->events->next;
       break;
     }
+    if (!cutoff)
+    {
+      unf->events = unf->events->next; 
+      if(harmful_marking && harmful_check)
+        nodelist_push(&harmful_list,ev);
+      else if(freechk && badunf)
+        {stopev = ev; break;}
+    }
 
     repeat = repeat > 0 && !check_query ? repeat : 0;
 
@@ -669,12 +678,7 @@ void unfold ()
     we have a cut-off event */
     /* add post-conditions for cut-off events */
     if (!cutoff)
-    { 
-      unf->events = unf->events->next; 
-      if(harmful_marking && harmful_check)
-        nodelist_push(&harmful_list,ev);
-      else if(freechk && badunf)
-        {stopev = ev; break;}
+    {
       add_post_conditions(ev,CUTOFF_YES, repeat, !check_query);
       continue;
     }
@@ -688,11 +692,9 @@ void unfold ()
     else
       add_post_conditions(ev,CUTOFF_NO, repeat, !check_query);
     //printf("cutoff: %d\n", cutoff);
-
     /* add post-conditions, compute possible extensions */
     pe_free(qu);
   }
-
   if(strlen(trans_pool) > 2){
     trans_pool[strlen(trans_pool)-2] = 0;
     net->unf_trans = MYstrdup(trans_pool);
@@ -714,6 +716,7 @@ void unfold ()
       {ev->next = unf->events; unf->events = ev;}
   }
 
+
   /* for (list = cutoff_list; list; list = list->next)
   {
     ev = list->node;
@@ -728,6 +731,7 @@ void unfold ()
           co->pre_ev->preset_size);
     qbuck->szevscut = nodelist_size(qbuck->evscut);
   }
+
 
   /* Make sure that stopev is the last event to ensure compatibility
      with Claus Schr�ter's reachability checker (otn). */
@@ -744,6 +748,5 @@ void unfold ()
   parikh_finish();
   free(events);
   for (pl = net->places; pl; pl = pl->next)
-    nodelist_delete(pl->conds);
-
+    nodelist_delete(pl->conds);  
 }

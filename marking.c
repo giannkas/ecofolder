@@ -123,12 +123,13 @@ int add_marking (nodelist_t *marking, event_t *ev)
   /* printf("\nhola\n");
   if(ev) printf("creating marking: %s, %d\n", ev->origin->name, ev->id);
   for(list = marking; list; list = list->next)
-    printf("%s, ", ((place_t*)(list->node))->name); */
+    printf("%s, ", ((place_t*)(list->node))->name);
+  printf("\nchao\n"); */
   
   if(!cmp && mcmillan) /* marking is already present */
   {
     list = (*buck)->pre_evs;
-    if(!list)
+    if(!list) /* initial marking */
     {
       checked_back = 1;
       nodelist_push(&cutoff_list,ev);
@@ -149,7 +150,9 @@ int add_marking (nodelist_t *marking, event_t *ev)
     (*buck)->repeat++;
     /* printf("\nrepetition: %d\n", (*buck)->repeat);
     printf("chao\n"); */
-    nodelist_push(&((*buck)->pre_evs),ev);
+    /* if initial marking has been seen then we're done. */
+    /* No event can create the initial marking */
+    if((*buck)->pre_evs) nodelist_push(&((*buck)->pre_evs),ev);
   }
   else if (!cmp && !mcmillan)
   {

@@ -8,14 +8,13 @@ import subprocess
 import sys
 import tempfile
 import time
+import re
 
 from tqdm import tqdm
 
 import networkx as nx
 
 import clingo
-
-DEVNULL = open(os.devnull, 'wb')
 
 script_dir = os.path.dirname(__file__)
 def script_path(name):
@@ -96,8 +95,16 @@ class Model:
     f.write("RS\n%s\n" % ("\n".join(self.RS + self.RS_)))
 
   def set_marking(self, m0):
+    #print(m0)
     for k in self.PL:
       self.PL[k]["m0"] = k in m0
+  
+  def get_m0(self):
+    m0 = []
+    for i in self.PL:
+      if self.PL[i]["m0"] is True:
+        m0+=[i]
+    return m0
 
   def complix(self, mcifile="working.mci", verbose=False):
     llfile = os.path.join(out_d, "working.ll")
@@ -105,9 +112,17 @@ class Model:
         self.write(fp)
     mcifile = os.path.join(out_d, mcifile)
     subprocess.check_call(["ecofolder", "-data", llfile, "-m", mcifile],
-        stderr=subprocess.DEVNULL if not verbose else None)
+            stderr=subprocess.DEVNULL if not verbose else None)
     return mcifile
-
+  
+  def freecheck(self, mcifile="working.mci", badfile="working_bad.mci"):
+    llfile = os.path.join(out_d, "working.ll")
+    with open(llfile, "w") as fp:
+        self.write(fp)
+    mcifile = os.path.join(out_d, mcifile)
+    free_mrk = subprocess.check_output(["ecofolder", "-freechk", "-badchk", badfile, llfile, "-m", mcifile]).decode()
+    
+    return free_mrk
 
 def prefix_nb_events(mcifile):
   # includes cutoffs
@@ -137,22 +152,22 @@ def get_eid(x):
 
 def marking_from_atoms(atoms):
   return h({py_of_symbol(a.arguments[0]) for a in atoms
-      if a.name == "ncut"})
+                if a.name == "ncut"})
 def cut_from_atoms(atoms):
   return h({py_of_symbol(a.arguments[0]) for a in atoms
-        if a.name == "cut"})
+              if a.name == "cut"})
 def hcut_from_atoms(atoms):
   return h({py_of_symbol(a) for a in atoms
-            if a.name == "hcut"})
+              if a.name == "hcut"})
 def cfg_from_atoms(atoms):
   return h({get_eid(py_of_symbol(a.arguments[0])) for a in atoms
-          if a.name == "e"})
+              if a.name == "e"})
 def names_from_atoms(atoms):
   return {py_of_symbol(a.arguments[0]) for a in atoms
-          if a.name == "resolved"}
+              if a.name == "resolved"}
 
 def asp_of_mci(mcifile, ns=None):
-  args = [script_path("mci2asp"), mcifile]
+  args = [script_path("mci2asp"), mcifile, "-p"]
   if ns:
     args.append(str(ns))
   return subprocess.check_output(args).decode()
@@ -184,7 +199,7 @@ def prefix_has_marking(prefix_asp, markings):
   sat.load(script_path("anycfg.asp"))
   sat.load(script_path("cut.asp"))
   for i, m in enumerate(markings):
-    sat.add("base", [], "".join(["q({},\"{}\").".format(i,p) for p in m]))
+      sat.add("base", [], "".join(["q({},\"{}\").".format(i,p) for p in m]))
   sat.add("base", [],
       "bad(I) :- q(I,_), ncut(P), not q(I,P)."
       "bad(I) :- not ncut(P), q(I,P)."
@@ -193,33 +208,8 @@ def prefix_has_marking(prefix_asp, markings):
   sat.ground([("base",())])
   return sat.solve().satisfiable
 
-def marking_led_by_configuration(prefix, configuration):
-  """Retrieves the marking led by the configuration in the prefix.
-
-  Args:
-    prefix: The prefix.
-    configuration: The configuration.
-
-  Returns:
-    The marking led by the configuration in the prefix.
-  """
-
-  sat = clingo.Control([str(0), "--project"]+clingo_opts)
-  sat.add("base", [], prefix)
-  sat.add("base", [], configuration)
-  sat.load(script_path("configuration.asp"))
-  sat.load(script_path("anycfg.asp"))
-  sat.load(script_path("cut.asp"))
-  sat.add("base", [], ":- marking(M), #show marking(M), not #show ncut(M,C).")
-  sat.ground([("base",())])
-
-  for sol in sat.solve(yield_=True):
-    atoms = sol.symbols(shown=True)
-    m = marking_from_atoms(atoms)
-    yield m
-
 def markings(prefix_asp):
-  sat = clingo.Control([str(0), "--project"]+clingo_opts)
+  sat = clingo.Control([0, "--project"]+clingo_opts)
   sat.add("base", [], prefix_asp)
   sat.load(script_path("configuration.asp"))
   sat.load(script_path("anycfg.asp"))
@@ -228,9 +218,9 @@ def markings(prefix_asp):
   sat.add("base", [], "#show ncut/1.")
   sat.ground([("base",())])
   for sol in sat.solve(yield_=True):
-    atoms = sol.symbols(shown=True)
-    m = marking_from_atoms(atoms)
-    yield m
+      atoms = sol.symbols(shown=True)
+      m = marking_from_atoms(atoms)
+      yield m
 
 def maximal_configurations(prefix_asp):
   sat = clingo.Control(["0", "--heuristic=Domain",
@@ -255,7 +245,7 @@ def find_glue(hcut, prefix_asp):
   sat = clingo.Control(["1"]+clingo_opts)
   sat.add("base", [], prefix_asp)
   for (c,p) in hcut:
-    sat.add("base", [], f"hcut({c},{p}).")
+      sat.add("base", [], f"hcut({c},{p}).")
   sat.load(script_path("findglue.asp"))
   sat.ground([("base",())])
   for sol in sat.solve(yield_=True):
@@ -287,32 +277,37 @@ def get_event_poset(prefix_asp):
   atoms = sol.symbols(shown=True)
   edges = [(get_eid(py_of_symbol(a.arguments[0])), get_eid(py_of_symbol(a.arguments[1])))
               for a in atoms if a.name == "greater"]
-  #print(edges)
   unchallenged = set((get_eid(py_of_symbol(a.arguments[0]))) for a in atoms if a.name == "unchallenged")
   poset = nx.DiGraph(edges)
   e2tr = {get_eid(py_of_symbol(a.arguments[0])): py_of_symbol(a.arguments[1])
               for a in atoms if a.name == "e2tr"}
   return {
-      "poset": poset,
-      "unchallenged": unchallenged,
-      "e2tr": e2tr
+    "poset": poset,
+    "unchallenged": unchallenged,
+    "e2tr": e2tr
   }
 
 model_ll = sys.argv[1]
 bad_marking = sys.argv[2]
+bad_unf = sys.argv[3]
 model = Model(model_ll)
 
 base_output = os.path.basename(model_ll.replace(".ll", ""))
 out_d = f"gen/{base_output}"
 
 if os.path.exists(out_d):
-    shutil.rmtree(out_d)
+  shutil.rmtree(out_d)
 os.makedirs(out_d)
 
 bad_aspfile = os.path.join(out_d, "bad.asp")
+f = open(bad_marking)
+bad_markings = []
+for l in f: # reading bad markings in f
+  bad_markings += [l.strip().split(",")] # list of lists to store each bad marking
 with open(bad_aspfile, "w") as fp:
-  for p in bad_marking.split(","):
-    fp.write(f"{clingo.Function('bad', (clingo.String(p),))}.\n")
+  for m in bad_markings:
+    for p in m:
+      fp.write(f"{clingo.Function('bad', (clingo.String(p),))}.\n")
 
 clingo_opts = ["-W", "none"]
 #clingo_opts += ["-t", str(multiprocessing.cpu_count())]
@@ -325,21 +320,20 @@ prefix = asp_of_mci(mci)
 print(f"Prefix has {prefix_nb_events(mci)} events, including cut-offs",
         file=sys.stderr)
 with open(f"{out_d}/prefix.asp", "w") as fp:
-    fp.write(prefix)
+  fp.write(prefix)
 
 prefix_info = get_event_poset(prefix)
 prefix_d = prefix_info["poset"]
 unchallenged = prefix_info["unchallenged"]
 e2tr = prefix_info["e2tr"]
 
-print("Unchallenged events", unchallenged, file=sys.stderr)
-print("poset", prefix_d, file=sys.stderr)
-print("e2tr", e2tr, file=sys.stderr)
+#print("Unchallenged events", unchallenged, file=sys.stderr)
+#print("prefix_d", prefix_d)
 
 # compute Pi_1
 
 # maxcfg = list(tqdm(maximal_configurations(prefix),
-#             desc="(Pi_1) Computing maximal configurations without cut-offs"))
+#           desc="(Pi_1) Computing maximal configurations without cut-offs"))
 # prefixes = []
 # for i, info in enumerate(tqdm(maxcfg, desc="(Pi_1) Computing prefixes")):
 #   model.set_marking(set(info["marking"]))
@@ -375,20 +369,20 @@ def shave(C_d, crest):
   blacklist = set()
   crest = set(crest)
   while True:
-    rm = [e for e in crest if e in unchallenged]
-    if not rm:
-        break
-    crest.difference_update(rm)
-    blacklist.update(rm)
-    for e in rm:
-      for f in C_d.predecessors(e):
-        is_crest = True
-        for g in C_d.successors(f):
-          if g not in blacklist:
-              is_crest = False
-              break
-        if is_crest:
-          crest.add(f)
+      rm = [e for e in crest if e in unchallenged]
+      if not rm:
+          break
+      crest.difference_update(rm)
+      blacklist.update(rm)
+      for e in rm:
+          for f in C_d.predecessors(e):
+              is_crest = True
+              for g in C_d.successors(f):
+                  if g not in blacklist:
+                      is_crest = False
+                      break
+              if is_crest:
+                  crest.add(f)
   return tuple(sorted(set(C_d) - blacklist)), tuple(sorted(crest))
 
 from time import process_time
@@ -396,30 +390,30 @@ from time import process_time
 wl = set()
 known = set()
 for C in tqdm(minF0(prefix, bad_aspfile), desc="minFO"):
+  #print("C", C)
   C_d = prefix_d.subgraph(C)
   C_crest = get_crest(C_d)
   (keep, crest) = shave(C_d, C_crest)
   #print("C_shave", keep)
-  #print(keep, crest)
   wl.add((keep, crest))
 
 
-print("Grounding doom check...", end="", flush=True, file=sys.stderr)
+# print("Grounding doom check...", end="", flush=True, file=sys.stderr)
 t0 = process_time()
 doom_ctl = clingo.Control(clingo_opts)
-doom_ctl.load(script_path("viable.asp"))
-doom_ctl.load(bad_aspfile)
-#doom_ctl.load(f"{out_d}/pi1.asp")
-doom_ctl.ground([("base",())])
+# doom_ctl.load(script_path("viable.asp"))
+# doom_ctl.load(bad_aspfile)
+# doom_ctl.load(f"{out_d}/pi1.asp")
+# doom_ctl.ground([("base",())])
 print(f" done in {process_time()-t0:.1f}s", flush=True, file=sys.stderr)
 
 def is_doomed(C):
   terms = [clingo.parse_term(f"my({e})") for e in C]
   for t in terms:
-      doom_ctl.assign_external(t, True)
+    doom_ctl.assign_external(t, True)
   ret = not doom_ctl.solve().satisfiable
   for t in terms:
-      doom_ctl.release_external(t)
+    doom_ctl.release_external(t)
   stats["is_doomed"] += 1
   return ret
 
@@ -433,48 +427,107 @@ def handle(C_e):
   return True
 
 
-print("wl is: ", wl)
-C, crest = wl.pop()
-print("crest is", crest)
-#C = ",".join(s.strip("'") for s in C)
-#C = "("+C+")"
-#print("C is", C)
-#print(prefix)
-# Retrieve the marking led by the configuration C in the prefix.
-# for m in marking_led_by_configuration(prefix, C):
-#   print(m)
+# C, crest = wl.pop()
+# C = set(C)
+# crest = set(crest)
 # C_e = C - crest
-# print("C_e is", C_e)
-for m in markings(prefix):
-  print(m)
-  
-#   print(repr(i).encode('utf-8'))
+# Cstr = ""
+# for s in C:
+#   Cstr = Cstr + "".join(d if d.isdigit() else "" for d in s)
+# Cstr = Cstr[1:]
+# Cstr=Cstr.replace('0',',')
+# Clist = Cstr.split(',')
+# Cstr_=sorted(Clist)
+# Cstr_ = ','.join(Cstr_)
+# print(C)
+# print(crest)
+# tcrest = tuple(crest)[0]
+# get_marking(C_e)
+# print("e2tr", e2tr)
+# #args = [script_path("mci2asp"), mcifile]
+#   #return subprocess.check_output(args).decode()
 
-#print(next(marking))
+# print(Cstr_)
+# result = subprocess.check_output(["mci2asp", "-cf", Cstr_, mci])
+# # Decode the result from bytes to a string (assuming it's a string)
+# result_string = result.decode('utf-8')
+# print(result_string)
 
-# i = 0
-# while wl:
-#   C, crest = wl.pop()
-#   if C in known:
-#     continue
-#   known.add(C)
-#   C = set(C)
-#   crest = set(crest)
-#   #print("wl", C)
-#   #print("  crest =", crest)
-#   C_e = C - crest
-#   add = True
-#   if handle(C - crest):
-#     for e in crest:
-#       viable = handle(C - {e})
-#       add = add and viable
-#   else:
-#     add = False
-#   if add:
-#     i += 1
-#     d = process_time() - t0
-#     print(f"{d:.1f} [MINDOO {i}]\t", set(sorted([e2tr[e] for e in C])), list(sorted(C)), flush=True)
-#     print(f"   doom checks: {stats['is_doomed']}", flush=True, file=sys.stderr)
-# if i == 0:
-#   print("EMPTY MINDOO")
-# print(f"total doom checks: {stats['is_doomed']}", flush=True, file=sys.stderr)
+def str_conf(C):
+  Cstr = ""
+  for s in C:
+    Cstr = Cstr + "".join(d if d.isdigit() else "" for d in s)
+  Cstr = Cstr[1:].replace('0', ',')
+  Clist = Cstr.split(',')
+  Cstr_ = sorted(Clist)
+  Cstr_ = ','.join(Cstr_)
+  return Cstr_
+
+def idpl2plnames(markidC):
+  markidC = markidC[:-1].split(",")
+  markC = ""
+  #print(model.PL)
+  first = True
+  for i in model.PL:
+    for j in markidC:
+      if first and model.PL[i]["id"] == int(j):
+        markC += i
+        first = False
+      elif model.PL[i]["id"] == int(j): markC += "," + i
+  tupleC = tuple(markC.split(","))
+  return tupleC
+
+def sort_by_number(string):
+  number = int(string.split(',')[-1][1:].strip(')'))
+  return number
+
+i = 0
+while wl:
+  C, crest = wl.pop()
+  # if C in known:
+  #   continue
+  #known.add(C)
+  C = set(C)
+  crest = set(crest)
+  #print("wl", C)
+  #print("  crest =", crest)
+  C_e = C - crest
+  add = True
+  Cstr_ = str_conf(C_e)
+  markidC_e = subprocess.check_output(["mci2asp", "-cf", Cstr_, mci]).decode()
+  tupleC_e = idpl2plnames(markidC_e)
+  model.set_marking(tupleC_e)
+  freeC_e = int(model.freecheck(badfile=bad_unf).strip())
+  if not freeC_e:
+    add = False
+    C_d = prefix_d.subgraph(C_e)
+    C_crest = get_crest(C_d)
+    (keep, crest) = shave(C_d, C_crest)
+    wl.add((keep, crest))
+    stats['is_doomed'] += 1
+  else:
+    for e in crest:
+      e = set(e)
+      c_e = C - e
+      cstr_ = str_conf(c_e)
+      markidc_e = subprocess.check_output(["mci2asp", "-cf", cstr_, mci]).decode()
+      tuplec_e = idpl2plnames(markidc_e)
+      freec_e = int(model.freecheck(badfile=bad_unf).strip())
+      if not freec_e:
+        add = False
+        c_d = prefix_d.subgraph(c_e)
+        c_crest = get_crest(c_d)
+        (keep, crest) = shave(c_d, c_crest)
+        wl.add((keep, crest))
+        stats['is_doomed'] += 1
+  if add:
+    i += 1
+    d = process_time() - t0
+    print(f"{d:.1f} [MINDOO {i}]\t", set(sorted([e2tr[e] for e in C])), sorted(C, key=sort_by_number), flush=True)
+    print(f"   doom checks: {stats['is_doomed']}", flush=True, file=sys.stderr)
+if i == 0:
+  print("EMPTY MINDOO")
+print(f"total doom checks: {stats['is_doomed']}", flush=True, file=sys.stderr)
+
+
+      

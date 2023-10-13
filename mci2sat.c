@@ -265,11 +265,11 @@ void reachable ()
   }
 }
 
-void mci2sat (const char * infile, const char *outfile)
+int mci2sat (const char * infile, const char *outfile)
 {
-  int i, j, e;
+  int i, j, e, maxszname = 0;
   list_t *post;
-  char *blob, *bconds;
+  char *blob, *bconds, *plinunf;
   int *harmfuls;
   int nqure, nqure_, nquszcut, nquszevscut, szcuts, harmful, token, queried;
   cut_t **cuts;
@@ -353,6 +353,14 @@ void mci2sat (const char * infile, const char *outfile)
   // dummy ints followed by number of places and transitions
   while (read_int());
   numpl = read_int();
+  //printf("p_reach->size: %d\n", p_reach->size);
+  //printf("numco: %d\n", conds);
+  //printf("1. nosense: %d\n", nosense);
+
+
+  if(p_reach->size > conds-1 || n_reach->size > conds-1)
+    return 0;
+
   numtr = read_int();
   read_int();
 
@@ -371,6 +379,10 @@ void mci2sat (const char * infile, const char *outfile)
       {
         plwanted[i] = 1;
         nosense = 0;
+        //printf("bpos: %s\n", bpos);
+        //printf("jptr[j]: %s\n", jptr[j]);
+        //printf("2. nosense: %d\n", nosense);
+
       }
       else
       {
@@ -379,6 +391,8 @@ void mci2sat (const char * infile, const char *outfile)
         {
           plwanted[i] = 1;
           nosense = 0;
+          //printf("3. nosense: %d\n", nosense);
+
         }
       }
     jptr = &(n_reach->contents);
@@ -399,16 +413,14 @@ void mci2sat (const char * infile, const char *outfile)
       }
 
     plname[i] = bpos;
+    if (strlen(plname[i]) > maxszname)
+      maxszname = strlen(plname[i]);
     read_str();
   }
-
+  plinunf = calloc((maxszname*numpl), sizeof(char));
+  //printf("4. nosense: %d\n", nosense);
   if (nosense)
-  { 
-    if (p_reach->size == 0 || n_reach->size == 0)
-      nosense = 0;
-    else
-      exit(1);
-  }
+    return 0;
   
   if (!opt_comments) P("p cnf                              \n");
   /* go back and read conditions */
@@ -418,6 +430,13 @@ void mci2sat (const char * infile, const char *outfile)
   {
     int consumers = 0;
     int place = read_int();
+    if(i == 1 && place && !strstr(plinunf, plname[place])) 
+      strcat(plinunf, plname[place]);
+    else if(place && !strstr(plinunf, plname[place]))
+    {
+      strcat(plinunf, ",");
+      strcat(plinunf, plname[place]);
+    }
     token = read_int();
     queried = read_int();
     int gen = read_int();
@@ -443,6 +462,25 @@ void mci2sat (const char * infile, const char *outfile)
     conflicts(i,post,gen);
   }
 
+  char **jptr, *needle;
+  jptr = &(p_reach->contents);
+  for (j = 0; j < p_reach->size; j++)
+  {
+    needle = strstr(plinunf, jptr[j]);
+    if(!needle) {nosense = 1; break;}
+  }
+
+  jptr = &(n_reach->contents);
+  for (j = 0; j < n_reach->size; j++)
+  {
+    needle = strstr(plinunf, jptr[j]);
+    if(!needle) {nosense = 1; break;}
+  }
+
+  //printf("5. nosense: %d\n", nosense);
+  if (nosense) return 0;
+
+
   if (!opt_reach)
   {
     for (i = 1; i <= events; i++)
@@ -460,6 +498,7 @@ void mci2sat (const char * infile, const char *outfile)
   fseek(fout,6,SEEK_SET);
   P("%d %d",vars,clauses);
   fclose(fout);
+  return 1;
 }
 
 void find_targets (clist_t **list, char *string)
@@ -495,7 +534,7 @@ void usage ()
 
 int main (int argc, char ** argv)
 {
-  int i;
+  int i, correct = 0;
         char outfile[1024];
   char *filename = NULL;
 
@@ -546,7 +585,7 @@ int main (int argc, char ** argv)
     strcpy(outfile + l - 3, "sat");
   }
 
-  mci2sat (filename,outfile);
+  correct = mci2sat (filename,outfile);
 
   return 0;
 }

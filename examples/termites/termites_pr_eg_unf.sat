@@ -1,184 +1,72 @@
-p cnf 64 183                       
--6 -5 0
--6 13 0
--5 13 0
--4 -2 0
--4 14 0
--2 14 0
--13 -14 0
--4 -3 0
--4 15 0
--3 15 0
--15 -2 0
-16 1 0
--16 -1 0
-17 2 1 0
--17 -2 0
--17 -1 0
--2 -1 0
-18 1 0
--18 -1 0
-19 10 6 4 0
--19 -10 0
--19 -6 0
--19 -4 0
--10 -6 0
--10 20 0
--6 20 0
--20 -4 0
-21 6 4 0
--21 -6 0
--21 -4 0
--6 -4 0
--2 -1 0
-22 9 6 4 0
--22 -9 0
--22 -6 0
--22 -4 0
--9 -6 0
--9 23 0
--6 23 0
--23 -4 0
--2 -1 0
--9 1 0
--7 1 0
--9 -7 0
--7 1 0
--3 1 0
--7 -3 0
--11 1 0
--10 1 0
--8 1 0
--11 -10 0
--11 24 0
--10 24 0
--24 -8 0
--3 1 0
--1 25 3 0
--25 1 0
--25 -3 0
--6 1 0
--5 1 0
--4 1 0
--6 -5 0
--6 26 0
--5 26 0
--26 -4 0
--2 27 0
--27 2 0
--2 28 0
--28 2 0
--2 29 0
--29 2 0
--6 3 0
--5 3 0
--6 -5 0
--5 3 0
--5 3 0
--8 4 0
--4 30 8 0
--30 4 0
--30 -8 0
--12 4 0
--4 31 12 0
--31 4 0
--31 -12 0
--7 4 0
--4 32 7 0
--32 4 0
--32 -7 0
--8 4 0
--4 33 8 0
--33 4 0
--33 -8 0
--7 4 0
--4 34 7 0
--34 4 0
--34 -7 0
--9 5 0
--5 35 9 0
--35 5 0
--35 -9 0
--10 5 0
--5 36 10 0
--36 5 0
--36 -10 0
--9 5 0
--5 37 9 0
--37 5 0
--37 -9 0
--11 6 0
--6 38 11 0
--38 6 0
--38 -11 0
--6 39 0
--39 6 0
--6 40 0
--40 6 0
--11 6 0
--6 41 11 0
--41 6 0
--41 -11 0
--6 42 0
--42 6 0
--7 43 0
--43 7 0
--7 44 0
--44 7 0
--12 7 0
--7 45 12 0
--45 7 0
--45 -12 0
--12 7 0
--7 46 12 0
--46 7 0
--46 -12 0
--12 8 0
--8 47 12 0
--47 8 0
--47 -12 0
--8 48 0
--48 8 0
--12 8 0
--8 49 12 0
--49 8 0
--49 -12 0
--9 50 0
--50 9 0
--9 51 0
--51 9 0
--9 52 0
--52 9 0
--9 53 0
--53 9 0
--10 54 0
--54 10 0
--10 55 0
--55 10 0
--10 56 0
--56 10 0
--11 57 0
--57 11 0
--11 58 0
--58 11 0
--11 59 0
--59 11 0
--12 60 0
--60 12 0
--12 61 0
--61 12 0
--12 62 0
--62 12 0
--12 63 0
--63 12 0
--12 64 0
--64 12 0
-29 34 37 42 46 53 64 0
-22 32 40 45 52 62 0
-25 0
-21 31 39 61 0
-19 30 38 49 56 59 60 0
-18 48 55 58 0
-17 27 35 44 51 0
-16 43 50 0
-28 33 36 41 47 54 57 63 0
+p cnf                              
+
+c event e1 ~ var 1
+c event e2 ~ var 2
+c event e3 ~ var 3
+c event e4 ~ var 4
+c event e5 ~ var 5
+c event e6 ~ var 6
+c event e7 ~ var 7
+c event e8 ~ var 8
+c event e9 ~ var 9
+c event e10 ~ var 10
+c event e11 ~ var 11
+c event e12 ~ var 12
+c event e13 ~ var 13
+c event e14 ~ var 14
+c event e15 ~ var 15
+c event e16 ~ var 16
+c event e17 ~ var 17
+c event e18 ~ var 18
+c event e19 ~ var 19
+c event e20 ~ var 20
+c event e21 ~ var 21
+c event e22 ~ var 22
+c event e23 ~ var 23
+c event e24 ~ var 24
+c event e25 ~ var 25
+c event e26 ~ var 26
+c event e27 ~ var 27
+c event e28 ~ var 28
+c event e29 ~ var 29
+c event e30 ~ var 30
+c event e31 ~ var 31
+c event e32 ~ var 32
+c event e33 ~ var 33
+c event e34 ~ var 34
+c event e35 ~ var 35
+c event e36 ~ var 36
+c event e37 ~ var 37
+c event e38 ~ var 38
+c event e39 ~ var 39
+c event e40 ~ var 40
+c event e41 ~ var 41
+c event e42 ~ var 42
+c event e43 ~ var 43
+c event e44 ~ var 44
+c event e45 ~ var 45
+c event e46 ~ var 46
+c event e47 ~ var 47
+c event e48 ~ var 48
+c event e49 ~ var 49
+c event e50 ~ var 50
+c event e51 ~ var 51
+c event e52 ~ var 52
+c event e53 ~ var 53
+c event e54 ~ var 54
+c event e55 ~ var 55
+c event e56 ~ var 56
+c event e57 ~ var 57
+c event e58 ~ var 58
+c event e59 ~ var 59
+c event e60 ~ var 60
+c event e61 ~ var 61
+c event e62 ~ var 62
+c event e63 ~ var 63
+c event e64 ~ var 64
+c event e65 ~ var 65
+c event e66 ~ var 66
+c event e67 ~ var 67
+c event e68 ~ var 68
+
+c previously found configurations that we wish to exclude
