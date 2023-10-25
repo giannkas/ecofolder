@@ -1,0 +1,32 @@
+digraph test {
+  c1 -> e1;
+  c2 -> e1;
+  c6 -> e1;
+  c10 -> e1;
+  c14 -> e1;
+  e1 -> c15;
+  e1 -> c16;
+  e1 -> c17;
+  e1 -> c18;
+  e1 -> c19;
+  c1 [color="#4040ff" fillcolor="transparent" label= <A+_3<FONT COLOR="red"><SUP>0</SUP></FONT>&nbsp;(c1)> shape=circle style=filled];
+  c2 [color="#4040ff" fillcolor="transparent" label= <A+_2<FONT COLOR="red"><SUP>0</SUP></FONT>&nbsp;(c2)> shape=circle style=filled];
+  c3 [color="#4040ff" fillcolor="transparent" label= <T-<FONT COLOR="red"><SUP>0</SUP></FONT>&nbsp;(c3)> shape=circle style=filled];
+  c4 [color="#4040ff" fillcolor="transparent" label= <P+<FONT COLOR="red"><SUP>0</SUP></FONT>&nbsp;(c4)> shape=circle style=filled];
+  c5 [color="#4040ff" fillcolor="transparent" label= <B+<FONT COLOR="red"><SUP>0</SUP></FONT>&nbsp;(c5)> shape=circle style=filled];
+  c6 [color="#4040ff" fillcolor="transparent" label= <A+_1<FONT COLOR="red"><SUP>0</SUP></FONT>&nbsp;(c6)> shape=circle style=filled];
+  c7 [color="#4040ff" fillcolor="transparent" label= <P-_3<FONT COLOR="red"><SUP>1</SUP></FONT>&nbsp;(c7)> shape=circle style=filled];
+  c8 [color="#4040ff" fillcolor="transparent" label= <P-_2<FONT COLOR="red"><SUP>1</SUP></FONT>&nbsp;(c8)> shape=circle style=filled];
+  c9 [color="#4040ff" fillcolor="transparent" label= <T+<FONT COLOR="red"><SUP>1</SUP></FONT>&nbsp;(c9)> shape=circle style=filled];
+  c10 [color="#4040ff" fillcolor="transparent" label= <P-_1<FONT COLOR="red"><SUP>1</SUP></FONT>&nbsp;(c10)> shape=circle style=filled];
+  c11 [color="#4040ff" fillcolor="transparent" label= <E-<FONT COLOR="red"><SUP>1</SUP></FONT>&nbsp;(c11)> shape=circle style=filled];
+  c12 [color="#4040ff" fillcolor="transparent" label= <C-<FONT COLOR="red"><SUP>1</SUP></FONT>&nbsp;(c12)> shape=circle style=filled];
+  c13 [color="#4040ff" fillcolor="transparent" label= <B-<FONT COLOR="red"><SUP>1</SUP></FONT>&nbsp;(c13)> shape=circle style=filled];
+  c14 [color="#4040ff" fillcolor="transparent" label= <A-<FONT COLOR="red"><SUP>1</SUP></FONT>&nbsp;(c14)> shape=circle style=filled];
+  c15 [color="#4040ff" fillcolor="#ccccff" label= <P-_1<FONT COLOR="red"><SUP>1</SUP></FONT>&nbsp;(c15)> shape=circle style=filled];
+  c16 [color="#4040ff" fillcolor="#ccccff" label= <A-<FONT COLOR="red"><SUP>1</SUP></FONT>&nbsp;(c16)> shape=circle style=filled];
+  c17 [color="#4040ff" fillcolor="#ccccff" label= <A+_1<FONT COLOR="red"><SUP>0</SUP></FONT>&nbsp;(c17)> shape=circle style=filled];
+  c18 [color="#4040ff" fillcolor="#ccccff" label= <A+_3<FONT COLOR="red"><SUP>0</SUP></FONT>&nbsp;(c18)> shape=circle style=filled];
+  c19 [color="#4040ff" fillcolor="#ccccff" label= <A+_2<FONT COLOR="red"><SUP>0</SUP></FONT>&nbsp;(c19)> shape=circle style=filled];
+  e1 [color=black fillcolor=cornflowerblue label="r2 (e1)" shape=box style=filled];
+}

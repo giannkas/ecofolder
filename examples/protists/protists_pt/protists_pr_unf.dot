@@ -1,0 +1,8 @@
+digraph test {
+  e0 -> e1;
+
+//conflicts
+
+  e1 [color="#409f40" fillcolor="#cce6cc" label="r9 (e1)" shape=box style=filled];
+  e0 [fillcolor=white label="⊥" shape=box style=filled];
+}

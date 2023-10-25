@@ -1,0 +1,46 @@
+digraph test {
+  e2 -> e5;
+  e2 -> e6;
+  e2 -> e7;
+  e2 -> e8;
+  e0 -> e1;
+  e0 -> e2;
+  e0 -> e3;
+  e0 -> e4;
+  e0 -> e9;
+  e0 -> e10;
+  e0 -> e11;
+  e0 -> e12;
+
+//conflicts
+  e1 -> e2 [arrowhead=none color=gray60 style=dashed constraint=false];
+  e1 -> e11 [arrowhead=none color=gray60 style=dashed constraint=false];
+  e1 -> e12 [arrowhead=none color=gray60 style=dashed constraint=false];
+  e2 -> e9 [arrowhead=none color=gray60 style=dashed constraint=false];
+  e2 -> e10 [arrowhead=none color=gray60 style=dashed constraint=false];
+  e2 -> e12 [arrowhead=none color=gray60 style=dashed constraint=false];
+  e3 -> e7 [arrowhead=none color=gray60 style=dashed constraint=false];
+  e3 -> e10 [arrowhead=none color=gray60 style=dashed constraint=false];
+  e4 -> e6 [arrowhead=none color=gray60 style=dashed constraint=false];
+  e4 -> e9 [arrowhead=none color=gray60 style=dashed constraint=false];
+  e5 -> e8 [arrowhead=none color=gray60 style=dashed constraint=false];
+  e5 -> e11 [arrowhead=none color=gray60 style=dashed constraint=false];
+  e6 -> e7 [arrowhead=none color=gray60 style=dashed constraint=false];
+  e8 -> e11 [arrowhead=none color=gray60 style=dashed constraint=false];
+  e9 -> e10 [arrowhead=none color=gray60 style=dashed constraint=false];
+  e11 -> e12 [arrowhead=none color=gray60 style=dashed constraint=false];
+
+  e1 [color="black" fillcolor="#edf8b1" label="r2 (e1)" shape=box style=filled];
+  e2 [color="black" fillcolor="#7fcdbb" label="r4 (e2)" shape=box style=filled];
+  e3 [color="black" fillcolor="#edf8b1:#7fcdbb" label="r6 (e3)" shape=box style=filled];
+  e4 [color="black" fillcolor="#edf8b1:#7fcdbb" label="r10 (e4)" shape=box style=filled];
+  e5 [color="black" fillcolor="#7fcdbb" label="r2 (e5)" shape=box style=filled];
+  e6 [color="black" fillcolor="white" label="r8 (e6)" shape=box style=filled];
+  e7 [color="black" fillcolor="white" label="r7 (e7)" shape=box style=filled];
+  e8 [color="black" fillcolor="white" label="r1 (e8)" shape=box style=filled];
+  e9 [color="black" fillcolor="white" label="r8 (e9)" shape=box style=filled];
+  e10 [color="black" fillcolor="white" label="r7 (e10)" shape=box style=filled];
+  e11 [color="black" fillcolor="white" label="r3 (e11)" shape=box style=filled];
+  e12 [color="black" fillcolor="white" label="r1 (e12)" shape=box style=filled];
+  e0 [fillcolor=white label="⊥" shape=box style=filled];
+}

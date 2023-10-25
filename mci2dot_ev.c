@@ -37,6 +37,22 @@ int find_successor(int rows, int cols, int (*ev_succs)[cols], int pre_ev, int po
   return found;
 }
 
+int find_predecessor(int rows, int cols, int (*ev_predc)[cols], int pre_ev, int post_ev ){
+  size_t j, found = 0;
+  if(ev_predc[post_ev][pre_ev] != pre_ev){ // if pre_ev is not in the 
+                                          //immediate predecessors of post_ev.
+    // we do loops to search in breadth.
+    for ( j = 1; j < post_ev && found == 0; j++){
+      if( ev_predc[post_ev][j] > 0)
+        found = find_predecessor(rows, cols, ev_predc, pre_ev, ev_predc[post_ev][j]);
+      //if (found > 0) ev_predc[pre_ev][post_ev] = found;    
+    }
+  }
+  else
+    found = post_ev;
+  return found;
+}
+
 int find_conflict(int rows, int cols, int (*ev_confl)[cols],
   int (*ev_confl_copy)[cols], int(*ev_succs)[cols], int ev_cfl, int ev_src ){
   size_t k;
@@ -143,6 +159,8 @@ void read_mci_file_ev (char *mcifile, char* evcofile, int m_repeat, int cutout)
 
   int (*co_postsets)[numev+1] = calloc(numco+1, sizeof *co_postsets); 
                                            // conditions' postsets to detect conflicts in events.
+  int (*ev_predc_copy)[numev+1] = calloc(numev+1, sizeof *ev_predc_copy); // matrix to record events' predecesors.
+  int (*ev_predc)[numev+1] = calloc(numev+1, sizeof *ev_predc); // matrix to record events' predecesors.
   int (*ev_succs)[numev+1] = calloc(numev+1, sizeof *ev_succs); // matrix to record events' successors.
   int (*ev_confl)[numev+1] = calloc(numev+1, sizeof *ev_confl); // matrix to record events' conflicts.
   int (*ev_confl_copy)[numev+1] = calloc(numev+1, sizeof *ev_confl_copy); // a copy of the previous variable.
@@ -220,17 +238,23 @@ void read_mci_file_ev (char *mcifile, char* evcofile, int m_repeat, int cutout)
                                                                // been assigned yet
                                                                // and if pre_ev and
                                                                // post_ev are not null
+        ev_predc[post_ev][pre_ev] = pre_ev; // matrix of predeccesors to only print
+        ev_predc_copy[post_ev][pre_ev] = pre_ev; // matrix of predeccesors to only print
+                                            // immediate predecessors. Comment out if
+                                            // you want all dependencies. 
         ev_succs[pre_ev][post_ev] = post_ev; // assign in the entry pre_ev of matrix 
                                              // ev_succs the connection 
                                              // between pre_ev and post_ev
                                              // with the value of post_ev itself.
                                              // The idea is to have a record
                                              // of pre_ev's successors.
-        if (cutout && queries_ev[pre_ev] && queries_ev[post_ev])
-          printf("  e%d -> e%d;\n",pre_ev,post_ev); // write the connection.
-        else if (!cutout)
-          printf("  e%d -> e%d;\n",pre_ev,post_ev); // write the connection.
+        /* Uncomment next 4 lines if you want to see all dependencies in events. */
+        // if (cutout && queries_ev[pre_ev] && queries_ev[post_ev])
+        //   printf("  e%d -> e%d;\n",pre_ev,post_ev); // write the connection.
+        // else if (!cutout)
+        //   printf("  e%d -> e%d;\n",pre_ev,post_ev); // write the connection.
       }
+      // This else if is necessary to show dependencies to initial cut.
       /* else if (!pre_ev && post_ev && ev_succs[0][post_ev] == 0)
       {
         ev_succs[0][post_ev] = post_ev;
@@ -250,6 +274,29 @@ void read_mci_file_ev (char *mcifile, char* evcofile, int m_repeat, int cutout)
                                                       // of a particular conditions
                                                       // to detect conflicts.
     } while (post_ev); // if post_ev is not null.
+  }
+
+  /* check immediate connections to events */
+  for (int i = 1; i <= numev; i++){
+    for (int j = 1; j <= i; j++){
+      for (int k = j+1; k <= i; k++)
+        if (ev_predc[i][j] > 0 && ev_predc[i][k] > 0) 
+          ev_predc_copy[i][j] = find_predecessor(numev+1, numev+1, ev_predc, ev_predc[i][j], ev_predc[i][k]) ? 0 : ev_predc[i][j]; 
+    }
+  }
+
+  /* print immediate connections to events */
+  for (int i = 1; i <= numev; i++){
+    for (int j = 1; j <= i; j++){
+      //if (i == 19) printf("%d,", ev_predc_copy[i][j]);
+      if (ev_predc_copy[i][j] > 0)
+      {
+        if (cutout && queries_ev[i] && queries_ev[j])
+          printf("  e%d -> e%d;\n",j,i); // write the connection.
+        else if (!cutout)
+          printf("  e%d -> e%d;\n",j,i); // write the connection.
+      }
+    }
   }
 
   if(dummy)

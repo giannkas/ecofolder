@@ -555,6 +555,7 @@ void unfold ()
 
   recursive_pe(nodelist_concatenate(unf->m0, unf->m0_unmarked));
 
+
   if(confmax)
     for (i = 0; i < conflsteps; i++)
       confl_evs[i] = MYcalloc(conflsteps * sizeof(confl_evs));

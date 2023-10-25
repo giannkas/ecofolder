@@ -1,0 +1,10 @@
+digraph test {
+  e1 -> e5 [style=dashed];
+  e0 -> e1;
+  e1 -> e3 [arrowhead=none color="#91bfdb" style=dashed];
+
+  e1 [color="black" fillcolor="#91bfdb" label="r3 (e1)" shape=box style=filled];
+  e3 [fillcolor="transparent" color="#91bfdb" label= <<FONT COLOR="#91bfdb">r4 (e3)</FONT>> shape=box style=dashed];
+  e5 [color="black" fillcolor="#fc8d59" label="r9 (e5)" shape=box style=filled];
+  e0 [fillcolor=white label="⊥" shape=box style=filled];
+}

@@ -50,10 +50,10 @@ int strtoint(char *num) {
 
 char* ftokstr(char *str, int ins, char delim)
 {    
-  int len = strlen(str), i = 0, c_delim = 0;
+  int len = strlen(str), i = 0, c_delim = 0, j;
   char *tok = malloc(len+1);
 
-  for (int j = 0; i < len && c_delim <= ins; i++){
+  for (j = 0; i < len && c_delim <= ins; i++){
     if(str[i] == delim && c_delim != ins){
       *tok = '\0';
       c_delim++; j = 0;
@@ -65,7 +65,8 @@ char* ftokstr(char *str, int ins, char delim)
       j++;
     }
   }
-  if (strchr(tok, '\n')) ins = c_delim + 1;
+  if (strchr(tok, '\n') || (i == len && *(tok+j) != '\0')) 
+    ins = c_delim + 1;
   return i == len && ins > c_delim ? NULL : tok;
 }
 

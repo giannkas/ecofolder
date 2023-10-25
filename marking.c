@@ -151,7 +151,7 @@ int add_marking (nodelist_t *marking, event_t *ev)
     /* printf("\nrepetition: %d\n", (*buck)->repeat);
     printf("chao\n"); */
     /* if initial marking has been seen then we're done. */
-    /* No event can create the initial marking */
+    /* All configurations start from the initial marking. */
     if((*buck)->pre_evs) nodelist_push(&((*buck)->pre_evs),ev);
   }
   else if (!cmp && !mcmillan)

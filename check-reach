@@ -2,9 +2,9 @@
 
 echo "Unfolding..."
 if [ -f $1.ll_net ]; then
-  ./ecofolder $1.ll_net
+  ./ecofolder -data $1.ll_net
 else
-  ./ecofolder $1.ll
+  ./ecofolder -data $1.ll
 fi
 
 echo "Translation to SAT..."

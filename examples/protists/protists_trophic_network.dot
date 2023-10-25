@@ -1,0 +1,27 @@
+digraph test {
+  am -> co [arrowhead=none];
+  am -> pa [arrowhead=none];
+  am -> te [arrowhead=none];
+  am -> bl [arrowhead=none, style=dotted];
+  am -> eu [arrowhead=none, style=dotted];
+  bl -> bl [arrowhead=none];
+  bl -> ba [arrowhead=none];
+  bl -> co [arrowhead=none];
+  bl -> te [arrowhead=none];
+  co -> ba [arrowhead=none];
+  co -> eu [arrowhead=none];
+  eu -> te [arrowhead=none];
+  eu -> ba [arrowhead=none, style=dotted];
+  pa -> ba [arrowhead=none];
+  pa -> bl [arrowhead=none, style=dotted];
+  ba -> te [arrowhead=none];
+
+  am [color="transparent" fillcolor="transparent" labelcolor="black" label=<<FONT COLOR="#000000"><I> Amoeba proteus</I><BR/> (predator)</FONT>> shape=egg style=filled];
+  bl [color="transparent" fillcolor="transparent" labelcolor="black" label=<<FONT COLOR="#000000"><I> Blepharisma japonicum</I><BR/> (bacterivore) </FONT>> shape=egg style=filled];
+  co [color="transparent" fillcolor="transparent" labelcolor="black" label=<<FONT COLOR="#000000"><I> Colpidium striatum</I><BR/> (bacterivore) </FONT>> shape=egg style=filled];
+  eu [color="transparent" fillcolor="transparent" labelcolor="black" label=<<FONT COLOR="#000000"><I> Euplotes patella</I><BR/> (predator) </FONT>> shape=egg style=filled];
+  pa [color="transparent" fillcolor="transparent" labelcolor="black" label=<<FONT COLOR="#000000"><I> Paramecium caudatum</I><BR/> (bacterivore) </FONT>> shape=egg style=filled];
+  ba [color="transparent" fillcolor="transparent" labelcolor="black" label="Bacteria" shape=egg style=filled];
+  te [color="transparent" fillcolor="transparent" labelcolor="black" label=<<FONT COLOR="#000000"><I> Tetrahymena pyriformis</I><BR/> (omnivore) </FONT>> shape=egg style=filled];
+
+}

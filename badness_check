@@ -1,9 +1,13 @@
 #!/bin/bash
 
 #echo "Translation to SAT..."
-./mci2sat -r "$2" $1.mci
-
-correct=$?
+if [ -f $1.mci ]; then
+  ./mci2sat -r "$2" $1.mci
+  correct=$?
+else
+  echo "mci file does not exist"
+  correct=0
+fi
 #echo $correct
 if [ $correct -eq 1 ]; then 
   #echo "SAT checking..."

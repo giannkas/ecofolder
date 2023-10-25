@@ -36,11 +36,10 @@ void bad_net(char* in_file1, char* in_file2){
   // Variables that come along
   char d_read[NUM_PLACES];
   char out_file[NUM_PLACES] = {0};
-  char *token, *tmp;
+  char *token, *tmp = NULL;
   int header = 0, places = 0, trans = 0, pnames = 1,
     nbadnames = 0, nbadmarkings = 0, nbadtrans = 1, i,
-    lentmp;
-  char ch;
+    lentmp, dummy = 0;
 
   // Open the existing file using fopen()
   // in read mode using "r" attribute
@@ -58,13 +57,13 @@ void bad_net(char* in_file1, char* in_file2){
     size_t len = 0;
     ssize_t read = 0;
     
-    while ((ch = fgetc(r_pointer2)) != EOF)
-      if (ch == '\n')
-        nbadmarkings++;
+    while ((read = getline(&line, &len, r_pointer2)) >= 0)
+      nbadmarkings++;
     // Check if this r_pointer1 is null
     // which maybe if the file does not exist
     if ( r_pointer1 == NULL && nbadmarkings == 0 ){
-      printf( "%s file failed to open or %s has no content.\n", in_file1, in_file2 ) ;
+      printf( "%s file failed to open or %s has no content.\n", 
+        in_file1, in_file2 ) ;
     }
     else
     {
@@ -73,7 +72,8 @@ void bad_net(char* in_file1, char* in_file2){
       w_pointer = fopen(out_file, "w");
       char place_names[MAX_NUM_PLACES][NUM_PLACES] = {0};
       /* Read up to RD label and get number of transitions and places*/
-      while(fgets(d_read, NUM_PLACES, r_pointer1) != NULL && !strstr(d_read, "RD") && !strstr(d_read, "TP")){
+      while(fgets(d_read, NUM_PLACES, r_pointer1) != NULL && 
+        !strstr(d_read, "RD") && !strstr(d_read, "TP")){
         if (d_read[0] == 'P' && d_read[1] == 'L')
           fprintf(w_pointer, "%s", d_read);
         else if (places == header)
@@ -83,35 +83,47 @@ void bad_net(char* in_file1, char* in_file2){
         } 
         if (d_read[0] == 'T' && d_read[1] == 'R')
         {
-          fprintf(w_pointer, "\"bad_P\"M1\n");
+          /* Compute header lines, number of places */
+          header++;
+          places = places - header;
+          if (!strlen(tmp))
+            fprintf(w_pointer, "\"bad_P\"M1\n");
+          else
+            fprintf(w_pointer, "%d\"bad_P\"M1\n",places+1);
           fprintf(w_pointer, "%s", d_read);
         }
         else if (trans == places)
         {
-          if( d_read[0] == '\"'){
+          if( strstr(d_read,"\"")){
             token = ftokstr(d_read,1,'\"');
-            fprintf(w_pointer, "\"%s\"\n", token);
+            tmp = ftokstr(d_read,0,'\"');
+            fprintf(w_pointer, "%s\"%s\"\n", tmp,token);
             strcpy(place_names[pnames], token);
             pnames++;
           }
           places++;
         }
-        else if (trans != places && d_read[0] == '\"')
+        else if (trans != places && strstr(d_read,"\""))
+        {
+          dummy = strlen(ftokstr(d_read,0,'\"'));
           fprintf(w_pointer, "%s", d_read);
+        }
         trans++;
       }
-      for(; nbadtrans <= nbadmarkings; nbadtrans++)
-        fprintf(w_pointer, "\"bad_T%d\"\n", nbadtrans);
-      fprintf(w_pointer, "%s", d_read);
       /* Compute header lines, number of places and transitions  */
       header++;
-      places = places - header;
-      header++;
       trans = trans - places - header;
+      for(; nbadtrans <= nbadmarkings; nbadtrans++)
+        if (!dummy)
+          fprintf(w_pointer, "\"bad_T%d\"\n", nbadtrans);
+        else
+          fprintf(w_pointer, "%d\"bad_T%d\"\n",nbadtrans+trans, nbadtrans);
+      fprintf(w_pointer, "%s", d_read);
       printf("header: %d\n", header);
       printf("places: %d\n", places);
       printf("trans: %d\n", trans);
       nbadtrans = 1;
+      dummy = 0;
 
       /* Print TP arcs (production) in the original net */
       while(fgets(d_read, NUM_PLACES, r_pointer1) != NULL &&
@@ -124,7 +136,7 @@ void bad_net(char* in_file1, char* in_file2){
       while ( (read = getline(&line, &len, r_pointer2)) >= 0 )
       {
         if (strchr(line, ','))
-        {  
+        {
           while ((tmp = ftokstr(line, nbadnames, ',')))
           {
             i = 1;
@@ -179,11 +191,27 @@ void bad_net(char* in_file1, char* in_file2){
           fprintf(w_pointer, "%d>%d\n", places+1, nbadtrans);
       }
       
-      /* Print RS arcs (reset) en remaining of the original net */
+      /* Print RS arcs (reset) remaining of the original net */
       fprintf(w_pointer, "%s", d_read);
+      if (strstr(d_read,"RS")) dummy = 1;
       while(fgets(d_read, NUM_PLACES, r_pointer1) != NULL)
         fprintf(w_pointer, "%s", d_read);
 
+      /* Print RS arcs (reset) from new bad transitions to 
+      each place in the net */
+      if (dummy && nbadtrans > 0)
+      {
+        nbadtrans = trans + 1;
+        for (; nbadtrans <= trans + nbadmarkings; nbadtrans++)
+        {
+          i = 1;
+          while (i <= places)
+          {
+            fprintf(w_pointer, "%d>%d\n", i, nbadtrans);
+            i++;
+          }
+        }
+      }
 
       fclose(r_pointer1);
       fclose(r_pointer2);

@@ -172,6 +172,35 @@ def asp_of_mci(mcifile, ns=None):
     args.append(str(ns))
   return subprocess.check_output(args).decode()
 
+#to review
+def evstump_of_mci(mcifile : str) -> dict:
+  args = [script_path("mci2evstump"), mcifile]
+  result = subprocess.check_output(args).decode()
+  lresult = result.split()
+  dicevents = {}
+  for i in lresult:
+    icomma = i.find(',')
+    key = i[:icomma]
+    key = int(key[1:])
+    value = [int(x) for x in i[icomma+1:].split(',')]
+    dicevents[key] = value
+  return dicevents
+
+#to review
+#conf must be numerically ordered a priori
+def decisional_height(dicevents: dict, conf: str) -> int:
+  conf = conf.split(',')
+  lconf = [int(x) for x in conf]
+  proct = 0 if len(lconf) > 0 else 1
+  for i in lconf:
+    for key in range(1,len(dicevents)):
+      if key not in lconf:
+        for ele in dicevents[key]:
+          if ele in dicevents[i]:
+            proct += 1
+            break
+  return proct
+
 def asp_of_sig_cfg(i, cfg, sig):
   facts = [f"mcfg(cfg{i},{e})." for e in cfg]
   facts += [f"sig_mcfg(cfg{i},{s})." for s in sig]
@@ -180,14 +209,14 @@ def asp_of_sig_cfg(i, cfg, sig):
 def dot_from_atoms(atoms):
   dot = "digraph G {\n"
   for a in atoms:
-      if a.name == "draw":
-          a, b = [py_of_symbol(x) for x in a.arguments]
-          dot += f"  {a} -> {b};\n"
-      elif a.name == "label":
-          a, b = [py_of_symbol(x) for x in a.arguments]
-          shape = "box" if a[0] == "e" else "none"
-          b = "\""+b+"\""
-          dot += f"  {a} [label={b} shape={shape}];\n"
+    if a.name == "draw":
+      a, b = [py_of_symbol(x) for x in a.arguments]
+      dot += f"  {a} -> {b};\n"
+    elif a.name == "label":
+      a, b = [py_of_symbol(x) for x in a.arguments]
+      shape = "box" if a[0] == "e" else "none"
+      b = "\""+b+"\""
+      dot += f"  {a} [label={b} shape={shape}];\n"
   dot += "}\n"
   return dot
 
@@ -310,13 +339,15 @@ with open(bad_aspfile, "w") as fp:
       fp.write(f"{clingo.Function('bad', (clingo.String(p),))}.\n")
 
 clingo_opts = ["-W", "none"]
-#clingo_opts += ["-t", str(multiprocessing.cpu_count())]
+clingo_opts += ["-t", str(multiprocessing.cpu_count())]
 
 t0 = time.time()
 
 # compute main prefix
 mci = model.complix("main.mci", verbose=1)
 prefix = asp_of_mci(mci)
+#dicevents = evstump_of_mci(mci)
+#print(dicevents)
 print(f"Prefix has {prefix_nb_events(mci)} events, including cut-offs",
         file=sys.stderr)
 with open(f"{out_d}/prefix.asp", "w") as fp:
@@ -327,8 +358,8 @@ prefix_d = prefix_info["poset"]
 unchallenged = prefix_info["unchallenged"]
 e2tr = prefix_info["e2tr"]
 
-#print("Unchallenged events", unchallenged, file=sys.stderr)
-#print("prefix_d", prefix_d)
+print("Unchallenged events", unchallenged, file=sys.stderr)
+print("prefix_d", prefix_d)
 
 # compute Pi_1
 
@@ -369,20 +400,20 @@ def shave(C_d, crest):
   blacklist = set()
   crest = set(crest)
   while True:
-      rm = [e for e in crest if e in unchallenged]
-      if not rm:
-          break
-      crest.difference_update(rm)
-      blacklist.update(rm)
-      for e in rm:
-          for f in C_d.predecessors(e):
-              is_crest = True
-              for g in C_d.successors(f):
-                  if g not in blacklist:
-                      is_crest = False
-                      break
-              if is_crest:
-                  crest.add(f)
+    rm = [e for e in crest if e in unchallenged]
+    if not rm:
+      break
+    crest.difference_update(rm)
+    blacklist.update(rm)
+    for e in rm:
+      for f in C_d.predecessors(e):
+        is_crest = True
+        for g in C_d.successors(f):
+          if g not in blacklist:
+            is_crest = False
+            break
+        if is_crest:
+          crest.add(f)
   return tuple(sorted(set(C_d) - blacklist)), tuple(sorted(crest))
 
 from time import process_time
@@ -447,21 +478,16 @@ def handle(C_e):
 # #args = [script_path("mci2asp"), mcifile]
 #   #return subprocess.check_output(args).decode()
 
-# print(Cstr_)
-# result = subprocess.check_output(["mci2asp", "-cf", Cstr_, mci])
-# # Decode the result from bytes to a string (assuming it's a string)
-# result_string = result.decode('utf-8')
-# print(result_string)
 
 def str_conf(C):
   Cstr = ""
   for s in C:
-    Cstr = Cstr + "".join(d if d.isdigit() else "" for d in s)
-  Cstr = Cstr[1:].replace('0', ',')
+    Cstr = Cstr + "".join(s[s.find('e')+1:s.find(')')]) + ","
+  Cstr = Cstr[:-1]
   Clist = Cstr.split(',')
-  Cstr_ = sorted(Clist)
-  Cstr_ = ','.join(Cstr_)
-  return Cstr_
+  if not '' in Clist: Clist.sort(key=int)
+  Cstr = ','.join(Clist)
+  return Cstr
 
 def idpl2plnames(markidC):
   markidC = markidC[:-1].split(",")
@@ -481,16 +507,20 @@ def sort_by_number(string):
   number = int(string.split(',')[-1][1:].strip(')'))
   return number
 
+
+#Cstr_ = "1,3,6,11,16,43"
+#print(decisional_height(dicevents, Cstr_))
+#markidC_e = subprocess.check_output(["mci2asp", "-cf", Cstr_, mci]).decode()
+#tupleC_e = idpl2plnames(markidC_e)
+#print(tupleC_e)
+
+#print(wl)
+
 i = 0
 while wl:
   C, crest = wl.pop()
-  # if C in known:
-  #   continue
-  #known.add(C)
   C = set(C)
   crest = set(crest)
-  #print("wl", C)
-  #print("  crest =", crest)
   C_e = C - crest
   add = True
   Cstr_ = str_conf(C_e)
@@ -498,36 +528,37 @@ while wl:
   tupleC_e = idpl2plnames(markidC_e)
   model.set_marking(tupleC_e)
   freeC_e = int(model.freecheck(badfile=bad_unf).strip())
+  #print("hola")
   if not freeC_e:
     add = False
     C_d = prefix_d.subgraph(C_e)
     C_crest = get_crest(C_d)
-    (keep, crest) = shave(C_d, C_crest)
-    wl.add((keep, crest))
+    Cp = shave(C_d, C_crest)
+    wl.add(Cp)
     stats['is_doomed'] += 1
   else:
     for e in crest:
-      e = set(e)
+      e = set([e])
       c_e = C - e
       cstr_ = str_conf(c_e)
       markidc_e = subprocess.check_output(["mci2asp", "-cf", cstr_, mci]).decode()
       tuplec_e = idpl2plnames(markidc_e)
+      model.set_marking(tuplec_e)
       freec_e = int(model.freecheck(badfile=bad_unf).strip())
       if not freec_e:
         add = False
         c_d = prefix_d.subgraph(c_e)
         c_crest = get_crest(c_d)
-        (keep, crest) = shave(c_d, c_crest)
-        wl.add((keep, crest))
+        cp = shave(c_d, c_crest)
+        wl.add(cp)
         stats['is_doomed'] += 1
   if add:
     i += 1
     d = process_time() - t0
     print(f"{d:.1f} [MINDOO {i}]\t", set(sorted([e2tr[e] for e in C])), sorted(C, key=sort_by_number), flush=True)
+    print("Marking: ", idpl2plnames(subprocess.check_output(["mci2asp", "-cf", str_conf(C), mci]).decode()))
     print(f"   doom checks: {stats['is_doomed']}", flush=True, file=sys.stderr)
 if i == 0:
   print("EMPTY MINDOO")
 print(f"total doom checks: {stats['is_doomed']}", flush=True, file=sys.stderr)
 
-
-      

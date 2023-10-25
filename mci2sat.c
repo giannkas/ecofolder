@@ -124,7 +124,8 @@ list_t **plcond;	// for each place, non-cutoff conditions labelled by it
 char **plname;		// names of places
 int vars = 0;		// variables used so far in the formula
 int clauses = 0;	// number of clauses
-int nosense = 1;
+int nosense = 1;  // nosense variable search
+int att = 0;    // used to find and format attractors
 signed char *plwanted;	// for reachability: 1=positive, -1=negative, 0=dontcare
 
 clist_t *p_reach, *n_reach; // positive and negative reachability targets
@@ -267,7 +268,7 @@ void reachable ()
 
 int mci2sat (const char * infile, const char *outfile)
 {
-  int i, j, e, maxszname = 0;
+  int i, j, e, maxszname = 1;
   list_t *post;
   char *blob, *bconds, *plinunf;
   int *harmfuls;
@@ -284,7 +285,8 @@ int mci2sat (const char * infile, const char *outfile)
   bpos = blob;
 
   fout = fopen(outfile,"w");
-  if (fout == 0) error("'%s': %s", outfile, strerror (errno));
+  if (!fout) error("'%s': %s", outfile, strerror (errno));
+  if (fd == -1) error("'%s': %s", infile, strerror (errno));
 
   // leave space for number of vars and clauses
   if (opt_comments) P("p cnf                              \n");
@@ -417,21 +419,28 @@ int mci2sat (const char * infile, const char *outfile)
       maxszname = strlen(plname[i]);
     read_str();
   }
-  plinunf = calloc((maxszname*numpl), sizeof(char));
+  plinunf = calloc((maxszname*numpl)*10, sizeof(char));
   //printf("4. nosense: %d\n", nosense);
-  if (nosense)
+  if (nosense && !att)
     return 0;
   
   if (!opt_comments) P("p cnf                              \n");
   /* go back and read conditions */
   l_init(&post);
   bpos = bconds;
+
+  //printf("num names: %d\n", numpl);
   for (i = 1; i <= conds; i++)
   {
+
     int consumers = 0;
     int place = read_int();
-    if(i == 1 && place && !strstr(plinunf, plname[place])) 
+    //printf("name num: %d\n", place);
+    if(i == 1 && place && !strstr(plinunf, plname[place]))
+    { 
+      //printf("plinunf: %s,", plinunf);
       strcat(plinunf, plname[place]);
+    }
     else if(place && !strstr(plinunf, plname[place]))
     {
       strcat(plinunf, ",");
@@ -478,7 +487,7 @@ int mci2sat (const char * infile, const char *outfile)
   }
 
   //printf("5. nosense: %d\n", nosense);
-  if (nosense) return 0;
+  if (nosense && !att) return 0;
 
 
   if (!opt_reach)
@@ -524,6 +533,7 @@ void usage ()
   "\t-c: add comments to sat encoding\n"
   "\t-d: check for deadlock [default]\n"
   "\t-f: find final configurations\n"
+  "\t-att: used to find and format attractors\n"
   "\t-r <list>, -n <list>: comma-separated list of place names\n"
   "\t-o <filename>: output file (default: mcifile with .sat)\n"
   "\nIf -r and/or -n are given, mci2sat will generate a formula for\n"
@@ -550,6 +560,8 @@ int main (int argc, char ** argv)
       opt_final = opt_reach = 0;
     else if (!strcmp(argv[i],"-f"))
       opt_final = 1;
+    else if (!strcmp(argv[i],"-att"))
+      att = 1;
     else if (!strcmp(argv[i],"-r"))
     {
       if (++i == argc) usage();
@@ -587,5 +599,6 @@ int main (int argc, char ** argv)
 
   correct = mci2sat (filename,outfile);
 
-  return 0;
+  return correct;
 }
+

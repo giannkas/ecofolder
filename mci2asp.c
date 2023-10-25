@@ -54,7 +54,7 @@ void read_mci_file (char *mcifile, int m_repeat, char* ns, char* conf)
     numco, numev, numpl, numtr, sz, i;
   int pre_ev, post_ev, cutoff, harmful, dummy = 0;
   int *co2pl, *ev2tr, *tokens, *queries_co,
-   *queries_ev, *cutoffs, *harmfuls, *queries_coset;
+   *queries_ev, *cutoffs, *harmfuls;
   char **plname, **trname, *c;
   cut_t **cuts;
 
@@ -71,7 +71,6 @@ void read_mci_file (char *mcifile, int m_repeat, char* ns, char* conf)
   tokens = malloc((numco+1) * sizeof(int));
   queries_co = malloc((numco+1) * sizeof(int));
   queries_ev = malloc((numev+1) * sizeof(int));
-  queries_coset = malloc((numco+1) * sizeof(int));
   ev2tr = malloc((numev+1) * sizeof(int));
   cutoffs = calloc(numev+1, sizeof(int));
   harmfuls = calloc(numev+1, sizeof(int));
@@ -117,21 +116,25 @@ void read_mci_file (char *mcifile, int m_repeat, char* ns, char* conf)
     read_int(tokens[i]);
     read_int(queries_co[i]);
     read_int(pre_ev);
-    if (pre_ev){
-      if (!conf) printf("edge((%s,e%d),(%s,c%d)).\n",ns,pre_ev,ns,i);
-      clist_add(&evprps[pre_ev]->postset, co2pl[i]);
+    if (pre_ev && tokens[i]){
+      if (!conf)
+        printf("edge((%s,e%d),(%s,c%d)).\n",ns,pre_ev,ns,i);
+      else
+        clist_add(&evprps[pre_ev]->postset, co2pl[i]);
       //evprps[pre_ev]->preset[i] = co2pl[i];
     }
-    else{ 
+    else if (conf && tokens[i]){ 
       clist_add(&evprps[0]->postset, co2pl[i]); 
     }
     //evprps[0]->postset[i] = co2pl[i];
     do {
       read_int(post_ev);
-      if (post_ev)
+      if (post_ev && tokens[i])
       {
-        if (!conf) printf("edge((%s,c%d),(%s,e%d)).\n",ns,i,ns,post_ev);
-        clist_add(&evprps[post_ev]->preset, co2pl[i]);
+        if(!conf)
+          printf("edge((%s,c%d),(%s,e%d)).\n",ns,i,ns,post_ev);
+        else
+          clist_add(&evprps[post_ev]->preset, co2pl[i]);
         //evprps[post_ev]->postset[i] = co2pl[i];
       }
     } while (post_ev);
@@ -170,7 +173,7 @@ void read_mci_file (char *mcifile, int m_repeat, char* ns, char* conf)
   fread(c,1,1,mcif);
 
   for (i = 1; i <= numco; i++)
-    if (!conf) printf("h((%s,c%d),p%d).\n", ns,i,co2pl[i]);
+    if (!conf && tokens[i]) printf("h((%s,c%d),p%d).\n", ns,i,co2pl[i]);
   for (i = 1; i <= numev; i++)
     if (!conf) printf("h((%s,e%d),t%d).\n", ns,i,ev2tr[i]);
 
@@ -210,13 +213,15 @@ void get_marking(char* confg)
   {
     plid = list->idplace;
     marking[plid] = plid;
+    //printf("%d,",marking[plid]);
   }
+  printf("\n");
 
   sub = strtok(confg_copy, ",");
   while (sub != NULL)
   {
     subint = strtoint(sub);
-    /* remove event's preset */
+    /* Remove event's preset */
     for(list = evprps[subint]->preset; list; list = list->next)
     {
       plid = list->idplace;

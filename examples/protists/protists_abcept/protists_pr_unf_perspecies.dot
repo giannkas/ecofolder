@@ -1,0 +1,124 @@
+digraph test {
+  e1 -> e5;
+  e1 -> e6;
+  e1 -> e7;
+  e6 -> e8;
+  e7 -> e9;
+  e1 -> e10;
+  e2 -> e10;
+  e6 -> e11;
+  e7 -> e11;
+  e10 -> e12;
+  e10 -> e13;
+  e6 -> e14;
+  e7 -> e14;
+  e7 -> e15;
+  e7 -> e16;
+  e1 -> e17;
+  e2 -> e17;
+  e7 -> e18;
+  e7 -> e19;
+  e6 -> e20;
+  e2 -> e21;
+  e2 -> e22;
+  e2 -> e23;
+  e0 -> e1;
+  e0 -> e2;
+  e0 -> e3;
+  e0 -> e4;
+  e0 -> e24;
+  e0 -> e25;
+  e0 -> e26;
+
+//conflicts
+  e1 -> e21 [arrowhead=none color=gray60 style=dashed constraint=false];
+  e1 -> e24 [arrowhead=none color=gray60 style=dashed constraint=false];
+  e2 -> e6 [arrowhead=none color=gray60 style=dashed constraint=false];
+  e2 -> e7 [arrowhead=none color=gray60 style=dashed constraint=false];
+  e2 -> e24 [arrowhead=none color=gray60 style=dashed constraint=false];
+  e2 -> e25 [arrowhead=none color=gray60 style=dashed constraint=false];
+  e2 -> e26 [arrowhead=none color=gray60 style=dashed constraint=false];
+  e3 -> e16 [arrowhead=none color=gray60 style=dashed constraint=false];
+  e3 -> e23 [arrowhead=none color=gray60 style=dashed constraint=false];
+  e3 -> e26 [arrowhead=none color=gray60 style=dashed constraint=false];
+  e4 -> e15 [arrowhead=none color=gray60 style=dashed constraint=false];
+  e4 -> e22 [arrowhead=none color=gray60 style=dashed constraint=false];
+  e4 -> e25 [arrowhead=none color=gray60 style=dashed constraint=false];
+  e5 -> e6 [arrowhead=none color=gray60 style=dashed constraint=false];
+  e5 -> e7 [arrowhead=none color=gray60 style=dashed constraint=false];
+  e5 -> e10 [arrowhead=none color=gray60 style=dashed constraint=false];
+  e5 -> e17 [arrowhead=none color=gray60 style=dashed constraint=false];
+  e6 -> e9 [arrowhead=none color=gray60 style=dashed constraint=false];
+  e6 -> e18 [arrowhead=none color=gray60 style=dashed constraint=false];
+  e6 -> e19 [arrowhead=none color=gray60 style=dashed constraint=false];
+  e7 -> e8 [arrowhead=none color=gray60 style=dashed constraint=false];
+  e7 -> e20 [arrowhead=none color=gray60 style=dashed constraint=false];
+  e7 -> e25 [arrowhead=none color=gray60 style=dashed constraint=false];
+  e7 -> e26 [arrowhead=none color=gray60 style=dashed constraint=false];
+  e8 -> e20 [arrowhead=none color=gray60 style=dashed constraint=false];
+  e9 -> e19 [arrowhead=none color=gray60 style=dashed constraint=false];
+  e11 -> e14 [arrowhead=none color=gray60 style=dashed constraint=false];
+  e12 -> e13 [arrowhead=none color=gray60 style=dashed constraint=false];
+  e12 -> e17 [arrowhead=none color=gray60 style=dashed constraint=false];
+  e13 -> e17 [arrowhead=none color=gray60 style=dashed constraint=false];
+  e15 -> e16 [arrowhead=none color=gray60 style=dashed constraint=false];
+  e15 -> e18 [arrowhead=none color=gray60 style=dashed constraint=false];
+  e16 -> e18 [arrowhead=none color=gray60 style=dashed constraint=false];
+  e17 -> e22 [arrowhead=none color=gray60 style=dashed constraint=false];
+  e17 -> e23 [arrowhead=none color=gray60 style=dashed constraint=false];
+  e21 -> e22 [arrowhead=none color=gray60 style=dashed constraint=false];
+  e21 -> e23 [arrowhead=none color=gray60 style=dashed constraint=false];
+  e22 -> e23 [arrowhead=none color=gray60 style=dashed constraint=false];
+  e24 -> e25 [arrowhead=none color=gray60 style=dashed constraint=false];
+  e24 -> e26 [arrowhead=none color=gray60 style=dashed constraint=false];
+  e25 -> e26 [arrowhead=none color=gray60 style=dashed constraint=false];
+
+  e1 [shape=none label=<
+    <TABLE border="1" cellspacing="0" cellpadding="8" cellborder="0" > 
+      <TR>
+        <TD bgcolor="#7fc97f:#beaed4" align="right">r1</TD>
+        <TD bgcolor="#beaed4:#fdc086" align="left">(e1)</TD>
+      </TR>
+    </TABLE>>
+    ];
+  e2 [shape=box style=filled color=black fillcolor="#fdc086" label="r5 (e2)"];
+  e3 [shape=none label=<
+    <TABLE border="1" cellspacing="0" cellpadding="8" cellborder="0" > 
+      <TR>
+        <TD bgcolor="#7fc97f:#beaed4" align="right">r6</TD>
+        <TD bgcolor="#beaed4:#fdc086" align="left">(e3)</TD>
+      </TR>
+    </TABLE>>
+    ];
+  e4 [shape=none label=<
+    <TABLE border="1" cellspacing="0" cellpadding="8" cellborder="0" > 
+      <TR>
+        <TD bgcolor="#7fc97f:#beaed4" align="right">r10</TD>
+        <TD bgcolor="#beaed4:#fdc086" align="left">(e4)</TD>
+      </TR>
+    </TABLE>>
+    ];
+  e5 [shape=box style=filled color=black fillcolor="#fdc086" label="r2 (e5)"];
+  e6 [shape=box style=filled color=black fillcolor="#7fc97f:#beaed4" label="r3 (e6)"];
+  e7 [shape=box style=filled color=black fillcolor="#7fc97f" label="r4 (e7)"];
+  e8 [shape=box style=filled color=black fillcolor="#beaed4" label="r2 (e8)"];
+  e9 [shape=box style=filled color=black fillcolor="white" label="r2 (e9)"];
+  e10 [shape=box style=filled color=black fillcolor="white" label="r3 (e10)"];
+  e11 [shape=box style=filled color=black fillcolor="#7fc97f" label="r2 (e11)"];
+  e12 [color=black fillcolor="white" label="r2 (e12)" shape=box style=filled];
+  e13 [color=black fillcolor="white" label="r1 (e13)" shape=box style=filled];
+  e14 [color=black fillcolor="white" label="r1 (e14)" shape=box style=filled];
+  e15 [color=black fillcolor="white" label="r8 (e15)" shape=box style=filled];
+  e16 [color=black fillcolor="white" label="r7 (e16)" shape=box style=filled];
+  e17 [color=black fillcolor="white" label="r4 (e17)" shape=box style=filled];
+  e18 [color=black fillcolor="white" label="r5 (e18)" shape=box style=filled];
+  e19 [color=black fillcolor="white" label="r1 (e19)" shape=box style=filled];
+  e20 [color=black fillcolor="white" label="r1 (e20)" shape=box style=filled];
+  e21 [color=black fillcolor="white" label="r9 (e21)" shape=box style=filled];
+  e22 [color=black fillcolor="white" label="r8 (e22)" shape=box style=filled];
+  e23 [color=black fillcolor="white" label="r7 (e23)" shape=box style=filled];
+  e24 [color=black fillcolor="white" label="r9 (e24)" shape=box style=filled];
+  e25 [color=black fillcolor="white" label="r8 (e25)" shape=box style=filled];
+  e26 [color=black fillcolor="white" label="r7 (e26)" shape=box style=filled];
+  e0 [fillcolor="white" label="⊥" shape=box style=filled];
+}

@@ -1,0 +1,18 @@
+digraph test {
+  e2 -> e3;
+  e2 -> e4;
+  e0 -> e1;
+  e0 -> e2;
+  e0 -> e5;
+
+//conflicts
+  e1 -> e2 [arrowhead=none color=gray60 style=dashed constraint=false];
+  e2 -> e5 [arrowhead=none color=gray60 style=dashed constraint=false];
+
+  e1 [color="#409f40" fillcolor="#cce6cc" label="r6 (e1)" shape=box style=filled];
+  e2 [color="#409f40" fillcolor="#cce6cc" label="r7 (e2)" shape=box style=filled];
+  e3 [color="#409f40" fillcolor="#cce6cc" label="r6 (e3)" shape=box style=filled];
+  e4 [color=black fillcolor=cornflowerblue label="r9 (e4)" shape=box style=filled];
+  e5 [color=black fillcolor=cornflowerblue label="r9 (e5)" shape=box style=filled];
+  e0 [fillcolor=white label="⊥" shape=box style=filled];
+}
