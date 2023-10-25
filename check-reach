@@ -2,15 +2,9 @@
 
 echo "Unfolding..."
 if [ -f $1.ll_net ]; then
-<<<<<<< HEAD
-  ./ecofolder $1.ll_net
-else
-  ./ecofolder $1.ll
-=======
   ./ecofolder -data $1.ll_net
 else
   ./ecofolder -data $1.ll
->>>>>>> a2d7029472ef6fd9949d9b3eeab62368d0f101ab
 fi
 
 echo "Translation to SAT..."
@@ -23,11 +17,7 @@ echo "Evaluating SAT..."
 ./sateval -r $1_unf.mci $1_unf.res
 
 echo "Converting to dot..."
-<<<<<<< HEAD
-./mci2dot_ev -c $1_unf.mci $1_unf.evco > $1_unf.dot
-=======
 ./mci2dot -c $1_unf.mci $1_unf.evco > $1_unf.dot
->>>>>>> a2d7029472ef6fd9949d9b3eeab62368d0f101ab
 
 echo "Producing the pdf..."
 dot -T pdf $1_unf.dot > $1_unf.pdf

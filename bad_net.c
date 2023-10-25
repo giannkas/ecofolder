@@ -5,13 +5,8 @@
 
 #include "common.h"
 
-<<<<<<< HEAD
-#define MAX_LINE_SIZE 500
-#define MAX_RESET_PLACES 100
-=======
 #define MAX_NUM_PLACES 1000
 #define NUM_PLACES 100
->>>>>>> a2d7029472ef6fd9949d9b3eeab62368d0f101ab
 
 /*****************************************************************************/
 
@@ -33,29 +28,18 @@ void usage(char *myname)
 /*****************************************************************************/
 
 
-<<<<<<< HEAD
-char* bad_net(char* in_file1, char* in_file2){
-=======
 void bad_net(char* in_file1, char* in_file2){
->>>>>>> a2d7029472ef6fd9949d9b3eeab62368d0f101ab
   // Declare the file pointer
   FILE *r_pointer1, *r_pointer2 ;
   FILE *w_pointer = NULL;
     
   // Variables that come along
-<<<<<<< HEAD
-  char d_read[MAX_RESET_PLACES];
-  char out_file[MAX_RESET_PLACES] = {0};
-  char *token, *tmp, *tmp1, *token2;
-  int header = 0, places = 0, trans = 0, complement_places = 0, num_tmp, num_tmp1, names = 1;
-=======
   char d_read[NUM_PLACES];
   char out_file[NUM_PLACES] = {0};
   char *token, *tmp = NULL;
   int header = 0, places = 0, trans = 0, pnames = 1,
     nbadnames = 0, nbadmarkings = 0, nbadtrans = 1, i,
     lentmp, dummy = 0;
->>>>>>> a2d7029472ef6fd9949d9b3eeab62368d0f101ab
 
   // Open the existing file using fopen()
   // in read mode using "r" attribute
@@ -65,36 +49,13 @@ void bad_net(char* in_file1, char* in_file2){
   // Check if this r_pointer2 is null
   // which maybe if the file does not exist
   if ( r_pointer2 == NULL ){
-<<<<<<< HEAD
-    printf( "%s file failed to open.", in_file2 ) ;
-=======
     printf( "%s file failed to open.\n", in_file2 ) ;
->>>>>>> a2d7029472ef6fd9949d9b3eeab62368d0f101ab
   }
   else
   {
     char *line = NULL;
     size_t len = 0;
     ssize_t read = 0;
-<<<<<<< HEAD
-
-    while ((read = getline(&line, &len, r_pointer2)) != -1)
-    {
-      printf("line size of: %zu\n", read);
-      //printf("len value: %d\n", len);
-      printf("%s\n", line);
-    }
-
-    // Check if this r_pointer1 is null
-    // which maybe if the file does not exist
-    if ( r_pointer1 == NULL ){
-      printf( "%s file failed to open.", in_file1 ) ;
-    }
-    else
-    {
-      
-      fclose(r_pointer1);
-=======
     
     while ((read = getline(&line, &len, r_pointer2)) >= 0)
       nbadmarkings++;
@@ -254,7 +215,6 @@ void bad_net(char* in_file1, char* in_file2){
 
       fclose(r_pointer1);
       fclose(r_pointer2);
->>>>>>> a2d7029472ef6fd9949d9b3eeab62368d0f101ab
       fclose(w_pointer);
     }
   }
@@ -266,10 +226,6 @@ int main (int argc, char **argv)
     fprintf(stderr,"usage: bad_net <LLnetfile> <multiset bad markings>\n");
     exit(1);
   }
-<<<<<<< HEAD
-  bad_net(argv[2], argv[3]);
-=======
   bad_net(argv[1], argv[2]);
->>>>>>> a2d7029472ef6fd9949d9b3eeab62368d0f101ab
   exit(0);
 }

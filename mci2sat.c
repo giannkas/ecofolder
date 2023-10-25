@@ -124,12 +124,8 @@ list_t **plcond;	// for each place, non-cutoff conditions labelled by it
 char **plname;		// names of places
 int vars = 0;		// variables used so far in the formula
 int clauses = 0;	// number of clauses
-<<<<<<< HEAD
-int nosense = 1;
-=======
 int nosense = 1;  // nosense variable search
 int att = 0;    // used to find and format attractors
->>>>>>> a2d7029472ef6fd9949d9b3eeab62368d0f101ab
 signed char *plwanted;	// for reachability: 1=positive, -1=negative, 0=dontcare
 
 clist_t *p_reach, *n_reach; // positive and negative reachability targets
@@ -270,19 +266,11 @@ void reachable ()
   }
 }
 
-<<<<<<< HEAD
-void mci2sat (const char * infile, const char *outfile)
-{
-  int i, j, e;
-  list_t *post;
-  char *blob, *bconds;
-=======
 int mci2sat (const char * infile, const char *outfile)
 {
   int i, j, e, maxszname = 1;
   list_t *post;
   char *blob, *bconds, *plinunf;
->>>>>>> a2d7029472ef6fd9949d9b3eeab62368d0f101ab
   int *harmfuls;
   int nqure, nqure_, nquszcut, nquszevscut, szcuts, harmful, token, queried;
   cut_t **cuts;
@@ -297,12 +285,8 @@ int mci2sat (const char * infile, const char *outfile)
   bpos = blob;
 
   fout = fopen(outfile,"w");
-<<<<<<< HEAD
-  if (fout == 0) error("'%s': %s", outfile, strerror (errno));
-=======
   if (!fout) error("'%s': %s", outfile, strerror (errno));
   if (fd == -1) error("'%s': %s", infile, strerror (errno));
->>>>>>> a2d7029472ef6fd9949d9b3eeab62368d0f101ab
 
   // leave space for number of vars and clauses
   if (opt_comments) P("p cnf                              \n");
@@ -371,8 +355,6 @@ int mci2sat (const char * infile, const char *outfile)
   // dummy ints followed by number of places and transitions
   while (read_int());
   numpl = read_int();
-<<<<<<< HEAD
-=======
   //printf("p_reach->size: %d\n", p_reach->size);
   //printf("numco: %d\n", conds);
   //printf("1. nosense: %d\n", nosense);
@@ -381,7 +363,6 @@ int mci2sat (const char * infile, const char *outfile)
   if(p_reach->size > conds-1 || n_reach->size > conds-1)
     return 0;
 
->>>>>>> a2d7029472ef6fd9949d9b3eeab62368d0f101ab
   numtr = read_int();
   read_int();
 
@@ -400,13 +381,10 @@ int mci2sat (const char * infile, const char *outfile)
       {
         plwanted[i] = 1;
         nosense = 0;
-<<<<<<< HEAD
-=======
         //printf("bpos: %s\n", bpos);
         //printf("jptr[j]: %s\n", jptr[j]);
         //printf("2. nosense: %d\n", nosense);
 
->>>>>>> a2d7029472ef6fd9949d9b3eeab62368d0f101ab
       }
       else
       {
@@ -415,11 +393,8 @@ int mci2sat (const char * infile, const char *outfile)
         {
           plwanted[i] = 1;
           nosense = 0;
-<<<<<<< HEAD
-=======
           //printf("3. nosense: %d\n", nosense);
 
->>>>>>> a2d7029472ef6fd9949d9b3eeab62368d0f101ab
         }
       }
     jptr = &(n_reach->contents);
@@ -440,18 +415,6 @@ int mci2sat (const char * infile, const char *outfile)
       }
 
     plname[i] = bpos;
-<<<<<<< HEAD
-    read_str();
-  }
-
-  if (nosense)
-  { 
-    if (p_reach->size == 0 || n_reach->size == 0)
-      nosense = 0;
-    else
-      exit(1);
-  }
-=======
     if (strlen(plname[i]) > maxszname)
       maxszname = strlen(plname[i]);
     read_str();
@@ -460,18 +423,11 @@ int mci2sat (const char * infile, const char *outfile)
   //printf("4. nosense: %d\n", nosense);
   if (nosense && !att)
     return 0;
->>>>>>> a2d7029472ef6fd9949d9b3eeab62368d0f101ab
   
   if (!opt_comments) P("p cnf                              \n");
   /* go back and read conditions */
   l_init(&post);
   bpos = bconds;
-<<<<<<< HEAD
-  for (i = 1; i <= conds; i++)
-  {
-    int consumers = 0;
-    int place = read_int();
-=======
 
   //printf("num names: %d\n", numpl);
   for (i = 1; i <= conds; i++)
@@ -490,7 +446,6 @@ int mci2sat (const char * infile, const char *outfile)
       strcat(plinunf, ",");
       strcat(plinunf, plname[place]);
     }
->>>>>>> a2d7029472ef6fd9949d9b3eeab62368d0f101ab
     token = read_int();
     queried = read_int();
     int gen = read_int();
@@ -516,8 +471,6 @@ int mci2sat (const char * infile, const char *outfile)
     conflicts(i,post,gen);
   }
 
-<<<<<<< HEAD
-=======
   char **jptr, *needle;
   jptr = &(p_reach->contents);
   for (j = 0; j < p_reach->size; j++)
@@ -537,7 +490,6 @@ int mci2sat (const char * infile, const char *outfile)
   if (nosense && !att) return 0;
 
 
->>>>>>> a2d7029472ef6fd9949d9b3eeab62368d0f101ab
   if (!opt_reach)
   {
     for (i = 1; i <= events; i++)
@@ -555,10 +507,7 @@ int mci2sat (const char * infile, const char *outfile)
   fseek(fout,6,SEEK_SET);
   P("%d %d",vars,clauses);
   fclose(fout);
-<<<<<<< HEAD
-=======
   return 1;
->>>>>>> a2d7029472ef6fd9949d9b3eeab62368d0f101ab
 }
 
 void find_targets (clist_t **list, char *string)
@@ -584,10 +533,7 @@ void usage ()
   "\t-c: add comments to sat encoding\n"
   "\t-d: check for deadlock [default]\n"
   "\t-f: find final configurations\n"
-<<<<<<< HEAD
-=======
   "\t-att: used to find and format attractors\n"
->>>>>>> a2d7029472ef6fd9949d9b3eeab62368d0f101ab
   "\t-r <list>, -n <list>: comma-separated list of place names\n"
   "\t-o <filename>: output file (default: mcifile with .sat)\n"
   "\nIf -r and/or -n are given, mci2sat will generate a formula for\n"
@@ -598,11 +544,7 @@ void usage ()
 
 int main (int argc, char ** argv)
 {
-<<<<<<< HEAD
-  int i;
-=======
   int i, correct = 0;
->>>>>>> a2d7029472ef6fd9949d9b3eeab62368d0f101ab
         char outfile[1024];
   char *filename = NULL;
 
@@ -618,11 +560,8 @@ int main (int argc, char ** argv)
       opt_final = opt_reach = 0;
     else if (!strcmp(argv[i],"-f"))
       opt_final = 1;
-<<<<<<< HEAD
-=======
     else if (!strcmp(argv[i],"-att"))
       att = 1;
->>>>>>> a2d7029472ef6fd9949d9b3eeab62368d0f101ab
     else if (!strcmp(argv[i],"-r"))
     {
       if (++i == argc) usage();
@@ -658,15 +597,8 @@ int main (int argc, char ** argv)
     strcpy(outfile + l - 3, "sat");
   }
 
-<<<<<<< HEAD
-  mci2sat (filename,outfile);
-
-  return 0;
-}
-=======
   correct = mci2sat (filename,outfile);
 
   return correct;
 }
 
->>>>>>> a2d7029472ef6fd9949d9b3eeab62368d0f101ab

@@ -99,11 +99,7 @@ class Model:
   def attractors(self):
     # 1. compute first complete prefix
     mci0 = self.filename.replace("."+self.suffix, ".mci")
-<<<<<<< HEAD
-    subprocess.call(["ecofolder", "-att", self.filename, "-m", mci0])
-=======
     subprocess.call(["ecofolder", "-data", self.filename, "-m", mci0])
->>>>>>> a2d7029472ef6fd9949d9b3eeab62368d0f101ab
 
     # 2. fetch final markings
     out = subprocess.check_output(["allfinals.pl", "-f", mci0], stderr=DEVNULL)
@@ -152,11 +148,7 @@ class Model:
     self.write(f)
     f.close()
 
-<<<<<<< HEAD
-    subprocess.call(["ecofolder", "-att", "-T", "reached_any", name, "-m", "tmp.mci"])
-=======
     subprocess.call(["ecofolder", "-data", "-T", "reached_any", name, "-m", "tmp.mci"])
->>>>>>> a2d7029472ef6fd9949d9b3eeab62368d0f101ab
     ret = subprocess.call(["mci2dot", "-reach", "reached_any", "tmp.mci"])
 
     reach = ret == 0

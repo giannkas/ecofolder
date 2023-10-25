@@ -23,17 +23,11 @@ void write_mci_file_cpr (char *filename)
 
   write_int(unf->numco);
   write_int(unf->numev);
-<<<<<<< HEAD
-  printf("unf->numev: %d\n", unf->numev);
-  printf("unf->numco: %d\n", unf->numco);
-  
-=======
   if(!data)
   {
     printf("unf->numev: %d\n", unf->numev);
     printf("unf->numco: %d\n", unf->numco);
   }
->>>>>>> a2d7029472ef6fd9949d9b3eeab62368d0f101ab
   /* Reverse the lists of places, events etc. This is to maintain
     compatibility with RdlcheckMcM and mcsmodels, which expect events
     to be numbered in accordance with the causality relation. */
@@ -53,10 +47,6 @@ void write_mci_file_cpr (char *filename)
       }
       printf("%s (e%d)  ", ev->origin->name, ev->mark);
     }
-<<<<<<< HEAD
-=======
-
->>>>>>> a2d7029472ef6fd9949d9b3eeab62368d0f101ab
   }
   printf("\n");
 
@@ -95,10 +85,6 @@ void write_mci_file_cpr (char *filename)
     write_int(ev->queried);
   }
 
-<<<<<<< HEAD
-=======
-
->>>>>>> a2d7029472ef6fd9949d9b3eeab62368d0f101ab
   for (co = unf->conditions, cum = 1; co &&
     cum <= unf->numco; co = co->next, cum++)
   {

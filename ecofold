@@ -2,25 +2,9 @@
 
 echo "Unfolding..."
 if [ -f $1.ll_net ]; then
-<<<<<<< HEAD
-  ./ecofolder -c $1.ll_net
+  ./ecofolder -mcmillan $1.ll_net
 else
-  ./ecofolder -c $1.ll
-fi
-#../ecofolder/ecofolder
-
-echo "Converting to dot..."
-./mci2dot_cpr $1_unf.mci > $1_unf.dot
-
-# if the compressed mode is needed, you should run:
-# ./mci2dot_cpr $1_unf.mci > $1_unf.dot
-
-# if the event structure is needed, you should run:
-# ./mci2dot_ev $1_unf.mci > $1_unf.dot
-=======
-  ./ecofolder $1.ll_net
-else
-  ./ecofolder $1.ll
+  ./ecofolder -mcmillan $1.ll
 fi
 #../ecofolder/ecofolder
 
@@ -36,7 +20,6 @@ echo "Converting to dot..."
 
 # if the event structure is needed, you should run:
 #./mci2dot_ev $1_unf.mci > $1_unf.dot
->>>>>>> a2d7029472ef6fd9949d9b3eeab62368d0f101ab
 
 echo "Producing the pdf..."
 dot -T pdf $1_unf.dot > $1_unf.pdf

@@ -23,19 +23,12 @@ int interactive = 0;      /* interactive mode (-i)    */
 int compressed = 0;     /* compressed unfolding view (-c)    */
 int mcmillan = 0;      /* mcmillan criteria flag (-mcmillan) */
 int m_repeat = 0;     /* marking repeat to highlight (-r)    */
-<<<<<<< HEAD
-int attractors = 0;     /* enabling Ecofolder to extract attractors (-att)    */
-int conflsteps = 0;   /* allocating blocks of CO_ALLOC_STEP Bytes */
-int** confl_evs = NULL;  /* matrix of events X conditions whether they are 
-                          in direct conflict*/
-=======
 int data = 0;     /* enabling Ecofolder to extract data (-data)    */
 int freechk = 0;       /* enabling Ecofolder to do a freeness check */
 int conflsteps = 0;   /* allocating blocks of CO_ALLOC_STEP Bytes */
 int** confl_evs = NULL;  /* matrix of events X conditions whether they are 
                           in direct conflict*/
 char* badunf = NULL;
->>>>>>> a2d7029472ef6fd9949d9b3eeab62368d0f101ab
 
 nodelist_t *cutoff_list, *corr_list;  /* cut-off list, corresponding 
   events */
@@ -118,21 +111,6 @@ cond_t* insert_condition (place_t *pl, event_t *ev, int queried,
   /* the other direction is done in pe() */
   co->origin = pl;
   co->flag = 0;
-<<<<<<< HEAD
-
-  co->postset = NULL;
-  co->pre_ev = ev;
-  co->mark = 0;
-  co->num = unf->numco++;
-  co->queried = queried ? 1 : 0;
-  if(ev && co->queried) co->pre_ev->queried = 1;
-  if ((ev && nodelist_find(ev->origin->postset, pl)) ||
-    (!ev && pl->marked))
-    co->token = 1;
-  else
-    co->token = 0;
-
-=======
   co->postset = NULL;
   co->pre_ev = ev;
   co->mark = 0;
@@ -147,7 +125,6 @@ cond_t* insert_condition (place_t *pl, event_t *ev, int queried,
   else
     co->token = 0;
 
->>>>>>> a2d7029472ef6fd9949d9b3eeab62368d0f101ab
   if (interactive)
   {
     printf("Added condition C%d (%s)",(co->num)+1,pl->name);
@@ -490,17 +467,10 @@ int check_conflict(int id_ev1, int id_ev2, int size)
 
 void unfold ()
 {
-<<<<<<< HEAD
-  nodelist_t *list, *mark_qr = NULL, *harmful_marking = NULL;
-  pe_queue_t *qu;
-  place_t *pl;
-  event_t *ev, *stopev = NULL;
-=======
   nodelist_t *list, *list2, *mark_qr = NULL, *harmful_marking = NULL;
   pe_queue_t *qu;
   place_t *pl;
   event_t *ev, *ev2, *stopev = NULL;
->>>>>>> a2d7029472ef6fd9949d9b3eeab62368d0f101ab
   cond_t  *co;
   querycell_t *qbuck;
   int i, cutoff, repeat = 0, check_query, harmful_check;
@@ -508,11 +478,8 @@ void unfold ()
   confl_evs = MYmalloc(CO_ALLOC_STEP * sizeof(int*));
   char trans_pool[(net->maxtrname+2)*(net->numtr)];
   memset( trans_pool, 0, (net->maxtrname+2)*(net->numtr)*sizeof(char) );
-<<<<<<< HEAD
-=======
   char* command = NULL;
   if (badunf) command = calloc((net->maxplname*net->numpl)+strlen(badunf)*2, sizeof(char));
->>>>>>> a2d7029472ef6fd9949d9b3eeab62368d0f101ab
 
   /* create empty unfolding structure */
   unf = nc_create_unfolding();
@@ -550,11 +517,7 @@ void unfold ()
     printf("\n");
   }
 
-<<<<<<< HEAD
-  if(!attractors && !interactive)
-=======
   if(!data && !interactive)
->>>>>>> a2d7029472ef6fd9949d9b3eeab62368d0f101ab
   {  
     printf("Print initial marking\n");
     print_marking_pl(list);
@@ -583,11 +546,7 @@ void unfold ()
     nodelist_push(&(unf->m0),co);
   }
   
-<<<<<<< HEAD
-  if(!attractors)
-=======
   if(!data)
->>>>>>> a2d7029472ef6fd9949d9b3eeab62368d0f101ab
   {
     printf("Unfolding initial marking plus resets\n");
     print_marking_co(nodelist_concatenate(unf->m0, unf->m0_unmarked));
@@ -596,182 +555,6 @@ void unfold ()
 
   recursive_pe(nodelist_concatenate(unf->m0, unf->m0_unmarked));
 
-<<<<<<< HEAD
-  if(confmax)
-    for (i = 0; i < conflsteps; i++)
-      confl_evs[i] = MYcalloc(conflsteps * sizeof(confl_evs));
-  /* take the next event from the queue */
-  while (pe_qsize)
-  {
-    int e, ev_choice;
-    check_query = 1; harmful_check = 1;
-    if(confmax && pe_qsize > unf->numev + unf->numco)
-    {
-      conflsteps += CO_ALLOC_STEP;
-      confl_evs = MYrealloc(confl_evs, conflsteps * sizeof(int*));
-      for (i = conflsteps-CO_ALLOC_STEP; i < conflsteps; i++) 
-        confl_evs[i] = MYcalloc(conflsteps * sizeof(confl_evs));
-    }
-
-    if (interactive) for (;;)
-    {
-      ev_choice = 1;
-      for (i = pe_qsize; i > 0; i--)
-        if (find_marking(pe_queue[i]->marking, 0))
-          printf("Event E%d (%s) is a cutoff.\n", pe_queue[i]->id, pe_queue[i]->trans->name);
-
-      printf("\nCurrent event queue:");
-      for (i = 1; i <= pe_qsize; i++)
-        printf(" E%d (%s)",pe_queue[i]->id, pe_queue[i]->trans->name);
-      printf("\nUnfold event E");
-      scanf("%d",&e);
-
-      if (confmax && pe_qsize > 1)
-      {
-        for (; ev_choice <= pe_qsize && pe_queue[ev_choice]->id != e; ev_choice++);
-        if (ev_choice > pe_qsize) exit(1);
-        for (i = 1; i <= pe_qsize; i++)
-        {
-          if (i != ev_choice)
-          {
-            pred_conds(pe_queue[ev_choice]->conds, pe_queue[ev_choice]->trans, pe_queue[i]->conds, pe_queue[i]->trans, pe_queue[ev_choice]->id, pe_queue[i]->id);
-            if(check_conflict(pe_queue[ev_choice]->id, pe_queue[i]->id, conflsteps))
-            {
-              qu = pe_pop(i); 
-              i = 0; 
-              for (ev_choice = 1; ev_choice <= pe_qsize && pe_queue[ev_choice]->id != e; ev_choice++);
-            }
-          }
-        }
-      }
-
-      for (i = 1; i <= pe_qsize; i++)
-        if (pe_queue[i]->id == e) break;
-      if (i <= pe_qsize) { qu = pe_pop(i); break; }
-      else exit(1);
-    }
-    else
-      qu = pe_pop(1);
-
-    /* add event to the unfolding */
-    ev = insert_event(qu, trans_pool);
-    cutoff = add_marking(qu->marking,ev);
-/*     if(!cutoff)
-      printf("ev name: %s\n", ev->origin->name); */
-    
-    check_query = nodelist_compare(qu->marking, mark_qr);
-    // harmful_check = nodelist_compare(qu->marking, harmful_marking);
-    for(list = harmful_marking; list && harmful_check;
-      list = list->next)
-      if(!nodelist_find(qu->marking, list->node)){
-        harmful_check = 0;
-      }
-
-    if(!check_query)
-    {
-      repeat = find_marking(mark_qr, 1);
-      if(repeat)
-      {
-        qbuck = MYmalloc(sizeof(querycell_t));
-        qbuck->repeat = repeat;
-        qbuck->szcut = 0;
-        qbuck->szevscut = 0;
-        qbuck->evscut = NULL;
-        qbuck->cut = NULL;
-        qbuck->next = *query;
-        *query = qbuck;
-      }
-    }
-
-    if (interactive && !cutoff)
-    {
-      if (!corr_list->node)
-        printf("E%d has the initial marking.\n",e);
-      else
-        printf("E%d has the same marking as E%d.\n",
-          e,((event_t*)(corr_list->node))->id);
-    }
-
-    /* if we've found the -T transition, stop immediately */
-    if (stoptr && ev->origin == stoptr)
-    {
-      stopev = ev;
-      unf->events = unf->events->next;
-      break;
-    }
-
-    repeat = repeat > 0 && !check_query ? repeat : 0;
-
-    /* compute the co-relation for ev and post-conditions */
-    co_relation(ev, qu, repeat, !check_query);
-
-    /* if the marking was already represented in the unfolding,
-    we have a cut-off event */
-    /* add post-conditions for cut-off events */
-    if (!cutoff)
-    { 
-      unf->events = unf->events->next; 
-      add_post_conditions(ev,CUTOFF_YES, repeat, !check_query);
-      continue;
-    }
-    else if(harmful_marking && harmful_check)
-    {
-      unf->events = unf->events->next; 
-      nodelist_push(&harmful_list,ev);
-      add_post_conditions(ev,HARMFUL_YES, repeat, !check_query);
-      continue;
-    }
-    else
-      add_post_conditions(ev,CUTOFF_NO, repeat, !check_query);
-    //printf("cutoff: %d\n", cutoff);
-
-    /* add post-conditions, compute possible extensions */
-    pe_free(qu);
-  }
-
-  if(strlen(trans_pool) > 2){
-    trans_pool[strlen(trans_pool)-2] = 0;
-    net->unf_trans = MYstrdup(trans_pool);
-  }
-
-  for (list = harmful_list; list; list = list->next)
-  {
-    ev = list->node;
-    ev->next = unf->events; unf->events = ev;
-  }
-
-  for (list = cutoff_list; list; list = list->next)
-  {
-    ev = list->node;
-    ev->next = unf->events; unf->events = ev;
-  }
-
-  for(qbuck = *query; qbuck; qbuck = qbuck->next)
-  {
-    for (list = qbuck->cut; list; list = list->next)
-      if((co = list->node) && co->pre_ev)
-        recursive_queried(qbuck, co->pre_ev->preset,
-          co->pre_ev->preset_size);
-    qbuck->szevscut = nodelist_size(qbuck->evscut);
-  }
-
-  /* Make sure that stopev is the last event to ensure compatibility
-     with Claus Schr�ter's reachability checker (otn). */
-  if (stopev)
-  {
-    exitcode = 2;
-    stopev->next = unf->events;
-    unf->events = stopev;
-  }
-
-  /* release memory that is no longer needed (probably incomplete) */
-  pe_finish();
-  parikh_finish();
-  free(events);
-  for (pl = net->places; pl; pl = pl->next)
-    nodelist_delete(pl->conds);
-
-=======
 
   if(confmax)
     for (i = 0; i < conflsteps; i++)
@@ -967,5 +750,4 @@ void unfold ()
   free(events);
   for (pl = net->places; pl; pl = pl->next)
     nodelist_delete(pl->conds);  
->>>>>>> a2d7029472ef6fd9949d9b3eeab62368d0f101ab
 }

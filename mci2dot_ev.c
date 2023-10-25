@@ -37,8 +37,6 @@ int find_successor(int rows, int cols, int (*ev_succs)[cols], int pre_ev, int po
   return found;
 }
 
-<<<<<<< HEAD
-=======
 int find_predecessor(int rows, int cols, int (*ev_predc)[cols], int pre_ev, int post_ev ){
   size_t j, found = 0;
   if(ev_predc[post_ev][pre_ev] != pre_ev){ // if pre_ev is not in the 
@@ -55,7 +53,6 @@ int find_predecessor(int rows, int cols, int (*ev_predc)[cols], int pre_ev, int 
   return found;
 }
 
->>>>>>> a2d7029472ef6fd9949d9b3eeab62368d0f101ab
 int find_conflict(int rows, int cols, int (*ev_confl)[cols],
   int (*ev_confl_copy)[cols], int(*ev_succs)[cols], int ev_cfl, int ev_src ){
   size_t k;
@@ -162,11 +159,8 @@ void read_mci_file_ev (char *mcifile, char* evcofile, int m_repeat, int cutout)
 
   int (*co_postsets)[numev+1] = calloc(numco+1, sizeof *co_postsets); 
                                            // conditions' postsets to detect conflicts in events.
-<<<<<<< HEAD
-=======
   int (*ev_predc_copy)[numev+1] = calloc(numev+1, sizeof *ev_predc_copy); // matrix to record events' predecesors.
   int (*ev_predc)[numev+1] = calloc(numev+1, sizeof *ev_predc); // matrix to record events' predecesors.
->>>>>>> a2d7029472ef6fd9949d9b3eeab62368d0f101ab
   int (*ev_succs)[numev+1] = calloc(numev+1, sizeof *ev_succs); // matrix to record events' successors.
   int (*ev_confl)[numev+1] = calloc(numev+1, sizeof *ev_confl); // matrix to record events' conflicts.
   int (*ev_confl_copy)[numev+1] = calloc(numev+1, sizeof *ev_confl_copy); // a copy of the previous variable.
@@ -244,27 +238,16 @@ void read_mci_file_ev (char *mcifile, char* evcofile, int m_repeat, int cutout)
                                                                // been assigned yet
                                                                // and if pre_ev and
                                                                // post_ev are not null
-<<<<<<< HEAD
-=======
         ev_predc[post_ev][pre_ev] = pre_ev; // matrix of predeccesors to only print
         ev_predc_copy[post_ev][pre_ev] = pre_ev; // matrix of predeccesors to only print
                                             // immediate predecessors. Comment out if
                                             // you want all dependencies. 
->>>>>>> a2d7029472ef6fd9949d9b3eeab62368d0f101ab
         ev_succs[pre_ev][post_ev] = post_ev; // assign in the entry pre_ev of matrix 
                                              // ev_succs the connection 
                                              // between pre_ev and post_ev
                                              // with the value of post_ev itself.
                                              // The idea is to have a record
                                              // of pre_ev's successors.
-<<<<<<< HEAD
-        if (cutout && queries_ev[pre_ev] && queries_ev[post_ev])
-          printf("  e%d -> e%d;\n",pre_ev,post_ev); // write the connection.
-        else if (!cutout)
-          printf("  e%d -> e%d;\n",pre_ev,post_ev); // write the connection.
-      }
-      else if (!pre_ev && post_ev && ev_succs[0][post_ev] == 0)
-=======
         /* Uncomment next 4 lines if you want to see all dependencies in events. */
         // if (cutout && queries_ev[pre_ev] && queries_ev[post_ev])
         //   printf("  e%d -> e%d;\n",pre_ev,post_ev); // write the connection.
@@ -273,18 +256,13 @@ void read_mci_file_ev (char *mcifile, char* evcofile, int m_repeat, int cutout)
       }
       // This else if is necessary to show dependencies to initial cut.
       /* else if (!pre_ev && post_ev && ev_succs[0][post_ev] == 0)
->>>>>>> a2d7029472ef6fd9949d9b3eeab62368d0f101ab
       {
         ev_succs[0][post_ev] = post_ev;
         if (!cutout)
           printf("  e0 -> e%d;\n", post_ev);
         else if (cutout && queries_ev[post_ev])
           printf("  e0 -> e%d;\n", post_ev);
-<<<<<<< HEAD
-      }
-=======
       } */
->>>>>>> a2d7029472ef6fd9949d9b3eeab62368d0f101ab
       if (post_ev) co_postsets[i][post_ev] = post_ev; // assign in the ith
                                                       // (which corresponds
                                                       // to the ith condition)
@@ -298,8 +276,6 @@ void read_mci_file_ev (char *mcifile, char* evcofile, int m_repeat, int cutout)
     } while (post_ev); // if post_ev is not null.
   }
 
-<<<<<<< HEAD
-=======
   /* check immediate connections to events */
   for (int i = 1; i <= numev; i++){
     for (int j = 1; j <= i; j++){
@@ -323,7 +299,6 @@ void read_mci_file_ev (char *mcifile, char* evcofile, int m_repeat, int cutout)
     }
   }
 
->>>>>>> a2d7029472ef6fd9949d9b3eeab62368d0f101ab
   if(dummy)
   {
     if (cuts[m_repeat] && cuts[m_repeat]->repeat < 0)
@@ -403,11 +378,7 @@ void read_mci_file_ev (char *mcifile, char* evcofile, int m_repeat, int cutout)
   the empty vector of index 0 in ev_succs matrix to collect all events 
   that have predecesors and hence to depict the arcs in the resulting 
   dot file */
-<<<<<<< HEAD
-  /* for (int i = 1; i <= numev; i++){
-=======
   for (int i = 1; i <= numev; i++){
->>>>>>> a2d7029472ef6fd9949d9b3eeab62368d0f101ab
     for (int j = i+1; j <= numev; j++){
       if (ev_succs[i][j] > 0 && ev_succs[0][j] == 0) 
         ev_succs[0][j] = ev_succs[i][j];
@@ -418,11 +389,7 @@ void read_mci_file_ev (char *mcifile, char* evcofile, int m_repeat, int cutout)
     if (!cutout && ev_succs[0][i] == 0) printf("  e0 -> e%d;\n", i);
     else if (cutout && ev_succs[0][i] == 0 && queries_ev[i])
       printf("  e0 -> e%d;\n", i);
-<<<<<<< HEAD
-  } */
-=======
   }
->>>>>>> a2d7029472ef6fd9949d9b3eeab62368d0f101ab
   
   if(!cutout)
   {  
@@ -482,42 +449,24 @@ void read_mci_file_ev (char *mcifile, char* evcofile, int m_repeat, int cutout)
   for (i = 1; i <= numev; i++)
     if (cutout && queries_ev[i])
     {  
-<<<<<<< HEAD
-      if (i == cutoffs[i])
-        printf("  e%d [color=%s fillcolor=%s label=\"%s (e%d)\" shape=box style=filled];\n",
-            i,queries_ev[i] ? color3 : color4,color2,trname[ev2tr[i]],i);
-      else if ( i == harmfuls[i])
-        printf("  e%d [color=%s fillcolor=%s label=\"%s (e%d)\" shape=box style=filled];\n",
-            i,queries_ev[i] ? color3 : color4,color5,trname[ev2tr[i]],i);
-=======
       if ( i == harmfuls[i])
         printf("  e%d [color=%s fillcolor=%s label=\"%s (e%d)\" shape=box style=filled];\n",
             i,queries_ev[i] ? color3 : color4,color5,trname[ev2tr[i]],i);
       else if (i == cutoffs[i])
         printf("  e%d [color=%s fillcolor=%s label=\"%s (e%d)\" shape=box style=filled];\n",
             i,queries_ev[i] ? color3 : color4,color2,trname[ev2tr[i]],i);
->>>>>>> a2d7029472ef6fd9949d9b3eeab62368d0f101ab
       else
         printf("  e%d [color=\"%s\" fillcolor=\"%s\" label=\"%s (e%d)\" shape=box style=filled];\n",
             i,queries_ev[i] ? color4 : color6,queries_ev[i] ? color3 : color1,trname[ev2tr[i]],i);
     }
     else if (!cutout)
     {
-<<<<<<< HEAD
-      if (i == cutoffs[i])
-        printf("  e%d [color=%s fillcolor=%s label=\"%s (e%d)\" shape=box style=filled];\n",
-            i,queries_ev[i] ? color3 : color4,color2,trname[ev2tr[i]],i);
-      else if ( i == harmfuls[i])
-        printf("  e%d [color=%s fillcolor=%s label=\"%s (e%d)\" shape=box style=filled];\n",
-            i,queries_ev[i] ? color3 : color4,color5,trname[ev2tr[i]],i);
-=======
       if ( i == harmfuls[i])
         printf("  e%d [color=%s fillcolor=%s label=\"%s (e%d)\" shape=box style=filled];\n",
             i,queries_ev[i] ? color3 : color4,color5,trname[ev2tr[i]],i);
       else if (i == cutoffs[i])
         printf("  e%d [color=%s fillcolor=%s label=\"%s (e%d)\" shape=box style=filled];\n",
             i,queries_ev[i] ? color3 : color4,color2,trname[ev2tr[i]],i);
->>>>>>> a2d7029472ef6fd9949d9b3eeab62368d0f101ab
       else
         printf("  e%d [color=\"%s\" fillcolor=\"%s\" label=\"%s (e%d)\" shape=box style=filled];\n",
             i,queries_ev[i] ? color4 : color6,queries_ev[i] ? color3 : color1,trname[ev2tr[i]],i);

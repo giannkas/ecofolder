@@ -17,11 +17,7 @@ echo "Evaluating SAT..."
 ./sateval -r $1.mci $1.res
 
 echo "Converting to dot..."
-<<<<<<< HEAD
-./mci2dot_ev -c $1.mci $1.evco > $1.dot
-=======
 ./mci2dot -c $1.mci $1.evco > $1.dot
->>>>>>> a2d7029472ef6fd9949d9b3eeab62368d0f101ab
 
 echo "Producing the pdf..."
 dot -T pdf $1.dot > $1.pdf

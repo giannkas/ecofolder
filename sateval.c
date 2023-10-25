@@ -122,17 +122,6 @@ void readmci (const char * infile)
       continue;
     }
 
-<<<<<<< HEAD
-    if(pre_ev) coxev[i][pre_ev] = co2pl[i];
-    post_ev = read_int();
-    while(token && post_ev)
-    {
-      if (post_ev && !pre_ev){ 
-        coxev[i][0] = co2pl[i];
-        coxev[i][post_ev] = co2pl[i]*-1;
-      }
-      else if (post_ev && pre_ev) coxev[i][post_ev] = co2pl[i]*-1;
-=======
     post_ev = read_int();
     if(pre_ev) coxev[i][pre_ev] = co2pl[i];
     else if (!pre_ev && !post_ev) coxev[i][0] = co2pl[i];
@@ -143,7 +132,6 @@ void readmci (const char * infile)
         coxev[i][post_ev] = co2pl[i]*-1;
       }
       else coxev[i][post_ev] = co2pl[i]*-1;
->>>>>>> a2d7029472ef6fd9949d9b3eeab62368d0f101ab
       post_ev = read_int();
     }
   }
@@ -180,11 +168,7 @@ void readmci (const char * infile)
   for (i = 1; i <= numtr; i++) { trname[i] = bpos; read_str(); }
 }
 
-<<<<<<< HEAD
-void sateval (char *satfile)
-=======
 int sateval (char *satfile, int data)
->>>>>>> a2d7029472ef6fd9949d9b3eeab62368d0f101ab
 {
   char *tmpname, *idx, *evcofile;
 
@@ -213,21 +197,12 @@ int sateval (char *satfile, int data)
 
   if (c == 'U')
   {
-<<<<<<< HEAD
-    if (opt_reach)
-      printf("Marking unreachable.\n");
-    else
-      printf("The net is alive.\n");
-    fclose(f);
-    return;
-=======
     if (opt_reach && data)
       printf("Marking unreachable.\n");
     else if (data)
       printf("The net is alive.\n");
     fclose(f);
     return 0;
->>>>>>> a2d7029472ef6fd9949d9b3eeab62368d0f101ab
   }
   else
   {
@@ -237,15 +212,6 @@ int sateval (char *satfile, int data)
 
     if (c == ' ')
     {
-<<<<<<< HEAD
-      if (opt_reach) printf("Marking unreachable.\n");
-      fclose(f);
-      return;
-    }
-    else if (opt_reach)
-      printf("Marking reachable:\n");
-    else
-=======
       if (opt_reach && data) printf("Marking unreachable.\n");
       fclose(f);
       return 0;
@@ -253,7 +219,6 @@ int sateval (char *satfile, int data)
     else if (opt_reach && data)
       printf("Marking reachable:\n");
     else if (data)
->>>>>>> a2d7029472ef6fd9949d9b3eeab62368d0f101ab
       printf("Deadlock sequence:");
   }
 
@@ -270,11 +235,7 @@ int sateval (char *satfile, int data)
     if (vnr > evars) break;
 
     if (v < 0) continue;
-<<<<<<< HEAD
-    printf(" %s (e%d)",trname[ev2tr[v]],v);
-=======
     if (data) printf(" %s (e%d)",trname[ev2tr[v]],v);
->>>>>>> a2d7029472ef6fd9949d9b3eeab62368d0f101ab
     fprintf(fo,"%d ",v);
     for (i = 1; i <= conds; i++)
     {
@@ -288,37 +249,21 @@ int sateval (char *satfile, int data)
       }
     }
   }
-<<<<<<< HEAD
-  printf("\n\t");
-=======
   if (data) printf("\n\t");
->>>>>>> a2d7029472ef6fd9949d9b3eeab62368d0f101ab
   fprintf(fo,"0\n");
   for (i = 1; i <= numpl; i++)
   {
     if (marking[i] > 0 ){
-<<<<<<< HEAD
-      printf("%s (c%d) ", plname[i], cut[i]);
-      fprintf(fo,"%d ", cut[i]);
-    }
-  }
-  printf("\n");
-=======
       if (data) printf("%s (c%d) ", plname[i], cut[i]);
       fprintf(fo,"%d ", cut[i]);
     }
   }
   if (data) printf("\n");
->>>>>>> a2d7029472ef6fd9949d9b3eeab62368d0f101ab
   fprintf(fo,"0\n");
 
   fclose(f);
   fclose(fo);
-<<<<<<< HEAD
-  return;
-=======
   return 1;
->>>>>>> a2d7029472ef6fd9949d9b3eeab62368d0f101ab
 }
 
 void usage ()
@@ -326,12 +271,8 @@ void usage ()
   fprintf(stderr,
   "\nusage: sateval {-d|-r} <mcifile> <satfile>\n\n"
   "  options:\n"
-<<<<<<< HEAD
-  "\t-d or -r: output for deadlock or reachability checking\n\n"
-=======
   "\t-d or -r: output for deadlock or reachability checking\n"
   "\t-data: no data printed but evco file is still created.\n\n"
->>>>>>> a2d7029472ef6fd9949d9b3eeab62368d0f101ab
   );
   exit(1);
 }
@@ -339,19 +280,6 @@ void usage ()
 int main (int argc, char ** argv)
 {
   char outfile[1024];
-<<<<<<< HEAD
-
-  *outfile = 0;
-
-  if (argc != 4) usage();
-  if (strcmp(argv[1],"-d") && strcmp(argv[1],"-r")) usage();
-  if (!strcmp(argv[1],"-r")) opt_reach = 1;
-  
-  readmci(argv[2]);
-  sateval(argv[3]);
-
-  return 0;
-=======
   int reachable = 0;
   int data = 1;
   char *mcifile = NULL;
@@ -374,5 +302,4 @@ int main (int argc, char ** argv)
   //printf("sateval is: %d\n", reachable);
 
   return reachable;
->>>>>>> a2d7029472ef6fd9949d9b3eeab62368d0f101ab
 }

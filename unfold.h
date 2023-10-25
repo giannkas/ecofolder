@@ -24,10 +24,7 @@ extern int hash_buckets;
 extern event_t **events;
 extern int conflsteps;
 extern int** confl_evs;
-<<<<<<< HEAD
-=======
 extern char* badunf;
->>>>>>> a2d7029472ef6fd9949d9b3eeab62368d0f101ab
 
 extern int exitcode;    /* proposed exit code of the program         */
 extern trans_t *stoptr;   /* the transition mentioned by the -T switch */
@@ -37,12 +34,8 @@ extern int confmax;   /* whether the -confmax switch has been supplied */
 extern int compressed;    /* whether the -c switch has been supplied */
 extern int mcmillan;    /* whether the -mcmillan switch is enabled */
 extern int m_repeat;    /* whether the -r switch has been supplied */
-<<<<<<< HEAD
-extern int attractors;    /* whether the -att switch has been supplied */
-=======
 extern int data;    /* whether the -att switch has been supplied */
 extern int freechk;  /* whether the -freechk has been supplied */
->>>>>>> a2d7029472ef6fd9949d9b3eeab62368d0f101ab
 
 extern nodelist_t *cutoff_list, *corr_list;  /* cut-off/corresponding list */
 extern nodelist_t *harmful_list;  /* bad or harmful events in a list */

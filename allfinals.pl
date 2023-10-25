@@ -27,11 +27,7 @@ testfile($resfile);
 
 # first step, generate sat formula from mci file
 #print "$mcifile\n";
-<<<<<<< HEAD
-system "./mci2sat -c -f $mcifile" || die "could not execute mci2sat";
-=======
 system "./mci2sat -c -att -f $mcifile" || die "could not execute mci2sat";
->>>>>>> a2d7029472ef6fd9949d9b3eeab62368d0f101ab
 die "cannot open $satfile" unless -r $satfile;
 
 # obtain number of (non-cutoff) events and correspondence between
