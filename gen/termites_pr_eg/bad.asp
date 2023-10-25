@@ -1,0 +1,9 @@
+bad("ac+").
+bad("ec-").
+bad("fg-").
+bad("rp-").
+bad("sd-").
+bad("te-").
+bad("wd-").
+bad("wk-_1").
+bad("wk-_2").

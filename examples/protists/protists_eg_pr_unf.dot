@@ -1,4 +1,5 @@
 digraph test {
+<<<<<<< HEAD
   c1 -> e11;
   c1 -> e1;
   c2 -> e11;
@@ -955,4 +956,58 @@ digraph test {
   e73 [color=black fillcolor=cornflowerblue label="r8 (e73)" shape=box style=filled];
   e74 [color=black fillcolor=cornflowerblue label="r5 (e74)" shape=box style=filled];
   e75 [color=black fillcolor=cornflowerblue label="r7 (e75)" shape=box style=filled];
+=======
+  c1 -> e1;
+  c2 -> e1;
+  c4 -> e1;
+  c6 -> e5;
+  c7 -> e5;
+  c8 -> e5;
+  c10 -> e1;
+  c11 -> e2;
+  c12 -> e4;
+  c14 -> e1;
+  e1 -> c15;
+  c15 -> e5;
+  e1 -> c16;
+  c16 -> e5;
+  e1 -> c17;
+  e1 -> c18;
+  e1 -> c19;
+  e2 -> c20;
+  e4 -> c30;
+  e5 -> c31;
+  e5 -> c32;
+  e5 -> c33;
+  e5 -> c34;
+  e5 -> c35;
+  c1 [color="#4040ff" fillcolor="transparent" label= <Pa-_3<FONT COLOR="red"><SUP>0</SUP></FONT>&nbsp;(c1)> shape=circle style=filled];
+  c2 [color="#4040ff" fillcolor="transparent" label= <Pa-_2<FONT COLOR="red"><SUP>0</SUP></FONT>&nbsp;(c2)> shape=circle style=filled];
+  c4 [color="#4040ff" fillcolor="transparent" label= <Pa-_1<FONT COLOR="red"><SUP>0</SUP></FONT>&nbsp;(c4)> shape=circle style=filled];
+  c6 [color="#4040ff" fillcolor="transparent" label= <Am-<FONT COLOR="red"><SUP>0</SUP></FONT>&nbsp;(c6)> shape=circle style=filled];
+  c7 [color="#4040ff" fillcolor="transparent" label= <Am+_3<FONT COLOR="red"><SUP>1</SUP></FONT>&nbsp;(c7)> shape=circle style=filled];
+  c8 [color="#4040ff" fillcolor="transparent" label= <Am+_2<FONT COLOR="red"><SUP>1</SUP></FONT>&nbsp;(c8)> shape=circle style=filled];
+  c9 [color="#4040ff" fillcolor="gold" label= <Te+<FONT COLOR="red"><SUP>1</SUP></FONT>&nbsp;(c9)> shape=circle style=filled];
+  c10 [color="#4040ff" fillcolor="transparent" label= <Pa+<FONT COLOR="red"><SUP>1</SUP></FONT>&nbsp;(c10)> shape=circle style=filled];
+  c11 [color="#4040ff" fillcolor="transparent" label= <Eu+<FONT COLOR="red"><SUP>1</SUP></FONT>&nbsp;(c11)> shape=circle style=filled];
+  c12 [color="#4040ff" fillcolor="transparent" label= <Co+<FONT COLOR="red"><SUP>1</SUP></FONT>&nbsp;(c12)> shape=circle style=filled];
+  c13 [color="#4040ff" fillcolor="gold" label= <Bl-<FONT COLOR="red"><SUP>1</SUP></FONT>&nbsp;(c13)> shape=circle style=filled];
+  c14 [color="#4040ff" fillcolor="transparent" label= <Am+_1<FONT COLOR="red"><SUP>1</SUP></FONT>&nbsp;(c14)> shape=circle style=filled];
+  c15 [color="#4040ff" fillcolor="#ccccff" label= <Am+_1<FONT COLOR="red"><SUP>1</SUP></FONT>&nbsp;(c15)> shape=circle style=filled];
+  c16 [color="#4040ff" fillcolor="#ccccff" label= <Pa-_1<FONT COLOR="red"><SUP>1</SUP></FONT>&nbsp;(c16)> shape=circle style=filled];
+  c17 [color="#4040ff" fillcolor="gold" label= <Pa-_3<FONT COLOR="red"><SUP>1</SUP></FONT>&nbsp;(c17)> shape=circle style=filled];
+  c18 [color="#4040ff" fillcolor="gold" label= <Pa-_2<FONT COLOR="red"><SUP>1</SUP></FONT>&nbsp;(c18)> shape=circle style=filled];
+  c19 [color="#4040ff" fillcolor="#ccccff" label= <Pa+<FONT COLOR="red"><SUP>0</SUP></FONT>&nbsp;(c19)> shape=circle style=filled];
+  c20 [color="#4040ff" fillcolor="gold" label= <Eu-<FONT COLOR="red"><SUP>1</SUP></FONT>&nbsp;(c20)> shape=circle style=filled];
+  c30 [color="#4040ff" fillcolor="gold" label= <Co-<FONT COLOR="red"><SUP>1</SUP></FONT>&nbsp;(c30)> shape=circle style=filled];
+  c31 [color="#4040ff" fillcolor="gold" label= <Pa-_1<FONT COLOR="red"><SUP>1</SUP></FONT>&nbsp;(c31)> shape=circle style=filled];
+  c32 [color="#4040ff" fillcolor="gold" label= <Am-<FONT COLOR="red"><SUP>1</SUP></FONT>&nbsp;(c32)> shape=circle style=filled];
+  c33 [color="#4040ff" fillcolor="#ccccff" label= <Am+_1<FONT COLOR="red"><SUP>0</SUP></FONT>&nbsp;(c33)> shape=circle style=filled];
+  c34 [color="#4040ff" fillcolor="#ccccff" label= <Am+_3<FONT COLOR="red"><SUP>0</SUP></FONT>&nbsp;(c34)> shape=circle style=filled];
+  c35 [color="#4040ff" fillcolor="#ccccff" label= <Am+_2<FONT COLOR="red"><SUP>0</SUP></FONT>&nbsp;(c35)> shape=circle style=filled];
+  e1 [color="black" fillcolor="orange" label="r1 (e1)" shape=box style=filled];
+  e2 [color="black" fillcolor="orange" label="r6 (e2)" shape=box style=filled];
+  e4 [color="black" fillcolor="orange" label="r10 (e4)" shape=box style=filled];
+  e5 [color="black" fillcolor="orange" label="r2 (e5)" shape=box style=filled];
+>>>>>>> a2d7029472ef6fd9949d9b3eeab62368d0f101ab
 }

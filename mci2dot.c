@@ -112,6 +112,11 @@ int read_mci_file (char *mcifile, char *evcofile, int m_repeat, char* evname, in
       printf("  e%d -> c%d;\n",pre_ev,i);
       queries_coset[i] = 1;
     }
+<<<<<<< HEAD
+=======
+    else if (cutout && !pre_ev && !evname && queries_co[i])
+      queries_coset[i] = 1;
+>>>>>>> a2d7029472ef6fd9949d9b3eeab62368d0f101ab
     else if (!cutout && pre_ev && !evname) printf("  e%d -> c%d;\n",pre_ev,i);
     if (!pre_ev) cut0[i] = 1;
     do {
@@ -200,24 +205,42 @@ int read_mci_file (char *mcifile, char *evcofile, int m_repeat, char* evname, in
     for (i = 1; i <= numev; i++)
       if (cutout && queries_ev[i])
       {
+<<<<<<< HEAD
         if (i == cutoffs[i])
           printf("  e%d [color=%s fillcolor=%s label=\"%s (e%d)\" shape=box style=filled];\n",
               i,queries_ev[i] ? color3 : color6,color5,trname[ev2tr[i]],i);
         else if ( i == harmfuls[i])
           printf("  e%d [color=%s fillcolor=%s label=\"%s (e%d)\" shape=box style=filled];\n",
               i,queries_ev[i] ? color3 : color6,color7,trname[ev2tr[i]],i);
+=======
+        if ( i == harmfuls[i])
+          printf("  e%d [color=%s fillcolor=%s label=\"%s (e%d)\" shape=box style=filled];\n",
+              i,queries_ev[i] ? color3 : color6,color7,trname[ev2tr[i]],i);
+        else if (i == cutoffs[i])
+          printf("  e%d [color=%s fillcolor=%s label=\"%s (e%d)\" shape=box style=filled];\n",
+              i,queries_ev[i] ? color3 : color6,color5,trname[ev2tr[i]],i);
+>>>>>>> a2d7029472ef6fd9949d9b3eeab62368d0f101ab
         else
           printf("  e%d [color=\"%s\" fillcolor=\"%s\" label=\"%s (e%d)\" shape=box style=filled];\n",
               i,queries_ev[i] ? color6 : color9,queries_ev[i] ? color3 : color4,trname[ev2tr[i]],i);
       }
       else if (!cutout)
       {
+<<<<<<< HEAD
         if (i == cutoffs[i])
           printf("  e%d [color=%s fillcolor=%s label=\"%s (e%d)\" shape=box style=filled];\n",
               i,queries_ev[i] ? color3 : color6,color5,trname[ev2tr[i]],i);
         else if ( i == harmfuls[i])
           printf("  e%d [color=%s fillcolor=%s label=\"%s (e%d)\" shape=box style=filled];\n",
               i,queries_ev[i] ? color3 : color6,color7,trname[ev2tr[i]],i);
+=======
+        if ( i == harmfuls[i])
+          printf("  e%d [color=%s fillcolor=%s label=\"%s (e%d)\" shape=box style=filled];\n",
+              i,queries_ev[i] ? color3 : color6,color7,trname[ev2tr[i]],i);
+        else if (i == cutoffs[i])
+          printf("  e%d [color=%s fillcolor=%s label=\"%s (e%d)\" shape=box style=filled];\n",
+              i,queries_ev[i] ? color3 : color6,color5,trname[ev2tr[i]],i);
+>>>>>>> a2d7029472ef6fd9949d9b3eeab62368d0f101ab
         else
           printf("  e%d [color=\"%s\" fillcolor=\"%s\" label=\"%s (e%d)\" shape=box style=filled];\n",
               i,queries_ev[i] ? color6 : color9,queries_ev[i] ? color3 : color4,trname[ev2tr[i]],i);

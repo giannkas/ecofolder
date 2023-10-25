@@ -1,0 +1,3 @@
+digraph test {
+  c1 [color= "#4040ff"fillcolor="transparent" label= <<FONT COLOR ="black">P8</FONT><FONT COLOR="red"><SUP>1</SUP></FONT><FONT COLOR="black"> (c1)</FONT>> shape=circle style=filled];
+}

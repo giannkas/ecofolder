@@ -1,0 +1,27 @@
+#!/bin/bash
+
+#echo "Translation to SAT..."
+if [ -f $1.mci ]; then
+  ./mci2sat -r "$2" $1.mci
+  correct=$?
+else
+  echo "mci file does not exist"
+  correct=0
+fi
+#echo $correct
+if [ $correct -eq 1 ]; then 
+  #echo "SAT checking..."
+  minisat $1.sat $1.res > /dev/null
+
+  #echo "Evaluating SAT..."
+  ./sateval -data -r $1.mci $1.res
+
+  sateval=$?
+  #echo "Sateval is: $sateval"
+else
+  sateval=$correct
+fi
+
+exit $sateval
+
+#rm -f $1.mci $1.sat $1.res

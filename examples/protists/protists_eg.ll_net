@@ -2,6 +2,7 @@ PEP
 PetriBox
 FORMAT_N2
 PL
+<<<<<<< HEAD
 "A+" M1
 "A-"
 "B+" M1
@@ -14,6 +15,20 @@ PL
 "P-"
 "T+" M1
 "T-"
+=======
+"Am+"M1
+"Am-"
+"Bl+"M1
+"Bl-"
+"Co+"M1
+"Co-"
+"Eu+"M1
+"Eu-"
+"Pa+"M1
+"Pa-"
+"Te+"M1
+"Te-"
+>>>>>>> a2d7029472ef6fd9949d9b3eeab62368d0f101ab
 TR
 "r1"
 "r2"

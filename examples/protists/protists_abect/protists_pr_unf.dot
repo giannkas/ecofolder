@@ -1,0 +1,95 @@
+digraph test {
+  e2 -> e6;
+  e3 -> e7;
+  e2 -> e8;
+  e3 -> e8;
+  e2 -> e9;
+  e3 -> e9;
+  e8 -> e10;
+  e8 -> e11;
+  e8 -> e12;
+  e3 -> e13;
+  e3 -> e14;
+  e3 -> e15;
+  e3 -> e16;
+  e2 -> e17;
+  e0 -> e1;
+  e0 -> e2;
+  e0 -> e3;
+  e0 -> e4;
+  e0 -> e5;
+  e0 -> e18;
+  e0 -> e19;
+  e0 -> e20;
+  e0 -> e21;
+
+//conflicts
+  e1 -> e2 [arrowhead=none color=gray60 style=dashed constraint=false];
+  e1 -> e3 [arrowhead=none color=gray60 style=dashed constraint=false];
+  e1 -> e21 [arrowhead=none color=gray60 style=dashed constraint=false];
+  e2 -> e7 [arrowhead=none color=gray60 style=dashed constraint=false];
+  e2 -> e15 [arrowhead=none color=gray60 style=dashed constraint=false];
+  e2 -> e16 [arrowhead=none color=gray60 style=dashed constraint=false];
+  e2 -> e20 [arrowhead=none color=gray60 style=dashed constraint=false];
+  e2 -> e21 [arrowhead=none color=gray60 style=dashed constraint=false];
+  e3 -> e6 [arrowhead=none color=gray60 style=dashed constraint=false];
+  e3 -> e17 [arrowhead=none color=gray60 style=dashed constraint=false];
+  e3 -> e18 [arrowhead=none color=gray60 style=dashed constraint=false];
+  e3 -> e19 [arrowhead=none color=gray60 style=dashed constraint=false];
+  e3 -> e20 [arrowhead=none color=gray60 style=dashed constraint=false];
+  e3 -> e21 [arrowhead=none color=gray60 style=dashed constraint=false];
+  e4 -> e14 [arrowhead=none color=gray60 style=dashed constraint=false];
+  e4 -> e19 [arrowhead=none color=gray60 style=dashed constraint=false];
+  e5 -> e13 [arrowhead=none color=gray60 style=dashed constraint=false];
+  e5 -> e18 [arrowhead=none color=gray60 style=dashed constraint=false];
+  e6 -> e17 [arrowhead=none color=gray60 style=dashed constraint=false];
+  e7 -> e16 [arrowhead=none color=gray60 style=dashed constraint=false];
+  e8 -> e9 [arrowhead=none color=gray60 style=dashed constraint=false];
+  e10 -> e12 [arrowhead=none color=gray60 style=dashed constraint=false];
+  e10 -> e13 [arrowhead=none color=gray60 style=dashed constraint=false];
+  e10 -> e14 [arrowhead=none color=gray60 style=dashed constraint=false];
+  e11 -> e12 [arrowhead=none color=gray60 style=dashed constraint=false];
+  e13 -> e14 [arrowhead=none color=gray60 style=dashed constraint=false];
+  e13 -> e15 [arrowhead=none color=gray60 style=dashed constraint=false];
+  e14 -> e15 [arrowhead=none color=gray60 style=dashed constraint=false];
+  e18 -> e19 [arrowhead=none color=gray60 style=dashed constraint=false];
+  e18 -> e20 [arrowhead=none color=gray60 style=dashed constraint=false];
+  e19 -> e20 [arrowhead=none color=gray60 style=dashed constraint=false];
+
+  e1 [color="black" fillcolor="white" label="r2 (e1)" shape=box style=filled];
+  e2 [color="black" fillcolor="#b3de69:#80b1d3" label="r3 (e2)" shape=box style=filled];
+  e3 [color="black" fillcolor="#ffed6f:#80b1d3" label="r4 (e3)" shape=box style=filled];
+  e4 [shape=none label=<
+    <TABLE border="1" cellspacing="0" cellpadding="8" cellborder="0" > 
+      <TR>
+        <TD bgcolor="#ffed6f:#b3de69" align="right">r6</TD>
+        <TD bgcolor="#b3de69:#80b1d3" align="left">(e4)</TD>
+      </TR>
+    </TABLE>>
+    ];
+  e5 [shape=none label=<
+    <TABLE border="1" cellspacing="0" cellpadding="8" cellborder="0" > 
+      <TR>
+        <TD bgcolor="#ffed6f:#b3de69" align="right">r10</TD>
+        <TD bgcolor="#b3de69:#80b1d3" align="left">(e5)</TD>
+      </TR>
+    </TABLE>>
+    ];
+  e6 [color="black" fillcolor="#b3de69" label="r2 (e6)" shape=box style=filled];
+  e7 [color="black" fillcolor="#ffed6f" label="r2 (e7)" shape=box style=filled];
+  e8 [color="black" fillcolor="white" label="r1 (e8)" shape=box style=filled];
+  e9 [color="black" fillcolor="#80b1d3" label="r2 (e9)" shape=box style=filled];
+  e10 [color="black" fillcolor="white" label="r4 (e10)" shape=box style=filled];
+  e11 [color="black" fillcolor="white" label="r3 (e11)" shape=box style=filled];
+  e12 [color="black" fillcolor="white" label="r2 (e12)" shape=box style=filled];
+  e13 [color="black" fillcolor="white" label="r8 (e13)" shape=box style=filled];
+  e14 [color="black" fillcolor="white" label="r7 (e14)" shape=box style=filled];
+  e15 [color="black" fillcolor="white" label="r5 (e15)" shape=box style=filled];
+  e16 [color="black" fillcolor="white" label="r1 (e16)" shape=box style=filled];
+  e17 [color="black" fillcolor="white" label="r1 (e17)" shape=box style=filled];
+  e18 [color="black" fillcolor="white" label="r8 (e18)" shape=box style=filled];
+  e19 [color="black" fillcolor="white" label="r7 (e19)" shape=box style=filled];
+  e20 [color="black" fillcolor="white" label="r5 (e20)" shape=box style=filled];
+  e21 [color="black" fillcolor="white" label="r1 (e21)" shape=box style=filled];
+  e0 [fillcolor=white label="⊥" shape=box style=filled];
+}

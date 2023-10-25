@@ -123,12 +123,21 @@ int add_marking (nodelist_t *marking, event_t *ev)
   /* printf("\nhola\n");
   if(ev) printf("creating marking: %s, %d\n", ev->origin->name, ev->id);
   for(list = marking; list; list = list->next)
+<<<<<<< HEAD
     printf("%s, ", ((place_t*)(list->node))->name); */
+=======
+    printf("%s, ", ((place_t*)(list->node))->name);
+  printf("\nchao\n"); */
+>>>>>>> a2d7029472ef6fd9949d9b3eeab62368d0f101ab
   
   if(!cmp && mcmillan) /* marking is already present */
   {
     list = (*buck)->pre_evs;
+<<<<<<< HEAD
     if(!list)
+=======
+    if(!list) /* initial marking */
+>>>>>>> a2d7029472ef6fd9949d9b3eeab62368d0f101ab
     {
       checked_back = 1;
       nodelist_push(&cutoff_list,ev);
@@ -149,7 +158,13 @@ int add_marking (nodelist_t *marking, event_t *ev)
     (*buck)->repeat++;
     /* printf("\nrepetition: %d\n", (*buck)->repeat);
     printf("chao\n"); */
+<<<<<<< HEAD
     nodelist_push(&((*buck)->pre_evs),ev);
+=======
+    /* if initial marking has been seen then we're done. */
+    /* All configurations start from the initial marking. */
+    if((*buck)->pre_evs) nodelist_push(&((*buck)->pre_evs),ev);
+>>>>>>> a2d7029472ef6fd9949d9b3eeab62368d0f101ab
   }
   else if (!cmp && !mcmillan)
   {
@@ -210,4 +225,17 @@ void print_marking_co (nodelist_t* list)
   if (!list) return;
   printf("%s ",((cond_t*)(list->node))->origin->name);
   print_marking_co(list->next);
+}
+
+char *mrk2str (nodelist_t* list)
+{
+  if (!list) return NULL;
+  char *str_marking = calloc((net->maxplname*(net->numpl-1)), sizeof(char));
+  while(list)
+  {
+    strcat(str_marking, ((place_t*)(list->node))->name);
+    list = list->next;
+    if (list) strcat(str_marking, ",");
+  }
+  return str_marking;
 }

@@ -25,6 +25,7 @@ digraph test {
   p4 [label="" xlabel= <<FONT COLOR="red">P3</FONT>> shape=circle ];
   p5 [label="" xlabel= <<FONT COLOR="red">P4</FONT>> shape=circle ];
   p6 [label="" xlabel= <<FONT COLOR="red">P5</FONT>> shape=circle ];
+<<<<<<< HEAD
   t1 [fillcolor=gray60 label=T0 shape=box style=filled];
   t2 [fillcolor=gray60 label=T1 shape=box style=filled];
   t3 [fillcolor=gray60 label=T2 shape=box style=filled];
@@ -35,4 +36,16 @@ digraph test {
   t8 [fillcolor=gray60 label=T7 shape=box style=filled];
   t9 [fillcolor=gray60 label=T8 shape=box style=filled];
   t10 [fillcolor=gray60 label=T9 shape=box style=filled];
+=======
+  t1 [fillcolor="#cccccc" label="T0" shape=box style=filled];
+  t2 [fillcolor="#cccccc" label="T1" shape=box style=filled];
+  t3 [fillcolor="#cccccc" label="T2" shape=box style=filled];
+  t4 [fillcolor="#cccccc" label="T3" shape=box style=filled];
+  t5 [fillcolor="#cccccc" label="T4" shape=box style=filled];
+  t6 [fillcolor="#cccccc" label="T5" shape=box style=filled];
+  t7 [fillcolor="#cccccc" label="T6" shape=box style=filled];
+  t8 [fillcolor="#cccccc" label="T7" shape=box style=filled];
+  t9 [fillcolor="#cccccc" label="T8" shape=box style=filled];
+  t10 [fillcolor="#cccccc" label="T9" shape=box style=filled];
+>>>>>>> a2d7029472ef6fd9949d9b3eeab62368d0f101ab
 }

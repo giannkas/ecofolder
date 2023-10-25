@@ -110,7 +110,11 @@ char* pr_encoding(char* in_file){
           strcat(buffer_pl, buf_arcs);
           new_places++;
           replicated_places_per_place[num_tmp][read_place_arcs[num_tmp]] = places+new_places;
+<<<<<<< HEAD
         }        
+=======
+        }
+>>>>>>> a2d7029472ef6fd9949d9b3eeab62368d0f101ab
       }
 
       /* Print into the output file the places that come from the input file plus
@@ -121,7 +125,11 @@ char* pr_encoding(char* in_file){
         token = ftokstr(d_read, 1, '\"');
         if(token){
           if(read_place_arcs[new_places] > 1){
+<<<<<<< HEAD
             sprintf(buf_arcs, "\"%s_%d\"%s", token, 1, ltokstr(d_read, 1, '\"'));
+=======
+            sprintf(buf_arcs, "\"%s_%d\"%s\n", token, 1, ltokstr(d_read, 1, '\"'));
+>>>>>>> a2d7029472ef6fd9949d9b3eeab62368d0f101ab
             fprintf(w_pointer, "%s", buf_arcs);
           }
           else
@@ -133,7 +141,11 @@ char* pr_encoding(char* in_file){
       }
       token = strtok(buffer_pl, ",");
       while (token != NULL){
+<<<<<<< HEAD
         fprintf(w_pointer, "%s", token);
+=======
+        fprintf(w_pointer, "%s\n", token);
+>>>>>>> a2d7029472ef6fd9949d9b3eeab62368d0f101ab
         token = strtok(NULL, ",");
       }
 

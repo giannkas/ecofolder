@@ -1,0 +1,7 @@
+digraph test {
+  c1 -> e1;
+  e1 -> c2;
+  c1 [color="#4040ff" fillcolor="transparent" label= <bad_P<FONT COLOR="red"><SUP>1</SUP></FONT>&nbsp;(c1)> shape=circle style=filled];
+  c2 [color="#4040ff" fillcolor="#ccccff" label= <cro_0<FONT COLOR="red"><SUP>1</SUP></FONT>&nbsp;(c2)> shape=circle style=filled];
+  e1 [color="#409f40" fillcolor="#cce6cc" label="bad_T1 (e1)" shape=box style=filled];
+}
