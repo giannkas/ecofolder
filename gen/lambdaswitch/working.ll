@@ -4,15 +4,15 @@ FORMAT_N
 PL
 3"cro_3"M0
 2"cro_2"M0
-6"cro_1"M1
-7"cro_0"M0
+6"cro_1"M0
+7"cro_0"M1
 11"cII_1"M0
 10"cII_0"M1
 5"cI_2"M0
-4"cI_1"M1
-1"cI_0"M0
-9"N_1"M1
-8"N_0"M0
+4"cI_1"M0
+1"cI_0"M1
+9"N_1"M0
+8"N_0"M1
 TR
 41"[cI_0;cro_3] -> N_1 N_0"0@0
 40"[cI_0;cro_2] -> N_1 N_0"0@0

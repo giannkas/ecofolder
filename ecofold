@@ -2,9 +2,9 @@
 
 echo "Unfolding..."
 if [ -f $1.ll_net ]; then
-  ./ecofolder -mcmillan $1.ll_net
+  ./ecofolder $1.ll_net
 else
-  ./ecofolder -mcmillan $1.ll
+  ./ecofolder $1.ll
 fi
 #../ecofolder/ecofolder
 

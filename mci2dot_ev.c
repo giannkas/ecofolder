@@ -233,7 +233,7 @@ void read_mci_file_ev (char *mcifile, char* evcofile, int m_repeat, int cutout)
                           // are the events in the postset of a condition in
                           // the unfolding.
       //printf("post_ev: %d\n", post_ev);
-      if(pre_ev && post_ev && ev_succs[pre_ev][post_ev] == 0){ // check if a 
+      if(pre_ev && post_ev && ev_succs[pre_ev][post_ev] == 0 && tokens[i]){ // check if a 
                                                                // value hasn't
                                                                // been assigned yet
                                                                // and if pre_ev and
@@ -263,7 +263,7 @@ void read_mci_file_ev (char *mcifile, char* evcofile, int m_repeat, int cutout)
         else if (cutout && queries_ev[post_ev])
           printf("  e0 -> e%d;\n", post_ev);
       } */
-      if (post_ev) co_postsets[i][post_ev] = post_ev; // assign in the ith
+      if (post_ev && tokens[i]) co_postsets[i][post_ev] = post_ev; // assign in the ith
                                                       // (which corresponds
                                                       // to the ith condition)
                                                       // entry of matrix

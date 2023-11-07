@@ -33,22 +33,18 @@ class Model:
     self.header = ''
     self.PL = {}
     self.TR = []
+    self.posts_TR = {}
     self.RT = []
     self.RD = []
     self.TP = []
     self.PT = []
     self.RS = []
-    self.PL_ = {}
-    self.TR_ = []
-    self.RT_ = []
-    self.RD_ = []
-    self.TP_ = []
-    self.PT_ = []
-    self.RS_ = []
     state = "header"
     max_pid = 0
     max_tid = 0
     pid, tid = 0, 0
+    id2pn = {}
+    id2tn = {}
     for l in f:
       r = l.strip()
       if r in ["PL", "TR", "RT", "RD", "TP", "PT", "RS"]:
@@ -62,11 +58,14 @@ class Model:
         name = parts[1]
         m0 = "M1" in r
         self.PL[name] = {"id": pid, "m0": m0}
+        id2pn[pid] = name
         max_pid = max(max_pid, pid)
       elif state == "TR":
         parts = r.split('"')
         if len(parts[0]) < 1: tid += 1
         else: tid = int(parts[0])
+        name = parts[1]
+        id2tn[tid] = name
         max_tid = max(max_tid, tid)
         self.TR.append(r)
       elif state == "RT":
@@ -75,6 +74,12 @@ class Model:
         self.RD.append(r)
       elif state == "TP":
         self.TP.append(r)
+        parts = r.split("<")
+        parts[0] = int(parts[0])
+        parts[1] = int(parts[1])
+        if id2tn[parts[0]] not in self.posts_TR: 
+          self.posts_TR[id2tn[parts[0]]] = [id2pn[parts[1]]]
+        else: self.posts_TR[id2tn[parts[0]]] += [id2pn[parts[1]]]
       elif state == "PT":
         self.PT.append(r)
       elif state == "RS":
@@ -87,15 +92,14 @@ class Model:
     PL = ["%d\"%s\"M%d" % (v["id"], k, 1 if v["m0"] else 0)
             for k, v in self.PL.items()]
     f.write("PL\n%s\n" % ("\n".join(PL)))
-    f.write("TR\n%s\n" % ("\n".join(self.TR + self.TR_)))
-    f.write("RT\n%s\n" % ("\n".join(self.RT + self.RT_)))
-    f.write("RD\n%s\n" % ("\n".join(self.RD + self.RD_)))
-    f.write("TP\n%s\n" % ("\n".join(self.TP + self.TP_)))
-    f.write("PT\n%s\n" % ("\n".join(self.PT + self.PT_)))
-    f.write("RS\n%s\n" % ("\n".join(self.RS + self.RS_)))
+    f.write("TR\n%s\n" % ("\n".join(self.TR)))
+    f.write("RT\n%s\n" % ("\n".join(self.RT)))
+    f.write("RD\n%s\n" % ("\n".join(self.RD)))
+    f.write("TP\n%s\n" % ("\n".join(self.TP)))
+    f.write("PT\n%s\n" % ("\n".join(self.PT)))
+    f.write("RS\n%s\n" % ("\n".join(self.RS)))
 
   def set_marking(self, m0):
-    #print(m0)
     for k in self.PL:
       self.PL[k]["m0"] = k in m0
   
@@ -120,7 +124,8 @@ class Model:
     with open(llfile, "w") as fp:
         self.write(fp)
     mcifile = os.path.join(out_d, mcifile)
-    free_mrk = subprocess.check_output(["ecofolder", "-freechk", "-badchk", badfile, llfile, "-m", mcifile]).decode()
+    args = [script_path("ecofolder"), "-freechk", "-badchk", badfile, llfile, "-m", mcifile]
+    free_mrk = subprocess.check_output(args).decode()
     
     return free_mrk
 
@@ -247,9 +252,9 @@ def markings(prefix_asp):
   sat.add("base", [], "#show ncut/1.")
   sat.ground([("base",())])
   for sol in sat.solve(yield_=True):
-      atoms = sol.symbols(shown=True)
-      m = marking_from_atoms(atoms)
-      yield m
+    atoms = sol.symbols(shown=True)
+    m = marking_from_atoms(atoms)
+    yield m
 
 def maximal_configurations(prefix_asp):
   sat = clingo.Control(["0", "--heuristic=Domain",
@@ -339,7 +344,7 @@ with open(bad_aspfile, "w") as fp:
       fp.write(f"{clingo.Function('bad', (clingo.String(p),))}.\n")
 
 clingo_opts = ["-W", "none"]
-clingo_opts += ["-t", str(multiprocessing.cpu_count())]
+#clingo_opts += ["-t", str(multiprocessing.cpu_count())]
 
 t0 = time.time()
 
@@ -392,7 +397,7 @@ def get_crest(poset):
   return {e for e, od in poset.out_degree() if od == 0}
 
 stats = {
-    "is_doomed": 0
+  "is_free": 0
 }
 
 def shave(C_d, crest):
@@ -438,47 +443,6 @@ doom_ctl = clingo.Control(clingo_opts)
 # doom_ctl.ground([("base",())])
 print(f" done in {process_time()-t0:.1f}s", flush=True, file=sys.stderr)
 
-def is_doomed(C):
-  terms = [clingo.parse_term(f"my({e})") for e in C]
-  for t in terms:
-    doom_ctl.assign_external(t, True)
-  ret = not doom_ctl.solve().satisfiable
-  for t in terms:
-    doom_ctl.release_external(t)
-  stats["is_doomed"] += 1
-  return ret
-
-def handle(C_e):
-  if is_doomed(C_e):
-    C_d = prefix_d.subgraph(C_e)
-    C_crest = get_crest(C_d)
-    Cp = shave(C_d, C_crest)
-    wl.add(Cp)
-    return False
-  return True
-
-
-# C, crest = wl.pop()
-# C = set(C)
-# crest = set(crest)
-# C_e = C - crest
-# Cstr = ""
-# for s in C:
-#   Cstr = Cstr + "".join(d if d.isdigit() else "" for d in s)
-# Cstr = Cstr[1:]
-# Cstr=Cstr.replace('0',',')
-# Clist = Cstr.split(',')
-# Cstr_=sorted(Clist)
-# Cstr_ = ','.join(Cstr_)
-# print(C)
-# print(crest)
-# tcrest = tuple(crest)[0]
-# get_marking(C_e)
-# print("e2tr", e2tr)
-# #args = [script_path("mci2asp"), mcifile]
-#   #return subprocess.check_output(args).decode()
-
-
 def str_conf(C):
   Cstr = ""
   for s in C:
@@ -507,58 +471,77 @@ def sort_by_number(string):
   number = int(string.split(',')[-1][1:].strip(')'))
   return number
 
-
 #Cstr_ = "1,3,6,11,16,43"
 #print(decisional_height(dicevents, Cstr_))
 #markidC_e = subprocess.check_output(["mci2asp", "-cf", Cstr_, mci]).decode()
 #tupleC_e = idpl2plnames(markidC_e)
 #print(tupleC_e)
 
-#print(wl)
-
-i = 0
-while wl:
-  C, crest = wl.pop()
-  C = set(C)
-  crest = set(crest)
-  C_e = C - crest
-  add = True
+def is_free(C_e):
   Cstr_ = str_conf(C_e)
   markidC_e = subprocess.check_output(["mci2asp", "-cf", Cstr_, mci]).decode()
   tupleC_e = idpl2plnames(markidC_e)
   model.set_marking(tupleC_e)
   freeC_e = int(model.freecheck(badfile=bad_unf).strip())
-  #print("hola")
-  if not freeC_e:
-    add = False
+  stats['is_free'] += 1
+  return freeC_e
+
+def handle(C_e):
+  if not is_free(C_e):
     C_d = prefix_d.subgraph(C_e)
     C_crest = get_crest(C_d)
     Cp = shave(C_d, C_crest)
     wl.add(Cp)
-    stats['is_doomed'] += 1
-  else:
+    return False
+  return True
+
+print(wl)
+
+i = 0
+while wl:
+  C, crest = wl.pop()
+  if C in known:
+    continue
+  known.add(C)
+  C = set(C)
+  crest = set(crest)
+  C_e = C - crest
+  add = True
+  # print(Cstr_)
+  if handle(C_e):
     for e in crest:
       e = set([e])
       c_e = C - e
-      cstr_ = str_conf(c_e)
-      markidc_e = subprocess.check_output(["mci2asp", "-cf", cstr_, mci]).decode()
-      tuplec_e = idpl2plnames(markidc_e)
-      model.set_marking(tuplec_e)
-      freec_e = int(model.freecheck(badfile=bad_unf).strip())
-      if not freec_e:
-        add = False
-        c_d = prefix_d.subgraph(c_e)
-        c_crest = get_crest(c_d)
-        cp = shave(c_d, c_crest)
-        wl.add(cp)
-        stats['is_doomed'] += 1
+      free = handle(c_e)
+      add = add and free
+  else:
+    add = False
   if add:
     i += 1
     d = process_time() - t0
     print(f"{d:.1f} [MINDOO {i}]\t", set(sorted([e2tr[e] for e in C])), sorted(C, key=sort_by_number), flush=True)
     print("Marking: ", idpl2plnames(subprocess.check_output(["mci2asp", "-cf", str_conf(C), mci]).decode()))
-    print(f"   doom checks: {stats['is_doomed']}", flush=True, file=sys.stderr)
+    print(f"   free checks: {stats['is_free']}", flush=True, file=sys.stderr)
 if i == 0:
   print("EMPTY MINDOO")
-print(f"total doom checks: {stats['is_doomed']}", flush=True, file=sys.stderr)
+print(f"total free checks: {stats['is_free']}", flush=True, file=sys.stderr)
 
+
+
+
+#marking = []
+# C_d = prefix_d.subgraph(C_e)
+  # C_crest = get_crest(C_d)
+  # C_creststr = str_conf(C_crest)
+  # sortC_crest = []
+  # print(C_creststr.split(","))
+  # for i in C_creststr.split(","):
+  #   for j in C_e:
+  #     if "e"+i+")" in j:
+  #       sortC_crest.append(j)
+  # print(sortC_crest)
+  # for i in sortC_crest:
+  #   marking += model.posts_TR[e2tr[i]]
+  #   print(e2tr[i])
+  # print(marking)
+  # print(set(marking))
