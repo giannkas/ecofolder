@@ -1,95 +1,65 @@
 digraph test {
-  e2 -> e6;
-  e3 -> e7;
-  e2 -> e8;
-  e3 -> e8;
-  e2 -> e9;
-  e3 -> e9;
-  e8 -> e10;
-  e8 -> e11;
-  e8 -> e12;
-  e3 -> e13;
-  e3 -> e14;
-  e3 -> e15;
-  e3 -> e16;
-  e2 -> e17;
-  e0 -> e1;
-  e0 -> e2;
-  e0 -> e3;
-  e0 -> e4;
-  e0 -> e5;
-  e0 -> e18;
-  e0 -> e19;
-  e0 -> e20;
-  e0 -> e21;
-
-//conflicts
-  e1 -> e2 [arrowhead=none color=gray60 style=dashed constraint=false];
-  e1 -> e3 [arrowhead=none color=gray60 style=dashed constraint=false];
-  e1 -> e21 [arrowhead=none color=gray60 style=dashed constraint=false];
-  e2 -> e7 [arrowhead=none color=gray60 style=dashed constraint=false];
-  e2 -> e15 [arrowhead=none color=gray60 style=dashed constraint=false];
-  e2 -> e16 [arrowhead=none color=gray60 style=dashed constraint=false];
-  e2 -> e20 [arrowhead=none color=gray60 style=dashed constraint=false];
-  e2 -> e21 [arrowhead=none color=gray60 style=dashed constraint=false];
-  e3 -> e6 [arrowhead=none color=gray60 style=dashed constraint=false];
-  e3 -> e17 [arrowhead=none color=gray60 style=dashed constraint=false];
-  e3 -> e18 [arrowhead=none color=gray60 style=dashed constraint=false];
-  e3 -> e19 [arrowhead=none color=gray60 style=dashed constraint=false];
-  e3 -> e20 [arrowhead=none color=gray60 style=dashed constraint=false];
-  e3 -> e21 [arrowhead=none color=gray60 style=dashed constraint=false];
-  e4 -> e14 [arrowhead=none color=gray60 style=dashed constraint=false];
-  e4 -> e19 [arrowhead=none color=gray60 style=dashed constraint=false];
-  e5 -> e13 [arrowhead=none color=gray60 style=dashed constraint=false];
-  e5 -> e18 [arrowhead=none color=gray60 style=dashed constraint=false];
-  e6 -> e17 [arrowhead=none color=gray60 style=dashed constraint=false];
-  e7 -> e16 [arrowhead=none color=gray60 style=dashed constraint=false];
-  e8 -> e9 [arrowhead=none color=gray60 style=dashed constraint=false];
-  e10 -> e12 [arrowhead=none color=gray60 style=dashed constraint=false];
-  e10 -> e13 [arrowhead=none color=gray60 style=dashed constraint=false];
-  e10 -> e14 [arrowhead=none color=gray60 style=dashed constraint=false];
-  e11 -> e12 [arrowhead=none color=gray60 style=dashed constraint=false];
-  e13 -> e14 [arrowhead=none color=gray60 style=dashed constraint=false];
-  e13 -> e15 [arrowhead=none color=gray60 style=dashed constraint=false];
-  e14 -> e15 [arrowhead=none color=gray60 style=dashed constraint=false];
-  e18 -> e19 [arrowhead=none color=gray60 style=dashed constraint=false];
-  e18 -> e20 [arrowhead=none color=gray60 style=dashed constraint=false];
-  e19 -> e20 [arrowhead=none color=gray60 style=dashed constraint=false];
-
-  e1 [color="black" fillcolor="white" label="r2 (e1)" shape=box style=filled];
-  e2 [color="black" fillcolor="#b3de69:#80b1d3" label="r3 (e2)" shape=box style=filled];
-  e3 [color="black" fillcolor="#ffed6f:#80b1d3" label="r4 (e3)" shape=box style=filled];
-  e4 [shape=none label=<
-    <TABLE border="1" cellspacing="0" cellpadding="8" cellborder="0" > 
-      <TR>
-        <TD bgcolor="#ffed6f:#b3de69" align="right">r6</TD>
-        <TD bgcolor="#b3de69:#80b1d3" align="left">(e4)</TD>
-      </TR>
-    </TABLE>>
-    ];
-  e5 [shape=none label=<
-    <TABLE border="1" cellspacing="0" cellpadding="8" cellborder="0" > 
-      <TR>
-        <TD bgcolor="#ffed6f:#b3de69" align="right">r10</TD>
-        <TD bgcolor="#b3de69:#80b1d3" align="left">(e5)</TD>
-      </TR>
-    </TABLE>>
-    ];
-  e6 [color="black" fillcolor="#b3de69" label="r2 (e6)" shape=box style=filled];
-  e7 [color="black" fillcolor="#ffed6f" label="r2 (e7)" shape=box style=filled];
-  e8 [color="black" fillcolor="white" label="r1 (e8)" shape=box style=filled];
-  e9 [color="black" fillcolor="#80b1d3" label="r2 (e9)" shape=box style=filled];
-  e10 [color="black" fillcolor="white" label="r4 (e10)" shape=box style=filled];
-  e11 [color="black" fillcolor="white" label="r3 (e11)" shape=box style=filled];
-  e12 [color="black" fillcolor="white" label="r2 (e12)" shape=box style=filled];
-  e13 [color="black" fillcolor="white" label="r8 (e13)" shape=box style=filled];
-  e14 [color="black" fillcolor="white" label="r7 (e14)" shape=box style=filled];
-  e15 [color="black" fillcolor="white" label="r5 (e15)" shape=box style=filled];
-  e16 [color="black" fillcolor="white" label="r1 (e16)" shape=box style=filled];
-  e17 [color="black" fillcolor="white" label="r1 (e17)" shape=box style=filled];
-  e18 [color="black" fillcolor="white" label="r8 (e18)" shape=box style=filled];
-  e19 [color="black" fillcolor="white" label="r7 (e19)" shape=box style=filled];
-  e20 [color="black" fillcolor="white" label="r5 (e20)" shape=box style=filled];
-  e21 [color="black" fillcolor="white" label="r1 (e21)" shape=box style=filled];
-  e0 [fillcolor=white label="⊥" shape=box style=filled];
+  c1 -> e3;
+  c3 -> e2;
+  c4 -> e9;
+  c5 -> e3;
+  c6 -> e3;
+  c7 -> e2;
+  c8 -> e2;
+  c9 -> e3;
+  c10 -> e9;
+  c11 -> e4;
+  c12 -> e5;
+  c13 -> e2;
+  c14 -> e9;
+  e2 -> c25;
+  e2 -> c26;
+  c26 -> e9;
+  e2 -> c27;
+  e2 -> c28;
+  e3 -> c29;
+  e3 -> c30;
+  c30 -> e9;
+  e3 -> c31;
+  e3 -> c32;
+  e4 -> c36;
+  e5 -> c43;
+  e9 -> c78;
+  e9 -> c79;
+  e9 -> c80;
+  e9 -> c81;
+  e9 -> c82;
+  c1 [color="#4040ff" fillcolor="transparent" label= <T-<FONT COLOR="red"><SUP>0</SUP></FONT>&nbsp;(c1)> shape=circle style=filled];
+  c3 [color="#4040ff" fillcolor="transparent" label= <B-<FONT COLOR="red"><SUP>0</SUP></FONT>&nbsp;(c3)> shape=circle style=filled];
+  c4 [color="#4040ff" fillcolor="transparent" label= <A-<FONT COLOR="red"><SUP>0</SUP></FONT>&nbsp;(c4)> shape=circle style=filled];
+  c5 [color="#4040ff" fillcolor="transparent" label= <P-_3<FONT COLOR="red"><SUP>1</SUP></FONT>&nbsp;(c5)> shape=circle style=filled];
+  c6 [color="#4040ff" fillcolor="transparent" label= <A+_3<FONT COLOR="red"><SUP>1</SUP></FONT>&nbsp;(c6)> shape=circle style=filled];
+  c7 [color="#4040ff" fillcolor="transparent" label= <P-_2<FONT COLOR="red"><SUP>1</SUP></FONT>&nbsp;(c7)> shape=circle style=filled];
+  c8 [color="#4040ff" fillcolor="transparent" label= <A+_2<FONT COLOR="red"><SUP>1</SUP></FONT>&nbsp;(c8)> shape=circle style=filled];
+  c9 [color="#4040ff" fillcolor="transparent" label= <T+<FONT COLOR="red"><SUP>1</SUP></FONT>&nbsp;(c9)> shape=circle style=filled];
+  c10 [color="#4040ff" fillcolor="transparent" label= <P-_1<FONT COLOR="red"><SUP>1</SUP></FONT>&nbsp;(c10)> shape=circle style=filled];
+  c11 [color="#4040ff" fillcolor="transparent" label= <E+<FONT COLOR="red"><SUP>1</SUP></FONT>&nbsp;(c11)> shape=circle style=filled];
+  c12 [color="#4040ff" fillcolor="transparent" label= <C+<FONT COLOR="red"><SUP>1</SUP></FONT>&nbsp;(c12)> shape=circle style=filled];
+  c13 [color="#4040ff" fillcolor="transparent" label= <B+<FONT COLOR="red"><SUP>1</SUP></FONT>&nbsp;(c13)> shape=circle style=filled];
+  c14 [color="#4040ff" fillcolor="transparent" label= <A+_1<FONT COLOR="red"><SUP>1</SUP></FONT>&nbsp;(c14)> shape=circle style=filled];
+  c25 [color="#4040ff" fillcolor="gold" label= <P-_2<FONT COLOR="red"><SUP>1</SUP></FONT>&nbsp;(c25)> shape=circle style=filled];
+  c26 [color="#4040ff" fillcolor="#ccccff" label= <A+_2<FONT COLOR="red"><SUP>1</SUP></FONT>&nbsp;(c26)> shape=circle style=filled];
+  c27 [color="#4040ff" fillcolor="gold" label= <B-<FONT COLOR="red"><SUP>1</SUP></FONT>&nbsp;(c27)> shape=circle style=filled];
+  c28 [color="#4040ff" fillcolor="#ccccff" label= <B+<FONT COLOR="red"><SUP>0</SUP></FONT>&nbsp;(c28)> shape=circle style=filled];
+  c29 [color="#4040ff" fillcolor="gold" label= <P-_3<FONT COLOR="red"><SUP>1</SUP></FONT>&nbsp;(c29)> shape=circle style=filled];
+  c30 [color="#4040ff" fillcolor="#ccccff" label= <A+_3<FONT COLOR="red"><SUP>1</SUP></FONT>&nbsp;(c30)> shape=circle style=filled];
+  c31 [color="#4040ff" fillcolor="gold" label= <T-<FONT COLOR="red"><SUP>1</SUP></FONT>&nbsp;(c31)> shape=circle style=filled];
+  c32 [color="#4040ff" fillcolor="#ccccff" label= <T+<FONT COLOR="red"><SUP>0</SUP></FONT>&nbsp;(c32)> shape=circle style=filled];
+  c36 [color="#4040ff" fillcolor="gold" label= <E-<FONT COLOR="red"><SUP>1</SUP></FONT>&nbsp;(c36)> shape=circle style=filled];
+  c43 [color="#4040ff" fillcolor="gold" label= <C-<FONT COLOR="red"><SUP>1</SUP></FONT>&nbsp;(c43)> shape=circle style=filled];
+  c78 [color="#4040ff" fillcolor="gold" label= <P-_1<FONT COLOR="red"><SUP>1</SUP></FONT>&nbsp;(c78)> shape=circle style=filled];
+  c79 [color="#4040ff" fillcolor="gold" label= <A-<FONT COLOR="red"><SUP>1</SUP></FONT>&nbsp;(c79)> shape=circle style=filled];
+  c80 [color="#4040ff" fillcolor="#ccccff" label= <A+_1<FONT COLOR="red"><SUP>0</SUP></FONT>&nbsp;(c80)> shape=circle style=filled];
+  c81 [color="#4040ff" fillcolor="#ccccff" label= <A+_3<FONT COLOR="red"><SUP>0</SUP></FONT>&nbsp;(c81)> shape=circle style=filled];
+  c82 [color="#4040ff" fillcolor="#ccccff" label= <A+_2<FONT COLOR="red"><SUP>0</SUP></FONT>&nbsp;(c82)> shape=circle style=filled];
+  e2 [color="black" fillcolor="orange" label="r3 (e2)" shape=box style=filled];
+  e3 [color="black" fillcolor="orange" label="r4 (e3)" shape=box style=filled];
+  e4 [color="black" fillcolor="orange" label="r6 (e4)" shape=box style=filled];
+  e5 [color="black" fillcolor="orange" label="r10 (e5)" shape=box style=filled];
+  e9 [color="black" fillcolor="orange" label="r2 (e9)" shape=box style=filled];
 }

@@ -21,7 +21,8 @@ typedef struct place_t
 {
   struct place_t *next;
   char  *name;  /* short name          */
-  int    num;  /* number            */
+  int    num;  /* number used for a posteriori computations*/
+  int   id;  /* used to identify numerically a place */
   struct nodelist_t *preset;  /* unordered list of preset        */
   struct nodelist_t *postset;  /* unordered list of postset      */
   struct nodelist_t *reset;  /* unordered list of reset transitions */
@@ -36,7 +37,8 @@ typedef struct trans_t
 {
   struct trans_t *next;
   char  *name;        /* short name          */
-  int    num;        /* number            */
+  int    num;   /* number used for a posteriori computations*/
+  int   id;  /* used to identify numerically a transition */
   struct nodelist_t *preset;  /* unordered list of preset        */
   struct nodelist_t *postset; /* unordered list of postset      */
   struct nodelist_t *reset; /* unordered list of reset */
@@ -136,8 +138,8 @@ typedef struct querycell_t
 
 extern net_t* nc_create_net ();
 extern unf_t* nc_create_unfolding ();
-extern place_t* nc_create_place (net_t*);
-extern trans_t* nc_create_transition (net_t*);
+extern place_t* nc_create_place (net_t*,int);
+extern trans_t* nc_create_transition (net_t*,int);
 extern restr_t* nc_create_restriction(net_t*);
 extern void nc_create_arc (struct nodelist_t**,struct nodelist_t**,void*,void*);
 extern void nc_compute_sizes (net_t*);

@@ -115,7 +115,7 @@ class Model:
     with open(llfile, "w") as fp:
         self.write(fp)
     mcifile = os.path.join(out_d, mcifile)
-    subprocess.check_call(["ecofolder", "-data", llfile, "-m", mcifile],
+    subprocess.check_call(["ecofolder", "-useids", llfile, "-m", mcifile],
             stderr=subprocess.DEVNULL if not verbose else None)
     return mcifile
   
@@ -124,7 +124,7 @@ class Model:
     with open(llfile, "w") as fp:
         self.write(fp)
     mcifile = os.path.join(out_d, mcifile)
-    args = [script_path("ecofolder"), "-freechk", "-badchk", badfile, llfile, "-m", mcifile]
+    args = [script_path("ecofolder"), "-useids", "-freechk", "-badchk", badfile, llfile, "-m", mcifile]
     free_mrk = subprocess.check_output(args).decode()
     
     return free_mrk
@@ -397,7 +397,7 @@ def get_crest(poset):
   return {e for e, od in poset.out_degree() if od == 0}
 
 stats = {
-  "is_free": 0
+  "is_doomed": 0
 }
 
 def shave(C_d, crest):
@@ -483,19 +483,16 @@ def is_free(C_e):
   tupleC_e = idpl2plnames(markidC_e)
   model.set_marking(tupleC_e)
   freeC_e = int(model.freecheck(badfile=bad_unf).strip())
-  stats['is_free'] += 1
   return freeC_e
 
 def handle(C_e):
-  if not is_free(C_e):
-    C_d = prefix_d.subgraph(C_e)
-    C_crest = get_crest(C_d)
-    Cp = shave(C_d, C_crest)
-    wl.add(Cp)
-    return False
-  return True
+  C_d = prefix_d.subgraph(C_e)
+  C_crest = get_crest(C_d)
+  Cp = shave(C_d, C_crest)
+  wl.add(Cp)
+  stats['is_doomed'] += 1
 
-print(wl)
+#print(wl)
 
 i = 0
 while wl:
@@ -508,25 +505,25 @@ while wl:
   C_e = C - crest
   add = True
   # print(Cstr_)
-  if handle(C_e):
-    for e in crest:
-      e = set([e])
-      c_e = C - e
-      free = handle(c_e)
-      add = add and free
-  else:
+  if not is_free(C_e):
     add = False
+    handle(C_e)
+  else:
+    for e in crest:
+      c_e = C - {e}
+      if not is_free(c_e):
+        add = False
+        handle(c_e)
   if add:
     i += 1
     d = process_time() - t0
     print(f"{d:.1f} [MINDOO {i}]\t", set(sorted([e2tr[e] for e in C])), sorted(C, key=sort_by_number), flush=True)
+    #print(str_conf(C))
     print("Marking: ", idpl2plnames(subprocess.check_output(["mci2asp", "-cf", str_conf(C), mci]).decode()))
-    print(f"   free checks: {stats['is_free']}", flush=True, file=sys.stderr)
+    print(f"   doom checks: {stats['is_doomed']}", flush=True, file=sys.stderr)
 if i == 0:
   print("EMPTY MINDOO")
-print(f"total free checks: {stats['is_free']}", flush=True, file=sys.stderr)
-
-
+print(f"total doom checks: {stats['is_doomed']}", flush=True, file=sys.stderr)
 
 
 #marking = []

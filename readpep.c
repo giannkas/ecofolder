@@ -477,6 +477,8 @@ char autonumbering, *rd_name;
 int insert_place()
 {
   placecount++;
+  int checkidpl = 0;
+  if (rd_ident) checkidpl = 1;
   if (rd_ident && rd_ident != placecount) autonumbering = 0;
   if (!rd_ident && autonumbering) rd_ident = placecount;
   if (!rd_ident) nc_error("missing place identifier");
@@ -495,7 +497,7 @@ int insert_place()
       PlArray[count++] = NULL;
   }
 
-  PlArray[rd_ident] = nc_create_place(rd_net);
+  PlArray[rd_ident] = nc_create_place(rd_net, checkidpl ? rd_ident : 0);
   PlArray[rd_ident]->name = rd_name? MYstrdup(rd_name) : NULL;
   if (rd_marked > 1) nc_error("place %s has more than one token",rd_name);
   PlArray[rd_ident]->marked = !!rd_marked;
@@ -506,6 +508,8 @@ int insert_place()
 
 int insert_trans()
 {
+  int checkidtr = 0;
+  if (rd_ident) checkidtr = 1;
   if (!transcount++) autonumbering = 1;
   if (rd_ident && rd_ident != transcount) autonumbering = 0;
   if (!rd_ident && autonumbering) rd_ident = transcount;
@@ -525,7 +529,7 @@ int insert_trans()
       TrArray[count++] = NULL;
   }
 
-  TrArray[rd_ident] = nc_create_transition(rd_net);
+  TrArray[rd_ident] = nc_create_transition(rd_net, checkidtr ? rd_ident : 0);
   TrArray[rd_ident]->name = rd_name? MYstrdup(rd_name) : NULL;  
   TrArray[rd_ident]->blocked = rd_blocked >= 1 ? !!rd_blocked : 0;
   return 0;

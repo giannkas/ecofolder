@@ -19,7 +19,7 @@ void read_mci_file (char *filename, int m_repeat, int compressed)
   FILE *file_in, *file_nodes, *file_edges;
   char fullfilename[LINE_SIZE], *fname;
   int nqure, nqure_, nquszcut, nquszevscut, szcuts, 
-    numco, numev, numpl, numtr, sz, i, j;
+    numco, numev, numpl, numtr, idpl, idtr, sz, i, j;
   int pre_ev, post_ev, cutoff, harmful, dummy = 0, dummy_ = 0;
   int *co2pl, *co2coo, *ev2tr, *tokens, *queries_co,
    *queries_ev, *cutoffs, *harmfuls;
@@ -164,12 +164,20 @@ void read_mci_file (char *filename, int m_repeat, int compressed)
   for (i = 1; i <= numpl+1; i++) plname[i] = malloc(sz+1);
   for (i = 1; i <= numtr+1; i++) trname[i] = malloc(sz+1);
 
-  for (c = plname[i=1]; i <= numpl; c = plname[++i])
+  for (i=1; i <= numpl; i++)
+  {
+    read_int(idpl);
+    c = plname[idpl];
     do { fread(c,1,1,file_in); } while (*c++);
+  }
   fread(c,1,1,file_in);
 
-  for (c = trname[i=1]; c = trname[i], i <= numtr; c = trname[++i])
+  for (i=1; i <= numtr; i++)
+  {
+    read_int(idtr);
+    c = trname[idtr];
     do { fread(c,1,1,file_in); } while (*c++);
+  }
   fread(c,1,1,file_in);
 
   for (i = 1; i <= numco; i++)

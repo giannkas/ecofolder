@@ -40,7 +40,7 @@ unf_t* nc_create_unfolding()
 /* Creates a new place or transition in the given net. The new node has no  */
 /* incoming or outgoing arcs and is unmarked.				    */
 
-place_t* nc_create_place (net_t *net)
+place_t* nc_create_place (net_t *net, int idpl)
 {
   place_t *pl = MYmalloc(sizeof(place_t));
   pl->next = net->places;
@@ -48,10 +48,13 @@ place_t* nc_create_place (net_t *net)
   pl->preset = pl->postset = pl->conds =
     pl->reset = pl->ctxset = NULL;
   pl->num = ++net->numpl;
+  if (idpl && useids) pl->id = idpl;
+  else
+    pl->id = net->numpl;
   return pl;
 }
 
-trans_t* nc_create_transition (net_t *net)
+trans_t* nc_create_transition (net_t *net, int idtr)
 {
   trans_t *tr = MYmalloc(sizeof(trans_t));
   tr->next = net->transitions;
@@ -62,6 +65,9 @@ trans_t* nc_create_transition (net_t *net)
     // prereset_size is the sum of preset_size + reset_size
     // dropping out those in common. Same for postreset_size.
   tr->num = ++net->numtr;
+  if (idtr && useids) tr->id = idtr;
+  else
+    tr->id = net->numtr;
   return tr;
 }
 

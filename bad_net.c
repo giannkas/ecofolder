@@ -98,7 +98,11 @@ void bad_net(char* in_file1, char* in_file2){
             token = ftokstr(d_read,1,'\"');
             tmp = ftokstr(d_read,0,'\"');
             fprintf(w_pointer, "%s\"%s\"\n", tmp,token);
-            strcpy(place_names[pnames], token);
+            if (!strlen(tmp))
+              strcpy(place_names[pnames], token);
+            else
+              strcpy(place_names[strtoint(tmp)], token);
+            //printf("%s\n",token);
             pnames++;
           }
           places++;
@@ -192,12 +196,15 @@ void bad_net(char* in_file1, char* in_file2){
       }
       
       /* Print RS arcs (reset) remaining of the original net */
-      fprintf(w_pointer, "%s", d_read);
-      if (strstr(d_read,"RS")) dummy = 1;
+      if (strstr(d_read,"RS"))
+      {
+        dummy = 1;
+        fprintf(w_pointer, "%s", d_read);
+      }
       while(fgets(d_read, NUM_PLACES, r_pointer1) != NULL)
         fprintf(w_pointer, "%s", d_read);
 
-      /* Print RS arcs (reset) from new bad transitions to 
+      /* Print RS arcs (reset) from the new bad transitions to 
       each place in the net */
       if (dummy && nbadtrans > 0)
       {

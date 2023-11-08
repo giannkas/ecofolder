@@ -115,7 +115,7 @@ void print_clist(clist_t *l)
 
 FILE *fout;
 
-int numpl, numtr, events, conds;
+int numpl, numtr, idpl, events, conds;
 char *cutoff;		// indicates which events are cutoffs (=1)
 int *evtrl;		// maps non-cutoff events to variable indices
 int *cotrl;		// maps conditions to variable indices
@@ -365,7 +365,7 @@ int mci2sat (const char * infile, const char *outfile)
 
   numtr = read_int();
   read_int();
-
+  
   // read place names
   plcond = malloc((numpl+1) * sizeof(list_t*));
   plwanted = calloc((numpl+1) * sizeof(signed char),1);
@@ -373,13 +373,13 @@ int mci2sat (const char * infile, const char *outfile)
   for (i = 1; i <= numpl; i++) l_init(plcond+i);
   for (i = 1; i <= numpl; i++)
   {
+    idpl = read_int();
     char **jptr;
-
     jptr = &(p_reach->contents);
     for (j = 0; j < p_reach->size; j++)
       if (!strcmp(bpos,jptr[j])) 
       {
-        plwanted[i] = 1;
+        plwanted[idpl] = 1;
         nosense = 0;
         //printf("bpos: %s\n", bpos);
         //printf("jptr[j]: %s\n", jptr[j]);
@@ -391,7 +391,7 @@ int mci2sat (const char * infile, const char *outfile)
         char* bpos_ = bltokstr(bpos, 0, '_');
         if (!strcmp(bpos_,jptr[j]))
         {
-          plwanted[i] = 1;
+          plwanted[idpl] = 1;
           nosense = 0;
           //printf("3. nosense: %d\n", nosense);
 
@@ -401,7 +401,7 @@ int mci2sat (const char * infile, const char *outfile)
     for (j = 0; j < n_reach->size; j++)
       if (!strcmp(bpos,jptr[j])) 
       {
-        plwanted[i] = -1;
+        plwanted[idpl] = -1;
         nosense = 0;
       }
       else
@@ -409,14 +409,14 @@ int mci2sat (const char * infile, const char *outfile)
         char* bpos_ = bltokstr(bpos, 0, '_');
         if (!strcmp(bpos_,jptr[j]))
         {
-          plwanted[i] = -1;
+          plwanted[idpl] = -1;
           nosense = 0;
         }
       }
 
-    plname[i] = bpos;
-    if (strlen(plname[i]) > maxszname)
-      maxszname = strlen(plname[i]);
+    plname[idpl] = bpos;
+    if (strlen(plname[idpl]) > maxszname)
+      maxszname = strlen(plname[idpl]);
     read_str();
   }
   plinunf = calloc((maxszname*numpl)*10, sizeof(char));

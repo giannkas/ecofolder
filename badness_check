@@ -14,7 +14,7 @@ if [ $correct -eq 1 ]; then
   minisat $1.sat $1.res > /dev/null
 
   #echo "Evaluating SAT..."
-  ./sateval -data -r $1.mci $1.res
+  ./sateval -r $1.mci $1.res
 
   sateval=$?
   #echo "Sateval is: $sateval"

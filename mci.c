@@ -38,7 +38,7 @@ void write_mci_file (char *filename)
 
   write_int(unf->numco);
   write_int(unf->numev);
-  if(!data)
+  if(verbose)
   {  
     printf("unf->numev: %d\n", unf->numev);
     printf("unf->numco: %d\n", unf->numco);
@@ -55,7 +55,7 @@ void write_mci_file (char *filename)
 
   for (ev = unf->events; ev; ev = ev->next){
     ev->mark = ++ev_num;
-    if(ev->queried && !data)
+    if(ev->queried && verbose)
     {
       if(!once)
       {
@@ -65,7 +65,7 @@ void write_mci_file (char *filename)
       printf("%s (e%d)  ", ev->origin->name, ev->mark);
     }
   }
-  //if(!data) printf("\n");
+  //if(verbose) printf("\n");
 
 
   querycell_t *qbuck;
@@ -93,13 +93,13 @@ void write_mci_file (char *filename)
   
   for (ev = unf->events; ev; ev = ev->next){
     //printf("ev name: %s\n", ev->origin->name);
-    write_int(ev->origin->num);
+    write_int(ev->origin->id);
     write_int(ev->queried);
   }
 
   for (co = unf->conditions; co ; co = co->next)
   {
-    write_int(co->origin->num);
+    write_int(co->origin->id);
     write_int(co->token);
     write_int(co->queried);
 
@@ -134,10 +134,16 @@ void write_mci_file (char *filename)
   write_int(sz);
 
   for (pl = net->places; pl; pl = pl->next)
+  {
+    write_int(pl->id);
     fwrite(pl->name,strlen(pl->name)+1,1,file);
+  }
   fwrite("",1,1,file);
   for (tr = net->transitions; tr; tr = tr->next)
+  {
+    write_int(tr->id);
     fwrite(tr->name,strlen(tr->name)+1,1,file);
+  }
   fwrite("",1,1,file);
 
   fclose(file);

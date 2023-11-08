@@ -23,8 +23,10 @@ int interactive = 0;      /* interactive mode (-i)    */
 int compressed = 0;     /* compressed unfolding view (-c)    */
 int mcmillan = 0;      /* mcmillan criteria flag (-mcmillan) */
 int m_repeat = 0;     /* marking repeat to highlight (-r)    */
-int data = 0;     /* enabling Ecofolder to extract data (-data)    */
+int verbose = 0;     /* enabling Ecofolder to print info (-verbose)    */
 int freechk = 0;       /* enabling Ecofolder to do a freeness check */
+int useids = 0;       /* enabling Ecofolder to use ids given in the input
+                       file for places and transitions. */
 int conflsteps = 0;   /* allocating blocks of CO_ALLOC_STEP Bytes */
 int** confl_evs = NULL;  /* matrix of events X conditions whether they are 
                           in direct conflict*/
@@ -511,17 +513,10 @@ void unfold ()
     *query = qbuck;
   }
 
-  if (interactive){
+  if (verbose || interactive){
     printf("Initial marking:");
     print_marking_pl(list);
     printf("\n");
-  }
-
-  if(!data && !interactive)
-  {  
-    printf("Print initial marking\n");
-    print_marking_pl(list);
-    printf("\n"); 
   }
 
   /* initialize PE computation */
@@ -546,7 +541,7 @@ void unfold ()
     nodelist_push(&(unf->m0),co);
   }
   
-  if(!data)
+  if(verbose)
   {
     printf("Unfolding initial marking plus resets\n");
     print_marking_co(nodelist_concatenate(unf->m0, unf->m0_unmarked));

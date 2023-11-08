@@ -51,7 +51,7 @@ void read_mci_file (char *mcifile, int m_repeat, char* ns, char* conf)
 
   FILE *mcif;
   int nqure, nqure_, nquszcut, nquszevscut, szcuts, 
-    numco, numev, numpl, numtr, sz, i;
+    numco, numev, numpl, numtr, idpl, idtr, sz, i;
   int pre_ev, post_ev, cutoff, harmful, dummy = 0;
   int *co2pl, *ev2tr, *tokens, *queries_co,
    *queries_ev, *cutoffs, *harmfuls;
@@ -164,12 +164,20 @@ void read_mci_file (char *mcifile, int m_repeat, char* ns, char* conf)
   for (i = 1; i <= numpl+1; i++) plname[i] = malloc(sz+1);
   for (i = 1; i <= numtr+1; i++) trname[i] = malloc(sz+1);
 
-  for (c = plname[i=1]; i <= numpl; c = plname[++i])
+  for (i=1; i <= numpl; i++)
+  {
+    read_int(idpl);
+    c = plname[idpl];
     do { fread(c,1,1,mcif); } while (*c++);
+  }
   fread(c,1,1,mcif);
 
-  for (c = trname[i=1]; c=trname[i], i <= numtr; c = trname[++i])
+  for (i=1; i <= numtr; i++)
+  {
+    read_int(idtr);
+    c = trname[idtr];
     do { fread(c,1,1,mcif); } while (*c++);
+  }
   fread(c,1,1,mcif);
 
   for (i = 1; i <= numco; i++)
@@ -215,7 +223,7 @@ void get_marking(char* confg)
     marking[plid] = plid;
     //printf("%d,",marking[plid]);
   }
-  printf("\n");
+  //printf("\n");
 
   sub = strtok(confg_copy, ",");
   while (sub != NULL)

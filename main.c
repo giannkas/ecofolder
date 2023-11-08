@@ -22,19 +22,18 @@ void usage(char *myname)
   "      -c               compressed view\n"
   "      -mcmillan        unfolds with mcmillan criteria.\n"
   "      -confmax         when used, it will enable interactive mode to display maximal configurations only.\n"
-  "      -freechk         used to check freeness. When used, you should enable -badchk <badunf> to\n                       do a proper freeness check, otherwise you will have the initial prefix.\n                       The parameter whill enable -mcmillan and -data flags as well.\n                       It cannot be used with -T <name> option."
+  "      -freechk         used to check freeness. When used, you should enable -badchk <badunf> to\n                       do a proper freeness check, otherwise you will have the initial prefix.\n                       The parameter will enable -mcmillan flag as well.\n                       It cannot be used with -T <name> option."
   "      -badchk <badunf> used to check badness <badunf> is a mci file containing an unfolding\n                       prefix of the corresponding bad net.\n"
-  "      -data            if used, Ecofolder will be used as an internal tool to extract data so\n                       it won't print anything but the mci file. Note that the interactive mode cannot\n                       be enabled when finding data.\n\n"
+  "      -verbose         if used, Ecofolder will print information concerning the prefix produced.\n"
+  "      -useids         when used, Ecofolder will use ids for places and transitions given in\n                       the input file.\n\n"
 
   "     FileOptions:\n"
   "      -m <filename>  file to store the unfolding in\n\n"
 
   "Unless specified otherwise, all filenames will default to\n"
-  "the basename of <LLnetfile> plus appropriate extensions.\n"
-  "confmax and interactive are mutually exclusive\n"
-  "with data (finding data).\n\n"
+  "the basename of <LLnetfile> plus appropriate extensions.\n\n"
 
-  "Version 1.0.0 (22.03.2022)\n", myname, myname);
+  "Version 2.0.0 (08.11.2023)\n", myname, myname);
 
   exit(1);
 }
@@ -78,8 +77,10 @@ int main (int argc, char **argv)
       compressed = 1;
     else if (!strcmp(argv[i],"-mcmillan"))
       mcmillan = 1;
-    else if (!strcmp(argv[i],"-data"))
-      data = 1;
+    else if (!strcmp(argv[i],"-verbose"))
+      verbose = 1;
+    else if (!strcmp(argv[i],"-useids"))
+      useids = 1;
     else if (!strcmp(argv[i],"-badchk"))
     {
       if (++i == argc) usage(argv[0]);
@@ -89,7 +90,6 @@ int main (int argc, char **argv)
     {
       freechk = 1;
       mcmillan = 1;
-      data = 1;
     }
     else
     {
@@ -114,9 +114,9 @@ int main (int argc, char **argv)
 
   if (!llnet) usage(argv[0]);
   
-  if (data)
+  /* if (data)
     if(interactive || confmax) 
-      usage(argv[0]);
+      usage(argv[0]); */
   if (stoptr_name && freechk) usage(argv[0]);
   
   net = read_pep_net(llnet);
@@ -124,7 +124,7 @@ int main (int argc, char **argv)
   nc_static_checks(net,stoptr_name);
   nc_create_trans_pool(net);
   /* creating transitions pool that are enforced by restrictions */
-  if(!data)
+  if(verbose)
   {
     /* Reset set of the transitions */
     printf("Reset set of the transitions\n");
@@ -261,7 +261,7 @@ int main (int argc, char **argv)
   unfold();
   nc_create_ignored_trans(net);
 
-  if(!data)
+  if(verbose)
   {  
     printf("Restricted transitions to fire: %s\n", net->rt_trans);
     printf("Fired transitions in the unfolding: %s\n", net->unf_trans);

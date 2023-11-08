@@ -168,7 +168,7 @@ void readmci (const char * infile)
   for (i = 1; i <= numtr; i++) { trname[i] = bpos; read_str(); }
 }
 
-int sateval (char *satfile, int data)
+int sateval (char *satfile, int verbose)
 {
   char *tmpname, *idx, *evcofile;
 
@@ -197,9 +197,9 @@ int sateval (char *satfile, int data)
 
   if (c == 'U')
   {
-    if (opt_reach && data)
+    if (opt_reach && verbose)
       printf("Marking unreachable.\n");
-    else if (data)
+    else if (verbose)
       printf("The net is alive.\n");
     fclose(f);
     return 0;
@@ -212,13 +212,13 @@ int sateval (char *satfile, int data)
 
     if (c == ' ')
     {
-      if (opt_reach && data) printf("Marking unreachable.\n");
+      if (opt_reach && verbose) printf("Marking unreachable.\n");
       fclose(f);
       return 0;
     }
-    else if (opt_reach && data)
+    else if (opt_reach && verbose)
       printf("Marking reachable:\n");
-    else if (data)
+    else if (verbose)
       printf("Deadlock sequence:");
   }
 
@@ -235,7 +235,7 @@ int sateval (char *satfile, int data)
     if (vnr > evars) break;
 
     if (v < 0) continue;
-    if (data) printf(" %s (e%d)",trname[ev2tr[v]],v);
+    if (verbose) printf(" %s (e%d)",trname[ev2tr[v]],v);
     fprintf(fo,"%d ",v);
     for (i = 1; i <= conds; i++)
     {
@@ -249,16 +249,16 @@ int sateval (char *satfile, int data)
       }
     }
   }
-  if (data) printf("\n\t");
+  if (verbose) printf("\n\t");
   fprintf(fo,"0\n");
   for (i = 1; i <= numpl; i++)
   {
     if (marking[i] > 0 ){
-      if (data) printf("%s (c%d) ", plname[i], cut[i]);
+      if (verbose) printf("%s (c%d) ", plname[i], cut[i]);
       fprintf(fo,"%d ", cut[i]);
     }
   }
-  if (data) printf("\n");
+  if (verbose) printf("\n");
   fprintf(fo,"0\n");
 
   fclose(f);
@@ -272,7 +272,7 @@ void usage ()
   "\nusage: sateval {-d|-r} <mcifile> <satfile>\n\n"
   "  options:\n"
   "\t-d or -r: output for deadlock or reachability checking\n"
-  "\t-data: no data printed but evco file is still created.\n\n"
+  "\t-verbose: printing info and evco file is still given.\n\n"
   );
   exit(1);
 }
@@ -281,7 +281,7 @@ int main (int argc, char ** argv)
 {
   char outfile[1024];
   int reachable = 0;
-  int data = 1;
+  int verbose = 0;
   char *mcifile = NULL;
   char *resfile = NULL;
 
@@ -290,7 +290,7 @@ int main (int argc, char ** argv)
   for (int i = 1; i < argc; i++)
     if (argc != 4 && argc != 5) usage();
     else if (!strcmp(argv[i],"-r")) opt_reach = 1;
-    else if (!strcmp(argv[i],"-data")) data = 0;
+    else if (!strcmp(argv[i],"-verbose")) verbose = 1;
     else if (i+1 < argc) mcifile = argv[i];
     else resfile = argv[i];
 
@@ -298,7 +298,7 @@ int main (int argc, char ** argv)
   if (!strcmp(argv[1],"-r")) opt_reach = 1; */
   
   readmci(mcifile);
-  reachable = sateval(resfile, data);
+  reachable = sateval(resfile, verbose);
   //printf("sateval is: %d\n", reachable);
 
   return reachable;
