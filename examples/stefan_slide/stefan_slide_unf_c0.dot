@@ -1,0 +1,4 @@
+digraph test {
+  c1 [color="#4040ff" fillcolor="transparent" label= <4<FONT COLOR="red"><SUP>1</SUP></FONT>&nbsp;(c1)> shape=circle style=filled];
+  c2 [color="#4040ff" fillcolor="transparent" label= <1<FONT COLOR="red"><SUP>1</SUP></FONT>&nbsp;(c2)> shape=circle style=filled];
+}

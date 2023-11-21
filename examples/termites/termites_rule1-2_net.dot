@@ -1,0 +1,19 @@
+digraph test {
+  p3 -> t1 [arrowhead=none color="blue"];
+  p3 -> t2 [arrowhead=none color="blue"];
+  p5 -> t2 [arrowhead=none color="blue"];
+  t1 -> p5;
+  t2 -> p1;
+  p5 -> t1 [arrowhead=odot];
+  p6 -> t1 [arrowhead=odot];
+  p1 -> t2 [arrowhead=odot];
+  p2 -> t2 [arrowhead=odot];
+  p1 [label="" xlabel= <<FONT COLOR="red">wk+</FONT>> shape=circle ];
+  p2 [label="" xlabel= <<FONT COLOR="red">wk-</FONT>> shape=circle ];
+  p3 [label="⬤" xlabel= <<FONT COLOR="red">rp+</FONT>> shape=circle ];
+  p4 [label="" xlabel= <<FONT COLOR="red">rp-</FONT>> shape=circle ];
+  p5 [label="" xlabel= <<FONT COLOR="red">ec+</FONT>> shape=circle ];
+  p6 [label="" xlabel= <<FONT COLOR="red">ec-</FONT>> shape=circle ];
+  t1 [fillcolor="#cccccc" label="r1" shape=box style=filled];
+  t2 [fillcolor="#cccccc" label="r2" shape=box style=filled];
+}

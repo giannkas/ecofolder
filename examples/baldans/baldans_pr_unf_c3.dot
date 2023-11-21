@@ -1,0 +1,18 @@
+digraph test {
+  c2 -> e1;
+  c3 -> e2;
+  e1 -> c4;
+  c4 -> e2;
+  e1 -> c5;
+  e2 -> c6;
+  e2 -> c7;
+  c1 [color="#4040ff" fillcolor="gold" label= <P3<FONT COLOR="red"><SUP>1</SUP></FONT>&nbsp;(c1)> shape=circle style=filled];
+  c2 [color="#4040ff" fillcolor="transparent" label= <P2<FONT COLOR="red"><SUP>1</SUP></FONT>&nbsp;(c2)> shape=circle style=filled];
+  c3 [color="#4040ff" fillcolor="transparent" label= <P1<FONT COLOR="red"><SUP>1</SUP></FONT>&nbsp;(c3)> shape=circle style=filled];
+  c4 [color="#4040ff" fillcolor="#ccccff" label= <P4_1<FONT COLOR="red"><SUP>1</SUP></FONT>&nbsp;(c4)> shape=circle style=filled];
+  c5 [color="#4040ff" fillcolor="gold" label= <P4_2<FONT COLOR="red"><SUP>1</SUP></FONT>&nbsp;(c5)> shape=circle style=filled];
+  c6 [color="#4040ff" fillcolor="gold" label= <P4_1<FONT COLOR="red"><SUP>1</SUP></FONT>&nbsp;(c6)> shape=circle style=filled];
+  c7 [color="#4040ff" fillcolor="gold" label= <P5<FONT COLOR="red"><SUP>1</SUP></FONT>&nbsp;(c7)> shape=circle style=filled];
+  e1 [color="#409f40" fillcolor="#cce6cc" label="a (e1)" shape=box style=filled];
+  e2 [color="#409f40" fillcolor="#cce6cc" label="b (e2)" shape=box style=filled];
+}

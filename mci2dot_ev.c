@@ -49,7 +49,7 @@ int find_predecessor(int rows, int cols, int (*ev_predc)[cols], int pre_ev, int 
     }
   }
   else
-    found = post_ev;
+    found = pre_ev;
   return found;
 }
 
@@ -280,8 +280,15 @@ void read_mci_file_ev (char *mcifile, char* evcofile, int m_repeat, int cutout)
   for (int i = 1; i <= numev; i++){
     for (int j = 1; j <= i; j++){
       for (int k = j+1; k <= i; k++)
-        if (ev_predc[i][j] > 0 && ev_predc[i][k] > 0) 
-          ev_predc_copy[i][j] = find_predecessor(numev+1, numev+1, ev_predc, ev_predc[i][j], ev_predc[i][k]) ? 0 : ev_predc[i][j]; 
+        if (ev_predc[i][j] > 0 && ev_predc[i][k] > 0)
+        {
+          if (ev_predc_copy[i][j] == 0) 
+            continue;
+          else
+            ev_predc_copy[i][j] = 
+            find_predecessor(numev+1, numev+1, ev_predc, 
+              ev_predc[i][j], ev_predc[i][k]) ? 0 : ev_predc[i][j]; 
+        }
     }
   }
 

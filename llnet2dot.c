@@ -81,7 +81,6 @@ void llnet2dot(char* in_file){
         fprintf(w_pointer, "  p%d -> t%d [arrowhead=none color=\"blue\"];\n", num_left, num_right);
       }
     }
-
     if(strstr(d_read, "TP\n")){
       while(fgets(d_read, READ_PLACES, r_pointer) != NULL && !strstr(d_read, "PT\n")){
         left = ftokstr(d_read, 0, '<');
@@ -119,7 +118,7 @@ void llnet2dot(char* in_file){
         token = ftokstr(d_read, 1, '\"');
         if(i <= places){
           if(strstr(d_read, "M1"))
-            fprintf(w_pointer, "  p%d [label=⬤ xlabel= <<FONT COLOR=\"red\">%s</FONT>> shape=circle ];\n",i,token);
+            fprintf(w_pointer, "  p%d [label=\"⬤\" xlabel= <<FONT COLOR=\"red\">%s</FONT>> shape=circle ];\n",i,token);
           else
             fprintf(w_pointer, "  p%d [label=\"\" xlabel= <<FONT COLOR=\"red\">%s</FONT>> shape=circle ];\n",i,token);
         }

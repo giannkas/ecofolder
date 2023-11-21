@@ -1,0 +1,34 @@
+digraph test {
+  c1 -> e3;
+  c2 -> e1;
+  c3 -> e1;
+  c4 -> e3;
+  c5 -> e1;
+  e1 -> c6;
+  c6 -> e5;
+  e1 -> c7;
+  c7 -> e3;
+  e1 -> c8;
+  e3 -> c12;
+  c12 -> e5;
+  e3 -> c13;
+  e3 -> c14;
+  e5 -> c17;
+  e5 -> c18;
+  c1 [color="#4040ff" fillcolor="transparent" label= <P0¬<FONT COLOR="red"><SUP>0</SUP></FONT>&nbsp;(c1)> shape=circle style=filled];
+  c2 [color="#4040ff" fillcolor="transparent" label= <P2<FONT COLOR="red"><SUP>0</SUP></FONT>&nbsp;(c2)> shape=circle style=filled];
+  c3 [color="#4040ff" fillcolor="transparent" label= <P2¬<FONT COLOR="red"><SUP>1</SUP></FONT>&nbsp;(c3)> shape=circle style=filled];
+  c4 [color="#4040ff" fillcolor="transparent" label= <P1<FONT COLOR="red"><SUP>1</SUP></FONT>&nbsp;(c4)> shape=circle style=filled];
+  c5 [color="#4040ff" fillcolor="transparent" label= <P0<FONT COLOR="red"><SUP>1</SUP></FONT>&nbsp;(c5)> shape=circle style=filled];
+  c6 [color="#4040ff" fillcolor="#ccccff" label= <P2<FONT COLOR="red"><SUP>1</SUP></FONT>&nbsp;(c6)> shape=circle style=filled];
+  c7 [color="#4040ff" fillcolor="#ccccff" label= <P0<FONT COLOR="red"><SUP>1</SUP></FONT>&nbsp;(c7)> shape=circle style=filled];
+  c8 [color="#4040ff" fillcolor="#ccccff" label= <P2¬<FONT COLOR="red"><SUP>0</SUP></FONT>&nbsp;(c8)> shape=circle style=filled];
+  c12 [color="#4040ff" fillcolor="#ccccff" label= <P3<FONT COLOR="red"><SUP>1</SUP></FONT>&nbsp;(c12)> shape=circle style=filled];
+  c13 [color="#4040ff" fillcolor="gold" label= <P0¬<FONT COLOR="red"><SUP>1</SUP></FONT>&nbsp;(c13)> shape=circle style=filled];
+  c14 [color="#4040ff" fillcolor="#ccccff" label= <P0<FONT COLOR="red"><SUP>0</SUP></FONT>&nbsp;(c14)> shape=circle style=filled];
+  c17 [color="#4040ff" fillcolor="gold" label= <P5<FONT COLOR="red"><SUP>1</SUP></FONT>&nbsp;(c17)> shape=circle style=filled];
+  c18 [color="#4040ff" fillcolor="gold" label= <P2¬<FONT COLOR="red"><SUP>1</SUP></FONT>&nbsp;(c18)> shape=circle style=filled];
+  e1 [color="#409f40" fillcolor="#cce6cc" label="T0 (e1)" shape=box style=filled];
+  e3 [color="#409f40" fillcolor="#cce6cc" label="T1 (e3)" shape=box style=filled];
+  e5 [color="#409f40" fillcolor="#cce6cc" label="T3 (e5)" shape=box style=filled];
+}

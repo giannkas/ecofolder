@@ -1,0 +1,23 @@
+digraph test {
+  p4 -> t2 [arrowhead=none color="blue"];
+  p4 -> t3 [arrowhead=none color="blue"];
+  p1 -> t2;
+  p2 -> t1;
+  t1 -> p4;
+  p3 -> t3;
+  t2 -> p5;
+  p4 -> t4;
+  t4 -> p6;
+  t3 -> p7;
+  p1 [label="⬤" xlabel= <<FONT COLOR="red">P1</FONT>> shape=circle ];
+  p2 [label="⬤" xlabel= <<FONT COLOR="red">P2</FONT>> shape=circle ];
+  p3 [label="⬤" xlabel= <<FONT COLOR="red">P3</FONT>> shape=circle ];
+  p4 [label="" xlabel= <<FONT COLOR="red">P4</FONT>> shape=circle ];
+  p5 [label="" xlabel= <<FONT COLOR="red">P5</FONT>> shape=circle ];
+  p6 [label="" xlabel= <<FONT COLOR="red">P6</FONT>> shape=circle ];
+  p7 [label="" xlabel= <<FONT COLOR="red">P7</FONT>> shape=circle ];
+  t1 [label="a" shape=box];
+  t2 [label="b" shape=box];
+  t3 [label="c" shape=box];
+  t4 [label="d" shape=box];
+}
