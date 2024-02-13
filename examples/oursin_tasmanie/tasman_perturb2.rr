@@ -1,0 +1,51 @@
+###########Toy-model Tasmanian (avec Martin M., 14/03/2023) 
+########### Scales of the reef and inter-decadal 
+    
+nodes:
+ Alg+: Sea weed bed (algae), '-' bare rock or '+' algal canopy  
+ Urc-: Urchin '+' High densities facilitating destructing grazing, '-' marginal densities  
+ Lob+: Lobster '+' High densities of large predatory individuals, '-' marginal densities of such predators   
+ Aba+: Abalone '+' High densities supporting commercial harvesting, '-' marginal densities    
+ Oct-: Octopus '+' High densities of top-predatory individuals, '-' marginal densities  
+ Fis-: Fishing effort targeting major coastal commercial stock (i.e. abalone and lobster) is sustainable ('-') or not ('+', which implies risks of overexploitation)
+ Cc- : Climate change induces regional ocean warming ('+') or not ('-')
+ Mgt-: Climate-change adaptation management strategy in place ('+') or not ('-')
+
+#constraints:
+# Alg- >> Fis-, Lob-, Aba-, Oct-   # Baren (Desertification)  
+
+rules:             
+####### Ecological processes #########
+ Alg+ >> Lob+               # Sea weeds MAY support recruitment of lobster juveniles (source of habitat and food) 
+ Alg+ >> Aba+               # Sea weeds MAY support recruitment of Abalone juveniles (source of habitat and food) 
+ Alg+ >> Oct+               # Sea weeds MAY support recruitment of Octopus juveniles (source of habitat and food) 
+
+ Lob+ >> Urc-               # Predation 
+ Urc+ >> Alg-               # Predation 
+ Oct+ >> Lob-               # Predation 
+
+ Lob+ >> Oct+               # Consumption 
+ Lob+ >> Aba-               # Consumption 
+ Urc+ >> Aba-               # Consumption 
+ Oct+ >> Aba-               # Consumption 
+
+ Urc- >> Alg+               # Macroalgal beds regrowth if release in urchin grazing pressure) 
+ Lob- >> Urc+               # Urchin population building up in the absence of predation  
+ Lob-, Urc- >> Aba+         # In the absence Restauration of Abalone (low predation pressure)  
+ Alg- >> Lob-, Aba-, Oct-   # Lack of productivity & macroalgal habitats prevents development of benthic diversity (Desertification)  
+
+####### With PERTURBATIONS (Second Model)  #########
+ Alg+ >> Alg-               # Sea weed decline (climate PERTURBATION 1) 
+ Lob+, Fis+ >> Lob-         # Southern rock lobster decline due to overexploitation (climate PERTURBATION 2) 
+ Aba+, Fis+ >> Aba-         # Abalone decline due to overexploitation (climate PERTURBATION 3) 
+ Cc+, Urc- >> Urc+          # Urchin population increase (climate PERTURBATION 4) 
+ Oct- >> Oct+               # Octopus increase (climate PERTURBATION 5) 
+
+### Climate-change adaptation variables
+ Aba-, Lob- >> Mgt+         # Decline of historical fisheries (when lobster and abalone populations drop below commercially-viable densities) induces climate change adaptation
+ Aba+, Lob+ >> Mgt-         # Good status of historical fisheries (when lobster and abalone populations drop below commercially-viable densities) may release the pressure to implement climate change adaptation
+ Mgt+, Fis+ >> Fis-         # Climate-change adaptation implies a reduction in fishing effort on historical commercial species (abalone / lobster) 
+ Mgt+, Oct+ >> Oct-         # endemic weed targeted harvesting (Human PERTURBATION 1'') 
+ Mgt+, Urc+ >> Urc-         # endemic Urchin targeted harvesting (Human PERTURBATION 3'') 
+ Mgt+, Lob- >> Lob+         # endemic Lobster targeted harvesting (Human PERTURBATION 2'') 
+ 
