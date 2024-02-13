@@ -492,7 +492,7 @@ def handle(C_e):
   wl.add(Cp)
   stats['is_doomed'] += 1
 
-#print(wl)
+print(wl)
 
 i = 0
 while wl:

@@ -46,7 +46,7 @@ digraph test {
   e1 [color="black" fillcolor="#ccece6:#238b45" gradientangle = 0 label="r1 (e1)" shape=box style=filled];
   e2 [color="black" fillcolor="#238b45" label="r6 (e2)" shape=box style=filled];
   e3 [color="black" fillcolor="#ccece6" label="r7 (e3)" shape=box style=filled];
-  e4 [color="black" fillcolor="#238b45" label="r10 (e4)" shape=box style=filled];
+  e4 [color="black" fillcolor="#ccece6:#238b45" gradientangle = 0 label="r10 (e4)" shape=box style=filled];
   e5 [color="black" fillcolor="#ccece6:#238b45" gradientangle = 0 label="r2 (e5)" shape=box style=filled];
   e6 [color="black" fillcolor="white" label="r4 (e6)" shape=box style=filled];
   e7 [color="black" fillcolor="#ccece6" label="r6 (e7)" shape=box style=filled];

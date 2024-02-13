@@ -8,7 +8,7 @@ digraph test {
   e1 -> c7;
   e1 -> c8;
   c1 [color="#4040ff" fillcolor="transparent" label= <ec+<FONT COLOR="red"><SUP>0</SUP></FONT>&nbsp;(c1)> shape=circle style=filled];
-  c2 [color="#4040ff" fillcolor="transparent" label= <ec-<FONT COLOR="red"><SUP>0</SUP></FONT>&nbsp;(c2)> shape=circle style=filled];
+  c2 [color="#4040ff" fillcolor="transparent" label= <ec-<FONT COLOR="red"><SUP>1</SUP></FONT>&nbsp;(c2)> shape=circle style=filled];
   c3 [color="#4040ff" fillcolor="transparent" label= <rp-<FONT COLOR="red"><SUP>1</SUP></FONT>&nbsp;(c3)> shape=circle style=filled];
   c4 [color="#4040ff" fillcolor="transparent" label= <wk-<FONT COLOR="red"><SUP>1</SUP></FONT>&nbsp;(c4)> shape=circle style=filled];
   c5 [color="#4040ff" fillcolor="#ccccff" label= <rp-<FONT COLOR="red"><SUP>1</SUP></FONT>&nbsp;(c5)> shape=circle style=filled];

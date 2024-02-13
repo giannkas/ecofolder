@@ -1,6 +1,6 @@
 /* 
  * Copyright (C) 2010, 2011  Cesar Rodriguez <cesar.rodriguez@lsv.ens-cachan.fr>
- * 
+ * Copyright (C) 2023-2024  Giann Karlo Aguirre-Samboní <giann.aguirre_samboni@ens-paris-saclay.fr>
  */
 
 #include <arpa/inet.h>

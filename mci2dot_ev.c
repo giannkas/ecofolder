@@ -10,6 +10,38 @@ typedef struct cut_t
   int *evscut;
 } cut_t;
 
+typedef struct clist_t
+{
+  int   idcond;
+  struct clist_t* next;
+} clist_t;
+
+typedef struct evprepost
+{
+  clist_t *preset;
+  clist_t *postset;
+  struct evprepost *next;
+} evprepost;
+
+clist_t* clist_add(clist_t** list, int idpl)
+{
+  clist_t* newco = malloc(sizeof(clist_t));
+  newco->idcond = idpl;
+  newco->next = *list;
+  return *list = newco;
+}
+
+int strtoint(char *num) {
+  int  i, len;
+  int result = 0;
+
+  len = strlen(num);
+
+  for(i=0; i<len; i++)
+    result = result * 10 + ( num[i] - '0' );
+  return result;
+}
+
 /**
  * @brief auxiliary function to find event successors of a particular event.
  * 
@@ -45,7 +77,6 @@ int find_predecessor(int rows, int cols, int (*ev_predc)[cols], int pre_ev, int 
     for ( j = 1; j < post_ev && found == 0; j++){
       if( ev_predc[post_ev][j] > 0)
         found = find_predecessor(rows, cols, ev_predc, pre_ev, ev_predc[post_ev][j]);
-      //if (found > 0) ev_predc[pre_ev][post_ev] = found;    
     }
   }
   else
@@ -102,7 +133,7 @@ void display_matrix(int rows, int cols, int (*matrix)[cols]){
  * 
  * @param mcifile string that corresponds to the needed mcifile.
  */
-void read_mci_file_ev (char *mcifile, char* evcofile, int m_repeat, int cutout)
+void read_mci_file_ev (char *mcifile, char* evcofile, int m_repeat, int cutout, char* conf)
 {
   #define read_int(x) fread(&(x),sizeof(int),1,mcif)
   /* define a micro substitution to read_int.
@@ -122,6 +153,8 @@ void read_mci_file_ev (char *mcifile, char* evcofile, int m_repeat, int cutout)
     *queries_ev, *cutoffs, *harmfuls;
   char **plname, **trname, *c;
   cut_t **cuts;
+  evprepost **evprps;
+
 
   if (!(mcif = fopen(mcifile,"rb")))
   {
@@ -156,6 +189,12 @@ void read_mci_file_ev (char *mcifile, char* evcofile, int m_repeat, int cutout)
                                            // events.
   cutoffs = calloc(numev+1, sizeof(int));
   harmfuls = calloc(numev+1, sizeof(int));
+  evprps = calloc(numev+1, sizeof(evprepost*));
+  for (i = 0; i <= numev; i++) {
+    evprps[i] = malloc(sizeof(evprepost));
+    evprps[i]->preset = NULL;
+    evprps[i]->postset = NULL;
+  }
 
   int (*co_postsets)[numev+1] = calloc(numco+1, sizeof *co_postsets); 
                                            // conditions' postsets to detect conflicts in events.
@@ -227,12 +266,18 @@ void read_mci_file_ev (char *mcifile, char* evcofile, int m_repeat, int cutout)
     read_int(pre_ev); // read the respective event number (mark attribute
                       // in event_t structure definition), if any, which is the only
                       // event in the preset of a condition in the unfolding.
+    if (pre_ev && conf && tokens[i] && !cutout)
+      clist_add(&evprps[pre_ev]->postset, i);
+    else if (!pre_ev && conf && tokens[i] && !cutout)
+      clist_add(&evprps[0]->postset, i);
     do {
       read_int(post_ev);  // read the respective event number (mark attribute
                           // in event_t structure definition), if any, which 
                           // are the events in the postset of a condition in
                           // the unfolding.
-      //printf("post_ev: %d\n", post_ev);
+
+      if (!cutout && post_ev && tokens[i] && conf)
+        clist_add(&evprps[post_ev]->preset, i);
       if(pre_ev && post_ev && ev_succs[pre_ev][post_ev] == 0 && tokens[i]){ // check if a 
                                                                // value hasn't
                                                                // been assigned yet
@@ -454,6 +499,44 @@ void read_mci_file_ev (char *mcifile, char* evcofile, int m_repeat, int cutout)
   }
   fread(c,1,1,mcif);
 
+  int *cut = calloc(numco+1, sizeof(int));
+  int *frsq = calloc(numev+1, sizeof(int));
+
+  if(conf)
+  {  
+    clist_t *list;
+    char* sub;
+    int coid;
+    int subint;
+    char* conf_copy = strdup(conf);
+    /* Add initial cut */
+    for(list = evprps[0]->postset; list; list = list->next)
+    {
+      coid = list->idcond;
+      cut[coid] = coid;
+    }
+
+    sub = strtok(conf_copy, ",");
+    while (sub != NULL)
+    {
+      subint = strtoint(sub);
+      frsq[subint] = subint;
+      /* Remove event's preset */
+      for(list = evprps[subint]->preset; list; list = list->next)
+      {
+        coid = list->idcond;
+        cut[coid] = 0;
+      }
+      /* Add event's poset */
+      for(list = evprps[subint]->postset; list; list = list->next)
+      {
+        coid = list->idcond;
+        cut[coid] = coid;
+      }
+      sub = strtok(NULL, ",");
+    }
+  }
+
   char color1[] = "#cce6cc"; // or "palegreen";
   char color2[] = "cornflowerblue";
   char color3[] = "orange";
@@ -465,11 +548,11 @@ void read_mci_file_ev (char *mcifile, char* evcofile, int m_repeat, int cutout)
     if (cutout && queries_ev[i])
     {  
       if ( i == harmfuls[i])
-        printf("  e%d [color=%s fillcolor=%s label=\"%s (e%d)\" shape=box style=filled];\n",
-            i,queries_ev[i] ? color3 : color4,color5,trname[ev2tr[i]],i);
+        printf("  e%d [color=%s fillcolor=\"%s:%s\" label=\"%s (e%d)\" shape=box style=filled];\n",
+            i,color4,color5,queries_ev[i] ?  color3 : color5,trname[ev2tr[i]],i);
       else if (i == cutoffs[i])
-        printf("  e%d [color=%s fillcolor=%s label=\"%s (e%d)\" shape=box style=filled];\n",
-            i,queries_ev[i] ? color3 : color4,color2,trname[ev2tr[i]],i);
+        printf("  e%d [color=%s fillcolor=\"%s:%s\" label=\"%s (e%d)\" shape=box style=filled];\n",
+            i,color4,color2,queries_ev[i] ?  color3 : color2,trname[ev2tr[i]],i);
       else
         printf("  e%d [color=\"%s\" fillcolor=\"%s\" label=\"%s (e%d)\" shape=box style=filled];\n",
             i,queries_ev[i] ? color4 : color6,queries_ev[i] ? color3 : color1,trname[ev2tr[i]],i);
@@ -477,14 +560,14 @@ void read_mci_file_ev (char *mcifile, char* evcofile, int m_repeat, int cutout)
     else if (!cutout)
     {
       if ( i == harmfuls[i])
-        printf("  e%d [color=%s fillcolor=%s label=\"%s (e%d)\" shape=box style=filled];\n",
-            i,queries_ev[i] ? color3 : color4,color5,trname[ev2tr[i]],i);
+        printf("  e%d [color=%s fillcolor=\"%s:%s\" label=\"%s (e%d)\" shape=box style=filled];\n",
+            i,color4,color5,queries_ev[i] || frsq[i] ?  color3 : color5,trname[ev2tr[i]],i);
       else if (i == cutoffs[i])
-        printf("  e%d [color=%s fillcolor=%s label=\"%s (e%d)\" shape=box style=filled];\n",
-            i,queries_ev[i] ? color3 : color4,color2,trname[ev2tr[i]],i);
+        printf("  e%d [color=%s fillcolor=\"%s:%s\" label=\"%s (e%d)\" shape=box style=filled];\n",
+            i,color4,color2,queries_ev[i] || frsq[i] ?  color3 : color2,trname[ev2tr[i]],i);
       else
         printf("  e%d [color=\"%s\" fillcolor=\"%s\" label=\"%s (e%d)\" shape=box style=filled];\n",
-            i,queries_ev[i] ? color4 : color6,queries_ev[i] ? color3 : color1,trname[ev2tr[i]],i);
+            i,queries_ev[i] || frsq[i] ? color4 : color6,queries_ev[i] || frsq[i] ? color3 : color1,trname[ev2tr[i]],i);
     }
   printf("  e0 [fillcolor=white label=\"⊥\" shape=box style=filled];\n");
   printf("}\n");
@@ -499,7 +582,8 @@ void usage ()
 
     "     Options:\n"
     "      -c --cutout  if a marking is queried or \n                  part of a reachability check then\n                  it will show a cutout of\n                  the whole unfolding\n"
-    "      -r <instance>  highlight <instance> of a repeated marking\n\n"
+    "      -r <instance>  highlight <instance> of a repeated marking\n"
+    "      -cf <confg>:   used to return the marking led \n by the configuration <confg>(string type).\n You cannot enable cutouts and this \n flag at the same time.\n\n"
 
     "<evcofile> is an optional file whose first line contains\n"
     "the IDs of a firing sequence of events and the second line\n"
@@ -511,12 +595,18 @@ int main (int argc, char **argv)
 {
   int i, m_repeat = 0, cutout = 0;
   char *mcifile = NULL, *evcofile = NULL;
+  char *configuration = NULL;
 
   for (i = 1; i < argc; i++)
     if (!strcmp(argv[i],"-r"))
     {
       if (++i == argc) usage();
       m_repeat = atoi(argv[i]);
+    }
+    else if (!strcmp(argv[i], "-cf"))
+    {
+      if (++i == argc) usage();
+      configuration = argv[i];
     }
     else if (!strcmp(argv[i],"-c") || !strcmp(argv[i],"--cutout"))
       cutout = 1;
@@ -525,7 +615,7 @@ int main (int argc, char **argv)
     else
       evcofile = argv[i];
 
-  if (!mcifile) usage();
-  read_mci_file_ev(mcifile, evcofile, m_repeat, cutout);
+  if (!mcifile || (cutout && configuration)) usage();
+  read_mci_file_ev(mcifile, evcofile, m_repeat, cutout, configuration);
   exit(0);
 }

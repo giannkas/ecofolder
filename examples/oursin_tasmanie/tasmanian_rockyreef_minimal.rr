@@ -1,0 +1,50 @@
+########### Toy-model Tasmanian rocky reefs
+########### Created by Cedric and Martin M. on 14/03/2023 / Modified by Martin M. on 11/1/2024 
+########### Context and scope: spatial scales of a rocky reef (100 m2 - 1 ha) and pluri-annual to inter-decadal time scales (i.e. generation time for most of the species considered) 
+Ma
+
+    
+nodes:
+# Initial condition 1 = productive urchin-free kelp bed
+ Alg+: macroAlgal bed (algae), '-' bare rock or '+' algal canopy  
+ Urc-: Urchin '+' High densities facilitating destructing grazing, '-' marginal densities  
+ Lob+: Lobster '+' High densities of large predatory individuals, '-' marginal densities of such predators   
+
+
+# Initial condition 2 = macroalgal-free sea urchin barren
+ Alg-: Sea weed bed (algae), '-' bare rock or '+' algal canopy  
+ Urc+: Urchin '+' High densities facilitating destructing grazing, '-' marginal densities  
+ Lob-: Lobster '+' High densities of large predatory individuals, '-' marginal densities of such predators   
+
+rules:              ####### Without PERTURBATIONS (First Model)  #########
+ Alg+ >> Lob+	    # Macroalgal beds can support lobster populations (as source of habitat and food) 
+ Alg- >> Lob-	    # Lobster recruitment relies on the presence of macroalgae (settlement of lobster puerulus)				
+	# Conversely urchin population does not rely on the presence of macroalgal beds as they can thrive in both kelp beds and barren states 
+ Lob+ >> Urc-       # Lobster predation can maintain low sea urchin densities.
+ Urc+ >> Alg-       # Sea urchin destructive grazing can deplete macroalgal beds. 
+ Urc- >> Alg+       # When urchin grazing pressure is low, macroalgal bed can build up.
+ Lob- >> Urc+       # When lobster predation pressure is low, urchin population can build up. 
+ Urc- >> Urc+ # climate change
+ Lob- >> Lob+ # restoring lobster population
+
+# Alg+ Urc- Lob+
+# Alg- Urc+ Lob-
+
+
+
+####### With PERTURBATIONS (Second Model)  #########
+## Alg+ >> Alg-       # Sea weed decline (climate PERTURBATION 1) 
+## Lob+ >> Lob-       # Southern rock lobster decline (climate PERTURBATION 2) 
+## Aba+ >> Aba-       # Abalone decline (climate PERTURBATION 3) 
+## Urc- >> Urc+       # Urchin population increase (climate PERTURBATION 4) 
+## Oct- >> Oct+       # Octopus increase (climate PERTURBATION 5) 
+## Fis- >> Fis+       # tropical Fish increase (climate PERTURBATION 6) 
+
+## Fis+ >> Fis-       # reef Fish fishing (Human PERTURBATION 1' Other paper) 
+## Lob+ >> Lob-       # Lobster fishing (Human PERTURBATION 2' Other paper) 
+
+####### With PERTURBATIONS (Third Model)  #########
+## Oct+ >> Oct-       # endemic weed targeted harvesting (Human PERTURBATION 1'') 
+## Urc+ >> Urc-       # endemic Urchin targeted harvesting (Human PERTURBATION 3'') 
+## Lob- >> Lob+       # endemic Lobster targeted harvesting (Human PERTURBATION 2'') 
+    

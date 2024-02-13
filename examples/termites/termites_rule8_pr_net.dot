@@ -8,7 +8,7 @@ digraph test {
   p4 -> t1 [arrowhead=odot];
   p1 [label="⬤" xlabel= <<FONT COLOR="red">wk-</FONT>> shape=circle ];
   p2 [label="⬤" xlabel= <<FONT COLOR="red">rp-</FONT>> shape=circle ];
-  p3 [fontcolor="white" label="⬤" xlabel= <<FONT COLOR="red">ec-</FONT>> shape=circle ];
+  p3 [fontcolor="" label="⬤" xlabel= <<FONT COLOR="red">ec-</FONT>> shape=circle ];
   p4 [label="" xlabel= <<FONT COLOR="red">ec+</FONT>> shape=circle ];
   t1 [fillcolor="#cccccc" label="r8" shape=box style=filled];
 }
