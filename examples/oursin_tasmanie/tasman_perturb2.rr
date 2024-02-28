@@ -42,7 +42,8 @@ rules:
  Oct- >> Oct+               # Octopus increase (climate PERTURBATION 5) 
 
 ### Climate-change adaptation variables
- Aba-, Lob- >> Mgt+         # Decline of historical fisheries (when lobster and abalone populations drop below commercially-viable densities) induces climate change adaptation
+ Aba-, Lob- >> Fis+         # Decline of historical fisheries (when lobster and abalone populations drop below commercially-viable densities) induces climate change adaptation
+ Fis+ >> Mgt+
  Aba+, Lob+ >> Mgt-         # Good status of historical fisheries (when lobster and abalone populations drop below commercially-viable densities) may release the pressure to implement climate change adaptation
  Mgt+, Fis+ >> Fis-         # Climate-change adaptation implies a reduction in fishing effort on historical commercial species (abalone / lobster) 
  Mgt+, Oct+ >> Oct-         # endemic weed targeted harvesting (Human PERTURBATION 1'') 

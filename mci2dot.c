@@ -48,7 +48,7 @@ int read_mci_file (char *mcifile, char *evcofile, int m_repeat, char* evname, in
 
   FILE *mcif, *evcof;
   int nqure, nqure_, nquszcut, nquszevscut, szcuts, 
-    numco, numev, numpl, idpl, idtr, numtr, sz, i, value;
+    numco, numev, numpl, idpl, idtr, numtr, sz, i, j, value;
   int pre_ev, post_ev, cutoff, harmful, dummy = 0;
   int *co2pl, *ev2tr, *tokens, *cut0, *queries_co,
    *queries_ev, *cutoffs, *harmfuls, *queries_coset;
@@ -98,8 +98,10 @@ int read_mci_file (char *mcifile, char *evcofile, int m_repeat, char* evname, in
   read_int(nqure);
   nqure_ = abs(nqure);
   cuts = calloc((szcuts = nqure_+1), sizeof(cut_t*));
-  if(nqure_ && m_repeat > 0 && m_repeat <= nqure_) 
-    dummy = 1;
+  if(nqure_ && !m_repeat)
+    dummy = nqure_;
+  else if(nqure_ && (m_repeat > szcuts-1 || m_repeat < 0))
+    m_repeat = -1;
   while(nqure_)
   {
     read_int(nquszcut);
@@ -132,11 +134,29 @@ int read_mci_file (char *mcifile, char *evcofile, int m_repeat, char* evname, in
       }
     }
   }
+  else if (m_repeat > 0 && cuts[m_repeat] && cuts[m_repeat]->repeat < 0)
+  {
+    for (i = 1; i <= cuts[m_repeat]->szcut; i++)
+      queries_co[cuts[m_repeat]->cut[i]] = 1;
+    for (i = 1; i <= cuts[m_repeat]->szevscut; i++)
+      queries_ev[cuts[m_repeat]->evscut[i]] = 1;
+  }
+  else if (!m_repeat)
+  {
+    for (j = 1; j <= dummy; j++)
+    {
+      for (i = 1; i <= cuts[j]->szcut; i++)
+        queries_co[cuts[j]->cut[i]] = 1;
+      for (i = 1; i <= cuts[j]->szevscut; i++)
+        queries_ev[cuts[j]->evscut[i]] = 1;
+    }
+  }
 
   for (i = 1; i <= numev; i++){
     read_int(ev2tr[i]);
     read_int(dummy);
-    if (!evcofile) queries_ev[i] = dummy;
+    if (!evcofile && m_repeat > 0 && cuts[m_repeat] && cuts[m_repeat]->repeat > 0) 
+      queries_ev[i] = dummy;
   }
 
   for (i = 1; i <= numco; i++)
@@ -144,7 +164,8 @@ int read_mci_file (char *mcifile, char *evcofile, int m_repeat, char* evname, in
     read_int(co2pl[i]);
     read_int(tokens[i]);
     read_int(dummy);
-    if (!evcofile) queries_co[i] = dummy;
+    if (!evcofile && m_repeat > 0 && cuts[m_repeat] && cuts[m_repeat]->repeat > 0) 
+      queries_co[i] = dummy;
     read_int(pre_ev);
     if (cutout && pre_ev && !evname && (queries_ev[pre_ev] || queries_co[i]))
     {
@@ -176,19 +197,6 @@ int read_mci_file (char *mcifile, char *evcofile, int m_repeat, char* evname, in
         if(tokens[i] && conf) clist_add(&evprps[post_ev]->preset, i);
       }
     } while (post_ev);
-  }
-
-  if(dummy && !evcofile)
-  {
-    if (cuts[m_repeat] && cuts[m_repeat]->repeat < 0)
-    {
-      memset(queries_ev,0,(numev)*sizeof(int));
-      memset(queries_co,0,(numco)*sizeof(int));
-      for (i = 1; i <= cuts[m_repeat]->szcut; i++)
-        queries_co[cuts[m_repeat]->cut[i]] = 1;
-      for (i = 1; i <= cuts[m_repeat]->szevscut; i++)
-        queries_ev[cuts[m_repeat]->evscut[i]] = 1;
-    }
   }
 
   for (;;) {
@@ -353,7 +361,7 @@ void usage ()
 
 int main (int argc, char **argv)
 {
-  int i, m_repeat = 0, cutout = 0;
+  int i, m_repeat = -1, cutout = 0;
   char *mcifile = NULL, *evcofile = NULL, *evname = NULL;
   char *configuration = NULL;
 

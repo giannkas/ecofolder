@@ -1,0 +1,24 @@
+#!/bin/bash
+
+# Define the pattern to match
+pattern="SAT"
+#counter=1
+
+# Run the command repeatedly until the pattern matches
+while :; do
+#while [ $counter -le 10 ];  do
+  # Run your command here
+  ./check-reach-more $1
+  # Check if the output of the command contains the pattern
+  if [ `head -1 $1_unf.res` = $pattern ]; then
+    oldnum=`head -1 $1_unf.sat | cut -d ' ' -f4`
+    newnum=`expr $oldnum + 1`
+    sed -i "s/$oldnum/$newnum/" $1_unf.sat
+    tail -1 $1_unf.res | for i in $(cat); do echo $((i*-1)); 
+    done | tr '\n' ' ' | awk '{printf $0 "\n"}' >> $1_unf.sat
+  else
+    break  # Exit the loop if the pattern matches
+  fi
+# ((counter++))
+  #sleep 0.5  # Sleep for 1 second before the next iteration to avoid consuming too much resources
+done

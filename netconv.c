@@ -213,7 +213,7 @@ void nc_create_ignored_trans (net_t* net)
   for (tr = net->transitions; tr; tr = tr->next){
     if (!strstr(net->rt_trans, tr->name) && 
       !strstr(net->unf_trans, tr->name))
-      strcat(trans_pool,strcat(tr->name, ", "));
+      strcat(strcat(trans_pool,tr->name), ", ");
   }
   
   if(strlen(trans_pool) > 2){

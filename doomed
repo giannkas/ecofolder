@@ -1,3 +1,4 @@
 #!/bin/bash
 export PATH=$PWD:$PATH
 python3 doomed.py $*
+# ./doomed examples/models/lambdaswitch/lambdaswitch examples/models/lambdaswitch/lambdaswitch.bad examples/models/lambdaswitch/lambdaswitch_bad_unf

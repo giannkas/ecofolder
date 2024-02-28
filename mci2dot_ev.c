@@ -147,7 +147,7 @@ void read_mci_file_ev (char *mcifile, char* evcofile, int m_repeat, int cutout, 
 
   FILE *mcif, *evcof;
   int nqure, nqure_, nquszcut, nquszevscut, szcuts,
-    numco, numev, numpl, numtr, idpl, idtr, sz, i, value, ev1, ev2;
+    numco, numev, numpl, numtr, idpl, idtr, sz, i, j, value, ev1, ev2;
   int pre_ev, post_ev, cutoff, harmful, dummy = 0;
   int *co2pl, *ev2tr, *tokens, *queries_co,
     *queries_ev, *cutoffs, *harmfuls;
@@ -207,8 +207,10 @@ void read_mci_file_ev (char *mcifile, char* evcofile, int m_repeat, int cutout, 
   read_int(nqure);
   nqure_ = abs(nqure);
   cuts = calloc((szcuts = nqure_+1), sizeof(cut_t*));
-  if(nqure_ && m_repeat > 0 && m_repeat <= nqure_) 
-    dummy = 1;
+  if(nqure_ && !m_repeat)
+    dummy = nqure_;
+  else if(nqure_ && (m_repeat > szcuts-1 || m_repeat < 0))
+    m_repeat = -1;
   while(nqure_)
   {
     read_int(nquszcut);
@@ -241,13 +243,34 @@ void read_mci_file_ev (char *mcifile, char* evcofile, int m_repeat, int cutout, 
       }
     }
   }
+  else if (m_repeat > 0 && cuts[m_repeat] && cuts[m_repeat]->repeat < 0)
+  {
+    for (i = 1; i <= cuts[m_repeat]->szcut; i++)
+      queries_co[cuts[m_repeat]->cut[i]] = 1;
+    for (i = 1; i <= cuts[m_repeat]->szevscut; i++)
+      {queries_ev[cuts[m_repeat]->evscut[i]] = 1;
+      //printf("e%d, ", cuts[m_repeat]->evscut[i]);
+      }
+    //printf("\n");
+  }
+  else if (!m_repeat)
+  {
+    for (j = 1; j <= dummy; j++)
+    {
+      for (i = 1; i <= cuts[j]->szcut; i++)
+        queries_co[cuts[j]->cut[i]] = 1;
+      for (i = 1; i <= cuts[j]->szevscut; i++)
+        queries_ev[cuts[j]->evscut[i]] = 1;
+    }
+  }
 
   for (i = 1; i <= numev; i++){
     read_int(ev2tr[i]); // assign a value to an entry in the array ev2tr for every event
                         // in the unfolding in order to map its respective 
                         // transition, eg., ev1 -> tr3 (ev2tr[1] -> 3)
     read_int(dummy);
-    if (!evcofile) queries_ev[i] = dummy; // assign a value to an entry in the array queries_ev for every event
+    if (!evcofile && m_repeat > 0 && cuts[m_repeat] && cuts[m_repeat]->repeat > 0) 
+      queries_ev[i] = dummy; // assign a value to an entry in the array queries_ev for every event
                         // in the unfolding in order to map its respective
                         // query number, eg., ev1 -> 1 (queries_ev[1] -> 1)
   }
@@ -351,26 +374,13 @@ void read_mci_file_ev (char *mcifile, char* evcofile, int m_repeat, int cutout, 
     }
   }
 
-  if(dummy)
-  {
-    if (cuts[m_repeat] && cuts[m_repeat]->repeat < 0)
-    {
-      memset(queries_ev,0,(numev)*sizeof(int));
-      memset(queries_co,0,(numco)*sizeof(int));
-      for (i = 1; i <= cuts[m_repeat]->szcut; i++)
-        queries_co[cuts[m_repeat]->cut[i]] = 1;
-      for (i = 1; i <= cuts[m_repeat]->szevscut; i++)
-        queries_ev[cuts[m_repeat]->evscut[i]] = 1;
-    }
-  }
-
   for (;;) {
     read_int(harmful);
     if (!harmful) break;
     harmfuls[harmful] = harmful;
   }
   
-  if (!cutout)
+  if (!cutout || !m_repeat)
   {  
     // A loop over co_postsets matrix to fill ev_confl matrix with conflicts
     // among events part of the same condition's postset. We make a copy 
@@ -379,7 +389,14 @@ void read_mci_file_ev (char *mcifile, char* evcofile, int m_repeat, int cutout, 
       for (size_t j = 1; j <= numev-1; j++){
         for (size_t k = j+1; k <= numev; k++){
           ev1 = co_postsets[i][j]; ev2 = co_postsets[i][k];
-          if (ev1 != 0 && ev2 != 0 && ev_confl[ev1][ev2] == 0){
+          if (cutout && queries_ev[j] && queries_ev[k] && 
+              ev1 != 0 && ev2 != 0 && ev_confl[ev1][ev2] == 0)
+          {
+            ev_confl[ev1][ev2] = ev2;
+            ev_confl_copy[ev1][ev2] = ev2;
+          }
+          else if (!cutout && ev1 != 0 && ev2 != 0 && ev_confl[ev1][ev2] == 0)
+          {
             ev_confl[ev1][ev2] = ev2;
             ev_confl_copy[ev1][ev2] = ev2;
           }
@@ -396,13 +413,37 @@ void read_mci_file_ev (char *mcifile, char* evcofile, int m_repeat, int cutout, 
     //display_matrix(numev+1, numev+1, ev_confl_copy);
     for (size_t i = 1; i <= numev; i++)
       for (size_t j = i+1; j <= numev; j++)
-        if(ev_succs[i][j] == 0)
+        if (cutout && queries_ev[i] && queries_ev[j] && ev_succs[i][j] == 0)
+          ev_succs[i][j] = find_successor(numev+1, numev+1, ev_succs, i, j);
+        else if(!cutout && ev_succs[i][j] == 0)
           ev_succs[i][j] = find_successor(numev+1, numev+1, ev_succs, i, j);
     
     
     for (size_t i = 1; i <= numev; i++){
       for (size_t j = i+1; j <= numev; j++){
-        if(ev_confl[i][j] > 0){
+        if(cutout && queries_ev[i] && queries_ev[j] && ev_confl[i][j] > 0)
+        {
+          for(size_t k = i+1; k <= numev; k++)
+            if(ev_succs[i][k] > 0){
+              if(k > j) ev_confl_copy[j][k] = 0;
+              else ev_confl_copy[k][j] = 0;
+            }
+              //{ev_confl_copy[j][k] = k > j ? ev_confl[j][k] > 0;}
+          for(size_t k = j+1; k <= numev; k++)
+            if(ev_succs[j][k] > 0){
+              if(k > i) ev_confl_copy[i][k] = 0;
+              else ev_confl_copy[k][i] = 0;
+            }
+
+          for (size_t k = i+1; k <= numev; k++)
+            for (size_t m = j+1; m <= numev; m++)
+              if(ev_succs[i][k] > 0 && ev_succs[j][m] > 0){
+                if(k > m) ev_confl_copy[m][k] = 0;
+                else ev_confl_copy[k][m] = 0;
+              }
+        }
+        else if(!cutout && ev_confl[i][j] > 0)
+        {
           for(size_t k = i+1; k <= numev; k++)
             if(ev_succs[i][k] > 0){
               if(k > j) ev_confl_copy[j][k] = 0;
@@ -443,7 +484,7 @@ void read_mci_file_ev (char *mcifile, char* evcofile, int m_repeat, int cutout, 
       printf("  e0 -> e%d;\n", i);
   }
   
-  if(!cutout)
+  if(!cutout || !m_repeat)
   {  
     printf("\n//conflicts\n");
     //display_matrix(numev+1, numev+1, ev_succs);
@@ -452,7 +493,9 @@ void read_mci_file_ev (char *mcifile, char* evcofile, int m_repeat, int cutout, 
     // to write in the output file those conflict relations.
     for (int i = 1; i <= numev; i++){
       for (int j = i+1; j <= numev; j++){
-        if (ev_confl_copy[i][j] > 0)
+        if (cutout && queries_ev[i] && queries_ev[j] && ev_confl_copy[i][j] > 0)
+          printf("  e%d -> e%d [arrowhead=none color=gray60 style=dashed constraint=false];\n",i,ev_confl_copy[i][j]);
+        else if (!cutout && ev_confl_copy[i][j] > 0)
           printf("  e%d -> e%d [arrowhead=none color=gray60 style=dashed constraint=false];\n",i,ev_confl_copy[i][j]);
       }
     }
@@ -548,10 +591,10 @@ void read_mci_file_ev (char *mcifile, char* evcofile, int m_repeat, int cutout, 
     if (cutout && queries_ev[i])
     {  
       if ( i == harmfuls[i])
-        printf("  e%d [color=%s fillcolor=\"%s:%s\" label=\"%s (e%d)\" shape=box style=filled];\n",
+        printf("  e%d [color=\"%s\" fillcolor=\"%s:%s\" label=\"%s (e%d)\" shape=box style=filled];\n",
             i,color4,color5,queries_ev[i] ?  color3 : color5,trname[ev2tr[i]],i);
       else if (i == cutoffs[i])
-        printf("  e%d [color=%s fillcolor=\"%s:%s\" label=\"%s (e%d)\" shape=box style=filled];\n",
+        printf("  e%d [color=\"%s\" fillcolor=\"%s:%s\" label=\"%s (e%d)\" shape=box style=filled];\n",
             i,color4,color2,queries_ev[i] ?  color3 : color2,trname[ev2tr[i]],i);
       else
         printf("  e%d [color=\"%s\" fillcolor=\"%s\" label=\"%s (e%d)\" shape=box style=filled];\n",
@@ -560,16 +603,16 @@ void read_mci_file_ev (char *mcifile, char* evcofile, int m_repeat, int cutout, 
     else if (!cutout)
     {
       if ( i == harmfuls[i])
-        printf("  e%d [color=%s fillcolor=\"%s:%s\" label=\"%s (e%d)\" shape=box style=filled];\n",
+        printf("  e%d [color=\"%s\" fillcolor=\"%s:%s\" label=\"%s (e%d)\" shape=box style=filled];\n",
             i,color4,color5,queries_ev[i] || frsq[i] ?  color3 : color5,trname[ev2tr[i]],i);
       else if (i == cutoffs[i])
-        printf("  e%d [color=%s fillcolor=\"%s:%s\" label=\"%s (e%d)\" shape=box style=filled];\n",
+        printf("  e%d [color=\"%s\" fillcolor=\"%s:%s\" label=\"%s (e%d)\" shape=box style=filled];\n",
             i,color4,color2,queries_ev[i] || frsq[i] ?  color3 : color2,trname[ev2tr[i]],i);
       else
         printf("  e%d [color=\"%s\" fillcolor=\"%s\" label=\"%s (e%d)\" shape=box style=filled];\n",
             i,queries_ev[i] || frsq[i] ? color4 : color6,queries_ev[i] || frsq[i] ? color3 : color1,trname[ev2tr[i]],i);
     }
-  printf("  e0 [fillcolor=white label=\"⊥\" shape=box style=filled];\n");
+  printf("  e0 [fillcolor=\"white\" label=\"⊥\" shape=box style=filled];\n");
   printf("}\n");
 
   fclose(mcif);
@@ -593,7 +636,7 @@ void usage ()
 
 int main (int argc, char **argv)
 {
-  int i, m_repeat = 0, cutout = 0;
+  int i, m_repeat = -1, cutout = 0;
   char *mcifile = NULL, *evcofile = NULL;
   char *configuration = NULL;
 

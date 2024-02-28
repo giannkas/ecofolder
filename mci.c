@@ -72,6 +72,7 @@ void write_mci_file (char *filename)
   for(qbuck = *query; qbuck; qbuck = qbuck->next)
   {
     write_int(qbuck->repeat);
+    //printf("%d\n", qbuck->repeat);
     write_int(qbuck->szcut);
     write_int(qbuck->szevscut);
     qbuck->cut = nodelist_reverse(qbuck->cut);
@@ -80,10 +81,12 @@ void write_mci_file (char *filename)
     {
       if((co = list1->node))
       {
+        //printf("%s, ", co->origin->name);
         tmp = co->num + 1;
         write_int(tmp);
       }
     }
+    //printf("\n");
     for(list1 = qbuck->evscut; list1; list1 = list1->next)
       if((ev = list1->node))
         write_int(ev->mark);

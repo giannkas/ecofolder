@@ -25,6 +25,7 @@ extern event_t **events;
 extern int conflsteps;
 extern int** confl_evs;
 extern char* badunf;
+extern char* qrmarking;     /* marking queried from user prompt */
 
 extern int exitcode;    /* proposed exit code of the program         */
 extern trans_t *stoptr;   /* the transition mentioned by the -T switch */
@@ -55,6 +56,7 @@ extern void print_events (event_t*);
 /* declarations for marking.c              */
 
 extern void marking_init ();
+extern int marking_hash (nodelist_t *);
 extern int repeated_marking(nodelist_t*);
 extern int find_marking (nodelist_t*, int);
 extern int add_marking (nodelist_t*,event_t*);

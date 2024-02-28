@@ -22,7 +22,7 @@ int confmax = 0;      /* display maximal configurations,
 int interactive = 0;      /* interactive mode (-i)    */
 int compressed = 0;     /* compressed unfolding view (-c)    */
 int mcmillan = 0;      /* mcmillan criteria flag (-mcmillan) */
-int m_repeat = 0;     /* marking repeat to highlight (-r)    */
+int m_repeat = -1;     /* marking repeat to highlight (-r)    */
 int verbose = 0;     /* enabling Ecofolder to print info (-verbose)    */
 int freechk = 0;       /* enabling Ecofolder to do a freeness check */
 int useids = 0;       /* enabling Ecofolder to use ids given in the input
@@ -31,6 +31,7 @@ int conflsteps = 0;   /* allocating blocks of CO_ALLOC_STEP Bytes */
 int** confl_evs = NULL;  /* matrix of events X conditions whether they are 
                           in direct conflict*/
 char* badunf = NULL;
+char* qrmarking = NULL;
 
 nodelist_t *cutoff_list, *corr_list;  /* cut-off list, corresponding 
   events */
@@ -120,6 +121,11 @@ cond_t* insert_condition (place_t *pl, event_t *ev, int queried,
   //if(unf->conditions) printf("plname: %s\n", ((cond_t*)(unf->conditions))->origin->name);
   //if(unf->conditions) printf("conum: %d\n", ((cond_t*)(unf->conditions))->num);
   co->queried = queried ? 1 : 0;
+  /* if(queried)
+  {
+    printf("co->num: %d\n", co->num);
+    printf("co->queried: %d\n", co->queried);
+  } */
   if(ev && co->queried) co->pre_ev->queried = 1;
   if ((ev && nodelist_find(ev->origin->postset, pl)) ||
     (!ev && pl->marked))
@@ -361,24 +367,30 @@ void co_relation (event_t *ev, pe_queue_t *qu, int check,
 
     if (count == evps){
       if(queryable){
-        nodelist_t *list, *list2;
-        for(list = qu->marking; list; list = list->next)
-          if(!nodelist_find(ev->origin->postset, list->node))
-            for(list2 = (((place_t*)(list->node))->conds); list2;
-               list2 = list2->next)
-              if (((cond_t*)(list2->node))->num == minco->num)
-                if (minco->origin->queried)
-                {
-                  if(check)
+        nodelist_t *list, *list2, *list3;
+        int check2 = 1;
+        for(list3 = (*query)->cut; list3 && check2 && !m_repeat; list3 = list3->next)
+          if(!strcmp(((cond_t*)(list3->node))->origin->name,minco->origin->name))  check2 = 0;
+        if(check2) //print_marking_pl(qu->marking);
+        {
+          for(list = qu->marking; list; list = list->next)
+            if(!nodelist_find(ev->origin->postset, list->node))
+              for(list2 = (((place_t*)(list->node))->conds); list2;
+                list2 = list2->next)
+                if (((cond_t*)(list2->node))->num == minco->num)
+                  if (minco->origin->queried && minco->token)
                   {
-                    if(minco->pre_ev)
-                      minco->pre_ev->queried = 1;
-                    minco->queried = 1;
+                    if(check)
+                    {
+                      if(minco->pre_ev)
+                        minco->pre_ev->queried = 1;
+                      minco->queried = 1;
+                    }
+                    nodelist_insert(&((*query)->evscut),minco->pre_ev);
+                    nodelist_push(&((*query)->cut),minco);
+                    (*query)->szcut++;
                   }
-                  nodelist_insert(&((*query)->evscut),minco->pre_ev);
-                  nodelist_push(&((*query)->cut),minco);
-                  (*query)->szcut++;
-                }
+        }
       }
       addto_coarray(&(ev->coarray),minco);
     }
@@ -498,6 +510,8 @@ void unfold ()
   /* init hash table, add initial marking */
   marking_init(); unf->m0 = unf->m0_unmarked = NULL;
   mark_qr = retrieve_list("queried");
+  /* printf("mark_qr\n");
+  print_marking_pl(mark_qr); */
   harmful_marking = retrieve_list("harmful");
   add_marking(list = retrieve_list("marked"),NULL);
   check_query = nodelist_compare(list, mark_qr);
@@ -534,8 +548,9 @@ void unfold ()
   /* add initial conditions to unfolding, compute possible extensions */
   for (; list; list = list->next)
   {
-    co = insert_condition(pl = list->node,NULL, !check_query ? 
-      repeat : 0, !check_query);
+    co = insert_condition(pl = list->node,NULL, 
+      (!m_repeat && !check_query) ||
+      (!check_query && find_marking(mark_qr, 1) > 0) ? 1 : 0, !check_query);
     co->co_common = alloc_coarray(0);
     co->co_private = alloc_coarray(0);
     nodelist_push(&(unf->m0),co);
@@ -610,8 +625,12 @@ void unfold ()
     /* add event to the unfolding */
     ev = insert_event(qu, trans_pool);
     cutoff = add_marking(qu->marking,ev);
-    
     check_query = nodelist_compare(qu->marking, mark_qr);
+    /* if(!check_query) 
+    {
+      printf("qu->marking\n");
+      print_marking_pl(qu->marking);
+    } */
     for(list = harmful_marking; list && harmful_check;
       list = list->next)
       if(!nodelist_find(qu->marking, list->node)){
@@ -665,8 +684,8 @@ void unfold ()
         {stopev = ev; break;}
     }
 
-    repeat = repeat > 0 && !check_query ? repeat : 0;
-
+    repeat = (!m_repeat && !check_query) ||
+      (repeat > 0 && !check_query) ? 1 : 0;
     /* compute the co-relation for ev and post-conditions */
     co_relation(ev, qu, repeat, !check_query);
 

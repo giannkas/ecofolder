@@ -1,0 +1,5 @@
+digraph test {
+  e0 -> e2;
+  e2 [color="black" fillcolor="orange" label="R8 (e2)" shape=box style=filled];
+  e0 [fillcolor=white label="⊥" shape=box style=filled];
+}

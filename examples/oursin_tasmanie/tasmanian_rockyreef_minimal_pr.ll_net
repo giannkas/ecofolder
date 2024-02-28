@@ -2,11 +2,11 @@ PEP
 PetriBox
 FORMAT_N2
 PL
-"Alg+"M1
+"Alg+"M1q1
 "Alg-"
 "Urc+"
-"Urc-"M1
-"Lob+"M1
+"Urc-"M1q1
+"Lob+"M1q1
 "Lob-"
 TR
 "Alg+ >> Lob+"

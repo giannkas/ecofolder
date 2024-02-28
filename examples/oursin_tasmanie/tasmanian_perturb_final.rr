@@ -1,0 +1,52 @@
+###########Toy-model Tasmanian reefs and fisheries (modified by Martin M. on 16/03/2024) 
+########### Scales of the reef and inter-decadal time frame ###########
+    
+nodes:
+ Alg+: Sea weed bed (algae), '-' bare rock or '+' algal canopy  
+ Urc-: Urchin '+' High densities facilitating destructing grazing, '-' marginal densities  
+ Lob+: Lobster '+' High densities of large predatory individuals, '-' marginal densities of such predators   
+ Aba+: Abalone '+' High densities supporting commercial harvesting, '-' marginal densities    
+ Oct-: Octopus '+' High densities of top-predatory individuals, '-' marginal densities  
+ Fis-: Fishing effort targeting major coastal commercial stock (i.e. abalone and lobster) is sustainable ('-') or not ('+', which implies risks of overexploitation)
+ Mgt-: Climate-change adaptation management strategy in place ('+') or not ('-')
+
+# Initial and Final states (and vice-versa) to explore transitions
+# Target state = algal-dominated: 	Alg+,Urc-,Lob+,Aba+,Oct-,Fis-,Mgt-  [ productive kelp bed with abundant commercial species, low predation potential by octopus, no overexploitation and no need for management interventions ]
+# State to avoid = urchin barrens: 	Alg-,Urc+,Lob-,Aba-,Oct+,Fis+,Mgt+  [ low diverse low productive barren ground, high predation potential by octopus,  non-sustainable fishing effort, costly management interventions ]
+
+
+rules:
+####### Ecological processes (coloured in green #1a9850) #########
+
+ Alg+, Fis- >> Lob+         # Habitat facilitation if fishing pressure is low enough.
+ Alg+, Fis- >> Aba+         # Habitat facilitation if fishing pressure is low enough.
+ Lob+ >> Urc-               # Predation  / Consumption
+ Urc+ >> Alg-               # Predation  / Consumption 
+ Oct+ >> Lob-               # Predation  / Consumption
+ Lob+ >> Aba-               # Predation  / Consumption
+ Urc+ >> Aba-               # Predation  / Consumption
+ Oct+ >> Aba-               # Predation  / Consumption
+ Urc- >> Alg+               # Macroalgal beds regrowth if urchin grazing pressure is low
+ Lob-, Urc- >> Aba+         # Abalone population may increase when predation pressure is low
+ Alg- >> Lob-, Aba-, Oct-   # Collapse of macroalgal beds induce decline in benthic productivity and diversity
+
+####### Climate-driven change (coloured in red #d73027) '  #########
+
+ Lob- >> Urc+               # Urchin population building up (lack of predation & climate-driven)
+ Oct- >> Oct+               # Climate-driven increase in regional octopus population  (Jorge Ramos' and Felipe Briceno's PhD) 
+
+####### Over-exploitation of natural resources (coloured in light orange #fee08b)  #########
+ Mgt- >> Fis+	            # Lack of fishing regulations can induce an increase in fishing effort beyond sustainable levels
+ Fis+ >> Lob-                # Southern rock lobster decline due to overexploitation
+ Fis+ >> Aba-                # Abalone decline due to overexploitation
+
+####### Management interventions / Climate-change adaptation variables (coloured in brown #8c510a )   #########
+ Aba-, Lob- >> Mgt+    # Decline of historical fisheries induces enhanced management interventions / climate change adaptation
+ Aba+, Lob+ >> Mgt-    # Good status of historical fisheries release the pressure for mgt interventions / climate change adaptation
+ Mgt+ >> Fis-          # Climate-change adaptation implies a reduction in fishing effort
+ Mgt+ >> Oct-          # Octopus harvesting 
+ Mgt+ >> Urc-          # Urchin harvesting or culling
+ Mgt+ >> Lob+          # Lobster population rebuilding (spatial management of fishing effort and/or translocation)
+
+####### Target state and cut-off events (coloured in blue #4393c3 )   #########
+ 

@@ -195,6 +195,25 @@ nodelist_t* retrieve_list (char* attribute)
      (!strcmp("queried",attribute) && pl->queried)) !=
      (!strcmp("harmful",attribute) && pl->harmful))
       nodelist_insert(&list,pl);
+    else if (!strcmp("queried",attribute) && !pl->queried && qrmarking)
+    {
+      if(strstr(qrmarking,pl->name))
+      {
+        pl->queried = 1;
+        nodelist_insert(&list,pl);
+      }
+      else
+      {
+        char* plname = bltokstr(pl->name, 0, '_');
+        if(plname[0] != pl->name[0]) plname = pl->name;
+        if(strstr(qrmarking,plname))
+        {
+          pl->queried = 1;
+          nodelist_insert(&list,pl);
+        }
+      }
+    }
+      
 
   return list;
 }

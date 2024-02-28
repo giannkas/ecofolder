@@ -25,6 +25,7 @@ void usage(char *myname)
   "      -freechk         used to check freeness. When used, you should enable -badchk <badunf> to\n                       do a proper freeness check, otherwise you will have the initial prefix.\n                       The parameter will enable -mcmillan flag as well.\n                       It cannot be used with -T <name> option."
   "      -badchk <badunf> used to check badness <badunf> is a mci file containing an unfolding\n                       prefix of the corresponding bad net.\n"
   "      -verbose         if used, Ecofolder will print information concerning the prefix produced.\n"
+  "      -q --query <marking>    query a marking in the prefix given by <marking>.\n"
   "      -useids         when used, Ecofolder will use ids for places and transitions given in\n                       the input file.\n\n"
 
   "     FileOptions:\n"
@@ -85,6 +86,11 @@ int main (int argc, char **argv)
     {
       if (++i == argc) usage(argv[0]);
       badunf = argv[i];
+    }
+    else if (!strcmp(argv[i],"-q") || !strcmp(argv[i],"--query"))
+    {
+      if (++i == argc) usage(argv[0]);
+      qrmarking = argv[i];
     }
     else if (!strcmp(argv[i],"-freechk"))
     {

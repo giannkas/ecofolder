@@ -233,12 +233,12 @@ char* pr_encoding(char* in_file){
               fprintf(w_pointer, "%s\n", buf_arcs);
               read_place_written[num_tmp]--;
             }
-          }          
+          }
           rd_arcs++;
           token = ftokstr(buffer_rd, rd_arcs,'\n');
           tmp1 = ftokstr(token, 0, '>');
           token2 = ltokstr(token, 0, '>');
-          num_tmp = strtol(tmp1, &tmp, 10);          
+          num_tmp = strtol(tmp1, &tmp, 10);
           if(token && read_place_written[num_tmp] == -1){
             read_place_written[num_tmp] = read_place_arcs[num_tmp];}
         }

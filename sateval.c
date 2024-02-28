@@ -153,6 +153,9 @@ void readmci (const char * infile)
   // skip cutoff information
   while ((i = read_int())) { cutoffs++; read_int(); }
   evars = events - cutoffs;
+  //printf("events: %d\n", events);
+  //printf("evars: %d\n", evars);
+  //printf("cutoffs: %d\n", cutoffs);
   // dummy ints followed by number of places and transitions
   while (read_int());
   numpl = read_int();
@@ -161,27 +164,34 @@ void readmci (const char * infile)
 
   // read place names
   plname = malloc((numpl+1) * sizeof(char*));
-  for (i = 1; i <= numpl; i++) { plname[i] = bpos; read_str(); }
+  for (i = 1; i <= numpl; i++) 
+  { 
+    read_int(); plname[i] = bpos; read_str();  
+  }
   bpos++;
   // read transition names
   trname = malloc((numtr+1) * sizeof(char*));
-  for (i = 1; i <= numtr; i++) { trname[i] = bpos; read_str(); }
+  for (i = 1; i <= numtr; i++)
+  { 
+    read_int(); trname[i] = bpos; read_str(); 
+  }
+  //bpos++;
 }
 
-int sateval (char *satfile, int verbose)
+int sateval (char *resfile, int verbose)
 {
   char *tmpname, *idx, *evcofile;
 
   FILE *f;
 
-  if (!(f = fopen(satfile,"r")))
+  if (!(f = fopen(resfile,"r")))
   {
-    fprintf(stderr,"cannot read file %s\n",satfile);
+    fprintf(stderr,"cannot read file %s\n",resfile);
     exit(1);
   }
 
-  tmpname = malloc(strlen(satfile)+5);
-  strcpy(tmpname, satfile);
+  tmpname = malloc(strlen(resfile)+5);
+  strcpy(tmpname, resfile);
   idx = strrchr(tmpname,'.');
   if (!idx) strcat(tmpname,".");
   idx = strrchr(tmpname,'.');
@@ -269,7 +279,7 @@ int sateval (char *satfile, int verbose)
 void usage ()
 {
   fprintf(stderr,
-  "\nusage: sateval {-d|-r} <mcifile> <satfile>\n\n"
+  "\nusage: sateval {-d|-r} <mcifile> <resfile>\n\n"
   "  options:\n"
   "\t-d or -r: output for deadlock or reachability checking\n"
   "\t-verbose: printing info and evco file is still given.\n\n"
