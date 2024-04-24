@@ -84,6 +84,81 @@ int find_predecessor(int rows, int cols, int (*ev_predc)[cols], int pre_ev, int 
   return found;
 }
 
+char* ftokstr(char *str, int ins, char delim)
+{    
+  int len = strlen(str), i = 0, c_delim = 0, j;
+  char *tok = malloc(len+1);
+
+  for (j = 0; i < len && c_delim <= ins; i++){
+    if(str[i] == delim && c_delim != ins){
+      *tok = '\0';
+      c_delim++; j = 0;
+    }else if(str[i] == delim){
+      c_delim++; *(tok+j) = '\0';
+    }
+    else{
+      *(tok+j) = str[i];
+      j++;
+    }
+  }
+  if (strchr(tok, '\n') || (i == len && *(tok+j) != '\0')) 
+    ins = c_delim + 1;
+  return i == len && ins >= c_delim ? NULL : tok;
+}
+
+int compute_cone_height(int numev, int (*ev_predc)[numev], int srcev, int height)
+{
+  int i;
+  for (i = 1; i <= numev && !ev_predc[srcev][i]; i++) {}
+  if (ev_predc[srcev][i])
+    height = compute_cone_height(numev, ev_predc, ev_predc[srcev][i], ++height);
+  return height;
+}
+
+void check_cone(int numev, int (*ev_predc)[numev], char cone_ev[], int confl_evs[numev], int srcev)
+{
+  char str[10];
+  sprintf(str, "%d,", srcev);
+  strcat(cone_ev, str);
+  for (int i = 1; i <= numev; i++)
+    if (ev_predc[srcev][i])
+      check_cone(numev, ev_predc, cone_ev, confl_evs, ev_predc[srcev][i]);
+}
+
+void print_pathway(int numev, int (*ev_predc)[numev], int (*path_evs)[numev], char cone_ev[], char cone_ev2[], int minlen, int confl_evs[numev], int pre_ev, int link_ev)
+{
+  for (int j = 1; j <= numev; j++)
+    if (ev_predc[pre_ev][j] && confl_evs[j] && !path_evs[j][link_ev])
+    {
+      printf("  e%d -> e%d [minlen=%d];\n", j, link_ev, pre_ev == link_ev ? 1 : minlen); // write the connection.
+      path_evs[j][0] = j;
+      path_evs[j][link_ev] = link_ev;
+      print_pathway(numev, ev_predc, path_evs, cone_ev, cone_ev2, 1, confl_evs, ev_predc[pre_ev][j], ev_predc[pre_ev][j]);
+    }
+    else if (ev_predc[pre_ev][j] && !confl_evs[j] && !path_evs[j][link_ev])
+    {
+      cone_ev[0] = '\0';
+      cone_ev2[0] = '\0';
+      int k = j+1;
+      while (k <= numev && k)
+      {
+        if (ev_predc[pre_ev][k] && confl_evs[k])
+        {
+          check_cone(numev, ev_predc, cone_ev, confl_evs, j);
+          check_cone(numev, ev_predc, cone_ev2, confl_evs, k);
+          int m = 0;
+          char *tmp = ftokstr(cone_ev, m, ',');
+          while(tmp && !strstr(cone_ev2, tmp))
+            tmp = ftokstr(cone_ev, ++m, ',');
+          if(tmp) k = -1;
+        }
+        k++;
+      }
+      if (k)
+        print_pathway(numev, ev_predc, path_evs, cone_ev, cone_ev2, ++minlen, confl_evs, ev_predc[pre_ev][j], link_ev);
+    }
+}
+
 int find_conflict(int rows, int cols, int (*ev_confl)[cols],
   int (*ev_confl_copy)[cols], int(*ev_succs)[cols], int ev_cfl, int ev_src ){
   size_t k;
@@ -105,9 +180,9 @@ int find_conflict(int rows, int cols, int (*ev_confl)[cols],
 
 void display_matrix(int rows, int cols, int (*matrix)[cols]){
   int i, j;
-  for (i=1; i<rows; i++)
+  for (i=0; i<rows; i++)
   {
-      for(j=1; j<cols; j++)
+      for(j=0; j<cols; j++)
       {
         // upper triangular matrix
         /* if(j >= i){
@@ -133,7 +208,7 @@ void display_matrix(int rows, int cols, int (*matrix)[cols]){
  * 
  * @param mcifile string that corresponds to the needed mcifile.
  */
-void read_mci_file_ev (char *mcifile, char* evcofile, int m_repeat, int cutout, char* conf)
+void read_mci_file_ev (char *mcifile, char* evcofile, int m_repeat, int cutout, char* conf, int pathway)
 {
   #define read_int(x) fread(&(x),sizeof(int),1,mcif)
   /* define a micro substitution to read_int.
@@ -146,11 +221,12 @@ void read_mci_file_ev (char *mcifile, char* evcofile, int m_repeat, int cutout, 
   */
 
   FILE *mcif, *evcof;
-  int nqure, nqure_, nquszcut, nquszevscut, szcuts,
+  int nqure, nqure_, nquszcut, nquszevscut, szcuts, qnumcutoff = 0, qnumconfl = 0,
     numco, numev, numpl, numtr, idpl, idtr, sz, i, j, value, ev1, ev2;
   int pre_ev, post_ev, cutoff, harmful, dummy = 0;
   int *co2pl, *ev2tr, *tokens, *queries_co,
-    *queries_ev, *cutoffs, *harmfuls;
+    *queries_ev, *cutoffs, *harmfuls, *confl_evs;
+    //*leaves_evs
   char **plname, **trname, *c;
   cut_t **cuts;
   evprepost **evprps;
@@ -187,6 +263,9 @@ void read_mci_file_ev (char *mcifile, char* evcofile, int m_repeat, int cutout, 
                                             // to save the particular queries' events.
   ev2tr = malloc((numev+1) * sizeof(int)); // reserve empty memory for the total number 
                                            // events.
+  //leaves_evs = calloc(numev+1, sizeof(int)); // collect events with no successors. 
+  confl_evs = calloc(numev+1, sizeof(int)); // events that have at least one conflict.
+
   cutoffs = calloc(numev+1, sizeof(int));
   harmfuls = calloc(numev+1, sizeof(int));
   evprps = calloc(numev+1, sizeof(evprepost*));
@@ -203,6 +282,8 @@ void read_mci_file_ev (char *mcifile, char* evcofile, int m_repeat, int cutout, 
   int (*ev_succs)[numev+1] = calloc(numev+1, sizeof *ev_succs); // matrix to record events' successors.
   int (*ev_confl)[numev+1] = calloc(numev+1, sizeof *ev_confl); // matrix to record events' conflicts.
   int (*ev_confl_copy)[numev+1] = calloc(numev+1, sizeof *ev_confl_copy); // a copy of the previous variable.
+  int (*path_evs)[numev+1] = calloc(numev+1, sizeof *path_evs); // matrix to record events' pathway structure.
+
 
   read_int(nqure);
   nqure_ = abs(nqure);
@@ -298,7 +379,11 @@ void read_mci_file_ev (char *mcifile, char* evcofile, int m_repeat, int cutout, 
                           // in event_t structure definition), if any, which 
                           // are the events in the postset of a condition in
                           // the unfolding.
-
+      /* if (pathway && pre_ev && !post_ev && dummy != pre_ev) 
+      {
+        leaves_evs[pre_ev] = 1; 
+        dummy = pre_ev;
+      } */
       if (!cutout && post_ev && tokens[i] && conf)
         clist_add(&evprps[post_ev]->preset, i);
       if(pre_ev && post_ev && ev_succs[pre_ev][post_ev] == 0 && tokens[i]){ // check if a 
@@ -361,15 +446,18 @@ void read_mci_file_ev (char *mcifile, char* evcofile, int m_repeat, int cutout, 
   }
 
   /* print immediate connections to events */
-  for (int i = 1; i <= numev; i++){
-    for (int j = 1; j <= i; j++){
-      //if (i == 19) printf("%d,", ev_predc_copy[i][j]);
-      if (ev_predc_copy[i][j] > 0)
-      {
-        if (cutout && queries_ev[i] && queries_ev[j])
-          printf("  e%d -> e%d;\n",j,i); // write the connection.
-        else if (!cutout)
-          printf("  e%d -> e%d;\n",j,i); // write the connection.
+  if (!pathway)
+  {
+    for (int i = 1; i <= numev; i++){
+      for (int j = 1; j <= i; j++){
+        //if (i == 19) printf("%d,", ev_predc_copy[i][j]);
+        if (ev_predc_copy[i][j] > 0)
+        {
+          if (cutout && queries_ev[i] && queries_ev[j])
+            printf("  e%d -> e%d;\n",j,i); // write the connection.
+          else if (!cutout)
+            printf("  e%d -> e%d;\n",j,i); // write the connection.
+        }
       }
     }
   }
@@ -478,12 +566,15 @@ void read_mci_file_ev (char *mcifile, char* evcofile, int m_repeat, int cutout, 
     }
   }
   
-  for (int i = 1; i <= numev; i++){
-    if (!cutout && ev_succs[0][i] == 0) printf("  e0 -> e%d;\n", i);
-    else if (cutout && ev_succs[0][i] == 0 && queries_ev[i])
-      printf("  e0 -> e%d;\n", i);
+  if (!pathway)
+  {
+    for (int i = 1; i <= numev; i++){
+      if (!cutout && ev_succs[0][i] == 0) printf("  e0 -> e%d;\n", i);
+      else if (cutout && ev_succs[0][i] == 0 && queries_ev[i])
+        printf("  e0 -> e%d;\n", i);
+    }
   }
-  
+
   if(!cutout || !m_repeat)
   {  
     printf("\n//conflicts\n");
@@ -492,10 +583,16 @@ void read_mci_file_ev (char *mcifile, char* evcofile, int m_repeat, int cutout, 
     // After leaving only immediate conflicts we do a loop over ev_confl
     // to write in the output file those conflict relations.
     for (int i = 1; i <= numev; i++){
-      for (int j = i+1; j <= numev; j++){
-        if (cutout && queries_ev[i] && queries_ev[j] && ev_confl_copy[i][j] > 0)
+      for (int j = i+1; j <= numev; j++)
+      {
+        if (cutout && queries_ev[i] && queries_ev[j] && ev_confl_copy[i][j])
+        {
+          confl_evs[i] = j;
+          confl_evs[j] = i;
+          qnumconfl += 2;
           printf("  e%d -> e%d [arrowhead=none color=gray60 style=dashed constraint=false];\n",i,ev_confl_copy[i][j]);
-        else if (!cutout && ev_confl_copy[i][j] > 0)
+        }
+        else if (!cutout && ev_confl_copy[i][j])
           printf("  e%d -> e%d [arrowhead=none color=gray60 style=dashed constraint=false];\n",i,ev_confl_copy[i][j]);
       }
     }
@@ -506,6 +603,7 @@ void read_mci_file_ev (char *mcifile, char* evcofile, int m_repeat, int cutout, 
     read_int(cutoff);
     if (!cutoff) break;
     cutoffs[cutoff] = cutoff;
+    if (queries_ev[cutoff]) qnumcutoff++;
 #ifdef CUTOFF
     printf("  e%d [style=filled];\n",cutoff);
 #endif
@@ -513,6 +611,54 @@ void read_mci_file_ev (char *mcifile, char* evcofile, int m_repeat, int cutout, 
 #ifdef CUTOFF
     printf("  e%d [style=dashed];\n",dummy);
 #endif
+  }
+
+
+  if (pathway)
+  {
+    int seq_size = qnumconfl+qnumcutoff+1;
+    int path_seq[seq_size];
+    memset(path_seq, 0, sizeof(path_seq));
+    char cone_ev[seq_size*seq_size];
+    char cone_ev2[seq_size*seq_size];
+    /* printf("qnumconfl: %d\n", qnumconfl);
+    printf("qnumcutoff: %d\n", qnumcutoff); */
+    dummy = 0;
+    int k, dummy2 = 0;
+    for (i = 1; i <= numev; i++)
+      if (queries_ev[i] && cutoffs[i])
+      {
+        path_seq[dummy] = i;
+        //printf("path_seq[%d]: %d\n", dummy, i);
+        dummy++;
+      }
+    dummy = 0;
+    for (i = 0; i < seq_size; i++)
+      if (path_seq[i])
+        print_pathway(numev+1, ev_predc_copy, path_evs, cone_ev, cone_ev2, 1, confl_evs, path_seq[i], path_seq[i]);
+    
+    memset(path_seq, 0, sizeof(path_seq));
+    for (i = 1; i <= numev; i++)
+      if (path_evs[i][0] && !dummy)
+      {
+        printf("  e0 -> e%d [minlen=%d];\n", path_evs[i][0], compute_cone_height(numev+1,ev_predc_copy,path_evs[i][0],1));
+        path_seq[0] = path_evs[i][0];
+        dummy++;
+      }
+      else if (path_evs[i][0] && dummy)
+      {
+        for (k = 0; k < seq_size; k++)
+        {
+          for (j = 1; j <= numev && !dummy2; j++)
+            if (path_seq[k] && path_evs[path_seq[k]][j] == path_evs[i][0])
+              dummy2 = 1;
+        }
+        if (!dummy2) 
+          printf("  e0 -> e%d [minlen=%d];\n", path_evs[i][0], compute_cone_height(numev+1,ev_predc_copy,path_evs[i][0],1));
+        path_seq[dummy] = path_evs[i][0];
+        dummy++;
+        dummy2 = 0;
+      }
   }
 
   do { read_int(dummy); } while(dummy);
@@ -586,32 +732,54 @@ void read_mci_file_ev (char *mcifile, char* evcofile, int m_repeat, int cutout, 
   char color4[] = "black";
   char color5[] = "firebrick2";
   char color6[] = "#409f40";
+  char *fillcolor, *color;
 
   for (i = 1; i <= numev; i++)
-    if (cutout && queries_ev[i])
-    {  
-      if ( i == harmfuls[i])
-        printf("  e%d [color=\"%s\" fillcolor=\"%s:%s\" label=\"%s (e%d)\" shape=box style=filled];\n",
-            i,color4,color5,queries_ev[i] ?  color3 : color5,trname[ev2tr[i]],i);
+  {
+    if (pathway && queries_ev[i] && (confl_evs[i] || cutoffs[i]))
+    {
+      if (i == harmfuls[i])
+        fillcolor = color5;
       else if (i == cutoffs[i])
-        printf("  e%d [color=\"%s\" fillcolor=\"%s:%s\" label=\"%s (e%d)\" shape=box style=filled];\n",
-            i,color4,color2,queries_ev[i] ?  color3 : color2,trname[ev2tr[i]],i);
+        fillcolor = color2;
       else
-        printf("  e%d [color=\"%s\" fillcolor=\"%s\" label=\"%s (e%d)\" shape=box style=filled];\n",
-            i,queries_ev[i] ? color4 : color6,queries_ev[i] ? color3 : color1,trname[ev2tr[i]],i);
+        fillcolor = queries_ev[i] ? color3 : color1;
+
+      color = queries_ev[i] ? color4 : color6;
+
+      printf("  e%d [color=\"%s\" fillcolor=\"%s:%s\" label=\"%s (e%d)\" shape=box style=filled];\n",
+            i, color, fillcolor, queries_ev[i] ? color3 : fillcolor, trname[ev2tr[i]], i);
+    }
+    else if (cutout && !pathway && queries_ev[i])
+    {
+      if (i == harmfuls[i])
+        fillcolor = color5;
+      else if (i == cutoffs[i])
+        fillcolor = color2;
+      else
+        fillcolor = queries_ev[i] ? color3 : color1;
+
+      color = queries_ev[i] ? color4 : color6;
+
+      printf("  e%d [color=\"%s\" fillcolor=\"%s:%s\" label=\"%s (e%d)\" shape=box style=filled];\n",
+            i, color, fillcolor, queries_ev[i] ? color3 : fillcolor, trname[ev2tr[i]], i);
     }
     else if (!cutout)
     {
-      if ( i == harmfuls[i])
-        printf("  e%d [color=\"%s\" fillcolor=\"%s:%s\" label=\"%s (e%d)\" shape=box style=filled];\n",
-            i,color4,color5,queries_ev[i] || frsq[i] ?  color3 : color5,trname[ev2tr[i]],i);
+      int queries_ev_or_frsq = queries_ev[i] || frsq[i];
+      if (i == harmfuls[i])
+        fillcolor = color5;
       else if (i == cutoffs[i])
-        printf("  e%d [color=\"%s\" fillcolor=\"%s:%s\" label=\"%s (e%d)\" shape=box style=filled];\n",
-            i,color4,color2,queries_ev[i] || frsq[i] ?  color3 : color2,trname[ev2tr[i]],i);
+        fillcolor = color2;
       else
-        printf("  e%d [color=\"%s\" fillcolor=\"%s\" label=\"%s (e%d)\" shape=box style=filled];\n",
-            i,queries_ev[i] || frsq[i] ? color4 : color6,queries_ev[i] || frsq[i] ? color3 : color1,trname[ev2tr[i]],i);
+        fillcolor = queries_ev_or_frsq ? color3 : color1;
+
+      color = queries_ev_or_frsq ? color4 : color6;
+
+      printf("  e%d [color=\"%s\" fillcolor=\"%s:%s\" label=\"%s (e%d)\" shape=box style=filled];\n",
+          i, color, fillcolor, queries_ev_or_frsq ? color3 : fillcolor, trname[ev2tr[i]], i);
     }
+  }
   printf("  e0 [fillcolor=\"white\" label=\"⊥\" shape=box style=filled];\n");
   printf("}\n");
 
@@ -625,7 +793,8 @@ void usage ()
 
     "     Options:\n"
     "      -c --cutout  if a marking is queried or \n                  part of a reachability check then\n                  it will show a cutout of\n                  the whole unfolding\n"
-    "      -r <instance>  highlight <instance> of a repeated marking\n"
+    "      -p --pathway   display pathway structure instead of event structure."
+    "      -r <instance>  highlight <instance> of a repeated marking - <0> will show all instances. \n"
     "      -cf <confg>:   used to return the marking led \n by the configuration <confg>(string type).\n You cannot enable cutouts and this \n flag at the same time.\n\n"
 
     "<evcofile> is an optional file whose first line contains\n"
@@ -636,7 +805,7 @@ void usage ()
 
 int main (int argc, char **argv)
 {
-  int i, m_repeat = -1, cutout = 0;
+  int i, m_repeat = -1, cutout = 0, pathway = 0;
   char *mcifile = NULL, *evcofile = NULL;
   char *configuration = NULL;
 
@@ -653,12 +822,14 @@ int main (int argc, char **argv)
     }
     else if (!strcmp(argv[i],"-c") || !strcmp(argv[i],"--cutout"))
       cutout = 1;
+    else if (!strcmp(argv[i],"-p") || !strcmp(argv[i],"--pathway"))
+      pathway = 1 ;
     else if (!mcifile)
       mcifile = argv[i];
     else
       evcofile = argv[i];
 
   if (!mcifile || (cutout && configuration)) usage();
-  read_mci_file_ev(mcifile, evcofile, m_repeat, cutout, configuration);
+  read_mci_file_ev(mcifile, evcofile, m_repeat, cutout, configuration, pathway);
   exit(0);
 }
