@@ -295,6 +295,8 @@ def minF0(prefix_asp, bad_aspfile):
       "--enum-mode=domRec", "--dom-mod=3,16"]+clingo_opts)
   sat.add("base", [], prefix_asp)
   sat.load(bad_aspfile)
+  sat.load(script_path("configuration.asp"))
+  sat.load(script_path("anycfg.asp"))
   sat.load(script_path("f0.asp"))
   sat.ground([("base",())])
   for sol in sat.solve(yield_=True):
@@ -368,8 +370,9 @@ print("prefix_d", prefix_d)
 
 # compute Pi_1
 
-# maxcfg = list(tqdm(maximal_configurations(prefix),
-#           desc="(Pi_1) Computing maximal configurations without cut-offs"))
+#maxcfg = list(tqdm(maximal_configurations(prefix),
+#          desc="(Pi_1) Computing maximal configurations without cut-offs"))
+#print(maxcfg)
 # prefixes = []
 # for i, info in enumerate(tqdm(maxcfg, desc="(Pi_1) Computing prefixes")):
 #   model.set_marking(set(info["marking"]))
@@ -425,6 +428,13 @@ from time import process_time
 
 wl = set()
 known = set()
+# init_marking = model.get_m0()
+# for i in bad_markings:
+#   for j in i:
+#     if j in init_marking:
+# if model.get_m0()
+# print(init_marking)
+# print(bad_markings)
 for C in tqdm(minF0(prefix, bad_aspfile), desc="minFO"):
   #print("C", C)
   C_d = prefix_d.subgraph(C)
@@ -483,6 +493,7 @@ def is_free(C_e):
   tupleC_e = idpl2plnames(markidC_e)
   model.set_marking(tupleC_e)
   freeC_e = int(model.freecheck(badfile=bad_unf).strip())
+  #print("is free: ", freeC_e)
   return freeC_e
 
 def handle(C_e):

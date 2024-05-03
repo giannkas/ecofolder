@@ -18,7 +18,8 @@ void usage(char *myname)
 
   "Unless specified otherwise, all filenames will default to\n"
   "the basename of <LLnetfile> plus appropriate extensions.\n"
-  "<multiset of bad markings> has comma-separated 'bad' places of a net with multilines to indicate different bad markings.\n\n"
+  "<multiset of bad markings> has comma-separated 'bad' places \n"
+  "of a net with multilines to indicate different bad markings.\n\n"
 
   "Version 1.0.0 (29.04.2022)\n", myname, myname);
 

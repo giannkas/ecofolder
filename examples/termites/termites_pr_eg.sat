@@ -1,0 +1,991 @@
+p cnf 139 438                      
+
+c e23 is a cutoff
+c e24 is a cutoff
+c e25 is a cutoff
+c e26 is a cutoff
+c e27 is a cutoff
+c e28 is a cutoff
+c e29 is a cutoff
+c e30 is a cutoff
+c e31 is a cutoff
+c e32 is a cutoff
+c e33 is a cutoff
+c e34 is a cutoff
+c e35 is a cutoff
+c e36 is a cutoff
+c e37 is a cutoff
+c e38 is a cutoff
+c e39 is a cutoff
+c e40 is a cutoff
+c e41 is a cutoff
+c e42 is a cutoff
+c e43 is a cutoff
+c e44 is a cutoff
+c e45 is a cutoff
+c e46 is a cutoff
+c e47 is a cutoff
+c e48 is a cutoff
+c e49 is a cutoff
+c e50 is a cutoff
+c e51 is a cutoff
+c e52 is a cutoff
+c e53 is a cutoff
+c e54 is a cutoff
+c e55 is a cutoff
+c e56 is a cutoff
+c e57 is a cutoff
+c e58 is a cutoff
+c e59 is a cutoff
+c e60 is a cutoff
+c e61 is a cutoff
+c e62 is a cutoff
+c e63 is a cutoff
+c e64 is a cutoff
+c e65 is a cutoff
+c e66 is a cutoff
+c e67 is a cutoff
+c e68 is a cutoff
+c event e1 ~ var 1
+c event e2 ~ var 2
+c event e3 ~ var 3
+c event e4 ~ var 4
+c event e5 ~ var 5
+c event e6 ~ var 6
+c event e7 ~ var 7
+c event e8 ~ var 8
+c event e9 ~ var 9
+c event e10 ~ var 10
+c event e11 ~ var 11
+c event e12 ~ var 12
+c event e13 ~ var 13
+c event e14 ~ var 14
+c event e15 ~ var 15
+c event e16 ~ var 16
+c event e17 ~ var 17
+c event e18 ~ var 18
+c event e19 ~ var 19
+c event e20 ~ var 20
+c event e21 ~ var 21
+c event e22 ~ var 22
+
+c condition c10 (wk+_3) ~ var 23
+c whether c10 is marked
+23 8 7 5 3 2 0
+-23 -8 0
+-23 -7 0
+-23 -5 0
+-23 -3 0
+-23 -2 0
+
+c conflicts for c10
+-8 -7 0
+-8 24 0
+-7 24 0
+-5 -3 0
+-5 25 0
+-3 25 0
+-24 -25 0
+-24 26 0
+-25 26 0
+-26 -2 0
+
+c condition c11 (wk+_2) ~ var 27
+c whether c11 is marked
+27 6 5 4 2 0
+-27 -6 0
+-27 -5 0
+-27 -4 0
+-27 -2 0
+
+c conflicts for c11
+-6 -5 0
+-6 28 0
+-5 28 0
+-4 -2 0
+-4 29 0
+-2 29 0
+-28 -29 0
+
+c condition c12 (fg-) ~ var 30
+c whether c12 is marked
+30 1 0
+-30 -1 0
+
+c condition c13 (te-) ~ var 31
+c whether c13 is marked
+31 2 1 0
+-31 -2 0
+-31 -1 0
+
+c conflicts for c13
+-2 -1 0
+
+c condition c14 (ec-) ~ var 32
+c whether c14 is marked
+32 1 0
+-32 -1 0
+
+c condition c15 (rp-) ~ var 33
+c whether c15 is marked
+33 13 8 5 3 0
+-33 -13 0
+-33 -8 0
+-33 -5 0
+-33 -3 0
+
+c conflicts for c15
+-13 -8 0
+-13 34 0
+-8 34 0
+-5 -3 0
+-5 35 0
+-3 35 0
+-34 -35 0
+
+c condition c16 (ac+) ~ var 36
+c whether c16 is marked
+36 8 5 0
+-36 -8 0
+-36 -5 0
+
+c conflicts for c16
+-8 -5 0
+
+c condition c17 (wd-) ~ var 37
+c whether c17 is marked
+37 2 1 0
+-37 -2 0
+-37 -1 0
+
+c conflicts for c17
+-2 -1 0
+
+c condition c18 (sd-) ~ var 38
+c whether c18 is marked
+38 12 8 5 3 0
+-38 -12 0
+-38 -8 0
+-38 -5 0
+-38 -3 0
+
+c conflicts for c18
+-12 -8 0
+-12 39 0
+-8 39 0
+-5 -3 0
+-5 40 0
+-3 40 0
+-39 -40 0
+
+c condition c19 (wk+_1) ~ var 41
+c whether c19 is marked
+41 2 1 0
+-41 -2 0
+-41 -1 0
+
+c conflicts for c19
+-2 -1 0
+
+c causal chains around c20
+-16 1 0
+-12 1 0
+-9 1 0
+
+c condition c20 (fg+) ~ var 42
+c whether c20 is marked
+-1 42 16 12 9 0
+-42 1 0
+-42 -16 0
+-42 -12 0
+-42 -9 0
+
+c conflicts for c20
+-16 -12 0
+-16 43 0
+-12 43 0
+-43 -9 0
+
+c causal chains around c21
+-9 1 0
+-6 1 0
+-4 1 0
+
+c condition c21 (te+) ~ var 44
+c whether c21 is marked
+-1 44 9 6 4 0
+-44 1 0
+-44 -9 0
+-44 -6 0
+-44 -4 0
+
+c conflicts for c21
+-9 -6 0
+-9 45 0
+-6 45 0
+-45 -4 0
+
+c causal chains around c22
+-18 1 0
+-15 1 0
+-14 1 0
+-13 1 0
+-10 1 0
+
+c condition c22 (ec+) ~ var 46
+c whether c22 is marked
+-1 46 18 15 14 13 10 0
+-46 1 0
+-46 -18 0
+-46 -15 0
+-46 -14 0
+-46 -13 0
+-46 -10 0
+
+c conflicts for c22
+-18 -15 0
+-18 47 0
+-15 47 0
+-14 -13 0
+-14 48 0
+-13 48 0
+-47 -48 0
+-47 49 0
+-48 49 0
+-49 -10 0
+
+c causal chains around c23
+-4 1 0
+-3 1 0
+
+c condition c23 (wd+) ~ var 50
+c whether c23 is marked
+-1 50 4 3 0
+-50 1 0
+-50 -4 0
+-50 -3 0
+
+c conflicts for c23
+-4 -3 0
+
+c causal chains around c24
+-11 1 0
+-8 1 0
+-7 1 0
+-5 1 0
+
+c condition c24 (wk+_1) ~ var 51
+c whether c24 is marked
+-1 51 11 8 7 5 0
+-51 1 0
+-51 -11 0
+-51 -8 0
+-51 -7 0
+-51 -5 0
+
+c conflicts for c24
+-11 -8 0
+-11 52 0
+-8 52 0
+-7 -5 0
+-7 53 0
+-5 53 0
+-52 -53 0
+
+c condition c29 (te-) ~ var 54
+c whether c29 is marked
+-2 54 0
+-54 2 0
+
+c condition c30 (wk-_2) ~ var 55
+c whether c30 is marked
+-2 55 0
+-55 2 0
+
+c condition c31 (wk-_1) ~ var 56
+c whether c31 is marked
+-2 56 0
+-56 2 0
+
+c condition c32 (wd-) ~ var 57
+c whether c32 is marked
+-2 57 0
+-57 2 0
+
+c causal chains around c47
+-16 3 0
+
+c condition c47 (sd+) ~ var 58
+c whether c47 is marked
+-3 58 16 0
+-58 3 0
+-58 -16 0
+
+c condition c48 (rp+_2) ~ var 59
+c whether c48 is marked
+-3 59 0
+-59 3 0
+
+c causal chains around c49
+-18 3 0
+-15 3 0
+
+c condition c49 (rp+_1) ~ var 60
+c whether c49 is marked
+-3 60 18 15 0
+-60 3 0
+-60 -18 0
+-60 -15 0
+
+c conflicts for c49
+-18 -15 0
+
+c causal chains around c50
+-6 3 0
+
+c condition c50 (wd+) ~ var 61
+c whether c50 is marked
+-3 61 6 0
+-61 3 0
+-61 -6 0
+
+c causal chains around c51
+-11 3 0
+
+c condition c51 (wk+_3) ~ var 62
+c whether c51 is marked
+-3 62 11 0
+-62 3 0
+-62 -11 0
+
+c causal chains around c54
+-8 4 0
+-7 4 0
+
+c condition c54 (wk+_2) ~ var 63
+c whether c54 is marked
+-4 63 8 7 0
+-63 4 0
+-63 -8 0
+-63 -7 0
+
+c conflicts for c54
+-8 -7 0
+
+c causal chains around c55
+-7 4 0
+
+c condition c55 (te+) ~ var 64
+c whether c55 is marked
+-4 64 7 0
+-64 4 0
+-64 -7 0
+
+c causal chains around c56
+-7 4 0
+
+c condition c56 (wd-) ~ var 65
+c whether c56 is marked
+-4 65 7 0
+-65 4 0
+-65 -7 0
+
+c causal chains around c58
+-10 5 0
+
+c condition c58 (rp-) ~ var 66
+c whether c58 is marked
+-5 66 10 0
+-66 5 0
+-66 -10 0
+
+c causal chains around c59
+-17 5 0
+
+c condition c59 (ac+) ~ var 67
+c whether c59 is marked
+-5 67 17 0
+-67 5 0
+-67 -17 0
+
+c causal chains around c60
+-9 5 0
+
+c condition c60 (sd-) ~ var 68
+c whether c60 is marked
+-5 68 9 0
+-68 5 0
+-68 -9 0
+
+c causal chains around c61
+-10 5 0
+
+c condition c61 (wk-_2) ~ var 69
+c whether c61 is marked
+-5 69 10 0
+-69 5 0
+-69 -10 0
+
+c causal chains around c62
+-9 5 0
+
+c condition c62 (wk-_1) ~ var 70
+c whether c62 is marked
+-5 70 9 0
+-70 5 0
+-70 -9 0
+
+c causal chains around c117
+-11 6 0
+
+c condition c117 (wk+_2) ~ var 71
+c whether c117 is marked
+-6 71 11 0
+-71 6 0
+-71 -11 0
+
+c causal chains around c118
+-11 6 0
+
+c condition c118 (te+) ~ var 72
+c whether c118 is marked
+-6 72 11 0
+-72 6 0
+-72 -11 0
+
+c causal chains around c119
+-11 6 0
+
+c condition c119 (wd-) ~ var 73
+c whether c119 is marked
+-6 73 11 0
+-73 6 0
+-73 -11 0
+
+c causal chains around c121
+-12 7 0
+
+c condition c121 (te-) ~ var 74
+c whether c121 is marked
+-7 74 12 0
+-74 7 0
+-74 -12 0
+
+c causal chains around c122
+-13 7 0
+
+c condition c122 (wk-_2) ~ var 75
+c whether c122 is marked
+-7 75 13 0
+-75 7 0
+-75 -13 0
+
+c causal chains around c123
+-12 7 0
+
+c condition c123 (wk-_1) ~ var 76
+c whether c123 is marked
+-7 76 12 0
+-76 7 0
+-76 -12 0
+
+c condition c124 (wd-) ~ var 77
+c whether c124 is marked
+-7 77 0
+-77 7 0
+
+c causal chains around c129
+-14 8 0
+
+c condition c129 (rp-) ~ var 78
+c whether c129 is marked
+-8 78 14 0
+-78 8 0
+-78 -14 0
+
+c condition c130 (ac+) ~ var 79
+c whether c130 is marked
+-8 79 0
+-79 8 0
+
+c condition c131 (sd-) ~ var 80
+c whether c131 is marked
+-8 80 0
+-80 8 0
+
+c causal chains around c132
+-14 8 0
+
+c condition c132 (wk-_2) ~ var 81
+c whether c132 is marked
+-8 81 14 0
+-81 8 0
+-81 -14 0
+
+c condition c133 (wk-_1) ~ var 82
+c whether c133 is marked
+-8 82 0
+-82 8 0
+
+c condition c139 (fg-) ~ var 83
+c whether c139 is marked
+-9 83 0
+-83 9 0
+
+c condition c140 (te-) ~ var 84
+c whether c140 is marked
+-9 84 0
+-84 9 0
+
+c causal chains around c141
+-17 9 0
+
+c condition c141 (sd-) ~ var 85
+c whether c141 is marked
+-9 85 17 0
+-85 9 0
+-85 -17 0
+
+c causal chains around c142
+-17 9 0
+
+c condition c142 (wk-_1) ~ var 86
+c whether c142 is marked
+-9 86 17 0
+-86 9 0
+-86 -17 0
+
+c causal chains around c146
+-17 10 0
+
+c condition c146 (wk-_2) ~ var 87
+c whether c146 is marked
+-10 87 17 0
+-87 10 0
+-87 -17 0
+
+c condition c147 (ec-) ~ var 88
+c whether c147 is marked
+-10 88 0
+-88 10 0
+
+c causal chains around c148
+-17 10 0
+
+c condition c148 (rp-) ~ var 89
+c whether c148 is marked
+-10 89 17 0
+-89 10 0
+-89 -17 0
+
+c causal chains around c166
+-16 11 0
+
+c condition c166 (te-) ~ var 90
+c whether c166 is marked
+-11 90 16 0
+-90 11 0
+-90 -16 0
+
+c causal chains around c167
+-18 11 0
+-15 11 0
+
+c condition c167 (wk-_2) ~ var 91
+c whether c167 is marked
+-11 91 18 15 0
+-91 11 0
+-91 -18 0
+-91 -15 0
+
+c conflicts for c167
+-18 -15 0
+
+c causal chains around c168
+-16 11 0
+-15 11 0
+
+c condition c168 (wk-_1) ~ var 92
+c whether c168 is marked
+-11 92 16 15 0
+-92 11 0
+-92 -16 0
+-92 -15 0
+
+c conflicts for c168
+-16 -15 0
+
+c causal chains around c169
+-19 11 0
+
+c condition c169 (wd-) ~ var 93
+c whether c169 is marked
+-11 93 19 0
+-93 11 0
+-93 -19 0
+
+c condition c174 (fg-) ~ var 94
+c whether c174 is marked
+-12 94 0
+-94 12 0
+
+c condition c175 (te-) ~ var 95
+c whether c175 is marked
+-12 95 0
+-95 12 0
+
+c condition c176 (sd-) ~ var 96
+c whether c176 is marked
+-12 96 0
+-96 12 0
+
+c condition c177 (wk-_1) ~ var 97
+c whether c177 is marked
+-12 97 0
+-97 12 0
+
+c condition c181 (wk-_2) ~ var 98
+c whether c181 is marked
+-13 98 0
+-98 13 0
+
+c condition c182 (ec-) ~ var 99
+c whether c182 is marked
+-13 99 0
+-99 13 0
+
+c condition c183 (rp-) ~ var 100
+c whether c183 is marked
+-13 100 0
+-100 13 0
+
+c condition c210 (wk-_2) ~ var 101
+c whether c210 is marked
+-14 101 0
+-101 14 0
+
+c condition c211 (ec-) ~ var 102
+c whether c211 is marked
+-14 102 0
+-102 14 0
+
+c condition c212 (rp-) ~ var 103
+c whether c212 is marked
+-14 103 0
+-103 14 0
+
+c condition c234 (wk+_3) ~ var 104
+c whether c234 is marked
+-15 104 0
+-104 15 0
+
+c condition c235 (wk+_2) ~ var 105
+c whether c235 is marked
+-15 105 0
+-105 15 0
+
+c condition c236 (wk+_1) ~ var 106
+c whether c236 is marked
+-15 106 0
+-106 15 0
+
+c condition c237 (ec+) ~ var 107
+c whether c237 is marked
+-15 107 0
+-107 15 0
+
+c condition c238 (rp+_1) ~ var 108
+c whether c238 is marked
+-15 108 0
+-108 15 0
+
+c causal chains around c241
+-19 16 0
+
+c condition c241 (fg-) ~ var 109
+c whether c241 is marked
+-16 109 19 0
+-109 16 0
+-109 -19 0
+
+c causal chains around c242
+-19 16 0
+
+c condition c242 (te-) ~ var 110
+c whether c242 is marked
+-16 110 19 0
+-110 16 0
+-110 -19 0
+
+c condition c243 (sd-) ~ var 111
+c whether c243 is marked
+-16 111 0
+-111 16 0
+
+c causal chains around c244
+-18 16 0
+
+c condition c244 (wk-_1) ~ var 112
+c whether c244 is marked
+-16 112 18 0
+-112 16 0
+-112 -18 0
+
+c condition c302 (rp-) ~ var 113
+c whether c302 is marked
+-17 113 0
+-113 17 0
+
+c condition c303 (ac+) ~ var 114
+c whether c303 is marked
+-17 114 0
+-114 17 0
+
+c condition c304 (sd-) ~ var 115
+c whether c304 is marked
+-17 115 0
+-115 17 0
+
+c condition c305 (wk-_2) ~ var 116
+c whether c305 is marked
+-17 116 0
+-116 17 0
+
+c condition c306 (wk-_1) ~ var 117
+c whether c306 is marked
+-17 117 0
+-117 17 0
+
+c causal chains around c332
+-21 18 0
+
+c condition c332 (wk+_3) ~ var 118
+c whether c332 is marked
+-18 118 21 0
+-118 18 0
+-118 -21 0
+
+c causal chains around c333
+-20 18 0
+
+c condition c333 (wk+_2) ~ var 119
+c whether c333 is marked
+-18 119 20 0
+-119 18 0
+-119 -20 0
+
+c causal chains around c334
+-19 18 0
+
+c condition c334 (wk+_1) ~ var 120
+c whether c334 is marked
+-18 120 19 0
+-120 18 0
+-120 -19 0
+
+c causal chains around c335
+-19 18 0
+
+c condition c335 (ec+) ~ var 121
+c whether c335 is marked
+-18 121 19 0
+-121 18 0
+-121 -19 0
+
+c causal chains around c336
+-22 18 0
+
+c condition c336 (rp+_1) ~ var 122
+c whether c336 is marked
+-18 122 22 0
+-122 18 0
+-122 -22 0
+
+c condition c389 (fg+) ~ var 123
+c whether c389 is marked
+-19 123 0
+-123 19 0
+
+c causal chains around c390
+-20 19 0
+
+c condition c390 (te+) ~ var 124
+c whether c390 is marked
+-19 124 20 0
+-124 19 0
+-124 -20 0
+
+c causal chains around c391
+-22 19 0
+
+c condition c391 (ec+) ~ var 125
+c whether c391 is marked
+-19 125 22 0
+-125 19 0
+-125 -22 0
+
+c causal chains around c392
+-20 19 0
+
+c condition c392 (wd+) ~ var 126
+c whether c392 is marked
+-19 126 20 0
+-126 19 0
+-126 -20 0
+
+c causal chains around c393
+-21 19 0
+
+c condition c393 (wk+_1) ~ var 127
+c whether c393 is marked
+-19 127 21 0
+-127 19 0
+-127 -21 0
+
+c causal chains around c433
+-21 20 0
+
+c condition c433 (wk+_2) ~ var 128
+c whether c433 is marked
+-20 128 21 0
+-128 20 0
+-128 -21 0
+
+c causal chains around c434
+-21 20 0
+
+c condition c434 (te+) ~ var 129
+c whether c434 is marked
+-20 129 21 0
+-129 20 0
+-129 -21 0
+
+c causal chains around c435
+-21 20 0
+
+c condition c435 (wd-) ~ var 130
+c whether c435 is marked
+-20 130 21 0
+-130 20 0
+-130 -21 0
+
+c condition c463 (te-) ~ var 131
+c whether c463 is marked
+-21 131 0
+-131 21 0
+
+c causal chains around c464
+-22 21 0
+
+c condition c464 (wk-_2) ~ var 132
+c whether c464 is marked
+-21 132 22 0
+-132 21 0
+-132 -22 0
+
+c causal chains around c465
+-22 21 0
+
+c condition c465 (wk-_1) ~ var 133
+c whether c465 is marked
+-21 133 22 0
+-133 21 0
+-133 -22 0
+
+c condition c466 (wd-) ~ var 134
+c whether c466 is marked
+-21 134 0
+-134 21 0
+
+c condition c481 (wk+_3) ~ var 135
+c whether c481 is marked
+-22 135 0
+-135 22 0
+
+c condition c482 (wk+_2) ~ var 136
+c whether c482 is marked
+-22 136 0
+-136 22 0
+
+c condition c483 (wk+_1) ~ var 137
+c whether c483 is marked
+-22 137 0
+-137 22 0
+
+c condition c484 (ec+) ~ var 138
+c whether c484 is marked
+-22 138 0
+-138 22 0
+
+c condition c485 (rp+_1) ~ var 139
+c whether c485 is marked
+-22 139 0
+-139 22 0
+
+c event e1 disabled
+-30 -31 -32 -37 -41 0
+
+c event e2 disabled
+-23 -27 -31 -37 -41 0
+
+c event e3 disabled
+-23 -33 -38 -50 0
+
+c event e4 disabled
+-27 -44 -50 0
+
+c event e5 disabled
+-23 -27 -33 -36 -38 -51 0
+
+c event e6 disabled
+-27 -44 -61 0
+
+c event e7 disabled
+-23 -51 -63 -64 -65 0
+
+c event e8 disabled
+-23 -33 -36 -38 -51 -63 0
+
+c event e9 disabled
+-42 -44 -68 -70 0
+
+c event e10 disabled
+-46 -66 -69 0
+
+c event e11 disabled
+-51 -62 -71 -72 -73 0
+
+c event e12 disabled
+-38 -42 -74 -76 0
+
+c event e13 disabled
+-33 -46 -75 0
+
+c event e14 disabled
+-46 -78 -81 0
+
+c event e15 disabled
+-46 -60 -91 -92 0
+
+c event e16 disabled
+-42 -58 -90 -92 0
+
+c event e17 disabled
+-67 -85 -86 -87 -89 0
+
+c event e18 disabled
+-46 -60 -91 -112 0
+
+c event e19 disabled
+-93 -109 -110 -120 -121 0
+
+c event e20 disabled
+-119 -124 -126 0
+
+c event e21 disabled
+-118 -127 -128 -129 -130 0
+
+c event e22 disabled
+-122 -125 -132 -133 0
+
+c previously found configurations that we wish to exclude
