@@ -390,7 +390,7 @@ int main (int argc, char **argv)
     else
       evcofile = argv[i];
 
-  if (!mcifile || (evname && m_repeat) || (cutout && configuration)) 
+  if (!mcifile || (evname && m_repeat >= 0) || (cutout && configuration)) 
     usage();
 
   exit(!read_mci_file(mcifile, evcofile, m_repeat, evname, cutout, configuration));

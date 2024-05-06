@@ -1,4 +1,5 @@
-conflict(E,F) :- edge(C,E),edge(C,F),E != F, not cutoff(E), not cutoff(F).
+{ e(E): event(E)}.
+conflict(E,F) :- edge(C,E),edge(C,F),E != F.
 
 %:- cutoff(E), e(E).
 % select parent events

@@ -296,7 +296,7 @@ def minF0(prefix_asp, bad_aspfile):
   sat.add("base", [], prefix_asp)
   sat.load(bad_aspfile)
   sat.load(script_path("configuration.asp"))
-  sat.load(script_path("anycfg.asp"))
+  #sat.load(script_path("anycfg.asp"))
   sat.load(script_path("f0.asp"))
   sat.ground([("base",())])
   for sol in sat.solve(yield_=True):
@@ -428,20 +428,25 @@ from time import process_time
 
 wl = set()
 known = set()
-# init_marking = model.get_m0()
-# for i in bad_markings:
-#   for j in i:
-#     if j in init_marking:
-# if model.get_m0()
-# print(init_marking)
-# print(bad_markings)
-for C in tqdm(minF0(prefix, bad_aspfile), desc="minFO"):
-  #print("C", C)
-  C_d = prefix_d.subgraph(C)
-  C_crest = get_crest(C_d)
-  (keep, crest) = shave(C_d, C_crest)
-  #print("C_shave", keep)
-  wl.add((keep, crest))
+init_marking = model.get_m0()
+empty_wl = 1
+for i in bad_markings:
+  if len(i) < len(init_marking):
+    for j in i:
+      if j not in init_marking: empty_wl = 0
+  elif len(i) > len(init_marking): empty_wl = 0
+  elif len(i) == len(init_marking):
+    if set(i) != set(init_marking):
+      empty_wl = 0
+
+if not empty_wl:
+  for C in tqdm(minF0(prefix, bad_aspfile), desc="minFO"):
+    #print("C", C)
+    C_d = prefix_d.subgraph(C)
+    C_crest = get_crest(C_d)
+    (keep, crest) = shave(C_d, C_crest)
+    #print("C_shave", keep)
+    wl.add((keep, crest))
 
 
 # print("Grounding doom check...", end="", flush=True, file=sys.stderr)
@@ -503,7 +508,8 @@ def handle(C_e):
   wl.add(Cp)
   stats['is_doomed'] += 1
 
-print(wl)
+for i in wl:
+  print(i)
 
 i = 0
 while wl:
