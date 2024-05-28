@@ -1208,55 +1208,55 @@ h((pi0,e123),t9).
 h((pi0,e124),t27).
 h((pi0,e125),t37).
 h((pi0,e126),t12).
-name(p1,"cI_0").
-name(p2,"cro_2").
 name(p3,"cro_3").
-name(p4,"cI_1").
-name(p5,"cI_2").
+name(p2,"cro_2").
 name(p6,"cro_1").
 name(p7,"cro_0").
-name(p8,"N_0").
-name(p9,"N_1").
-name(p10,"cII_0").
 name(p11,"cII_1").
-name(t1,"[cI_0] -> cro_2 cro_3").
-name(t2,"[cI_1] -> cro_2 cro_3").
-name(t3,"[cI_2] -> cro_2 cro_1").
-name(t4,"[cI_0;cro_0] -> N_0 N_1").
-name(t5,"[cI_0;cro_1] -> N_0 N_1").
-name(t6,"[N_1;cI_0;cro_0] -> cII_0 cII_1").
-name(t7,"[N_1;cI_0;cro_1] -> cII_0 cII_1").
-name(t8,"[N_1;cI_0;cro_2] -> cII_0 cII_1").
-name(t9,"[N_1;cI_1;cro_0] -> cII_0 cII_1").
-name(t10,"[N_1;cI_1;cro_1] -> cII_0 cII_1").
-name(t11,"[N_1;cI_1;cro_2] -> cII_0 cII_1").
-name(t12,"[cI_0] -> cro_0 cro_1").
-name(t13,"[cI_1] -> cro_0 cro_1").
-name(t14,"[] -> cro_3 cro_2").
-name(t15,"[cI_2] -> cro_3 cro_2").
-name(t16,"[N_0] -> cII_1 cII_0").
-name(t17,"[cro_3] -> cII_1 cII_0").
-name(t18,"[cI_2] -> cII_1 cII_0").
-name(t19,"[cII_0;cro_1] -> cI_2 cI_1").
-name(t20,"[cII_0;cro_2] -> cI_2 cI_1").
-name(t21,"[cII_0;cro_3] -> cI_2 cI_1").
-name(t22,"[cI_0] -> cro_1 cro_2").
-name(t23,"[cI_1] -> cro_1 cro_2").
-name(t24,"[cI_2] -> cro_1 cro_0").
-name(t25,"[cro_0] -> cI_1 cI_2").
-name(t26,"[cII_1] -> cI_1 cI_2").
-name(t27,"[cII_0;cro_1] -> cI_1 cI_0").
-name(t28,"[cII_0;cro_2] -> cI_1 cI_0").
-name(t29,"[cII_0;cro_3] -> cI_1 cI_0").
-name(t30,"[cro_0] -> cI_0 cI_1").
-name(t31,"[cII_1] -> cI_0 cI_1").
-name(t32,"[cI_2;cro_2] -> N_1 N_0").
-name(t33,"[cI_1;cro_2] -> N_1 N_0").
-name(t34,"[cI_2;cro_3] -> N_1 N_0").
-name(t35,"[cI_1;cro_3] -> N_1 N_0").
-name(t36,"[cI_2;cro_0] -> N_1 N_0").
-name(t37,"[cI_1;cro_0] -> N_1 N_0").
-name(t38,"[cI_2;cro_1] -> N_1 N_0").
-name(t39,"[cI_1;cro_1] -> N_1 N_0").
-name(t40,"[cI_0;cro_2] -> N_1 N_0").
-name(t41,"[cI_0;cro_3] -> N_1 N_0").
+name(p10,"cII_0").
+name(p5,"cI_2").
+name(p4,"cI_1").
+name(p1,"cI_0").
+name(p9,"N_1").
+name(p8,"N_0").
+name(t41,"R41").
+name(t40,"R40").
+name(t39,"R39").
+name(t38,"R38").
+name(t37,"R37").
+name(t36,"R36").
+name(t35,"R35").
+name(t34,"R34").
+name(t33,"R33").
+name(t32,"R32").
+name(t31,"R31").
+name(t30,"R30").
+name(t29,"R29").
+name(t28,"R28").
+name(t27,"R27").
+name(t26,"R26").
+name(t25,"R25").
+name(t24,"R24").
+name(t23,"R23").
+name(t22,"R22").
+name(t21,"R21").
+name(t20,"R20").
+name(t19,"R19").
+name(t18,"R18").
+name(t17,"R17").
+name(t16,"R16").
+name(t15,"R15").
+name(t14,"R14").
+name(t13,"R13").
+name(t12,"R12").
+name(t11,"R11").
+name(t10,"R10").
+name(t9,"R9").
+name(t8,"R8").
+name(t7,"R7").
+name(t6,"R6").
+name(t5,"R5").
+name(t4,"R4").
+name(t3,"R3").
+name(t2,"R2").
+name(t1,"R1").

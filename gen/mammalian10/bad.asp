@@ -1,0 +1,10 @@
+bad("Cdc20_1").
+bad("CycA_0").
+bad("CycB_1").
+bad("CycD_1").
+bad("CycE_0").
+bad("E2F_0").
+bad("Rb_0").
+bad("UbcH10_0").
+bad("cdh1_1").
+bad("p27_0").

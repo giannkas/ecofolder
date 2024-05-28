@@ -53,9 +53,9 @@ void llnet2dot(char* in_file){
     while(fgets(d_read, READ_PLACES, r_pointer) != NULL && !strstr(d_read, "RD\n")
        && !strstr(d_read, "TP\n"))
     {
-      if (d_read[0] == 'P' && d_read[1] == 'L');
+      if (strstr(d_read, "PL\n"));
       else if (places == header) header++;
-      if (d_read[0] == 'T' && d_read[1] == 'R');
+      if (strstr(d_read, "TR\n"));
       else if (trans == places) places++;
       trans++;
     }
@@ -64,11 +64,11 @@ void llnet2dot(char* in_file){
     places = places - header;
     header++;
     trans = trans - places - header;
-    printf("header: %d\n", header);
+    printf("header: %d\n", --header);
     printf("places: %d\n", places);
     printf("trans: %d\n", trans);
     strcat(out_file, ftokstr(in_file, 0, '.'));
-    strcat(out_file, "_net.dot");			
+    strcat(out_file, "_net.dot");
     w_pointer = fopen(out_file, "w"); // if we have read arcs then create a new file.      
     fprintf(w_pointer, "digraph test {\n");
 
@@ -115,12 +115,14 @@ void llnet2dot(char* in_file){
     int i = 1;
     while(fgets(d_read, READ_PLACES, r_pointer) != NULL && !strstr(d_read, "TR\n")){
       if(strstr(d_read, "\"")){
+        left = ftokstr(d_read, 0, '\"');
+        if (strlen(left)) num_left = strtol(left, &token, 10);
         token = ftokstr(d_read, 1, '\"');
         if(i <= places){
-          if(strstr(d_read, "M1"))
-            fprintf(w_pointer, "  p%d [label=\"⬤\" xlabel= <<FONT COLOR=\"red\">%s</FONT>> shape=circle ];\n",i,token);
+          if(strstr(d_read, "M1\n"))
+            fprintf(w_pointer, "  p%d [label=\"⬤\" xlabel= <<FONT COLOR=\"red\">%s</FONT>> shape=circle ];\n",strlen(left) ? num_left : i,token);
           else
-            fprintf(w_pointer, "  p%d [label=\"\" xlabel= <<FONT COLOR=\"red\">%s</FONT>> shape=circle ];\n",i,token);
+            fprintf(w_pointer, "  p%d [label=\"\" xlabel= <<FONT COLOR=\"red\">%s</FONT>> shape=circle ];\n",strlen(left) ? num_left : i,token);
         }
         i++;
       }
@@ -129,9 +131,11 @@ void llnet2dot(char* in_file){
     i = 1;
     if(strstr(d_read, "TR\n")){
       while(fgets(d_read, READ_PLACES, r_pointer) != NULL && strstr(d_read, "\"")){
+        left = ftokstr(d_read, 0, '\"');
+        if (strlen(left)) num_left = strtol(left, &token, 10);
         token = ftokstr(d_read, 1, '\"');
         if(i <= trans)
-          fprintf(w_pointer, "  t%d [fillcolor=\"#cccccc\" label=\"%s\" shape=box style=filled];\n",i,token);
+          fprintf(w_pointer, "  t%d [fillcolor=\"#cccccc\" label=\"%s\" shape=box style=filled];\n",strlen(left) ? num_left : i,token);
         i++;
       }
     }

@@ -17,11 +17,11 @@ if [ $correct -eq 1 ]; then
   ./sateval -r $1.mci $1.res
 
   sateval=$?
-  #echo "Sateval is: $sateval"
 else
   sateval=$correct
 fi
 
+#echo "Sateval is: $sateval"
 exit $sateval
 
 #rm -f $1.mci $1.sat $1.res

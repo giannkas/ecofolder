@@ -56,7 +56,7 @@ class Model:
         if len(parts[0]) < 1: pid += 1
         else: pid = int(parts[0])
         name = parts[1]
-        m0 = "M1" in r
+        m0 = r.endswith("M1")
         self.PL[name] = {"id": pid, "m0": m0}
         id2pn[pid] = name
         max_pid = max(max_pid, pid)
@@ -122,7 +122,7 @@ class Model:
   def freecheck(self, mcifile="working.mci", badfile="working_bad.mci"):
     llfile = os.path.join(out_d, "working.ll")
     with open(llfile, "w") as fp:
-        self.write(fp)
+      self.write(fp)
     mcifile = os.path.join(out_d, mcifile)
     args = [script_path("ecofolder"), "-useids", "-freechk", "-badchk", badfile, llfile, "-m", mcifile]
     free_mrk = subprocess.check_output(args).decode()
@@ -357,6 +357,7 @@ prefix = asp_of_mci(mci)
 #print(dicevents)
 print(f"Prefix has {prefix_nb_events(mci)} events, including cut-offs",
         file=sys.stderr)
+
 with open(f"{out_d}/prefix.asp", "w") as fp:
   fp.write(prefix)
 
@@ -368,39 +369,11 @@ e2tr = prefix_info["e2tr"]
 print("Unchallenged events", unchallenged, file=sys.stderr)
 print("prefix_d", prefix_d)
 
-# compute Pi_1
-
-#maxcfg = list(tqdm(maximal_configurations(prefix),
-#          desc="(Pi_1) Computing maximal configurations without cut-offs"))
-#print(maxcfg)
-# prefixes = []
-# for i, info in enumerate(tqdm(maxcfg, desc="(Pi_1) Computing prefixes")):
-#   model.set_marking(set(info["marking"]))
-#   #print(info)
-#   mci = model.complix()
-#   ns = f"w{i}"
-#   mci_asp = asp_of_mci(mci, ns=ns)
-#   for j, glue in enumerate(find_glue(info["hcut"], mci_asp)):
-#       if not glue:
-#           continue
-#       w_asp = mci_asp
-#       for (orig, match) in glue:
-#           w_asp = w_asp.replace(f"{match},",f"{orig},")
-#       prefixes.append(w_asp)
-#       """
-#       with open(f"{out_d}/p{i}{j}.asp", "w") as fp:
-#           fp.write(w_asp)
-#       """
-
-# Pi1_asp = "".join([prefix]+prefixes)
-# with open(f"{out_d}/pi1.asp", "w") as fp:
-#   fp.write(Pi1_asp)
-
 def get_crest(poset):
   return {e for e, od in poset.out_degree() if od == 0}
 
 stats = {
-  "is_doomed": 0
+  "freechk": 0
 }
 
 def shave(C_d, crest):
@@ -424,7 +397,7 @@ def shave(C_d, crest):
           crest.add(f)
   return tuple(sorted(set(C_d) - blacklist)), tuple(sorted(crest))
 
-from time import process_time
+from time import strftime
 
 wl = set()
 known = set()
@@ -441,22 +414,13 @@ for i in bad_markings:
 
 if not empty_wl:
   for C in tqdm(minF0(prefix, bad_aspfile), desc="minFO"):
-    #print("C", C)
     C_d = prefix_d.subgraph(C)
     C_crest = get_crest(C_d)
     (keep, crest) = shave(C_d, C_crest)
-    #print("C_shave", keep)
     wl.add((keep, crest))
 
-
-# print("Grounding doom check...", end="", flush=True, file=sys.stderr)
-t0 = process_time()
+#t0 = process_time()
 doom_ctl = clingo.Control(clingo_opts)
-# doom_ctl.load(script_path("viable.asp"))
-# doom_ctl.load(bad_aspfile)
-# doom_ctl.load(f"{out_d}/pi1.asp")
-# doom_ctl.ground([("base",())])
-print(f" done in {process_time()-t0:.1f}s", flush=True, file=sys.stderr)
 
 def str_conf(C):
   Cstr = ""
@@ -493,12 +457,12 @@ def sort_by_number(string):
 #print(tupleC_e)
 
 def is_free(C_e):
+  stats['freechk'] += 1
   Cstr_ = str_conf(C_e)
   markidC_e = subprocess.check_output(["mci2asp", "-cf", Cstr_, mci]).decode()
   tupleC_e = idpl2plnames(markidC_e)
   model.set_marking(tupleC_e)
   freeC_e = int(model.freecheck(badfile=bad_unf).strip())
-  #print("is free: ", freeC_e)
   return freeC_e
 
 def handle(C_e):
@@ -506,7 +470,6 @@ def handle(C_e):
   C_crest = get_crest(C_d)
   Cp = shave(C_d, C_crest)
   wl.add(Cp)
-  stats['is_doomed'] += 1
 
 for i in wl:
   print(i)
@@ -521,7 +484,6 @@ while wl:
   crest = set(crest)
   C_e = C - crest
   add = True
-  # print(Cstr_)
   if not is_free(C_e):
     add = False
     handle(C_e)
@@ -533,14 +495,15 @@ while wl:
         handle(c_e)
   if add:
     i += 1
-    d = process_time() - t0
-    print(f"{d:.1f} [MINDOO {i}]\t", set(sorted([e2tr[e] for e in C])), sorted(C, key=sort_by_number), flush=True)
+    d = time.time() - t0
+    etime = time.strftime("%Mm%Ss", time.gmtime(d))
+    print(f"{etime} [MINDOO {i}]\t", set(sorted([e2tr[e] for e in C])), sorted(C, key=sort_by_number), flush=True)
     #print(str_conf(C))
     print("Marking: ", idpl2plnames(subprocess.check_output(["mci2asp", "-cf", str_conf(C), mci]).decode()))
-    print(f"   doom checks: {stats['is_doomed']}", flush=True, file=sys.stderr)
+    print(f"   free checks: {stats['freechk']}", flush=True, file=sys.stderr)
 if i == 0:
   print("EMPTY MINDOO")
-print(f"total doom checks: {stats['is_doomed']}", flush=True, file=sys.stderr)
+print(f"total free checks: {stats['freechk']}", flush=True, file=sys.stderr)
 
 
 #marking = []

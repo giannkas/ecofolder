@@ -554,7 +554,6 @@ void read_mci_file_ev (char *mcifile, char* evcofile, int m_repeat, int cutout, 
       }
     }
   }
-
   /* Printing event corresponding to the initial cut. We make use of 
   the empty vector of index 0 in ev_succs matrix to collect all events 
   that have predecesors and hence to depict the arcs in the resulting 

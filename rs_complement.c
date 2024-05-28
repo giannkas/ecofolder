@@ -53,9 +53,9 @@ char* rs_complement(char* in_file){
     /* Read up to RD label and get number of transitions and places*/
     while(fgets(d_read, MAX_RESET_PLACES, r_pointer) != NULL &&
        !strstr(d_read, "RD") && !strstr(d_read, "TP")){
-      if (d_read[0] == 'P' && d_read[1] == 'L');
+      if (strstr(d_read, "PL\n"));
       else if (places == header) header++;
-      if (d_read[0] == 'T' && d_read[1] == 'R');
+      if (strstr(d_read, "TR\n"));
       else if (trans == places){
         if( d_read[0] == '\"'){
           strcpy(place_names[names], d_read);
@@ -70,7 +70,7 @@ char* rs_complement(char* in_file){
     places = places - header;
     header++;
     trans = trans - places - header;
-    printf("header: %d\n", header);
+    printf("header: %d\n", --header);
     printf("places: %d\n", places);
     printf("trans: %d\n", trans);
     while(fgets(d_read, MAX_RESET_PLACES, r_pointer) != NULL && !strstr(d_read, "RS")){}

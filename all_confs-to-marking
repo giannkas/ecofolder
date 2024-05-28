@@ -1,0 +1,3 @@
+#!/bin/bash
+export PATH=$PWD:$PATH
+python3 all_confs-to-marking.py $*

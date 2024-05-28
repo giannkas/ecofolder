@@ -1,2 +1,11 @@
-bad("C3=1").
 bad("ATP=1").
+bad("C3=1").
+bad("C8=1").
+bad("FAS=0").
+bad("MOMP=1").
+bad("MPT=0").
+bad("NFkB=0").
+bad("RIP1=0").
+bad("ROS=0").
+bad("TNF=1").
+bad("cIAP=0").
