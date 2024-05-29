@@ -342,21 +342,18 @@ def sort_by_number(string):
   number = int(string.split(',')[-1][1:].strip(')'))
   return number
 
-#Cstr_ = "1,3,6,11,16,43"
-#print(decisional_height(dicevents, Cstr_))
-#markidC_e = subprocess.check_output(["mci2asp", "-cf", Cstr_, mci]).decode()
-#tupleC_e = idpl2plnames(markidC_e)
-#print(tupleC_e)
-print(set(bad_markings[0]))
-for i in wl:
-  listC = str_conf(i).split(',')
-  for ci in range(len(listC)):
-    if ','.join(listC[:ci]) in known:
-      break
-    check = set(idpl2plnames(subprocess.check_output(["mci2asp", "-cf", ','.join(listC[:ci]), mci]).decode())) == set(bad_markings[0])
-    if check:
-      known.add(','.join(listC[:ci]))
-      print(sorted(i, key=sort_by_number))
-      print(listC[:ci])
-      break
+outf = f"{script_dir}/{os.path.dirname(model_ll)}/all_confs-to-marking_{base_output}.evco"
+with open(outf, "w") as fout:
+  for i in wl:
+    listC = str_conf(i).split(',')
+    for ci in range(len(listC)):
+      if ','.join(listC[:ci+1]) in known: break
+      check = set(idpl2plnames(subprocess.check_output([
+        "mci2asp", "-cf", ','.join(listC[:ci+1]), mci]).decode())) == \
+        set(bad_markings[0])
+      if check:
+        known.add(','.join(listC[:ci+1]))
+        #print(sorted(i, key=sort_by_number))
+        print(' '.join(listC[:ci+1])+' 0', file=fout)
+        break
 

@@ -114,7 +114,6 @@ int main (int argc, char **argv)
         else strcpy(idx,".mci");
         mcifile = MYstrdup(tmpname);
       }
-
       dptr = NULL;
     }
 

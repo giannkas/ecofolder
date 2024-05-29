@@ -223,7 +223,7 @@ void read_mci_file_ev (char *mcifile, char* evcofile, int m_repeat, int cutout, 
   FILE *mcif, *evcof;
   int nqure, nqure_, nquszcut, nquszevscut, szcuts, qnumcutoff = 0, qnumconfl = 0,
     numco, numev, numpl, numtr, idpl, idtr, sz, i, j, value, ev1, ev2;
-  int pre_ev, post_ev, cutoff, harmful, dummy = 0;
+  int pre_ev, post_ev, cutoff, harmful, dummy = 0, count_mrk = 1;
   int *co2pl, *ev2tr, *tokens, *queries_co,
     *queries_ev, *cutoffs, *harmfuls, *confl_evs;
     //*leaves_evs
@@ -311,18 +311,21 @@ void read_mci_file_ev (char *mcifile, char* evcofile, int m_repeat, int cutout, 
   }
 
   if(evcofile)
-  {  
-    dummy = 0;
-    while (fscanf(evcof," %d",&value) != EOF)
-    {
-      if (value != 0 && !dummy)
-        queries_ev[value] = 1;
-      else
+  {
+    if (!m_repeat)
+      while (fscanf(evcof," %d",&value) != EOF)
       {
-        queries_co[value] = 1; 
-        dummy = 1;
+        if (value != 0 && !queries_ev[value])
+          queries_ev[value] = 1;
       }
-    }
+    else
+      while (fscanf(evcof," %d",&value) != EOF && count_mrk <= m_repeat)
+      {
+        if (value != 0 && !queries_ev[value] && count_mrk == m_repeat)
+          queries_ev[value] = 1;
+        else if (!value)
+          count_mrk++;
+      }
   }
   else if (m_repeat > 0 && cuts[m_repeat] && cuts[m_repeat]->repeat < 0)
   {
