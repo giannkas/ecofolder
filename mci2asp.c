@@ -45,6 +45,8 @@ int strtoint(char *num) {
   return result;
 }
 
+//char **plname;
+
 void read_mci_file (char *mcifile, int m_repeat, char* ns, char* conf)
 {
   #define read_int(x) fread(&(x),sizeof(int),1,mcif)
@@ -54,7 +56,7 @@ void read_mci_file (char *mcifile, int m_repeat, char* ns, char* conf)
     numco, numev, numpl, numtr, idpl, idtr, sz, i;
   int pre_ev, post_ev, cutoff, harmful, dummy = 0;
   int *co2pl, *ev2tr, *tokens, *queries_co,
-   *queries_ev, *cutoffs, *harmfuls;
+   *queries_ev, *cutoffs, *harmfuls, *plids, *trids;
   char **plname, **trname, *c;
   cut_t **cuts;
 
@@ -161,13 +163,17 @@ void read_mci_file (char *mcifile, int m_repeat, char* ns, char* conf)
 
   plname = malloc((numpl+2) * sizeof(char*));
   trname = malloc((numtr+2) * sizeof(char*));
+  plids = calloc(numpl+2, sizeof(int));
+  trids = calloc(numtr+2, sizeof(int));
+
   for (i = 1; i <= numpl+1; i++) plname[i] = malloc(sz+1);
   for (i = 1; i <= numtr+1; i++) trname[i] = malloc(sz+1);
 
   for (i=1; i <= numpl; i++)
   {
     read_int(idpl);
-    c = plname[idpl];
+    plids[i] = idpl;
+    c = plname[i];
     do { fread(c,1,1,mcif); } while (*c++);
   }
   fread(c,1,1,mcif);
@@ -175,7 +181,8 @@ void read_mci_file (char *mcifile, int m_repeat, char* ns, char* conf)
   for (i=1; i <= numtr; i++)
   {
     read_int(idtr);
-    c = trname[idtr];
+    trids[i] = idtr;
+    c = trname[i];
     do { fread(c,1,1,mcif); } while (*c++);
   }
   fread(c,1,1,mcif);
@@ -186,9 +193,9 @@ void read_mci_file (char *mcifile, int m_repeat, char* ns, char* conf)
     if (!conf) printf("h((%s,e%d),t%d).\n", ns,i,ev2tr[i]);
 
   for (i = 1; i <= numpl; i++)
-    if (!conf)  printf("name(p%d,\"%s\").\n",i,plname[i]);
+    if (!conf)  printf("name(p%d,\"%s\").\n",plids[i],plname[i]);
   for (i = 1; i <= numtr; i++)
-    if (!conf)  printf("name(t%d,\"%s\").\n",i,trname[i]);
+    if (!conf)  printf("name(t%d,\"%s\").\n",trids[i],trname[i]);
 
   /* clist_t *j;
   for (i = 0; i <= numev; i++) {
@@ -210,7 +217,7 @@ void get_marking(char* confg)
   char* confg_copy = strdup(confg);
   int subint;
 
-  int *marking = calloc(numplaces+1, sizeof(int));
+  int *marking = calloc((numplaces*numplaces)+1, sizeof(int));
   char *markingstr = calloc(numplaces*5, sizeof(char));
   int length = snprintf(NULL, 0, "%d", numplaces);
   char* plidstr = malloc(length);
@@ -244,7 +251,7 @@ void get_marking(char* confg)
     sub = strtok(NULL, ",");
   }
 
-  for(int i = 1; i <= numplaces; i++)
+  for(int i = 1; i <= (numplaces*numplaces); i++)
   {
     if (marking[i] > 0)
     {
@@ -252,7 +259,6 @@ void get_marking(char* confg)
       strcat(markingstr, plidstr);
     }
   }
-
   printf("%s",markingstr);
 }
 

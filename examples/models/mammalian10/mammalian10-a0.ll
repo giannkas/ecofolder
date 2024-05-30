@@ -2,16 +2,16 @@ PEP
 PTNet
 FORMAT_N
 PL
-10"Cdc20_0"M1
-11"Cdc20_1"M0
+10"Cdc20_0"M0
+11"Cdc20_1"M1
 20"CycA_0"M1
 21"CycA_1"M0
 30"CycB_0"M1
 31"CycB_1"M0
 40"CycD_0"M0
 41"CycD_1"M1
-50"CycE_0"M1
-51"CycE_1"M0
+50"CycE_0"M0
+51"CycE_1"M1
 60"E2F_0"M1
 61"E2F_1"M0
 70"Rb_0"M1
@@ -63,6 +63,10 @@ TR
 37"37 p27 0 1"
 38"38 p27 1 0"
 105"reached_any"
+RT
+
+RD
+
 TP
 1<11
 1<31
@@ -330,3 +334,5 @@ PT
 40>37
 101>38
 102>105
+RS
+

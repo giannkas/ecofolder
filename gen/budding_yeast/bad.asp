@@ -1,0 +1,9 @@
+bad("MBF=0").
+bad("SBF=0").
+bad("YOX1=0").
+bad("HCM1=0").
+bad("YHP1=0").
+bad("SFF=0").
+bad("ACE2=0").
+bad("SWI5=0").
+bad("CLN3=0").

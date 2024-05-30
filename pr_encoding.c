@@ -56,9 +56,9 @@ char* pr_encoding(char* in_file){
     char read_place_names[MAX_READ_PLACES][MAX_READ_PLACES] = {0};
     /* Read up to RD label and get number of transitions and places*/
     while(fgets(d_read, READ_PLACES, r_pointer) != NULL && !strstr(d_read, "RD") && !strstr(d_read, "TP")){
-      if (d_read[0] == 'P' && d_read[1] == 'L');
+      if (strstr(d_read, "PL\n"));
       else if (places == header) header++;
-      if (d_read[0] == 'T' && d_read[1] == 'R');
+      if (strstr(d_read, "TR\n"));
       else if (trans == places){
         if( strstr(d_read,"\"")){
           strcpy(read_place_names[names], d_read);
@@ -78,7 +78,7 @@ char* pr_encoding(char* in_file){
     places = places - header;
     header++;
     trans = trans - places - header;
-    printf("header: %d\n", header);
+    printf("header: %d\n", --header);
     printf("places: %d\n", places);
     printf("trans: %d\n", trans);
 

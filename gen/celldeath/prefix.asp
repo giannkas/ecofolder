@@ -9558,36 +9558,36 @@ name(p19,"TNF=0").
 name(p20,"TNF=1").
 name(p21,"cIAP=0").
 name(p22,"cIAP=1").
-name(t1,"MPT=1 -> MPT=0 when NFkB=0 and ROS=0").
-name(t2,"MPT=1 -> MPT=0 when NFkB=1").
-name(t3,"C3=1 -> C3=0 when ATP=0").
-name(t4,"C3=1 -> C3=0 when ATP=1 and MOMP=0").
-name(t5,"C3=1 -> C3=0 when ATP=1 and MOMP=1 and NFkB=1, ").
-name(t6,"MPT=0 -> MPT=1 when NFkB=0 and ROS=1").
-name(t7,"ATP=0 -> ATP=1 when MPT=0").
-name(t8,"MOMP=1 -> MOMP=0 when C8=0 and MPT=0").
-name(t9,"MOMP=1 -> MOMP=0 when C8=1 and MPT=0 and NFkB=1").
-name(t10,"cIAP=1 -> cIAP=0 when MOMP=1").
-name(t11,"C3=0 -> C3=1 when ATP=1 and MOMP=1 and NFkB=0").
-name(t12,"C8=0 -> C8=1 when C3=0 and FAS=0 and NFkB=0 and TNF=1").
-name(t13,"C8=0 -> C8=1 when C3=0 and FAS=1 and NFkB=0, ").
-name(t14,"C8=0 -> C8=1 when C3=1 and NFkB=0").
-name(t15,"RIP1=1 -> RIP1=0 when C8=0 and FAS=0 and TNF=0, ").
-name(t16,"RIP1=1 -> RIP1=0 when C8=1").
-name(t17,"NFkB=1 -> NFkB=0 when C3=0 and RIP1=0").
-name(t18,"NFkB=1 -> NFkB=0 when C3=0 and RIP1=1 and cIAP=0").
-name(t19,"NFkB=1 -> NFkB=0 when C3=1, ").
-name(t20,"ROS=0 -> ROS=1 when MPT=0 and NFkB=0 and RIP1=1").
-name(t21,"ROS=0 -> ROS=1 when MPT=1 and NFkB=0").
-name(t22,"cIAP=0 -> cIAP=1 when MOMP=0 and NFkB=1").
-name(t23,"ATP=1 -> ATP=0 when MPT=1").
-name(t24,"RIP1=0 -> RIP1=1 when C8=0 and FAS=0 and TNF=1").
-name(t25,"RIP1=0 -> RIP1=1 when C8=0 and FAS=1, ").
-name(t26,"NFkB=0 -> NFkB=1 when C3=0 and RIP1=1 and cIAP=1").
-name(t27,"MOMP=0 -> MOMP=1 when MPT=1").
-name(t28,"MOMP=0 -> MOMP=1 when C8=1 and MPT=0 and NFkB=0").
-name(t29,"ROS=1 -> ROS=0 when NFkB=1").
-name(t30,"ROS=1 -> ROS=0 when MPT=0 and NFkB=0 and RIP1=0").
-name(t31,"C8=1 -> C8=0 when C3=0 and NFkB=1").
-name(t32,"C8=1 -> C8=0 when C3=0 and FAS=0 and NFkB=0 and TNF=0, ").
-name(t33,"C8=1 -> C8=0 when C3=1 and NFkB=1, ").
+name(t1,"1").
+name(t2,"2").
+name(t3,"3").
+name(t4,"4").
+name(t5,"5").
+name(t6,"6").
+name(t7,"7").
+name(t8,"8").
+name(t9,"9").
+name(t10,"10").
+name(t11,"11").
+name(t12,"12").
+name(t13,"13").
+name(t14,"14").
+name(t15,"15").
+name(t16,"16").
+name(t17,"17").
+name(t18,"18").
+name(t19,"19").
+name(t20,"20").
+name(t21,"21").
+name(t22,"22").
+name(t23,"23").
+name(t24,"24").
+name(t25,"25").
+name(t26,"26").
+name(t27,"27").
+name(t28,"28").
+name(t29,"29").
+name(t30,"30").
+name(t31,"31").
+name(t32,"32").
+name(t33,"33").

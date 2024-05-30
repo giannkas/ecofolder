@@ -72,7 +72,7 @@ int read_mci_file (char *mcifile, char *evcofile, int m_repeat, char* evname, in
     }
   }
 
-  if(!evname) 
+  if(!evname && !conf) 
     printf("digraph test {\n");
 
 
@@ -167,16 +167,16 @@ int read_mci_file (char *mcifile, char *evcofile, int m_repeat, char* evname, in
     if (!evcofile && m_repeat > 0 && cuts[m_repeat] && cuts[m_repeat]->repeat > 0) 
       queries_co[i] = dummy;
     read_int(pre_ev);
-    if (cutout && pre_ev && !evname && (queries_ev[pre_ev] || queries_co[i]))
+    if (cutout && pre_ev && !evname && (queries_ev[pre_ev] || queries_co[i]) && !conf)
     {
       printf("  e%d -> c%d;\n",pre_ev,i);
       queries_coset[i] = 1;
     }
-    else if (cutout && !pre_ev && !evname && queries_co[i])
+    else if (cutout && !pre_ev && !evname && queries_co[i] && !conf)
       queries_coset[i] = 1;
     else if (!cutout && pre_ev && !evname) 
     {
-      printf("  e%d -> c%d;\n",pre_ev,i);
+      if (!conf) printf("  e%d -> c%d;\n",pre_ev,i);
       if(tokens[i] && conf) clist_add(&evprps[pre_ev]->postset, i);
     }
     if (!pre_ev)
@@ -186,14 +186,14 @@ int read_mci_file (char *mcifile, char *evcofile, int m_repeat, char* evname, in
     }
     do {
       read_int(post_ev);
-      if (cutout && post_ev && !evname && (queries_ev[post_ev] || queries_co[i]))
+      if (cutout && post_ev && !evname && (queries_ev[post_ev] || queries_co[i]) && !conf)
       {
         if (queries_ev[post_ev]) printf("  c%d -> e%d;\n",i,post_ev);
         queries_coset[i] = 1;
       }
       else if (!cutout && post_ev && !evname)
       { 
-        printf("  c%d -> e%d;\n",i,post_ev);
+        if (!conf) printf("  c%d -> e%d;\n",i,post_ev);
         if(tokens[i] && conf) clist_add(&evprps[post_ev]->preset, i);
       }
     } while (post_ev);
@@ -255,6 +255,7 @@ int read_mci_file (char *mcifile, char *evcofile, int m_repeat, char* evname, in
     int coid;
     int subint;
     char* conf_copy = strdup(conf);
+    char *markingstr = calloc(numpl*sz, sizeof(char));
     /* Add initial cut */
     for(list = evprps[0]->postset; list; list = list->next)
     {
@@ -281,6 +282,17 @@ int read_mci_file (char *mcifile, char *evcofile, int m_repeat, char* evname, in
       }
       sub = strtok(NULL, ",");
     }
+
+    for(int i = 1; i <= numco; i++)
+    {
+      if (cut[i] > 0)
+      {
+        if (strlen(markingstr) > 0) strcat(markingstr,",");
+        strcat(markingstr, plname[co2pl[i]]);
+      }
+    }
+
+    printf("%s\n",markingstr);
   }
 
   char color0[] = "transparent";
@@ -295,7 +307,7 @@ int read_mci_file (char *mcifile, char *evcofile, int m_repeat, char* evname, in
   char color9[] = "#409f40";
   
   int found = 0;
-  if(!evname)
+  if(!evname && !conf)
   {
     for (i = 1; i <= numco; i++)
       if (cutout && queries_coset[i])

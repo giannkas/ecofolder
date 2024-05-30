@@ -360,8 +360,10 @@ int mci2sat (const char * infile, const char *outfile)
   //printf("1. nosense: %d\n", nosense);
 
 
-  if(p_reach->size > conds-1 || n_reach->size > conds-1)
+  if(p_reach->size > conds-1 || n_reach->size > conds-1){
+    //printf("first return\n");
     return 0;
+  }
 
   numtr = read_int();
   read_int();
@@ -421,8 +423,10 @@ int mci2sat (const char * infile, const char *outfile)
   }
   plinunf = calloc((maxszname*numpl)*10, sizeof(char));
   //printf("4. nosense: %d\n", nosense);
-  if (nosense && !att)
+  if (nosense && !att){
+    //printf("second return\n");
     return 0;
+  }
   
   if (!opt_comments) P("p cnf                              \n");
   /* go back and read conditions */
@@ -487,7 +491,10 @@ int mci2sat (const char * infile, const char *outfile)
   }
 
   //printf("5. nosense: %d\n", nosense);
-  if (nosense && !att) return 0;
+  if (nosense && !att){ 
+    //printf("third return\n");
+    return 0;
+  }
 
 
   if (!opt_reach)
@@ -597,7 +604,7 @@ int main (int argc, char ** argv)
     strcpy(outfile + l - 3, "sat");
   }
 
-  correct = mci2sat (filename,outfile);
+  correct = mci2sat(filename,outfile);
 
   return correct;
 }
