@@ -10,10 +10,10 @@ def color_in_dot():
     Usage: python3 {color_in_dot.__name__} [options]\n
 
     Options:
-        -b --blank     enables to the white fill color for rules not given as an argument.
+        -b --blank     enables to fill with white color for rules or events not given as an argument.
         -e --events   assumes that the list of rules are events of a configuration.
         -ru --rules <rule names>    list of rules given <rule names>.
-        -co --colors <list of colors>    list of colores given <list of colors>.
+        -co --colors <list of colors>    list of colors given <list of colors>.
         -cocs --color_cutofss <color>    color for cutoff events.\n
     
     File is given by STDIN. If options are not given then {color_in_dot.__name__} will produce the same file.\n
@@ -59,28 +59,31 @@ def color_in_dot():
     if "fillcolor" in line and "⊥" not in line:
       pos_label = line.find("label=\"") + len("label=\"")
       pos_fillcolor = line.find("fillcolor=")
-      size_fillcolor = len(line[pos_fillcolor:].split()[0])
+      sz_fillcolor = len(line[pos_fillcolor:].split()[0])
       fevp = line.find("(")+1
       levp = line.find(")")
       node_name = line[pos_label:fevp-2] if evs == 0 else line[fevp:levp]
       if node_name in color_rule.keys():
-        if ":" in line:
+        colon = line.find(":")
+        fcolor = line[pos_fillcolor+len("fillcolor=\""):colon]
+        scolor = line[colon+1:pos_fillcolor+sz_fillcolor-1]
+        if fcolor == scolor:
+          print(line[:pos_fillcolor+len("fillcolor=")] + "\"" + color_rule[node_name]
+              + ":" + color_rule[node_name] + "\"" + 
+              line[pos_fillcolor+sz_fillcolor:-1])
+        else:
           print(line[:pos_fillcolor+len("fillcolor=")] + "\"" + colorcut
               + ":" + color_rule[node_name] + "\"" + 
-              line[pos_fillcolor+size_fillcolor:-1])
-        else:
-          print(line[:pos_fillcolor+len("fillcolor=")] + "\"" +
-              color_rule[node_name] + "\"" + 
-              line[pos_fillcolor+size_fillcolor:-1])
+              line[pos_fillcolor+sz_fillcolor:-1])
       elif blank == 1:
         if ":" in line:
           print(line[:pos_fillcolor+len("fillcolor=")] + "\"" + "white"
               + ":" + "white" + "\"" + 
-              line[pos_fillcolor+size_fillcolor:-1])
+              line[pos_fillcolor+sz_fillcolor:-1])
         else:
           print(line[:pos_fillcolor+len("fillcolor=")] + "\"" +
               "white" + "\"" + 
-              line[pos_fillcolor+size_fillcolor:-1])
+              line[pos_fillcolor+sz_fillcolor:-1])
 
     else: print(line[:-1])
     line = stdin.readline()
