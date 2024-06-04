@@ -11,6 +11,7 @@ import time
 import re
 
 from tqdm import tqdm
+from itertools import chain, combinations
 
 import networkx as nx
 
@@ -189,11 +190,14 @@ def dot_from_atoms(atoms):
 def minF0(prefix_asp, bad_aspfile):
   sat = clingo.Control(["0", "--heuristic=Domain",
       "--enum-mode=domRec", "--dom-mod=3,16"]+clingo_opts)
+  # sat = clingo.Control(["0", "--heuristic=Domain",
+  #     "--enum-mode=domRec", "--dom-mod=3,16", "--opt-mode=optN"]+clingo_opts)
   sat.add("base", [], prefix_asp)
   sat.load(bad_aspfile)
-  #sat.load(script_path("configuration.asp"))
+  sat.load(script_path("configuration.asp"))
   #sat.load(script_path("anycfg.asp"))
   sat.load(script_path("f0.asp"))
+  #sat.add("base", [], ":~ e(E). [1@1, E]")
   sat.ground([("base",())])
   for sol in sat.solve(yield_=True):
     atoms = sol.symbols(atoms=True)
@@ -271,27 +275,6 @@ stats = {
   "freechk": 0
 }
 
-def shave(C_d, crest):
-  first = True
-  blacklist = set()
-  crest = set(crest)
-  while True:
-    rm = [e for e in crest if e in unchallenged]
-    if not rm:
-      break
-    crest.difference_update(rm)
-    blacklist.update(rm)
-    for e in rm:
-      for f in C_d.predecessors(e):
-        is_crest = True
-        for g in C_d.successors(f):
-          if g not in blacklist:
-            is_crest = False
-            break
-        if is_crest:
-          crest.add(f)
-  return tuple(sorted(set(C_d) - blacklist)), tuple(sorted(crest))
-
 from time import strftime
 
 wl = set()
@@ -342,18 +325,67 @@ def sort_by_number(string):
   number = int(string.split(',')[-1][1:].strip(')'))
   return number
 
-outf = f"{script_dir}/{os.path.dirname(model_ll)}/all_confs-to-marking_{base_output}.evco"
-with open(outf, "w") as fout:
+# from itertools recipes: 
+# https://docs.python.org/2/library/itertools.html#recipes
+def powerset(iterable):
+  s = list(iterable)
+  return chain.from_iterable(combinations(s, r) for r in range(len(s)+1))
+
+# removing events given its causal relation of events, then
+# if a run has led to the desired marking, then do no add more
+# events to this run
+def run_to_marking():
   for i in wl:
     listC = str_conf(i).split(',')
+    isorted = sorted(i, key=sort_by_number)
     for ci in range(len(listC)):
-      if ','.join(listC[:ci+1]) in known: break
+      primer = ','.join(listC[:ci+1])
+      if tuple(isorted[:ci+1]) in known: break
       check = set(idpl2plnames(subprocess.check_output([
-        "mci2asp", "-cf", ','.join(listC[:ci+1]), mci]).decode())) == \
+        "mci2asp", "-cf", primer, mci]).decode())) == \
         set(bad_markings[0])
       if check:
-        known.add(','.join(listC[:ci+1]))
-        #print(sorted(i, key=sort_by_number))
-        print(' '.join(listC[:ci+1])+' 0', file=fout)
+        yield tuple(isorted[:ci+1])
+        # known.add(tuple(isorted[:ci+1]))
+        # #print(' '.join(listC[:ci+1])+' 0', file=fout)
         break
+
+# we can shorthen even more these runs by checking unnecesary
+# events that lead to a marking
+def shortening_runs():
+  sols = set()
+  seen = set()
+  for j in known:
+    for i in powerset(j):
+      if len(i) > 0:
+        if i in sols: break
+        if i in seen: continue
+        else: seen.add(i)
+        primer = str_conf(i)
+        confvalid = 1
+        for k in range(len(i)-1):
+          in_edges_view = prefix_d.in_edges(nbunch=i[k+1])
+          source_nodes = [edge[0] for edge in in_edges_view]
+          for m in source_nodes:
+            if m in j and m not in i:
+              confvalid = 0
+              break
+        if (confvalid):
+          check = set(idpl2plnames(subprocess.check_output([
+            "mci2asp", "-cf", primer, mci]).decode())) == \
+            set(bad_markings[0])
+          if check:
+            sols.add(i)
+            yield (primer.replace(","," ")+' 0')
+            #print(primer.replace(","," ")+' 0', file=fout)
+            break
+
+outf = f"{script_dir}/{os.path.dirname(model_ll)}/all_confs-to-marking_{base_output}.evev"
+with open(outf, "w") as fout:
+  for run in tqdm(run_to_marking(), desc="Run to marking"):
+    known.add(run)
+  for shrt_run in tqdm(shortening_runs(), desc="Shortening runs"):
+    print(shrt_run, file=fout)
+  
+
 

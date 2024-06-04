@@ -14,7 +14,7 @@
 
 echo "Converting to dot..."
 #./mci2dot $1_unf.mci > $1_unf.dot
-./mci2dot_ev -r 11 -c $1_unf.mci $2.evco > $1_unf.dot
+./mci2dot_ev -r 0 -c -p $1_unf.mci $2.evev > $1_unf.dot
 
 # if the compressed mode is needed, you should run:
 #./mci2dot_cpr $1_unf.mci > $1_unf.dot

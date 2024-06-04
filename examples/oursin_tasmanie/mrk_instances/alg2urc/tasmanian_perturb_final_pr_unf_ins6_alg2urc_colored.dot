@@ -241,7 +241,7 @@ digraph test {
   e56 [color="black" fillcolor="white:white" label="R11 (e56)" shape=box style=filled];
   e57 [color="black" fillcolor="white:white" label="R21 (e57)" shape=box style=filled];
   e59 [color="black" fillcolor="white:white" label="R12 (e59)" shape=box style=filled];
-  e62 [color="black" fillcolor="#8c510a:#8c510a" label="R22 (e62)" shape=box style=filled];
+  e62 [color="black" fillcolor="white:white" label="R22 (e62)" shape=box style=filled];
   e65 [color="black" fillcolor="white:white" label="R5 (e65)" shape=box style=filled];
   e67 [color="black" fillcolor="white:white" label="R15 (e67)" shape=box style=filled];
   e76 [color="black" fillcolor="white:white" label="R4 (e76)" shape=box style=filled];
@@ -265,7 +265,7 @@ digraph test {
   e300 [color="black" fillcolor="white:white" label="R17 (e300)" shape=box style=filled];
   e302 [color="black" fillcolor="white:white" label="R17 (e302)" shape=box style=filled];
   e303 [color="black" fillcolor="white:white" label="R17 (e303)" shape=box style=filled];
-  e331 [color="black" fillcolor="#1a9850:#1a9850" label="R5 (e331)" shape=box style=filled];
+  e331 [color="black" fillcolor="white:white" label="R5 (e331)" shape=box style=filled];
   e332 [color="black" fillcolor="white:white" label="R15 (e332)" shape=box style=filled];
   e337 [color="black" fillcolor="white:white" label="R5 (e337)" shape=box style=filled];
   e338 [color="black" fillcolor="white:white" label="R17 (e338)" shape=box style=filled];
@@ -285,8 +285,8 @@ digraph test {
   e478 [color="black" fillcolor="white:white" label="R4 (e478)" shape=box style=filled];
   e501 [color="black" fillcolor="white:white" label="R12 (e501)" shape=box style=filled];
   e518 [color="black" fillcolor="white:white" label="R15 (e518)" shape=box style=filled];
-  e519 [color="black" fillcolor="cornflowerblue:#1a9850" label="R8 (e519)" shape=box style=filled];
-  e524 [color="black" fillcolor="white:white" label="R7 (e524)" shape=box style=filled];
+  e519 [color="black" fillcolor="white:white" label="R8 (e519)" shape=box style=filled];
+  e524 [color="black" fillcolor="cornflowerblue:#1a9850" label="R7 (e524)" shape=box style=filled];
   e527 [color="black" fillcolor="white:white" label="R17 (e527)" shape=box style=filled];
   e531 [color="black" fillcolor="white:white" label="R17 (e531)" shape=box style=filled];
   e539 [color="black" fillcolor="white:white" label="R17 (e539)" shape=box style=filled];
