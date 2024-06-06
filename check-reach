@@ -18,6 +18,7 @@ echo "Evaluating SAT..."
 
 echo "Converting to dot..."
 ./mci2dot_ev -c $1_unf.mci $1_unf.evco > $1_unf.dot
+#./mci2dot -c $1_unf.mci $1_unf.evco > $1_unf.dot
 
 echo "Producing the pdf..."
 dot -T pdf $1_unf.dot > $1_unf.pdf

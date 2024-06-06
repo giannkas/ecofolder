@@ -1,11 +1,13 @@
 #!/bin/bash
 
-# echo "Unfolding..."
-# if [ -f $1.ll_net ]; then
-#   ./ecofolder -q $2 -r 0 $1.ll_net
-# else
-#   ./ecofolder -q $2 -r 0 $1.ll
-# fi
+echo "Unfolding..."
+if [ -f $1.ll_net ]; then
+  #./ecofolder $1.ll_net
+  ./ecofolder -q $2 -r 0 $1.ll_net
+else
+  #./ecofolder $1.ll
+  ./ecofolder -q $2 -r 0 $1.ll
+fi
 #../ecofolder/ecofolder
 
 #free=$?
@@ -14,7 +16,8 @@
 
 echo "Converting to dot..."
 #./mci2dot $1_unf.mci > $1_unf.dot
-./mci2dot_ev -r 11 -c $1_unf.mci $2.evco > $1_unf.dot
+./mci2dot_ev -r 0 -c $1_unf.mci $2.evev > $1_unf.dot
+
 
 # if the compressed mode is needed, you should run:
 #./mci2dot_cpr $1_unf.mci > $1_unf.dot

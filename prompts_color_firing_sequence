@@ -1,0 +1,3 @@
+#!/bin/bash
+export PATH=$PWD:$PATH
+python3 prompts_color_firing_sequence.py $*
