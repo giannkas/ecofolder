@@ -228,13 +228,12 @@ void read_mci_file_ev (char *mcifile, char* evevfile, int m_repeat, int cutout, 
     file - is the pointer to a FILE object that specifies an input stream.
   */
 
-  FILE *mcif, *evcof;
+  FILE *mcif, *evevf;
   int nqure, nqure_, nquszcut, nquszevscut, szcuts, qnumcutoff = 0, qnumconfl = 0,
     numco, numev, numpl, numtr, idpl, idtr, sz, i, j, value, ev1, ev2;
   int pre_ev, post_ev, cutoff, harmful, dummy = 0, tmp = 0, count_mrk = 1, seq_size = 0;
   int *co2pl, *ev2tr, *tokens, *queries_co,
-    *queries_ev, *cutoffs, *harmfuls, *confl_evs, *leaves;
-    //*leaves_evs
+    *queries_ev, *cutoffs, *harmfuls, *confl_evs, *leaves_evs;
   char **plname, **trname, *c;
   cut_t **cuts;
   evprepost **evprps;
@@ -248,7 +247,7 @@ void read_mci_file_ev (char *mcifile, char* evevfile, int m_repeat, int cutout, 
 
   if (evevfile)
   {
-    if (!(evcof = fopen(evevfile, "r")))
+    if (!(evevf = fopen(evevfile, "r")))
     {
       fprintf(stderr,"cannot read file %s\n",evevfile);
       exit(1);
@@ -276,8 +275,8 @@ void read_mci_file_ev (char *mcifile, char* evevfile, int m_repeat, int cutout, 
 
   cutoffs = calloc(numev+1, sizeof(int));
   harmfuls = calloc(numev+1, sizeof(int));
-  leaves = calloc(numev+1, sizeof(int)); // list of events that are the tip of branching processes
-                                          // which may not be cutoff events.
+  leaves_evs = calloc(numev+1, sizeof(int)); // collect events with no successors
+                                          // which are not cutoff events. Used when evev file is given.
   evprps = calloc(numev+1, sizeof(evprepost*));
   for (i = 0; i <= numev; i++) {
     evprps[i] = malloc(sizeof(evprepost));
@@ -323,25 +322,27 @@ void read_mci_file_ev (char *mcifile, char* evevfile, int m_repeat, int cutout, 
   if(evevfile)
   {
     if (!m_repeat)
-      while (fscanf(evcof," %d",&value) != EOF)
-      {
-        if (value != 0 && !queries_ev[value])
+    { 
+      while (fscanf(evevf," %d",&value) != EOF)
+        if (value > 0 && !queries_ev[value])
           queries_ev[value] = 1;
-        else if (!value && !leaves[tmp])
-        {
-          leaves[tmp] = 1;
-          seq_size++;
-        }
-        tmp = value;
-      }
-    else
-      while (fscanf(evcof," %d",&value) != EOF && count_mrk <= m_repeat)
+    }
+    else if (m_repeat > 0)
+      while (fscanf(evevf," %d",&value) != EOF && count_mrk <= m_repeat)
       {
-        if (value != 0 && !queries_ev[value] && count_mrk == m_repeat)
+        if (value > 0 && !queries_ev[value] && count_mrk == m_repeat)
           queries_ev[value] = 1;
         else if (!value)
           count_mrk++;
       }
+    else
+    {
+      while (fscanf(evevf," %d",&value) != EOF)
+        if (value > 0 && !queries_ev[value])
+          queries_ev[value] = 1;
+        else if (!value && strstr(evevfile, ".evco"))
+          break;
+    }
   }
   else if (m_repeat > 0 && cuts[m_repeat] && cuts[m_repeat]->repeat < 0)
   {
@@ -634,7 +635,7 @@ void read_mci_file_ev (char *mcifile, char* evevfile, int m_repeat, int cutout, 
 
   if (pathway)
   {
-    seq_size = seq_size+qnumconfl+qnumcutoff+1;
+    seq_size = (qnumconfl+qnumcutoff)*2;
     int path_seq[seq_size];
     memset(path_seq, 0, sizeof(path_seq));
     char cone_ev[seq_size*seq_size];
@@ -642,13 +643,28 @@ void read_mci_file_ev (char *mcifile, char* evevfile, int m_repeat, int cutout, 
     /* printf("qnumconfl: %d\n", qnumconfl);
     printf("qnumcutoff: %d\n", qnumcutoff); */
     dummy = 0;
+    tmp = 1;
     int k, dummy2 = 0;
     for (i = 1; i <= numev; i++)
-      if ((queries_ev[i] && cutoffs[i]) || (queries_ev[i] && leaves[i]))
+      if (queries_ev[i] && cutoffs[i])
       {
         path_seq[dummy] = i;
         //printf("path_seq[%d]: %d\n", dummy, i);
         dummy++;
+      }
+      else if(queries_ev[i] && !cutoffs[i])
+      {
+        for (j = 1; j <= numev && tmp; j++)
+          if (ev_succs[i][j] && queries_ev[j])
+            tmp = 0;
+        if (tmp && !leaves_evs[i] && !path_seq[dummy])
+        {
+          path_seq[dummy] = i;
+          leaves_evs[i] = 1;
+          dummy++;
+        }
+        else 
+          tmp = 1;
       }
     dummy = 0;
     for (i = 0; i < seq_size; i++)
@@ -677,6 +693,8 @@ void read_mci_file_ev (char *mcifile, char* evevfile, int m_repeat, int cutout, 
         dummy++;
         dummy2 = 0;
       }
+      else if (i == numev)
+        printf("\n");
   }
 
   do { read_int(dummy); } while(dummy);
@@ -754,7 +772,7 @@ void read_mci_file_ev (char *mcifile, char* evevfile, int m_repeat, int cutout, 
 
   for (i = 1; i <= numev; i++)
   {
-    if (pathway && queries_ev[i] && (confl_evs[i] || cutoffs[i]))
+    if (pathway && queries_ev[i] && (confl_evs[i] || cutoffs[i] || leaves_evs[i]))
     {
       if (i == harmfuls[i])
         fillcolor = color5;
@@ -802,7 +820,7 @@ void read_mci_file_ev (char *mcifile, char* evevfile, int m_repeat, int cutout, 
   printf("}\n");
 
   fclose(mcif);
-  if (evevfile) fclose(evcof);
+  if (evevfile) fclose(evevf);
 }
 
 void usage ()
@@ -817,7 +835,7 @@ void usage ()
 
     "<evevfile> is an optional file whose lines contain\n"
     "the IDs of firing sequences of events, each line ends with a 0\n"
-    "indicating the end of the line. This file is similar to <evcofile>\n"
+    "indicating the end of the line. This file is similar to <evevfile>\n"
     "used in <mci2dot>\n\n");
     exit(1);
 }

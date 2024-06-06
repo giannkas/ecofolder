@@ -12,24 +12,24 @@ def ids_labels():
     Usage: python3 {ids_labels.__name__} [options]
 
     Options:
-        -rls --rules    Rule names will be printed rather than id places.
+        -ids    Id names will be printed instead of rule names.
         And viceversa if not given.\n
   """
 
-  rls = 0
-  src_rr, tgt_dot = "", ""
+  ids = 0
+  src_rr, src_dot = "", ""
   params = len(sys.argv)
 
   if params < 3:
     raise ValueError(ids_labels.__doc__)
   elif params <= 4:
     for i in range(params):
-      if sys.argv[i] == "-rls" or sys.argv[i] == "--rules":
-        rls = 1
+      if sys.argv[i] == "-ids" or sys.argv[i] == "--rules":
+        ids = 1
       elif ".rr" in sys.argv[i]:
         src_rr = sys.argv[i]
       elif ".dot" in sys.argv[i]:
-        tgt_dot = sys.argv[i]
+        src_dot = sys.argv[i]
   
   dids = {}
   drls = {}
@@ -43,11 +43,11 @@ def ids_labels():
       dids[f"R{nrls}"] = rule
       nrls += 1
 
-  drls = {value: key for key, value in dids.items()}
-  #print(dids)
-  #print(drls)
+  # drls = {value: key for key, value in dids.items()}
+  # print(dids)
+  # print(drls)
 
-  with open(tgt_dot, 'r') as fdot:
+  with open(src_dot, 'r') as fdot:
     content = fdot.read()
 
   cntl = content.split('\n')
@@ -57,19 +57,16 @@ def ids_labels():
       lblp = cntl[l].find("label=\"") + len("label=\"")
       dmp = cntl[l][lblp:].find("\"")
       #print(cntl[l])
-      if "(" in cntl[l]:
-        rl = cntl[l][lblp:cntl[l].find("(")-1] if rls == 0 else cntl[l][lblp:lblp+dmp]
-        #print(rl)
+      if "(" in cntl[l][lblp:]:
+        rl = cntl[l][lblp:cntl[l].find("(")-1]
       else: rl = cntl[l][lblp:lblp+dmp]
-      if rls == 0:
+      if not ids:
         cntl[l] = cntl[l][:lblp] + dids[rl] + cntl[l][lblp+dmp:]
       else:
-        cntl[l] = cntl[l][:lblp] + drls[rl] + cntl[l][lblp+dmp:]
+        cntl[l] = cntl[l][:lblp] + rl + cntl[l][lblp+dmp:]
+
+    print(cntl[l])
   
-  with open(tgt_dot, 'w') as fdot:
-    fdot.write(("\n".join(cntl)))
-
-
   frr.close()
 
 

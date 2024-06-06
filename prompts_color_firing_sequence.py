@@ -58,7 +58,7 @@ for line_number, line in enumerate(evev_lines, start=1):
   
   ru_value = ";".join([",".join(ru_parts[part]) for part in ["part1", "part2", "part3", "part4"]])
   # color_list = #1a9850;#d73027;#fee08b;#8c510a
-  outdot = f"examples/oursin_tasmanie/mrk_instances/alg2urc/tasmanian_perturb_final_pr_unf_ins{line_number}_alg2urc_colored.dot"
+  outdot = f"examples/oursin_tasmanie/mrk_instances/urc2alg/tasmanian_perturb_final_pr_unf_ins{line_number}_urc2alg_colored.dot"
   #prompt = f'python3 colorindot.py -e -b -ru "{ru_value}" -co "{color_list}" < {dot_file} > {outdot}'
   with open(dot_file, 'r') as source_dot, open(outdot, 'w') as out_dot:
     subprocess.check_call(["python3", "colorindot.py", "-e", "-b",
