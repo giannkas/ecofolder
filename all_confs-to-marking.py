@@ -338,6 +338,7 @@ def run_to_marking():
   for i in wl:
     listC = str_conf(i).split(',')
     isorted = sorted(i, key=sort_by_number)
+    #print(isorted)
     for ci in range(len(listC)):
       primer = ','.join(listC[:ci+1])
       if tuple(isorted[:ci+1]) in known: break

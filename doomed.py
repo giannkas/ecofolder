@@ -290,14 +290,26 @@ def find_glue(hcut, prefix_asp):
     b = [parse_bind(a) for a in atoms if a.name == "bind"]
     yield b
 
-def minF0(prefix_asp, bad_aspfile):
+def minF0(prefix_asp, bad_aspfile, badmrks=1):
   sat = clingo.Control(["0", "--heuristic=Domain",
       "--enum-mode=domRec", "--dom-mod=3,16"]+clingo_opts)
   sat.add("base", [], prefix_asp)
   sat.load(bad_aspfile)
   sat.load(script_path("configuration.asp"))
   #sat.load(script_path("anycfg.asp"))
-  sat.load(script_path("f0.asp"))
+  if badmrks > 1:
+    tobads = ":- "
+    for i in range(1,badmrks+1):
+      if i == badmrks:
+        tobads += f" not ncut(P), bad{i}(P)."
+      else:
+        tobads += f"not ncut(P), bad{i}(P);"
+    sat.add("base", [], "#include \"configuration.asp\"."
+              "#include \"cut.asp\".")
+    sat.add("base", [], tobads)
+    sat.add("base", [], "#show e/1.")
+  else:
+    sat.load(script_path("f0.asp"))
   sat.ground([("base",())])
   for sol in sat.solve(yield_=True):
     atoms = sol.symbols(atoms=True)
@@ -341,9 +353,16 @@ bad_markings = []
 for l in f: # reading bad markings in f
   bad_markings += [l.strip().split(",")] # list of lists to store each bad marking
 with open(bad_aspfile, "w") as fp:
-  for m in bad_markings:
-    for p in m:
-      fp.write(f"{clingo.Function('bad', (clingo.String(p),))}.\n")
+  if len(bad_markings) > 1:
+    curm = 1
+    for m in bad_markings:
+      for p in m:
+        fp.write(f"{clingo.Function(f'bad{curm}', (clingo.String(p),))}.\n")
+      curm += 1
+  else:
+    for m in bad_markings:
+      for p in m:
+        fp.write(f"{clingo.Function('bad', (clingo.String(p),))}.\n")
 
 clingo_opts = ["-W", "none"]
 #clingo_opts += ["-t", str(multiprocessing.cpu_count())]
@@ -413,7 +432,8 @@ for i in bad_markings:
       empty_wl = 0
 
 if not empty_wl:
-  for C in tqdm(minF0(prefix, bad_aspfile), desc="minFO"):
+  for C in tqdm(minF0(prefix, bad_aspfile, len(bad_markings)), desc="minFO"):
+    #print(C)
     C_d = prefix_d.subgraph(C)
     C_crest = get_crest(C_d)
     (keep, crest) = shave(C_d, C_crest)
@@ -471,8 +491,8 @@ def handle(C_e):
   Cp = shave(C_d, C_crest)
   wl.add(Cp)
 
-for i in wl:
-  print(i)
+# for i in wl:
+#   print(i)
 
 i = 0
 while wl:
@@ -497,7 +517,7 @@ while wl:
     i += 1
     d = time.time() - t0
     etime = time.strftime("%Mm%Ss", time.gmtime(d))
-    print(f"{etime} [MINDOO {i}]\t", set(sorted([e2tr[e] for e in C])), sorted(C, key=sort_by_number), flush=True)
+    print(f"{etime} [MINDOO {i}]\t", sorted([e2tr[e] for e in C]), sorted(C, key=sort_by_number), flush=True)
     #print(str_conf(C))
     print("Marking: ", idpl2plnames(subprocess.check_output(["mci2asp", "-cf", str_conf(C), mci]).decode()))
     print(f"   free checks: {stats['freechk']}", flush=True, file=sys.stderr)
