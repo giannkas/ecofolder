@@ -237,8 +237,22 @@ os.makedirs(out_d)
 bad_aspfile = os.path.join(out_d, "bad.asp")
 f = open(bad_marking)
 bad_markings = []
+
 for l in f: # reading bad markings in f
-  bad_markings += [l.strip().split(",")] # list of lists to store each bad marking
+  m = l.strip().split(",")
+  newm = []
+  for i in m:
+    ipos_ = i[::-1].find('_')
+    if (ipos_ == -1 or ipos_ > -1) and i in model.PL.keys():
+      newm.append(i)
+    elif ipos_ == -1:
+      for j in model.PL.keys():
+        jpos_ = j[::-1].find('_')
+        if jpos_ > -1 and j[len(j)-(jpos_+1)] != '0':
+          if j[:len(j)-jpos_-1] == i:
+            newm.append(j)
+  bad_markings += [newm] # list of lists to store each bad marking
+
 with open(bad_aspfile, "w") as fp:
   for m in bad_markings:
     for p in m:

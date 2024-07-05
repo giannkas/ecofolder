@@ -702,6 +702,7 @@ void unfold ()
       unf->events = unf->events->next; 
       nodelist_push(&harmful_list,ev);
       add_post_conditions(ev,HARMFUL_YES, repeat, !check_query);
+      //stopev = ev; break;
       continue;
     }
     else

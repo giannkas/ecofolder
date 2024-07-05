@@ -152,7 +152,19 @@ void bad_net(char* in_file1, char* in_file2){
           while ((tmp = ftokstr(line, nbadnames, ',')))
           {
             i = 1;
-            while (i <= MAX_NUM_PLACES && strcmp(place_names[i], tmp)) i++;
+            while (i <= MAX_NUM_PLACES && strcmp(place_names[i], tmp))
+            {
+              if (strlen(place_names[i]) > strlen(tmp))
+              {
+                char* plname = bltokstr(place_names[i], 0, '_');
+                if (strcmp(plname, tmp)) 
+                  i++;
+                else
+                  break;
+              }
+              else
+                i++;
+            } 
             if (i <= MAX_NUM_PLACES)
             {
               fprintf(w_pointer, "%d<%d\n", maxidtr+nbadtrans, i);
@@ -162,7 +174,19 @@ void bad_net(char* in_file1, char* in_file2){
           if ((tmp = ltokstr(line, nbadnames-1, ',')))
           {
             i = 1;
-            while (i <= MAX_NUM_PLACES && strcmp(place_names[i], tmp)) i++;
+            while (i <= MAX_NUM_PLACES && strcmp(place_names[i], tmp))
+            {
+              if (strlen(place_names[i]) > strlen(tmp))
+              {
+                char* plname = bltokstr(place_names[i], 0, '_');
+                if (strcmp(plname, tmp)) 
+                  i++;
+                else
+                  break;
+              }
+              else
+                i++;
+            }
             if (i <= MAX_NUM_PLACES)
               fprintf(w_pointer, "%d<%d\n", maxidtr+nbadtrans, i);
           }  
@@ -187,7 +211,7 @@ void bad_net(char* in_file1, char* in_file2){
           else nbadtrans = 0;
         }
       }
-
+      
       /* Print PT arcs (consumption) in the original net */
       fprintf(w_pointer, "%s", d_read);
       while(fgets(d_read, NUM_PLACES, r_pointer1) != NULL &&
