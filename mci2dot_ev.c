@@ -284,15 +284,17 @@ void read_mci_file_ev (char *mcifile, char* evevfile, int m_repeat, int cutout, 
     evprps[i]->postset = NULL;
   }
 
-  int (*co_postsets)[numev+1] = calloc(numco+1, sizeof *co_postsets); 
+  int (*co_postsets)[numev+1] = calloc(numco+1, sizeof *co_postsets);
                                            // conditions' postsets to detect conflicts in events.
+  if (co_postsets == NULL) {
+    fprintf(stderr, "Memory allocation failed.\n");
+  }
   int (*ev_predc_copy)[numev+1] = calloc(numev+1, sizeof *ev_predc_copy); // matrix to record events' predecesors.
   int (*ev_predc)[numev+1] = calloc(numev+1, sizeof *ev_predc); // matrix to record events' predecesors.
   int (*ev_succs)[numev+1] = calloc(numev+1, sizeof *ev_succs); // matrix to record events' successors.
   int (*ev_confl)[numev+1] = calloc(numev+1, sizeof *ev_confl); // matrix to record events' conflicts.
   int (*ev_confl_copy)[numev+1] = calloc(numev+1, sizeof *ev_confl_copy); // a copy of the previous variable.
   int (*path_evs)[numev+1] = calloc(numev+1, sizeof *path_evs); // matrix to record events' pathway structure.
-
 
   read_int(nqure);
   nqure_ = abs(nqure);
@@ -435,7 +437,7 @@ void read_mci_file_ev (char *mcifile, char* evevfile, int m_repeat, int cutout, 
           printf("  e0 -> e%d;\n", post_ev);
         else if (cutout && queries_ev[post_ev])
           printf("  e0 -> e%d;\n", post_ev);
-      } */
+      } */      
       if (post_ev && tokens[i]) co_postsets[i][post_ev] = post_ev; // assign in the ith
                                                       // (which corresponds
                                                       // to the ith condition)
@@ -448,7 +450,6 @@ void read_mci_file_ev (char *mcifile, char* evevfile, int m_repeat, int cutout, 
                                                       // to detect conflicts.
     } while (post_ev); // if post_ev is not null.
   }
-
   /* check immediate connections to events */
   for (int i = 1; i <= numev; i++){
     for (int j = 1; j <= i; j++){

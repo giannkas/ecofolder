@@ -119,13 +119,18 @@ class Model:
             stderr=subprocess.DEVNULL if not verbose else None)
     return mcifile
   
-  def freecheck(self, mcifile="working.mci", badfile="working_bad.mci"):
+  def freecheck(self, mcifile="working.mci", badfile="working_bad.mci", mrk = ""):
     llfile = os.path.join(out_d, "working.ll")
     with open(llfile, "w") as fp:
       self.write(fp)
     mcifile = os.path.join(out_d, mcifile)
-    args = [script_path("ecofolder"), "-useids", "-freechk", "-badchk", badfile, llfile, "-m", mcifile]
-    free_mrk = subprocess.check_output(args).decode()
+    args_bad = [script_path("badness_check"), badfile, mrk]
+    bad_mrk = subprocess.run(args_bad,capture_output=True, text=True).returncode
+    if bad_mrk:
+      free_mrk = str(bad_mrk*0)
+    else:
+      args = [script_path("ecofolder"), "-useids", "-freechk", "-badchk", badfile, llfile, "-m", mcifile]
+      free_mrk = subprocess.check_output(args).decode()
     
     return free_mrk
 
@@ -495,7 +500,7 @@ def is_free(C_e):
   markidC_e = subprocess.check_output(["mci2asp", "-cf", Cstr_, mci]).decode()
   tupleC_e = idpl2plnames(markidC_e)
   model.set_marking(tupleC_e)
-  freeC_e = int(model.freecheck(badfile=bad_unf).strip())
+  freeC_e = int(model.freecheck(badfile=bad_unf, mrk=",".join([i for i in tupleC_e])).strip())
   return freeC_e
 
 def handle(C_e):
