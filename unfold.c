@@ -641,6 +641,7 @@ void unfold ()
       sprintf(command, "./badness_check \"%s\" \"%s\"", badunf, mrk2str(qu->marking));
       harmful_check = system(command)/256;
       harmful_marking = qu->marking;
+      //harmful_marking = NULL;
     }
 
     if(!check_query)

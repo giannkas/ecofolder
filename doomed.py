@@ -124,13 +124,13 @@ class Model:
     with open(llfile, "w") as fp:
       self.write(fp)
     mcifile = os.path.join(out_d, mcifile)
-    args_bad = [script_path("badness_check"), badfile, mrk]
-    bad_mrk = subprocess.run(args_bad,capture_output=True, text=True).returncode
-    if bad_mrk:
-      free_mrk = str(bad_mrk*0)
-    else:
-      args = [script_path("ecofolder"), "-useids", "-freechk", "-badchk", badfile, llfile, "-m", mcifile]
-      free_mrk = subprocess.check_output(args).decode()
+    # args_bad = [script_path("badness_check"), badfile, mrk]
+    # bad_mrk = subprocess.run(args_bad,capture_output=True, text=True).returncode
+    # if bad_mrk:
+    #   free_mrk = str(bad_mrk*0)
+    # else:
+    args = [script_path("ecofolder"), "-useids", "-freechk", "-badchk", badfile, llfile, "-m", mcifile]
+    free_mrk = subprocess.check_output(args).decode()
     
     return free_mrk
 
@@ -340,223 +340,228 @@ def get_event_poset(prefix_asp):
     "e2tr": e2tr
   }
 
-model_ll = sys.argv[1]
-bad_marking = sys.argv[2]
-bad_unf = sys.argv[3]
-model = Model(model_ll)
 
-base_output = os.path.basename(model_ll.replace(".ll", ""))
-out_d = f"gen/{base_output}"
+if __name__ == "__main__":
+  if len(sys.argv) < 4:
+    print("Usage: ./doomed <model> <badmarkings> <prefix_badnet>")
+  else:        
+    model_ll = sys.argv[1]
+    bad_marking = sys.argv[2]
+    bad_unf = sys.argv[3]
+    model = Model(model_ll)
 
-if os.path.exists(out_d):
-  shutil.rmtree(out_d)
-os.makedirs(out_d)
+    base_output = os.path.basename(model_ll.replace(".ll", ""))
+    out_d = f"gen/{base_output}"
 
-bad_aspfile = os.path.join(out_d, "bad.asp")
-f = open(bad_marking)
-bad_markings = []
-for l in f: # reading bad markings in f
-  m = l.strip().split(",")
-  newm = []
-  for i in m:
-    ipos_ = i[::-1].find('_')
-    if (ipos_ == -1 or ipos_ > -1) and i in model.PL.keys():
-      newm.append(i)
-    elif ipos_ == -1:
-      for j in model.PL.keys():
-        jpos_ = j[::-1].find('_')
-        if jpos_ > -1 and j[len(j)-(jpos_+1)] != '0':
-          if j[:len(j)-jpos_-1] == i:
-            newm.append(j)
-  bad_markings += [newm] # list of lists to store each bad marking
+    if os.path.exists(out_d):
+      shutil.rmtree(out_d)
+    os.makedirs(out_d)
 
-with open(bad_aspfile, "w") as fp:
-  if len(bad_markings) > 1:
-    curm = 1
-    for m in bad_markings:
-      for p in m:
-        fp.write(f"{clingo.Function(f'bad{curm}', (clingo.String(p),))}.\n")
-      curm += 1
-  else:
-    for m in bad_markings:
-      for p in m:
-        fp.write(f"{clingo.Function('bad', (clingo.String(p),))}.\n")
+    bad_aspfile = os.path.join(out_d, "bad.asp")
+    f = open(bad_marking)
+    bad_markings = []
+    for l in f: # reading bad markings in f
+      m = l.strip().split(",")
+      newm = []
+      for i in m:
+        ipos_ = i[::-1].find('_')
+        if (ipos_ == -1 or ipos_ > -1) and i in model.PL.keys():
+          newm.append(i)
+        elif ipos_ == -1:
+          for j in model.PL.keys():
+            jpos_ = j[::-1].find('_')
+            if jpos_ > -1 and j[len(j)-(jpos_+1)] != '0':
+              if j[:len(j)-jpos_-1] == i:
+                newm.append(j)
+      bad_markings += [newm] # list of lists to store each bad marking
 
-clingo_opts = ["-W", "none"]
-#clingo_opts += ["-t", str(multiprocessing.cpu_count())]
+    with open(bad_aspfile, "w") as fp:
+      if len(bad_markings) > 1:
+        curm = 1
+        for m in bad_markings:
+          for p in m:
+            fp.write(f"{clingo.Function(f'bad{curm}', (clingo.String(p),))}.\n")
+          curm += 1
+      else:
+        for m in bad_markings:
+          for p in m:
+            fp.write(f"{clingo.Function('bad', (clingo.String(p),))}.\n")
 
-t0 = time.time()
+    clingo_opts = ["-W", "none"]
+    #clingo_opts += ["-t", str(multiprocessing.cpu_count())]
 
-# compute main prefix
-mci = model.complix("main.mci", verbose=1)
-prefix = asp_of_mci(mci)
-#dicevents = evstump_of_mci(mci)
-#print(dicevents)
-print(f"Prefix has {prefix_nb_events(mci)} events, including cut-offs",
-        file=sys.stderr)
+    t0 = time.time()
 
-with open(f"{out_d}/prefix.asp", "w") as fp:
-  fp.write(prefix)
+    # compute main prefix
+    mci = model.complix("main.mci", verbose=1)
+    prefix = asp_of_mci(mci)
+    #dicevents = evstump_of_mci(mci)
+    #print(dicevents)
+    print(f"Prefix has {prefix_nb_events(mci)} events, including cut-offs",
+            file=sys.stderr)
 
-prefix_info = get_event_poset(prefix)
-prefix_d = prefix_info["poset"]
-unchallenged = prefix_info["unchallenged"]
-e2tr = prefix_info["e2tr"]
+    with open(f"{out_d}/prefix.asp", "w") as fp:
+      fp.write(prefix)
 
-print("Unchallenged events", unchallenged, file=sys.stderr)
-print("prefix_d", prefix_d)
+    prefix_info = get_event_poset(prefix)
+    prefix_d = prefix_info["poset"]
+    unchallenged = prefix_info["unchallenged"]
+    e2tr = prefix_info["e2tr"]
 
-def get_crest(poset):
-  return {e for e, od in poset.out_degree() if od == 0}
+    print("Unchallenged events", unchallenged, file=sys.stderr)
+    print("prefix_d", prefix_d)
 
-stats = {
-  "freechk": 0
-}
+    def get_crest(poset):
+      return {e for e, od in poset.out_degree() if od == 0}
 
-def shave(C_d, crest):
-  first = True
-  blacklist = set()
-  crest = set(crest)
-  while True:
-    rm = [e for e in crest if e in unchallenged]
-    if not rm:
-      break
-    crest.difference_update(rm)
-    blacklist.update(rm)
-    for e in rm:
-      for f in C_d.predecessors(e):
-        is_crest = True
-        for g in C_d.successors(f):
-          if g not in blacklist:
-            is_crest = False
-            break
-        if is_crest:
-          crest.add(f)
-  return tuple(sorted(set(C_d) - blacklist)), tuple(sorted(crest))
+    stats = {
+      "freechk": 0
+    }
 
-from time import strftime
+    def shave(C_d, crest):
+      first = True
+      blacklist = set()
+      crest = set(crest)
+      while True:
+        rm = [e for e in crest if e in unchallenged]
+        if not rm:
+          break
+        crest.difference_update(rm)
+        blacklist.update(rm)
+        for e in rm:
+          for f in C_d.predecessors(e):
+            is_crest = True
+            for g in C_d.successors(f):
+              if g not in blacklist:
+                is_crest = False
+                break
+            if is_crest:
+              crest.add(f)
+      return tuple(sorted(set(C_d) - blacklist)), tuple(sorted(crest))
 
-wl = set()
-known = set()
-init_marking = model.get_m0()
-empty_wl = 1
-for i in bad_markings:
-  if len(i) < len(init_marking):
-    for j in i:
-      if j not in init_marking: empty_wl = 0
-  elif len(i) > len(init_marking): empty_wl = 0
-  elif len(i) == len(init_marking):
-    if set(i) != set(init_marking):
-      empty_wl = 0
+    from time import strftime
 
-if not empty_wl:
-  for C in tqdm(minF0(prefix, bad_aspfile, len(bad_markings)), desc="minFO"):
-    #print(C)
-    C_d = prefix_d.subgraph(C)
-    C_crest = get_crest(C_d)
-    (keep, crest) = shave(C_d, C_crest)
-    wl.add((keep, crest))
+    wl = set()
+    known = set()
+    init_marking = model.get_m0()
+    empty_wl = 1
+    for i in bad_markings:
+      if len(i) < len(init_marking):
+        for j in i:
+          if j not in init_marking: empty_wl = 0
+      elif len(i) > len(init_marking): empty_wl = 0
+      elif len(i) == len(init_marking):
+        if set(i) != set(init_marking):
+          empty_wl = 0
 
-#t0 = process_time()
-doom_ctl = clingo.Control(clingo_opts)
+    if not empty_wl:
+      for C in tqdm(minF0(prefix, bad_aspfile, len(bad_markings)), desc="minFO"):
+        #print(C)
+        C_d = prefix_d.subgraph(C)
+        C_crest = get_crest(C_d)
+        (keep, crest) = shave(C_d, C_crest)
+        wl.add((keep, crest))
 
-def str_conf(C):
-  Cstr = ""
-  for s in C:
-    Cstr = Cstr + "".join(s[s.find('e')+1:s.find(')')]) + ","
-  Cstr = Cstr[:-1]
-  Clist = Cstr.split(',')
-  if not '' in Clist: Clist.sort(key=int)
-  Cstr = ','.join(Clist)
-  return Cstr
+    #t0 = process_time()
+    doom_ctl = clingo.Control(clingo_opts)
 
-def idpl2plnames(markidC):
-  markidC = markidC[:-1].split(",")
-  markC = ""
-  #print(model.PL)
-  first = True
-  for i in model.PL:
-    for j in markidC:
-      if first and model.PL[i]["id"] == int(j):
-        markC += i
-        first = False
-      elif model.PL[i]["id"] == int(j): markC += "," + i
-  tupleC = tuple(markC.split(","))
-  return tupleC
+    def str_conf(C):
+      Cstr = ""
+      for s in C:
+        Cstr = Cstr + "".join(s[s.find('e')+1:s.find(')')]) + ","
+      Cstr = Cstr[:-1]
+      Clist = Cstr.split(',')
+      if not '' in Clist: Clist.sort(key=int)
+      Cstr = ','.join(Clist)
+      return Cstr
 
-def sort_by_number(string):
-  number = int(string.split(',')[-1][1:].strip(')'))
-  return number
+    def idpl2plnames(markidC):
+      markidC = markidC[:-1].split(",")
+      markC = ""
+      #print(model.PL)
+      first = True
+      for i in model.PL:
+        for j in markidC:
+          if first and model.PL[i]["id"] == int(j):
+            markC += i
+            first = False
+          elif model.PL[i]["id"] == int(j): markC += "," + i
+      tupleC = tuple(markC.split(","))
+      return tupleC
 
-#Cstr_ = "1,3,6,11,16,43"
-#print(decisional_height(dicevents, Cstr_))
-#markidC_e = subprocess.check_output(["mci2asp", "-cf", Cstr_, mci]).decode()
-#tupleC_e = idpl2plnames(markidC_e)
-#print(tupleC_e)
+    def sort_by_number(string):
+      number = int(string.split(',')[-1][1:].strip(')'))
+      return number
 
-def is_free(C_e):
-  stats['freechk'] += 1
-  Cstr_ = str_conf(C_e)
-  markidC_e = subprocess.check_output(["mci2asp", "-cf", Cstr_, mci]).decode()
-  tupleC_e = idpl2plnames(markidC_e)
-  model.set_marking(tupleC_e)
-  freeC_e = int(model.freecheck(badfile=bad_unf, mrk=",".join([i for i in tupleC_e])).strip())
-  return freeC_e
+    #Cstr_ = "1,3,6,11,16,43"
+    #print(decisional_height(dicevents, Cstr_))
+    #markidC_e = subprocess.check_output(["mci2asp", "-cf", Cstr_, mci]).decode()
+    #tupleC_e = idpl2plnames(markidC_e)
+    #print(tupleC_e)
 
-def handle(C_e):
-  C_d = prefix_d.subgraph(C_e)
-  C_crest = get_crest(C_d)
-  Cp = shave(C_d, C_crest)
-  wl.add(Cp)
+    def is_free(C_e):
+      stats['freechk'] += 1
+      Cstr_ = str_conf(C_e)
+      markidC_e = subprocess.check_output(["mci2asp", "-cf", Cstr_, mci]).decode()
+      tupleC_e = idpl2plnames(markidC_e)
+      model.set_marking(tupleC_e)
+      freeC_e = int(model.freecheck(badfile=bad_unf, mrk=",".join([i for i in tupleC_e])).strip())
+      return freeC_e
 
-# for i in wl:
-#   print(i)
+    def handle(C_e):
+      C_d = prefix_d.subgraph(C_e)
+      C_crest = get_crest(C_d)
+      Cp = shave(C_d, C_crest)
+      wl.add(Cp)
 
-i = 0
-while wl:
-  C, crest = wl.pop()
-  if C in known:
-    continue
-  known.add(C)
-  C = set(C)
-  crest = set(crest)
-  C_e = C - crest
-  add = True
-  if not is_free(C_e):
-    add = False
-    handle(C_e)
-  else:
-    for e in crest:
-      c_e = C - {e}
-      if not is_free(c_e):
+    # for i in wl:
+    #   print(i)
+
+    i = 0
+    while wl:
+      C, crest = wl.pop()
+      if C in known:
+        continue
+      known.add(C)
+      C = set(C)
+      crest = set(crest)
+      C_e = C - crest
+      add = True
+      if not is_free(C_e):
         add = False
-        handle(c_e)
-  if add:
-    i += 1
-    d = time.time() - t0
-    etime = time.strftime("%Mm%Ss", time.gmtime(d))
-    print(f"{etime} [MINDOO {i}]\t", sorted([e2tr[e] for e in C]), sorted(C, key=sort_by_number), flush=True)
-    #print(str_conf(C))
-    print("Marking: ", idpl2plnames(subprocess.check_output(["mci2asp", "-cf", str_conf(C), mci]).decode()))
-    print(f"   free checks: {stats['freechk']}", flush=True, file=sys.stderr)
-if i == 0:
-  print("EMPTY MINDOO")
-print(f"total free checks: {stats['freechk']}", flush=True, file=sys.stderr)
+        handle(C_e)
+      else:
+        for e in crest:
+          c_e = C - {e}
+          if not is_free(c_e):
+            add = False
+            handle(c_e)
+      if add:
+        i += 1
+        d = time.time() - t0
+        etime = time.strftime("%Mm%Ss", time.gmtime(d))
+        print(f"{etime} [MINDOO {i}]\t", sorted([e2tr[e] for e in C]), sorted(C, key=sort_by_number), flush=True)
+        #print(str_conf(C))
+        print("Marking: ", idpl2plnames(subprocess.check_output(["mci2asp", "-cf", str_conf(C), mci]).decode()))
+        print(f"   free checks: {stats['freechk']}", flush=True, file=sys.stderr)
+    if i == 0:
+      print("EMPTY MINDOO")
+    print(f"total free checks: {stats['freechk']}", flush=True, file=sys.stderr)
 
 
-#marking = []
-# C_d = prefix_d.subgraph(C_e)
-  # C_crest = get_crest(C_d)
-  # C_creststr = str_conf(C_crest)
-  # sortC_crest = []
-  # print(C_creststr.split(","))
-  # for i in C_creststr.split(","):
-  #   for j in C_e:
-  #     if "e"+i+")" in j:
-  #       sortC_crest.append(j)
-  # print(sortC_crest)
-  # for i in sortC_crest:
-  #   marking += model.posts_TR[e2tr[i]]
-  #   print(e2tr[i])
-  # print(marking)
-  # print(set(marking))
+    #marking = []
+    # C_d = prefix_d.subgraph(C_e)
+      # C_crest = get_crest(C_d)
+      # C_creststr = str_conf(C_crest)
+      # sortC_crest = []
+      # print(C_creststr.split(","))
+      # for i in C_creststr.split(","):
+      #   for j in C_e:
+      #     if "e"+i+")" in j:
+      #       sortC_crest.append(j)
+      # print(sortC_crest)
+      # for i in sortC_crest:
+      #   marking += model.posts_TR[e2tr[i]]
+      #   print(e2tr[i])
+      # print(marking)
+      # print(set(marking))
