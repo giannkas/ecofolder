@@ -124,13 +124,13 @@ class Model:
     with open(llfile, "w") as fp:
       self.write(fp)
     mcifile = os.path.join(out_d, mcifile)
-    # args_bad = [script_path("badness_check"), badfile, mrk]
-    # bad_mrk = subprocess.run(args_bad,capture_output=True, text=True).returncode
-    # if bad_mrk:
-    #   free_mrk = str(bad_mrk*0)
-    # else:
-    args = [script_path("ecofolder"), "-useids", "-freechk", "-badchk", badfile, llfile, "-m", mcifile]
-    free_mrk = subprocess.check_output(args).decode()
+    args_bad = [script_path("badness_check"), badfile, mrk]
+    bad_mrk = subprocess.run(args_bad,capture_output=True, text=True).returncode
+    if bad_mrk:
+      free_mrk = str(bad_mrk*0)
+    else:
+      args = [script_path("ecofolder"), "-useids", "-freechk", "-badchk", badfile, llfile, "-m", mcifile]
+      free_mrk = subprocess.check_output(args).decode()
     
     return free_mrk
 
