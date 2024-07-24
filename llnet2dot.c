@@ -71,23 +71,24 @@ void llnet2dot(char* in_file){
     strcat(out_file, "_net.dot");
     w_pointer = fopen(out_file, "w"); // if we have read arcs then create a new file.      
     fprintf(w_pointer, "digraph test {\n");
-
     if(strstr(d_read, "RD\n")){
       while(fgets(d_read, READ_PLACES, r_pointer) != NULL && !strstr(d_read, "TP\n")){
         left = ftokstr(d_read, 0, '>');
         right = ltokstr(d_read, 0, '>');
-        num_left = strtol(left, &token, 10);
-        num_right = strtol(right, &token, 10);
-        fprintf(w_pointer, "  p%d -> t%d [arrowhead=none color=\"blue\"];\n", num_left, num_right);
+        num_left = left ? strtol(left, &token, 10) : 0;
+        num_right = right ? strtol(right, &token, 10) : 0;
+        if (num_left && num_right)
+          fprintf(w_pointer, "  p%d -> t%d [arrowhead=none color=\"blue\"];\n", num_left, num_right);
       }
     }
     if(strstr(d_read, "TP\n")){
       while(fgets(d_read, READ_PLACES, r_pointer) != NULL && !strstr(d_read, "PT\n")){
         left = ftokstr(d_read, 0, '<');
         right = ltokstr(d_read, 0, '<');
-        num_left = strtol(left, &token, 10);
-        num_right = strtol(right, &token, 10);
-        fprintf(w_pointer, "  t%d -> p%d;\n", num_left, num_right);
+        num_left = left ? strtol(left, &token, 10) : 0;
+        num_right = right ? strtol(right, &token, 10) : 0;
+        if (num_left && num_right)
+          fprintf(w_pointer, "  t%d -> p%d;\n", num_left, num_right);
       }
     }
 
@@ -95,9 +96,10 @@ void llnet2dot(char* in_file){
       while(fgets(d_read, READ_PLACES, r_pointer) != NULL && !strstr(d_read, "RS\n")){
         left = ftokstr(d_read, 0, '>');
         right = ltokstr(d_read, 0, '>');
-        num_left = strtol(left, &token, 10);
-        num_right = strtol(right, &token, 10);
-        fprintf(w_pointer, "  p%d -> t%d;\n", num_left, num_right);
+        num_left = left ? strtol(left, &token, 10) : 0;
+        num_right = right ? strtol(right, &token, 10) : 0;
+        if (num_left && num_right)
+          fprintf(w_pointer, "  p%d -> t%d;\n", num_left, num_right);
       }
     }
 
@@ -105,9 +107,10 @@ void llnet2dot(char* in_file){
       while(fgets(d_read, READ_PLACES, r_pointer) != NULL){
         left = ftokstr(d_read, 0, '>');
         right = ltokstr(d_read, 0, '>');
-        num_left = strtol(left, &token, 10);
-        num_right = strtol(right, &token, 10);
-        fprintf(w_pointer, "  p%d -> t%d [arrowhead=odot];\n", num_left, num_right);
+        num_left = left ? strtol(left, &token, 10) : 0;
+        num_right = right ? strtol(right, &token, 10) : 0;
+        if (num_left && num_right)
+          fprintf(w_pointer, "  p%d -> t%d [arrowhead=odot];\n", num_left, num_right);
       }
     }
 
