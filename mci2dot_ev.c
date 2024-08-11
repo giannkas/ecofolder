@@ -836,7 +836,7 @@ void usage ()
 
     "<evevfile> is an optional file whose lines contain\n"
     "the IDs of firing sequences of events, each line ends with a 0\n"
-    "indicating the end of the line. This file is similar to <evevfile>\n"
+    "indicating the end of the line. This file is similar to <evcofile>\n"
     "used in <mci2dot>\n\n");
     exit(1);
 }
