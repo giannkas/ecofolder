@@ -9,6 +9,7 @@ from doomed import asp_of_mci,cfg_from_atoms
 import clingo
 
 def minconfs(prefix_asp, markings):
+
   sat = clingo.Control(["--models=0", "--opt-mode=optN", "--heuristic=Domain",
       "--enum-mode=domRec", "--dom-mod=5,16"]+clingo_opts)
   sat.add("base", [], prefix_asp)
@@ -21,6 +22,7 @@ def minconfs(prefix_asp, markings):
       ":- conflict(E,F), e(E), e(F).")
   sat.add("base", [],
       "1 { e(E): event(E) }."
+      ":~ e(E). [1@1, E]"
       "#show e/1.")
   sat.add("base", [],
       "c(C) :- e(E), edge(E,C)."
@@ -39,6 +41,7 @@ def minconfs(prefix_asp, markings):
   for sol in sat.solve(yield_=True):
     atoms = sol.symbols(atoms=True)
     cfg = cfg_from_atoms(atoms)
+    #if sol.optimality_proven:
     yield cfg
 
 def sort_by_number(string):
