@@ -340,6 +340,15 @@ def get_event_poset(prefix_asp):
     "e2tr": e2tr
   }
 
+def str_conf(C):
+  Cstr = ""
+  for s in C:
+    Cstr = Cstr + "".join(s[s.find('e')+1:s.find(')')]) + ","
+  Cstr = Cstr[:-1]
+  Clist = Cstr.split(',')
+  if not '' in Clist: Clist.sort(key=int)
+  Cstr = ','.join(Clist)
+  return Cstr
 
 if __name__ == "__main__":
   if len(sys.argv) < 4:
@@ -464,16 +473,6 @@ if __name__ == "__main__":
 
     #t0 = process_time()
     doom_ctl = clingo.Control(clingo_opts)
-
-    def str_conf(C):
-      Cstr = ""
-      for s in C:
-        Cstr = Cstr + "".join(s[s.find('e')+1:s.find(')')]) + ","
-      Cstr = Cstr[:-1]
-      Clist = Cstr.split(',')
-      if not '' in Clist: Clist.sort(key=int)
-      Cstr = ','.join(Clist)
-      return Cstr
 
     def idpl2plnames(markidC):
       markidC = markidC[:-1].split(",")

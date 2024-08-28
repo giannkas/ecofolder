@@ -6,6 +6,8 @@ import sys
 import time
 from doomed import asp_of_mci,cfg_from_atoms
 
+from tqdm import tqdm
+
 import clingo
 
 def minconfs(prefix_asp, markings):
@@ -14,7 +16,7 @@ def minconfs(prefix_asp, markings):
       "--enum-mode=domRec", "--dom-mod=5,16"]+clingo_opts)
   sat.add("base", [], prefix_asp)
   for i, m in enumerate(markings):
-    print("".join(["q({},\"{}\").".format(i,p) for p in m]))
+    # print("".join(["q({},\"{}\").".format(i,p) for p in m]))
     sat.add("base", [], "".join(["q({},\"{}\").".format(i,p) for p in m]))
   sat.add("base", [],
       "conflict(E,F) :- edge(C,E),edge(C,F),E != F."
@@ -41,12 +43,24 @@ def minconfs(prefix_asp, markings):
   for sol in sat.solve(yield_=True):
     atoms = sol.symbols(atoms=True)
     cfg = cfg_from_atoms(atoms)
-    #if sol.optimality_proven:
-    yield cfg
+    if sol.optimality_proven:
+      yield cfg
 
 def sort_by_number(string):
   number = int(string.split(',')[-1][1:].strip(')'))
   return number
+
+def str_conf(C):
+  Cstr = ""
+  for s in C:
+    Cstr = Cstr + "".join(s[s.find('e')+1:s.find(')')]) + ","
+  Cstr = Cstr[:-1]
+  Clist = Cstr.split(',')
+  if not '' in Clist: Clist.sort(key=int)
+  Cstr = ' '.join(Clist) + ' 0'
+  return Cstr
+
+script_dir = os.path.dirname(__file__)
 
 model_unf = sys.argv[1]
 query_marking = [sys.argv[2].split(',')]
@@ -60,7 +74,16 @@ if not os.path.exists(f"{out_d}/{base_output}.asp"):
     fp.write(prefix)
 
 clingo_opts = ["-W", "none"]
-
 t0 = time.time()
-for C in minconfs(prefix, query_marking):
-  print(sorted(C, key=sort_by_number))
+
+outf = f"{script_dir}/{os.path.dirname(model_unf)}/minconfs-to-marking_{base_output}.evev"
+# with open(outf, "w") as fout:
+#   for run in tqdm(run_to_marking(), desc="Run to marking"):
+#     known.add(run)
+#   for shrt_run in tqdm(shortening_runs(), desc="Shortening runs"):
+#     print(shrt_run, file=fout)
+
+with open(outf, "w") as fout:
+  for C in tqdm(minconfs(prefix, query_marking), desc="Computing minimal configurations"):
+    # print(sorted(C, key=sort_by_number))
+    print(str_conf(sorted(C, key=sort_by_number)), file=fout)
