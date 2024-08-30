@@ -2,7 +2,7 @@
 
 #echo "Translation to SAT..."
 if [ -f $1.mci ]; then
-  ./mci2sat -r "$2" $1.mci
+  src/mci2sat -r "$2" $1.mci
   correct=$?
 else
   echo "mci file does not exist"
@@ -14,7 +14,7 @@ if [ $correct -eq 1 ]; then
   minisat $1.sat $1.res > /dev/null
 
   #echo "Evaluating SAT..."
-  ./sateval -r $1.mci $1.res
+  src/sateval -r $1.mci $1.res
 
   sateval=$?
 else

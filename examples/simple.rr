@@ -1,9 +1,0 @@
-variables:
-  Hello+: say hello
-  World-: say world
-  Spam+: turn this into spam
-
-rules:
-  Hello+ >> Hello-, World+
-  World+ >> World-
-  Spam+ >> Hello+, World+

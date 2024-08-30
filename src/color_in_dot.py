@@ -74,8 +74,6 @@ def color_in_dot():
       node_name = line[pos_label:fevp-2] if not args.events else line[fevp:levp]
 
       if node_name in color_rule:
-        colon = line.find(":")
-        current_color = line[pos_fillcolor+len("fillcolor=\""):colon]
         end_fillcolor_pos = line.find("\"", pos_fillcolor+len("fillcolor=\""))
 
         if ":" in line:
