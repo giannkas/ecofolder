@@ -4,7 +4,8 @@
 import os
 import sys
 import time
-from doomed import asp_of_mci,cfg_from_atoms
+import subprocess
+from doomed import asp_of_mci,cfg_from_atoms,script_path
 
 from tqdm import tqdm
 
@@ -13,7 +14,7 @@ import clingo
 script_dir = os.path.dirname(os.path.abspath(__file__))
 parent_dir = os.path.dirname(script_dir)
 
-def minconfs(prefix_asp, markings, shortest=0):
+def minconfs(prefix_asp, markings, shortest=0, clingo_opts=""):
 
   sat = clingo.Control(["--models=0", "--opt-mode=optN", "--heuristic=Domain",
       "--enum-mode=domRec", "--dom-mod=5,16"]+clingo_opts)
@@ -53,7 +54,7 @@ def minconfs(prefix_asp, markings, shortest=0):
     cfg = cfg_from_atoms(atoms)
     if shortest and sol.optimality_proven:
       yield cfg
-    else:
+    elif not shortest:
       yield cfg
 
 def sort_by_number(string):
@@ -81,13 +82,17 @@ def compute_minconfs():
 
     Options:
       -sht --shortest   mode to select the configurations that contain the least number of events.
+      -r --repeat    <conf_number>   produce a cutout showing only the configuration selected by <conf_number>.
       -pdf    mode to render a PDF file to display the configurations.\n
           
     Files are mandatory to compute the configurations and options can be interchangeable to produce different outputs.\n
-    """
+  """
   
   shortest = 0
   outpdf = 0
+  repeat = 0
+  model_unf = ""
+  query_marking = ""
 
   params = len(sys.argv)
 
@@ -104,6 +109,11 @@ def compute_minconfs():
       query_marking = [sys.argv[i].split(',')]
     elif sys.argv[i] == "-sht" or sys.argv[i] == "--shortest":
       shortest = 1
+    elif sys.argv[i] == "-r" or sys.argv[i] == "--repeat":
+      i += 1
+      if (i == params or '-' == sys.argv[i][0]):
+          raise ValueError(compute_minconfs.__doc__)
+      repeat = sys.argv[i]
     elif sys.argv[i] == "-pdf":
       outpdf = 1
   
@@ -122,9 +132,30 @@ def compute_minconfs():
   outf = f"{os.path.dirname(model_unf)}/minconfs-to-marking_{base_output}.evev"
 
   with open(outf, "w") as fout:
-    for C in tqdm(minconfs(prefix, query_marking, shortest), desc="Computing minimal configurations"):
+    for C in tqdm(minconfs(prefix, query_marking, shortest, clingo_opts), desc="Computing minimal configurations"):
       #print(sorted(C, key=sort_by_number))
       print(str_conf(sorted(C, key=sort_by_number)), file=fout)
+
+  if outpdf:
+    print("Converting to dot...")
+    outdot = model_unf.replace(".mci", ".dot")
+    with open(outdot, 'w') as out_dot:
+      args_mci2dot = [script_path("mci2dot_ev"), "-r", f"{repeat}", "-c", model_unf, outf]
+      subprocess.check_call(args_mci2dot, stdout=out_dot)
+
+    print("Producing the PDF...")
+    opdf = model_unf.replace(".mci", ".pdf")
+    with open(opdf, 'w') as out_pdf:
+      args_dotpdf = ["dot", "-T", "pdf", outdot]
+      subprocess.check_call(args_dotpdf, stdout=out_pdf)
+
+    print("Displaying the PDF...")
+    args_evince = ["evince", opdf]
+    subprocess.run(args_evince)
+
+
+if __name__ == "__main__":
+  compute_minconfs()
 
 
 

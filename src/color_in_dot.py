@@ -95,4 +95,4 @@ def color_in_dot():
     print(line, end="")
 
 if __name__ == "__main__":
-    color_in_dot()
+  color_in_dot()

@@ -369,7 +369,7 @@ if __name__ == "__main__":
     bad_ll = os.path.dirname(model_ll) + f"/{base_output}_bad.ll_net"
 
     # unfolding the badnet model
-    args_bad_unf = [script_path("ecofolder"), bad_ll, ]
+    args_bad_unf = [script_path("ecofolder"), bad_ll]
     subprocess.run(args_bad_unf)
 
     # preparing badnet's prefix filename to use in the algorithm
