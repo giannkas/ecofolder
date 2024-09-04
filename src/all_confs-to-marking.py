@@ -17,7 +17,7 @@ import networkx as nx
 
 import clingo
 
-script_dir = os.path.dirname(__file__)
+script_dir = os.path.dirname(os.path.abspath(__file__))
 def script_path(name):
     return os.path.join(script_dir, name)
 
@@ -116,7 +116,7 @@ class Model:
     with open(llfile, "w") as fp:
         self.write(fp)
     mcifile = os.path.join(out_d, mcifile)
-    subprocess.check_call(["ecofolder", "-useids", llfile, "-m", mcifile],
+    subprocess.check_call([script_path("ecofolder"), "-useids", llfile, "-m", mcifile],
             stderr=subprocess.DEVNULL if not verbose else None)
     return mcifile
 
@@ -163,7 +163,7 @@ def names_from_atoms(atoms):
               if a.name == "resolved"}
 
 def asp_of_mci(mcifile, ns=None):
-  args = [script_path("mci2asp"), mcifile, "-p"]
+  args = [script_path(script_path("mci2asp")), mcifile, "-p"]
   if ns:
     args.append(str(ns))
   return subprocess.check_output(args).decode()
@@ -357,7 +357,7 @@ def run_to_marking():
       primer = ','.join(listC[:ci+1])
       if tuple(isorted[:ci+1]) in known: break
       check = set(idpl2plnames(subprocess.check_output([
-        "mci2asp", "-cf", primer, mci]).decode())) == \
+        script_path("mci2asp"), "-cf", primer, mci]).decode())) == \
         set(bad_markings[0])
       if check:
         yield tuple(isorted[:ci+1])
@@ -387,7 +387,7 @@ def shortening_runs():
               break
         if (confvalid):
           check = set(idpl2plnames(subprocess.check_output([
-            "mci2asp", "-cf", primer, mci]).decode())) == \
+            script_path(script_path("mci2asp")), "-cf", primer, mci]).decode())) == \
             set(bad_markings[0])
           if check:
             sols.add(i)
@@ -395,7 +395,7 @@ def shortening_runs():
             #print(primer.replace(","," ")+' 0', file=fout)
             break
 
-outf = f"{script_dir}/{os.path.dirname(model_ll)}/all_confs-to-marking_{base_output}.evev"
+outf = f"{os.path.dirname(model_ll)}/all_confs-to-marking_{base_output}.evev"
 with open(outf, "w") as fout:
   for run in tqdm(run_to_marking(), desc="Run to marking"):
     known.add(run)

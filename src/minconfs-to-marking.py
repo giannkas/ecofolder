@@ -5,7 +5,7 @@ import os
 import sys
 import time
 import subprocess
-from doomed import asp_of_mci,cfg_from_atoms,script_path
+from doomed import asp_of_mci,cfg_from_atoms,script_path,Model
 
 from tqdm import tqdm
 
@@ -20,7 +20,7 @@ def minconfs(prefix_asp, markings, shortest=0, clingo_opts=""):
       "--enum-mode=domRec", "--dom-mod=5,16"]+clingo_opts)
   sat.add("base", [], prefix_asp)
   for i, m in enumerate(markings):
-    # print("".join(["q({},\"{}\").".format(i,p) for p in m]))
+    #print("".join(["q({},\"{}\").".format(i,p) for p in m]))
     sat.add("base", [], "".join(["q({},\"{}\").".format(i,p) for p in m]))
   sat.add("base", [],
       "conflict(E,F) :- edge(C,E),edge(C,F),E != F."
@@ -91,7 +91,7 @@ def compute_minconfs():
   shortest = 0
   outpdf = 0
   repeat = 0
-  model_unf = ""
+  model_ll = ""
   query_marking = ""
 
   params = len(sys.argv)
@@ -101,12 +101,12 @@ def compute_minconfs():
       i += 1
       if (i == params or '-' == sys.argv[i][0]):
           raise ValueError(compute_minconfs.__doc__)
-      model_unf = sys.argv[i]
+      model_ll = sys.argv[i]
     elif sys.argv[i] == "-mrk" or sys.argv[i] == "--marking":
       i += 1
       if (i == params or '-' == sys.argv[i][0]):
           raise ValueError(compute_minconfs.__doc__)
-      query_marking = [sys.argv[i].split(',')]
+      query_marking = sys.argv[i]
     elif sys.argv[i] == "-sht" or sys.argv[i] == "--shortest":
       shortest = 1
     elif sys.argv[i] == "-r" or sys.argv[i] == "--repeat":
@@ -117,10 +117,19 @@ def compute_minconfs():
     elif sys.argv[i] == "-pdf":
       outpdf = 1
   
+  model = Model(model_ll)
+  extd_badmarkings = model.get_badmarkings(query_marking)
+  args_unf = [script_path("ecofolder"), model.filename]
+  subprocess.run(args_unf)
+  model_unf = model_ll + "_unf.mci"
+
   prefix = asp_of_mci(model_unf)
 
-  base_output = os.path.basename(model_unf.replace(".mci", ""))
-  out_d = f"{os.path.split(model_unf)[0]}"
+  if ".ll_net" in model_ll:
+    base_output = os.path.basename(model_ll.replace(".ll_net", ""))
+  else:
+    base_output = os.path.basename(model_ll.replace(".ll", ""))
+  out_d = f"{os.path.split(model_ll)[0]}"
 
   if not os.path.exists(f"{out_d}/{base_output}.asp"):
     with open(f"{out_d}/{base_output}.asp", "w") as fp:
@@ -129,10 +138,10 @@ def compute_minconfs():
   clingo_opts = ["-W", "none"]
   t0 = time.time()
 
-  outf = f"{os.path.dirname(model_unf)}/minconfs-to-marking_{base_output}.evev"
+  outf = f"{os.path.dirname(model_ll)}/minconfs-to-marking_{base_output}.evev"
 
   with open(outf, "w") as fout:
-    for C in tqdm(minconfs(prefix, query_marking, shortest, clingo_opts), desc="Computing minimal configurations"):
+    for C in tqdm(minconfs(prefix, extd_badmarkings, shortest, clingo_opts), desc="Computing minimal configurations"):
       #print(sorted(C, key=sort_by_number))
       print(str_conf(sorted(C, key=sort_by_number)), file=fout)
 

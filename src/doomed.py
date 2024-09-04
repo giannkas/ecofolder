@@ -135,6 +135,26 @@ class Model:
       free_mrk = subprocess.check_output(args).decode()
     
     return free_mrk
+  
+  def get_badmarkings(self, fmrks="bad_markings.bad"):
+    f = open(fmrks)
+    bad_markings = []
+    for l in f: # reading bad markings in f
+      m = l.strip().split(",")
+      newm = []
+      for i in m:
+        ipos_ = i[::-1].find('_')
+        if (ipos_ == -1 or ipos_ > -1) and i in self.PL.keys():
+          newm.append(i)
+        elif ipos_ == -1:
+          for j in self.PL.keys():
+            jpos_ = j[::-1].find('_')
+            if jpos_ > -1 and j[len(j)-(jpos_+1)] != '0':
+              if j[:len(j)-jpos_-1] == i:
+                newm.append(j)
+      bad_markings += [newm] # list of lists to store each bad marking
+    
+    return bad_markings
 
 def prefix_nb_events(mcifile):
   # includes cutoffs
@@ -382,22 +402,23 @@ if __name__ == "__main__":
     os.makedirs(out_d)
 
     bad_aspfile = os.path.join(out_d, "bad.asp")
-    f = open(bad_marking)
-    bad_markings = []
-    for l in f: # reading bad markings in f
-      m = l.strip().split(",")
-      newm = []
-      for i in m:
-        ipos_ = i[::-1].find('_')
-        if (ipos_ == -1 or ipos_ > -1) and i in model.PL.keys():
-          newm.append(i)
-        elif ipos_ == -1:
-          for j in model.PL.keys():
-            jpos_ = j[::-1].find('_')
-            if jpos_ > -1 and j[len(j)-(jpos_+1)] != '0':
-              if j[:len(j)-jpos_-1] == i:
-                newm.append(j)
-      bad_markings += [newm] # list of lists to store each bad marking
+    # f = open(bad_marking)
+    # bad_markings = []
+    # for l in f: # reading bad markings in f
+    #   m = l.strip().split(",")
+    #   newm = []
+    #   for i in m:
+    #     ipos_ = i[::-1].find('_')
+    #     if (ipos_ == -1 or ipos_ > -1) and i in model.PL.keys():
+    #       newm.append(i)
+    #     elif ipos_ == -1:
+    #       for j in model.PL.keys():
+    #         jpos_ = j[::-1].find('_')
+    #         if jpos_ > -1 and j[len(j)-(jpos_+1)] != '0':
+    #           if j[:len(j)-jpos_-1] == i:
+    #             newm.append(j)
+    #   bad_markings += [newm] # list of lists to store each bad marking
+    bad_markings = model.get_badmarkings(bad_marking)
 
     with open(bad_aspfile, "w") as fp:
       if len(bad_markings) > 1:

@@ -2,22 +2,22 @@
 
 echo "Unfolding..."
 if [ -f $1.ll_net ]; then
-  ./ecofolder $1.ll_net
+  src/ecofolder $1.ll_net
 else
-  ./ecofolder $1.ll
+  src/ecofolder $1.ll
 fi
 
 echo "Translation to SAT..."
-./mci2sat -r "$2" $1_unf.mci
+src/mci2sat -r "$2" $1_unf.mci
 
 echo "SAT checking..."
 minisat $1_unf.sat $1_unf.res > /dev/null
 
 echo "Evaluating SAT..."
-./sateval -verbose -r $1_unf.mci $1_unf.res
+src/sateval -verbose -r $1_unf.mci $1_unf.res
 
 echo "Converting to dot..."
-./mci2dot_ev -c $1_unf.mci $1_unf.evco > $1_unf.dot
+src/mci2dot_ev -c $1_unf.mci $1_unf.evco > $1_unf.dot
 #./mci2dot -c $1_unf.mci $1_unf.evco > $1_unf.dot
 
 echo "Producing the pdf..."
