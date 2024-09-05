@@ -2,14 +2,13 @@ import sys
 import re
 import subprocess
 import os
-
+from doomed import script_path
 
 evev_path = sys.argv[1]
 dot_file = sys.argv[2]
 color_list = sys.argv[3]
 outdir = sys.argv[4]
 init_number = int(sys.argv[5])
-
 
 # Read 'evev' file
 with open(evev_path, "r") as file:
@@ -63,7 +62,7 @@ for line_number, line in enumerate(evev_lines, start=1):
   outdot = f"{outdir}{outfile}_ins{line_number}.dot"
 
   with open(dot_file, 'r') as source_dot, open(outdot, 'w') as out_dot:
-    subprocess.check_call(["python3", "colorindot.py", "-e", "-b",
+    subprocess.check_call(["python3", script_path("color_in_dot.py"), "-e", "-b",
                            "-ru", ru_value, "-co", color_list, "-cocs", "none" ],
                           stdin=source_dot, stdout=out_dot)
 

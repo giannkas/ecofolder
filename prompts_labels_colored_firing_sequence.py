@@ -3,6 +3,12 @@ import subprocess
 import os
 import re
 
+# ./color_in_dot -ru "R1,R2,R3,R4,R5,R6,R7,R8,R9,R10,R11;R12,R13;R14,R15,R16;R17,R18,R19,R20,R21,R22" -co "#1a9850;#d73027;#fee08b;#8c510a" -cocs "none" < examples/oursin_tasmanie/tasmanian_perturb_final_pr_urc2alg_unf.dot > examples/oursin_tasmanie/tasmanian_perturb_final_pr_urc2alg_unf_colored.dot
+
+# ./prompts_color_firing_sequence examples/oursin_tasmanie/minconfs-to-marking_tasmanian_perturb_final_pr_urc2alg.evev examples/oursin_tasmanie/tasmanian_perturb_final_pr_urc2alg_unf_colored.dot "#1a9850;#d73027;#fee08b;#8c510a" examples/oursin_tasmanie/mrk_instances/urc2alg+/ 5
+
+# python3 prompts_labels_colored_firing_sequence.py examples/oursin_tasmanie/minconfs-to-marking_tasmanian_perturb_final_pr_urc2alg.evev examples/oursin_tasmanie/mrk_instances/urc2alg+/tasmanian_perturb_final_pr_urc2alg_unf_colored_ins1.dot examples/oursin_tasmanie/tasmanian_perturb_final.rr examples/oursin_tasmanie/mrk_instances/urc2alg+/ 6
+
 evev_path = sys.argv[1]
 dot_file = sys.argv[2]
 rr_path = sys.argv[3]
