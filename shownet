@@ -2,9 +2,9 @@
 
 echo "Converting to dot..."
 if [ -f $1.ll_net ]; then
-  ./llnet2dot $1.ll_net
+  src/llnet2dot $1.ll_net
 else
-  ./llnet2dot $1.ll
+  src/llnet2dot $1.ll
 fi
 
 echo "Producing the pdf..."
