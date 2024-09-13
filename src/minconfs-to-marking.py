@@ -79,6 +79,7 @@ def compute_minconfs():
     Files:
       -prx --prefix <mcifile>     prefix in .mci format from where the configurations will be computed.
       -mrk --marking <markingsfile>    queried marking to where configurations lead to.
+      -out <outfile>    filename to save the output, if not given then it will be saved in the model location.
 
     Options:
       -sht --shortest   mode to select the configurations that contain the least number of events.
@@ -92,6 +93,7 @@ def compute_minconfs():
   outpdf = 0
   repeat = 0
   model_ll = ""
+  out_fname = ""
   query_marking = ""
 
   params = len(sys.argv)
@@ -100,28 +102,36 @@ def compute_minconfs():
     if sys.argv[i] == "-prx" or sys.argv[i] == "--prefix":
       i += 1
       if (i == params or '-' == sys.argv[i][0]):
-          raise ValueError(compute_minconfs.__doc__)
+        raise ValueError(compute_minconfs.__doc__)
       model_ll = sys.argv[i]
     elif sys.argv[i] == "-mrk" or sys.argv[i] == "--marking":
       i += 1
       if (i == params or '-' == sys.argv[i][0]):
-          raise ValueError(compute_minconfs.__doc__)
+        raise ValueError(compute_minconfs.__doc__)
       query_marking = sys.argv[i]
+    elif sys.argv[i] == "-out":
+      i += 1
+      if (i == params or '-' == sys.argv[i][0]):
+        raise ValueError(compute_minconfs.__doc__)
+      out_fname = sys.argv[i]
     elif sys.argv[i] == "-sht" or sys.argv[i] == "--shortest":
       shortest = 1
     elif sys.argv[i] == "-r" or sys.argv[i] == "--repeat":
       i += 1
       if (i == params or '-' == sys.argv[i][0]):
-          raise ValueError(compute_minconfs.__doc__)
+        raise ValueError(compute_minconfs.__doc__)
       repeat = sys.argv[i]
     elif sys.argv[i] == "-pdf":
       outpdf = 1
   
   model = Model(model_ll)
   extd_badmarkings = model.get_badmarkings(query_marking)
-  args_unf = [script_path("ecofolder"), model.filename]
+  if out_fname == "":
+    args_unf = [script_path("ecofolder"), model.filename]
+  else:
+    args_unf = [script_path("ecofolder"), model.filename, "-m", out_fname + "_unf.mci"]
   subprocess.run(args_unf)
-  model_unf = model_ll + "_unf.mci"
+  model_unf = model_ll + "_unf.mci" if out_fname == "" else out_fname + "_unf.mci"
 
   prefix = asp_of_mci(model_unf)
 
