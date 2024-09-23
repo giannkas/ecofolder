@@ -159,14 +159,14 @@ digraph test {
   e15 [color="black" fillcolor="white:white" label="R12 (e15)" shape=box style=filled];
   e18 [color="black" fillcolor="white:white" label="R12 (e18)" shape=box style=filled];
   e19 [color="black" fillcolor="white:white" label="R17 (e19)" shape=box style=filled];
-  e20 [color="black" fillcolor="#fee08b:#fee08b" label="R16 (e20)" shape=box style=filled];
+  e20 [color="black" fillcolor="gray60:gray60" label="R16 (e20)" shape=box style=filled];
   e21 [color="black" fillcolor="white:white" label="R4 (e21)" shape=box style=filled];
   e22 [color="black" fillcolor="white:white" label="R6 (e22)" shape=box style=filled];
   e24 [color="black" fillcolor="white:white" label="R14 (e24)" shape=box style=filled];
   e26 [color="black" fillcolor="white:white" label="R4 (e26)" shape=box style=filled];
   e27 [color="black" fillcolor="white:white" label="R4 (e27)" shape=box style=filled];
   e29 [color="black" fillcolor="white:white" label="R17 (e29)" shape=box style=filled];
-  e30 [color="black" fillcolor="#fee08b:#fee08b" label="R15 (e30)" shape=box style=filled];
+  e30 [color="black" fillcolor="gray60:gray60" label="R15 (e30)" shape=box style=filled];
   e31 [color="black" fillcolor="white:white" label="R10 (e31)" shape=box style=filled];
   e34 [color="black" fillcolor="white:white" label="R3 (e34)" shape=box style=filled];
   e36 [color="black" fillcolor="white:white" label="R16 (e36)" shape=box style=filled];

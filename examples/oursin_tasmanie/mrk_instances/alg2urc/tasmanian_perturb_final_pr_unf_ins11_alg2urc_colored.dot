@@ -159,7 +159,7 @@ digraph test {
   e15 [color="black" fillcolor="white:white" label="R12 (e15)" shape=box style=filled];
   e18 [color="black" fillcolor="white:white" label="R12 (e18)" shape=box style=filled];
   e19 [color="black" fillcolor="white:white" label="R17 (e19)" shape=box style=filled];
-  e20 [color="black" fillcolor="#fee08b:#fee08b" label="R16 (e20)" shape=box style=filled];
+  e20 [color="black" fillcolor="gray60:gray60" label="R16 (e20)" shape=box style=filled];
   e21 [color="black" fillcolor="white:white" label="R4 (e21)" shape=box style=filled];
   e22 [color="black" fillcolor="white:white" label="R6 (e22)" shape=box style=filled];
   e24 [color="black" fillcolor="white:white" label="R14 (e24)" shape=box style=filled];

@@ -77,8 +77,8 @@ def compute_minconfs():
     Usage: python3 {compute_minconfs.__name__} [files] [options]\n
 
     Files:
-      -prx --prefix <mcifile>     prefix in .mci format from where the configurations will be computed.
-      -mrk --marking <markingsfile>    queried marking to where configurations lead to.
+      -mdl --model <mcifile>     model in .ll_net format from where the configurations will be computed.
+      -mrk --marking <markingsfile>    queried markings to where configurations lead to.
       -out <outfile>    filename to save the output, if not given then it will be saved in the model location.
 
     Options:
@@ -99,7 +99,7 @@ def compute_minconfs():
   params = len(sys.argv)
 
   for i in range(params):
-    if sys.argv[i] == "-prx" or sys.argv[i] == "--prefix":
+    if sys.argv[i] == "-mdl" or sys.argv[i] == "--model":
       i += 1
       if (i == params or '-' == sys.argv[i][0]):
         raise ValueError(compute_minconfs.__doc__)
@@ -124,6 +124,13 @@ def compute_minconfs():
     elif sys.argv[i] == "-pdf":
       outpdf = 1
   
+  if ".ll_net" in model_ll:
+    base_output = os.path.basename(model_ll.replace(".ll_net", ""))
+    model_ll = model_ll.replace(".ll_net", "")
+  else:
+    base_output = os.path.basename(model_ll.replace(".ll", ""))
+    model_ll = model_ll.replace(".ll", "")
+  
   model = Model(model_ll)
   extd_badmarkings = model.get_badmarkings(query_marking)
   if out_fname == "":
@@ -135,10 +142,6 @@ def compute_minconfs():
 
   prefix = asp_of_mci(model_unf)
 
-  if ".ll_net" in model_ll:
-    base_output = os.path.basename(model_ll.replace(".ll_net", ""))
-  else:
-    base_output = os.path.basename(model_ll.replace(".ll", ""))
   out_d = f"{os.path.split(model_ll)[0]}"
 
   if not os.path.exists(f"{out_d}/{base_output}.asp"):
