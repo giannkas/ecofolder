@@ -7,8 +7,9 @@ from doomed import script_path
 evev_path = sys.argv[1]
 dot_file = sys.argv[2]
 color_list = sys.argv[3]
-outdir = sys.argv[4]
-init_number = int(sys.argv[5])
+color_range = sys.argv[4]
+outdir = sys.argv[5]
+init_number = int(sys.argv[6])
 
 # Read 'evev' file
 with open(evev_path, "r") as file:
@@ -18,7 +19,9 @@ with open(evev_path, "r") as file:
 with open(dot_file, "r") as file:
   dot_lines = file.readlines()
 
-
+cranges = color_range.split(";")
+crranges = [int(r) for r in cranges]
+ncolors = len(color_list.split(";"))
 # Extract rule ids and event ids from the dot file
 event_rule_mapping = {}
 for line in dot_lines:
@@ -33,31 +36,25 @@ for line in dot_lines:
 prompts = []
 
 for line_number, line in enumerate(evev_lines, start=1):
-  event_ids = [int(e) for e in line.split() if e != '0']
+  event_ids = [int(e) if '+' not in e else e for e in line.split() if e != '0']
   
   # Initialize the parts of the -ru parameter
-  ru_parts = {
-    "part1": [],
-    "part2": [],
-    "part3": [],
-    "part4": []
-  }
+  ru_parts = {f"part{i+1}": [] for i in range(ncolors)}
   
   for event_id in event_ids:
     if event_id in event_rule_mapping:
       rule_id = event_rule_mapping[event_id]
-      
-      if rule_id <= 11:
-        ru_parts["part1"].append(f"e{event_id}")
-      elif 12 <= rule_id <= 13:
-        ru_parts["part2"].append(f"e{event_id}")
-      elif 14 <= rule_id <= 16:
-        ru_parts["part3"].append(f"e{event_id}")
-      elif rule_id >= 17:
-        ru_parts["part4"].append(f"e{event_id}")
-  
-  ru_value = ";".join([",".join(ru_parts[part]) for part in ["part1", "part2", "part3", "part4"]])
+      cr = next((index for index, rgs in 
+                      enumerate(crranges) 
+                      if rule_id <= rgs or (index == len(crranges)-1 and rule_id > rgs)), -1)
+      if cr >= 0: ru_parts[f"part{cr+1}"].append(f"e{event_id}")
 
+    elif '+' in event_id:
+      eid = int(event_id[:-1])
+      ru_parts[f"part{ncolors}"].append(f"e{eid}")
+    
+  
+  ru_value = ";".join([",".join(ru_parts[part]) for part in ru_parts.keys()])
   outfile = os.path.basename(dot_file.replace(".dot",""))
   outdot = f"{outdir}{outfile}_ins{line_number}.dot"
 
