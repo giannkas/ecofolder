@@ -3,7 +3,7 @@
 
 TARGET = ecofolder mci2dot mci2dot_ev mci2dot_cpr \
 mci2csv pr_encoding rs_complement llnet2dot mci2sat \
-sateval bad_net mci2asp mci2evstump
+sateval bad_net mci2asp mci2evstump mcievev2rules
 LIBS = 
 FLAGS = 
 INCLUDES =

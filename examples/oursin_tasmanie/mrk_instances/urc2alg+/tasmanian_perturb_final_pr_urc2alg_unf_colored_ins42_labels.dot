@@ -196,7 +196,7 @@ digraph test {
   e13 [color="black" fillcolor="white:white" label="Lob- >> Urc+" shape=box style=filled];
   e14 [color="black" fillcolor="white:white" label="Lob-, Urc- >> Aba+" shape=box style=filled];
   e16 [color="black" fillcolor="white:white" label="Mgt+ >> Lob+" shape=box style=filled];
-  e17 [color="black" fillcolor="#8c510a:#8c510a" label="Aba-, Lob- >> Mgt+" shape=box style=filled];
+  e17 [color="black" fillcolor="gray60:gray60" label="Aba-, Lob- >> Mgt+" shape=box style=filled];
   e18 [color="black" fillcolor="white:white" label="Aba-, Lob- >> Mgt+" shape=box style=filled];
   e19 [color="black" fillcolor="white:white" label="Alg+, Fis- >> Lob+" shape=box style=filled];
   e21 [color="black" fillcolor="white:white" label="Urc- >> Alg+" shape=box style=filled];
@@ -238,7 +238,7 @@ digraph test {
   e282 [color="black" fillcolor="white:white" label="Alg+, Fis- >> Lob+" shape=box style=filled];
   e291 [color="black" fillcolor="white:white" label="Lob+ >> Urc-" shape=box style=filled];
   e335 [color="black" fillcolor="white:white" label="Mgt+ >> Lob+" shape=box style=filled];
-  e336 [color="black" fillcolor="#8c510a:#8c510a" label="Mgt+ >> Urc-" shape=box style=filled];
+  e336 [color="black" fillcolor="gray60:gray60" label="Mgt+ >> Urc-" shape=box style=filled];
   e342 [color="black" fillcolor="white:white" label="Mgt+ >> Lob+" shape=box style=filled];
   e343 [color="black" fillcolor="white:white" label="Mgt+ >> Urc-" shape=box style=filled];
   e400 [color="black" fillcolor="white:white" label="Lob+ >> Urc-" shape=box style=filled];

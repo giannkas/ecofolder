@@ -83,6 +83,7 @@ def compute_minconfs():
 
     Options:
       -sht --shortest   mode to select the configurations that contain the least number of events.
+      -p --pathway display pathway structure instead of event structure.
       -r --repeat    <conf_number>   produce a cutout showing only the configuration selected by <conf_number>.
       -pdf    mode to render a PDF file to display the configurations.\n
           
@@ -92,6 +93,7 @@ def compute_minconfs():
   shortest = 0
   outpdf = 0
   repeat = 0
+  pathway = 0
   model_ll = ""
   out_fname = ""
   query_marking = ""
@@ -116,6 +118,8 @@ def compute_minconfs():
       out_fname = sys.argv[i]
     elif sys.argv[i] == "-sht" or sys.argv[i] == "--shortest":
       shortest = 1
+    elif sys.argv[i] == "-p" or sys.argv[i] == "--pathway":
+      pathway = 1
     elif sys.argv[i] == "-r" or sys.argv[i] == "--repeat":
       i += 1
       if (i == params or '-' == sys.argv[i][0]):
@@ -138,7 +142,7 @@ def compute_minconfs():
   else:
     args_unf = [script_path("ecofolder"), model.filename, "-m", out_fname + "_unf.mci"]
   subprocess.run(args_unf)
-  model_unf = model_ll + "_unf.mci" if out_fname == "" else out_fname + "_unf.mci"
+  model_unf = model_ll + "_unf.mci" if out_fname == "" else out_fname + "_unf.mci" if "/" in out_fname and len(out_fname) > 1 else f"{os.path.dirname(model_ll)}/{out_fname}_unf.mci"
 
   prefix = asp_of_mci(model_unf)
 
@@ -151,7 +155,7 @@ def compute_minconfs():
   clingo_opts = ["-W", "none"]
   t0 = time.time()
 
-  outf = f"{os.path.dirname(model_ll)}/minconfs-to-marking_{base_output}.evev"
+  outf = f"{os.path.dirname(model_ll)}/minconfs-to-marking_{base_output}.evev" if out_fname == "" else out_fname + ".evev" if "/" in out_fname and len(out_fname) > 1 else f"{os.path.dirname(model_ll)}/{out_fname}.evev"
 
   with open(outf, "w") as fout:
     for C in tqdm(minconfs(prefix, extd_badmarkings, shortest, clingo_opts), desc="Computing minimal configurations"):
@@ -162,7 +166,7 @@ def compute_minconfs():
     print("Converting to dot...")
     outdot = model_unf.replace(".mci", ".dot")
     with open(outdot, 'w') as out_dot:
-      args_mci2dot = [script_path("mci2dot_ev"), "-r", f"{repeat}", "-c", model_unf, outf]
+      args_mci2dot = [script_path("mci2dot_ev"), "-r", f"{repeat}", "-c", model_unf, outf] if pathway == 0 else [script_path("mci2dot_ev"), "-r", f"{repeat}", "-p", "-c", model_unf, outf]
       subprocess.check_call(args_mci2dot, stdout=out_dot)
 
     print("Producing the PDF...")
