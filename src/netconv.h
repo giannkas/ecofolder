@@ -98,7 +98,7 @@ typedef struct
 {
   place_t *places;  /* pointer to first place    */
   trans_t *transitions;  /* pointer to first transition    */
-  restr_t *restrictions; /* constraints to restrict net's unfolding */
+  restr_t *restrictions; /* places restricted in the net's unfolding */
   int numpl, numtr, numrt, numqr;  /* number of places/transitions in net  */
   int maxpre, maxpost, maxres, maxctx;  /* maximal size of a t-pre/postset, reset and ctxset  */
   int maxplname, maxtrname; /* maximal size of place and transition names */

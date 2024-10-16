@@ -26,6 +26,8 @@ extern int conflsteps;
 extern int** confl_evs;
 extern char* badunf;
 extern char* qrmarking;     /* marking queried from user prompt */
+extern char* rtplaces;     /* places restricted from user prompt */
+extern char* bltransitions;     /* transitions blocker from user prompt */
 
 extern int exitcode;    /* proposed exit code of the program         */
 extern trans_t *stoptr;   /* the transition mentioned by the -T switch */

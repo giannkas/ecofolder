@@ -170,25 +170,36 @@ void nc_create_trans_pool (net_t* net)
 {
   restr_t *rt;
   trans_t *tr;
+  place_t *pl;
   int const_check;
   char *token_rt, *token_pl;
   
   char trans_pool[(net->maxtrname+2)*(net->numtr)];
   memset( trans_pool, 0, (net->maxtrname+2)*(net->numtr)*sizeof(char) );
 
+  for (pl = net->places; pl; pl = pl->next)
+    if(rtplaces && (strstr(rtplaces, pl->name) || 
+      (strstr(pl->name, "_") && strstr(rtplaces, bltokstr(pl->name, 0, '_')))))
+    {
+      restr_t* rt = nc_create_restriction(net);
+      rt->name = MYstrdup(pl->name); 
+    }
+  
   for (tr = net->transitions; tr; tr = tr->next){
     const_check = 0;
     for (rt = net->restrictions; rt && !const_check; rt = rt->next){
       nodelist_t *ptr = tr->postset;
       for (; ptr && !const_check; ptr = ptr->next){
-        if(strstr(((place_t*)(ptr->node))->name,"+") && strstr(rt->name,"-")){
+        if(!strcmp(((place_t*)(ptr->node))->name,rt->name)){ const_check = 1;
+          strcat(strcat(trans_pool,tr->name), ", ");}
+        else if(strstr(((place_t*)(ptr->node))->name,"+") && strstr(rt->name,"+")){
           token_pl = ftokstr(((place_t*)(ptr->node))->name, 0, '+');
-          token_rt = ftokstr(rt->name, 0, '-');
+          token_rt = ftokstr(rt->name, 0, '+');
           if(!strcmp(token_pl,token_rt)){ const_check = 1;
           strcat(strcat(trans_pool,tr->name), ", ");}
-        } else if (strstr(((place_t*)(ptr->node))->name,"-") && strstr(rt->name,"+")){
+        } else if (strstr(((place_t*)(ptr->node))->name,"-") && strstr(rt->name,"-")){
           token_pl = ftokstr(((place_t*)(ptr->node))->name, 0, '-');
-          token_rt = ftokstr(rt->name, 0, '+');
+          token_rt = ftokstr(rt->name, 0, '-');
           if(!strcmp(token_pl,token_rt)){ const_check = 1;
           strcat(strcat(trans_pool,tr->name), ", ");}
         }

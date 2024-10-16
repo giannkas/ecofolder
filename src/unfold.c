@@ -32,6 +32,8 @@ int** confl_evs = NULL;  /* matrix of events X conditions whether they are
                           in direct conflict*/
 char* badunf = NULL;
 char* qrmarking = NULL;
+char* rtplaces = NULL;
+char* bltransitions = NULL;
 
 nodelist_t *cutoff_list, *corr_list;  /* cut-off list, corresponding 
   events */

@@ -13,6 +13,7 @@
 
 #include "readlib.h"
 #include "netconv.h"
+#include "unfold.h"
 #include "common.h"
 
 /*****************************************************************************/
@@ -532,6 +533,9 @@ int insert_trans()
   TrArray[rd_ident] = nc_create_transition(rd_net, checkidtr ? rd_ident : 0);
   TrArray[rd_ident]->name = rd_name? MYstrdup(rd_name) : NULL;  
   TrArray[rd_ident]->blocked = rd_blocked >= 1 ? !!rd_blocked : 0;
+  if (!(TrArray[rd_ident]->blocked) && bltransitions)
+    if (strstr(bltransitions,TrArray[rd_ident]->name))
+      TrArray[rd_ident]->blocked = 1;
   return 0;
 }
 

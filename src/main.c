@@ -20,12 +20,14 @@ void usage(char *myname)
   "      -i               interactive mode.\n"
   "      -r <instance>    highlight <instance> of a repeated marking.\n"
   "      -c               compressed view\n"
-  "      -mcmillan        unfolds with mcmillan criteria.\n"
+  "      -mcmillan        unfolds with mcmillan criterion.\n"
   "      -confmax         when used, it will enable interactive mode to display maximal configurations only.\n"
   "      -freechk         used to check freeness. When used, you should enable -badchk <badunf> to\n                       do a proper freeness check, otherwise you will have the initial prefix.\n                       The parameter will enable -mcmillan flag as well.\n                       It cannot be used with -T <name> option."
   "      -badchk <badunf> used to check badness <badunf> is a mci file containing an unfolding\n                       prefix of the corresponding bad net.\n"
   "      -verbose         if used, Ecofolder will print information concerning the prefix produced.\n"
   "      -q --query <marking>    query a marking in the prefix given by <marking>.\n"
+  "      -rst --restriction <places>    restrict <places> from appearing in the unfolding, they must be comma-separated.\n"
+  "      -blc --block <transitions>    block <transitions> from firing in the unfolding, they must be comma-separated.\n"
   "      -useids         when used, Ecofolder will use ids for places and transitions given in\n                       the input file.\n\n"
 
   "     FileOptions:\n"
@@ -92,6 +94,16 @@ int main (int argc, char **argv)
       if (++i == argc) usage(argv[0]);
       qrmarking = argv[i];
     }
+    else if (!strcmp(argv[i],"-rst") || !strcmp(argv[i],"--restriction"))
+    {
+      if (++i == argc) usage(argv[0]);
+      rtplaces = argv[i];
+    }
+    else if (!strcmp(argv[i],"-blc") || !strcmp(argv[i],"--block"))
+    {
+      if (++i == argc) usage(argv[0]);
+      bltransitions = argv[i];
+    }
     else if (!strcmp(argv[i],"-freechk"))
     {
       freechk = 1;
@@ -127,8 +139,9 @@ int main (int argc, char **argv)
   net = read_pep_net(llnet);
 
   nc_static_checks(net,stoptr_name);
-  nc_create_trans_pool(net);
   /* creating transitions pool that are enforced by restrictions */
+  nc_create_trans_pool(net);
+  
   if(verbose)
   {
     /* Reset set of the transitions */
