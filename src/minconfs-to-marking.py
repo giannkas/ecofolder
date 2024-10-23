@@ -87,7 +87,7 @@ def compute_minconfs():
       -r --repeat    <conf_number>   produce a cutout showing only the configuration selected by <conf_number>.
       -pdf    mode to render a PDF file to display the configurations.\n
           
-    Files are mandatory to compute the configurations and options can be interchangeable to produce different outputs.\n
+    <mcifile> and <markingsfile> are mandatory to compute the configurations and options can be interchangeable to produce different outputs.\n
   """
   
   shortest = 0
@@ -127,6 +127,9 @@ def compute_minconfs():
       repeat = sys.argv[i]
     elif sys.argv[i] == "-pdf":
       outpdf = 1
+  
+  if len(model_ll) < 1 or len(query_marking) < 1:
+    raise ValueError(compute_minconfs.__doc__)
   
   if ".ll_net" in model_ll:
     base_output = os.path.basename(model_ll.replace(".ll_net", ""))
