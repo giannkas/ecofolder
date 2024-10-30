@@ -726,6 +726,7 @@ void read_mci_file_ev (char *mcifile, char* evevfile, int m_repeat, int cutout, 
   fread(c,1,1,mcif);
 
   int *cut = calloc(numco+1, sizeof(int));
+  /* firing sequence */
   int *frsq = calloc(numev+1, sizeof(int));
 
   if(conf)
@@ -811,7 +812,7 @@ void read_mci_file_ev (char *mcifile, char* evevfile, int m_repeat, int cutout, 
       else
         fillcolor = queries_ev_or_frsq ? color3 : color1;
 
-      color = queries_ev_or_frsq ? color4 : color6;
+      color = queries_ev_or_frsq || harmfuls[i] || cutoffs[i] ? color4 : color6;
 
       printf("  e%d [color=\"%s\" fillcolor=\"%s:%s\" label=\"%s (e%d)\" shape=box style=filled];\n",
           i, color, fillcolor, queries_ev_or_frsq ? color3 : fillcolor, trname[ev2tr[i]], i);

@@ -5,7 +5,7 @@ import os
 import sys
 import time
 import subprocess
-from doomed import asp_of_mci,cfg_from_atoms,script_path,Model
+from doomed import asp_of_mci,cfg_from_atoms,script_path, Model
 
 from tqdm import tqdm
 
@@ -77,7 +77,8 @@ def compute_minconfs():
     Usage: python3 {compute_minconfs.__name__} [files] [options]\n
 
     Files:
-      -mdl --model <mcifile>     model in .ll_net format from where the configurations will be computed.
+      -prx --prefix <mcifile>     prefix in .mci format from where the configurations will be computed.
+      -mdl --model <ll_netfile>     model in .ll_net format to unfold and produce a prefix from where the configurations will be computed.
       -mrk --marking <markingsfile>    queried markings to where configurations lead to.
       -out <outfile>    filename to save the output, if not given then it will be saved in the model location.
 
@@ -87,7 +88,7 @@ def compute_minconfs():
       -r --repeat    <conf_number>   produce a cutout showing only the configuration selected by <conf_number>.
       -pdf    mode to render a PDF file to display the configurations.\n
           
-    <mcifile> and <markingsfile> are mandatory to compute the configurations and options can be interchangeable to produce different outputs.\n
+    <ll_netfile> and <markingsfile> are mandatory to compute the configurations and options can be interchangeable to produce different outputs. If <mcifile> and <ll_netfile> are provided, then {compute_minconfs.__name__} will not unfold to model, instead it assumes that <mcifile> is the corresponding prefix for processing.\n
   """
   
   shortest = 0
@@ -95,6 +96,7 @@ def compute_minconfs():
   repeat = 0
   pathway = 0
   model_ll = ""
+  model_unf = ""
   out_fname = ""
   query_marking = ""
 
@@ -106,6 +108,11 @@ def compute_minconfs():
       if (i == params or '-' == sys.argv[i][0]):
         raise ValueError(compute_minconfs.__doc__)
       model_ll = sys.argv[i]
+    if sys.argv[i] == "-prx" or sys.argv[i] == "--prefix":
+      i += 1
+      if (i == params or '-' == sys.argv[i][0]):
+        raise ValueError(compute_minconfs.__doc__)
+      model_unf = sys.argv[i]
     elif sys.argv[i] == "-mrk" or sys.argv[i] == "--marking":
       i += 1
       if (i == params or '-' == sys.argv[i][0]):
@@ -128,9 +135,11 @@ def compute_minconfs():
     elif sys.argv[i] == "-pdf":
       outpdf = 1
   
+  # If no filenames are provided, then raise an error message
   if len(model_ll) < 1 or len(query_marking) < 1:
     raise ValueError(compute_minconfs.__doc__)
   
+  # Process the model, if not prefix is given, then compute it.
   if ".ll_net" in model_ll:
     base_output = os.path.basename(model_ll.replace(".ll_net", ""))
     model_ll = model_ll.replace(".ll_net", "")
@@ -141,17 +150,20 @@ def compute_minconfs():
   model = Model(model_ll)
   expnd_query_markings = []
 
-  # Expand wildcards '*' if used in the markings
+  # Process bad markings - expand wildcards '*' if used in the markings
   with open(query_marking, "r") as qm:
     for l in qm:
       expnd_query_markings = model.expand_markings(l)
   extd_badmarkings = model.get_badmarkings(expnd_query_markings)
-  if out_fname == "":
-    args_unf = [script_path("ecofolder"), model.filename]
-  else:
-    args_unf = [script_path("ecofolder"), model.filename, "-m", out_fname + "_unf.mci"]
-  subprocess.run(args_unf)
-  model_unf = model_ll + "_unf.mci" if out_fname == "" else out_fname + "_unf.mci" if "/" in out_fname and len(out_fname) > 1 else f"{os.path.dirname(model_ll)}/{out_fname}_unf.mci"
+
+  if len(model_unf) < 1:
+    if out_fname == "":
+      args_unf = [script_path("ecofolder"), model.filename]
+    else:
+      args_unf = [script_path("ecofolder"), model.filename, "-m", out_fname + "_unf.mci"]
+    subprocess.run(args_unf)
+
+    model_unf = model_ll + "_unf.mci" if out_fname == "" else out_fname + "_unf.mci" if "/" in out_fname and len(out_fname) > 1 else f"{os.path.dirname(model_ll)}/{out_fname}_unf.mci"
 
   prefix = asp_of_mci(model_unf)
 
