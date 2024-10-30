@@ -9,6 +9,8 @@ import sys
 import tempfile
 import time
 import re
+from itertools import product
+
 
 from tqdm import tqdm
 
@@ -136,8 +138,30 @@ class Model:
     
     return free_mrk
   
+  def expand_markings(self, marking):
+    places = marking.split(',')
+    
+    # identify the indices of wildcard entries (marked with '*')
+    wildcard_pos = [i for i, place in enumerate(places) if '*' in place]
+    
+    # remove the '*' symbol from each wildcard entry
+    places = [place.replace('*', '-') for place in places]
+    
+    # generate all combinations of '+' and '-' for wildcard entries
+    combinations = product(['+', '-'], repeat=len(wildcard_pos))
+    
+    # create the expanded markings by applying each combination
+    exp_mrk = []
+    for combi in combinations:
+      modified_places = places[:]  # make a copy of the original places list
+      for idx, sign in zip(wildcard_pos, combi):
+        modified_places[idx] = modified_places[idx].replace('-', sign)
+      exp_mrk.append(','.join(modified_places))
+    
+    return exp_mrk
+  
   def get_badmarkings(self, fmrks="bad_markings.bad"):
-    f = open(fmrks)
+    f = open(fmrks) if isinstance(fmrks, str) else fmrks
     bad_markings = []
     for l in f: # reading bad markings in f
       m = l.strip().split(",")

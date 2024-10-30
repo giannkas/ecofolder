@@ -139,7 +139,13 @@ def compute_minconfs():
     model_ll = model_ll.replace(".ll", "")
   
   model = Model(model_ll)
-  extd_badmarkings = model.get_badmarkings(query_marking)
+  expnd_query_markings = []
+
+  # Expand wildcards '*' if used in the markings
+  with open(query_marking, "r") as qm:
+    for l in qm:
+      expnd_query_markings = model.expand_markings(l)
+  extd_badmarkings = model.get_badmarkings(expnd_query_markings)
   if out_fname == "":
     args_unf = [script_path("ecofolder"), model.filename]
   else:
