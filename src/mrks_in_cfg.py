@@ -48,23 +48,24 @@ def repeated_markings_in_conf():
   with open(evev_path, "r+") as file:
     evev_lines = file.readlines()
 
-  newevev = [[] for _ in range(len(evev_lines))]
+    newevev = [[] for _ in range(len(evev_lines))]
 
-  for conf_number, conf in enumerate(evev_lines):
-    known = []
-    conf = conf.split(' ')[:-1]
-    for ev_number, _ in enumerate(conf,start=1):
-      args_mrk = [script_path("mci2dot"), "-cf", ",".join(e for e in conf[:ev_number]), model_unf]
-      mrk = subprocess.run(args_mrk,capture_output=True,text=True).stdout.strip()
-      ev_pos = ev_number-1
-      set_mrk = {pl for pl in mrk.split(',')}
-      if set_mrk in known:
-        newevev[conf_number].append(conf[ev_pos]+'+')
-      else:
-        newevev[conf_number].append(conf[ev_pos])
-        known.append(set_mrk)
+    for conf_number, conf in enumerate(evev_lines):
+      known = []
+      conf = conf.split(' ')[:-1]
+      for ev_number, _ in enumerate(conf,start=1):
+        args_mrk = [script_path("mci2dot"), "-cf", ",".join(e for e in conf[:ev_number]), model_unf]
+        mrk = subprocess.run(args_mrk,capture_output=True,text=True).stdout.strip()
+        ev_pos = ev_number-1
+        set_mrk = {pl for pl in mrk.split(',')}
+        if set_mrk in known:
+          newevev[conf_number].append(conf[ev_pos]+'+')
+        else:
+          newevev[conf_number].append(conf[ev_pos])
+          known.append(set_mrk)
 
-  with open(evev_path, "w") as file:
+    file.seek(0)
+    
     for conf in newevev:
       dlt_conf = []
       for e in conf:
@@ -73,6 +74,7 @@ def repeated_markings_in_conf():
         else:
           dlt_conf.append(e)
       file.write(" ".join(dlt_conf) + " 0\n")
+    file.truncate()
 
 if __name__ == "__main__":
   repeated_markings_in_conf()
