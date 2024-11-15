@@ -408,21 +408,12 @@ void read_mci_file_ev (char *mcifile, char* evevfile, int m_repeat, int cutout, 
       } */
       if (!cutout && post_ev && tokens[i] && conf)
         clist_add(&evprps[post_ev]->preset, i);
-      if(pre_ev && post_ev && ev_succs[pre_ev][post_ev] == 0 && tokens[i]){ // check if a 
-                                                               // value hasn't
-                                                               // been assigned yet
-                                                               // and if pre_ev and
-                                                               // post_ev are not null
+      if(pre_ev && post_ev && ev_succs[pre_ev][post_ev] == 0 && tokens[i]){ 
         ev_predc[post_ev][pre_ev] = pre_ev; // matrix of predeccesors to only print
         ev_predc_copy[post_ev][pre_ev] = pre_ev; // matrix of predeccesors to only print
                                             // immediate predecessors. Comment out if
                                             // you want all dependencies. 
-        ev_succs[pre_ev][post_ev] = post_ev; // assign in the entry pre_ev of matrix 
-                                             // ev_succs the connection 
-                                             // between pre_ev and post_ev
-                                             // with the value of post_ev itself.
-                                             // The idea is to have a record
-                                             // of pre_ev's successors.
+        ev_succs[pre_ev][post_ev] = post_ev; 
         /* Uncomment next 4 lines if you want to see all dependencies in events. */
         // if (cutout && queries_ev[pre_ev] && queries_ev[post_ev])
         //   printf("  e%d -> e%d;\n",pre_ev,post_ev); // write the connection.
@@ -438,16 +429,7 @@ void read_mci_file_ev (char *mcifile, char* evevfile, int m_repeat, int cutout, 
         else if (cutout && queries_ev[post_ev])
           printf("  e0 -> e%d;\n", post_ev);
       } */      
-      if (post_ev && tokens[i]) co_postsets[i][post_ev] = post_ev; // assign in the ith
-                                                      // (which corresponds
-                                                      // to the ith condition)
-                                                      // entry of matrix
-                                                      // co_postsets in the
-                                                      // position post_ev
-                                                      // the value post_ev itself.
-                                                      // this keep track of the postset
-                                                      // of a particular conditions
-                                                      // to detect conflicts.
+      if (post_ev && tokens[i]) co_postsets[i][post_ev] = post_ev; 
     } while (post_ev); // if post_ev is not null.
   }
   /* check immediate connections to events */
@@ -833,6 +815,7 @@ void usage ()
     "      -c --cutout  if a marking is queried or \n                  part of a reachability check then\n                  it will show a cutout of\n                  the whole unfolding\n"
     "      -p --pathway   display pathway structure instead of event structure."
     "      -r <instance>  highlight <instance> of a repeated marking - <0> will show all instances. \n"
+    "      -noredundant  when computing minimal configurations, you may end with events leading to repetitive markings (already produced in their cones), and then this flag will consider the removal of these events given in the <evevfile>.\n The general idea to implement this feature is to save events succession in the matrix ev_succ so all the new event connections are updated."
     "      -cf <confg>:   used to return the marking led \n by the configuration <confg>(string type).\n You cannot enable cutouts and this \n flag at the same time.\n\n"
 
     "<evevfile> is an optional file whose lines contain\n"
