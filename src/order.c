@@ -17,7 +17,8 @@ int parikh_size;  /* counts the number of different transitions        */
 
 void parikh_init ()
 {
-  if (net->numtr > 0xFFFE)
+  // 0xFFFE = 65534; 0xFFFFFF = 16777215
+  if (net->numtr > 0xFFFFFF)
   {
     fprintf(stderr,"Parikh vector has too few entries.\n");
     exit(1);

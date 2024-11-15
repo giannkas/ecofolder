@@ -403,20 +403,31 @@ if __name__ == "__main__":
     model_ll = sys.argv[1]
     bad_marking = sys.argv[2]
     model = Model(model_ll)
+    expnd_query_markings = []
+
+    # Process bad markings - expand wildcards '*' if used in the markings
+    with open(bad_marking, "r") as qm:
+      for l in qm:
+        expnd_query_markings = model.expand_markings(l)
+    bad_markings = model.get_badmarkings(expnd_query_markings)
+
+    with open(bad_marking, 'w') as newmks:
+      for l in bad_markings:
+        newmks.write(",".join(l) + "\n")
 
     # creating the corresponding bad net of the model
     args_bad_net = [script_path("bad_net"), model.filename, bad_marking]
     subprocess.run(args_bad_net)
 
-    # preparing badnet's filename to unfold next
+    # # preparing badnet's filename to unfold next
     base_output = os.path.basename(model_ll.replace(".ll", ""))
     bad_ll = os.path.dirname(model_ll) + f"/{base_output}_bad.ll_net"
 
-    # unfolding the badnet model
+    # # unfolding the badnet model
     args_bad_unf = [script_path("ecofolder"), bad_ll]
     subprocess.run(args_bad_unf)
 
-    # preparing badnet's prefix filename to use in the algorithm
+    # # preparing badnet's prefix filename to use in the algorithm
     bad_unf = bad_ll.replace(".ll_net", "") + "_unf"
 
     out_d = f"gen/{base_output}"
@@ -426,23 +437,6 @@ if __name__ == "__main__":
     os.makedirs(out_d)
 
     bad_aspfile = os.path.join(out_d, "bad.asp")
-    # f = open(bad_marking)
-    # bad_markings = []
-    # for l in f: # reading bad markings in f
-    #   m = l.strip().split(",")
-    #   newm = []
-    #   for i in m:
-    #     ipos_ = i[::-1].find('_')
-    #     if (ipos_ == -1 or ipos_ > -1) and i in model.PL.keys():
-    #       newm.append(i)
-    #     elif ipos_ == -1:
-    #       for j in model.PL.keys():
-    #         jpos_ = j[::-1].find('_')
-    #         if jpos_ > -1 and j[len(j)-(jpos_+1)] != '0':
-    #           if j[:len(j)-jpos_-1] == i:
-    #             newm.append(j)
-    #   bad_markings += [newm] # list of lists to store each bad marking
-    bad_markings = model.get_badmarkings(bad_marking)
 
     with open(bad_aspfile, "w") as fp:
       if len(bad_markings) > 1:
