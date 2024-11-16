@@ -216,7 +216,7 @@ void display_matrix(int rows, int cols, int (*matrix)[cols]){
  * 
  * @param mcifile string that corresponds to the needed mcifile.
  */
-void read_mci_file_ev (char *mcifile, char* evevfile, int m_repeat, int cutout, char* conf, int pathway)
+void read_mci_file_ev (char *mcifile, char* evevfile, int m_repeat, int cutout, char* conf, int pathway, int noredundant)
 {
   #define read_int(x) fread(&(x),sizeof(int),1,mcif)
   /* define a micro substitution to read_int.
@@ -323,7 +323,13 @@ void read_mci_file_ev (char *mcifile, char* evevfile, int m_repeat, int cutout, 
 
   if(evevfile)
   {
-    if (!m_repeat)
+    if (noredundant)
+    {
+      while (fscanf(evevf," %d",&value) != EOF)
+        if (value > 0 && !queries_ev[value])
+          queries_ev[value] = 1;
+    }
+    else if (!m_repeat)
     { 
       while (fscanf(evevf," %d",&value) != EOF)
         if (value > 0 && !queries_ev[value])
@@ -815,7 +821,7 @@ void usage ()
     "      -c --cutout  if a marking is queried or \n                  part of a reachability check then\n                  it will show a cutout of\n                  the whole unfolding\n"
     "      -p --pathway   display pathway structure instead of event structure."
     "      -r <instance>  highlight <instance> of a repeated marking - <0> will show all instances. \n"
-    "      -noredundant  when computing minimal configurations, you may end with events leading to repetitive markings (already produced in their cones), and then this flag will consider the removal of these events given in the <evevfile>.\n The general idea to implement this feature is to save events succession in the matrix ev_succ so all the new event connections are updated."
+    "      --noredundant  when computing minimal configurations, you may end with events leading to repetitive markings (already produced in their cones), and then this flag will consider the removal of these events given in the <evevfile>.\n The general idea to implement this feature is to save events successors in the matrix ev_succ so all the new event connections are updated."
     "      -cf <confg>:   used to return the marking led \n by the configuration <confg>(string type).\n You cannot enable cutouts and this \n flag at the same time.\n\n"
 
     "<evevfile> is an optional file whose lines contain\n"
@@ -827,7 +833,7 @@ void usage ()
 
 int main (int argc, char **argv)
 {
-  int i, m_repeat = -1, cutout = 0, pathway = 0;
+  int i, m_repeat = -1, cutout = 0, pathway = 0, noredundant = 0;
   char *mcifile = NULL, *evevfile = NULL;
   char *configuration = NULL;
 
@@ -846,12 +852,14 @@ int main (int argc, char **argv)
       cutout = 1;
     else if (!strcmp(argv[i],"-p") || !strcmp(argv[i],"--pathway"))
       pathway = 1 ;
+    else if (!strcmp(argv[i],"--noredundant"))
+      noredundant = 1 ;
     else if (!mcifile)
       mcifile = argv[i];
     else
       evevfile = argv[i];
 
   if (!mcifile || (cutout && configuration)) usage();
-  read_mci_file_ev(mcifile, evevfile, m_repeat, cutout, configuration, pathway);
+  read_mci_file_ev(mcifile, evevfile, m_repeat, cutout, configuration, pathway, noredundant);
   exit(0);
 }
