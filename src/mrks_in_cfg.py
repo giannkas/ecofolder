@@ -61,6 +61,7 @@ def repeated_markings_in_conf():
         if set_mrk in known:
           newevev[conf_number].append(conf[ev_pos]+'+')
         else:
+          known = []
           newevev[conf_number].append(conf[ev_pos])
           known.append(set_mrk)
 
