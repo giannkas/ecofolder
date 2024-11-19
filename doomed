@@ -2,3 +2,7 @@
 export PATH=$PWD:$PATH
 python3 src/doomed.py $*
 # ./doomed model list_bad_markings.bad unf_bad_net_model
+# dependencies:
+# conda create -n ecofolder python tqdm networkx
+# conda activate
+# conda install -c conda-forge clingo

@@ -198,7 +198,8 @@ def compute_minconfs():
 
     print("Displaying the PDF...")
     args_evince = ["evince", opdf]
-    subprocess.run(args_evince)
+    subprocess.Popen(args_evince)
+    # subprocess.run(args_evince) keeps the process running even if the pdf is already closed.
 
 
 if __name__ == "__main__":

@@ -4,7 +4,7 @@ import os
 import re
 import argparse
 
-# ./color_in_dot -ru "R1,R2,R3,R4,R5,R6,R7,R8,R9,R10,R11;R12,R13;R14,R15,R16;R17,R18,R19,R20,R21,R22" -co "#1a9850;#d73027;#fee08b;#8c510a" -cocs "none" < examples/oursin_tasmanie/tasmanian_perturb_final_pr_urc2alg_unf.dot > examples/oursin_tasmanie/tasmanian_perturb_final_pr_urc2alg_unf_colored.dot
+# ./color_in_dot -ru "R1,R2,R3,R4,R5,R6,R7,R8,R9,R10,R11;R12,R13;R14,R15,R16;R17,R18,R19,R20,R21,R22" -co "#1a9850;#d73027;#fee08b;#8c510a" -cocfs "none" -dotfile examples/oursin_tasmanie/tasmanian_perturb_final_pr_urc2alg_unf.dot -out examples/oursin_tasmanie/tasmanian_perturb_final_pr_urc2alg_unf_colored.dot
 
 # ./prompts_color_firing_sequence examples/oursin_tasmanie/minconfs-to-marking_tasmanian_perturb_final_pr_urc2alg.evev examples/oursin_tasmanie/tasmanian_perturb_final_pr_urc2alg_unf_colored.dot "#1a9850;#d73027;#fee08b;#8c510a;gray60" "11;13;16;17" examples/oursin_tasmanie/mrk_instances/urc2alg+/ 5
 
