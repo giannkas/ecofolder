@@ -21,7 +21,7 @@ import clingo
 script_dir = os.path.dirname(os.path.abspath(__file__))
 parent_dir = os.path.dirname(script_dir)
 def script_path(name):
-    return os.path.join(script_dir, name)
+  return os.path.join(script_dir, name)
 
 class Model:
   def __init__(self, filename):
@@ -139,24 +139,25 @@ class Model:
     return free_mrk
   
   def expand_markings(self, marking):
-    places = marking.split(',')
-    
-    # identify the indices of wildcard entries (marked with '*')
-    wildcard_pos = [i for i, place in enumerate(places) if '*' in place]
-    
-    # remove the '*' symbol from each wildcard entry
-    places = [place.replace('*', '-') for place in places]
-    
-    # generate all combinations of '+' and '-' for wildcard entries
-    combinations = product(['+', '-'], repeat=len(wildcard_pos))
-    
-    # create the expanded markings by applying each combination
     exp_mrk = []
-    for combi in combinations:
-      modified_places = places[:]  # make a copy of the original places list
-      for idx, sign in zip(wildcard_pos, combi):
-        modified_places[idx] = modified_places[idx].replace('-', sign)
-      exp_mrk.append(','.join(modified_places))
+    if '*' in marking:
+      places = marking.split(',')
+      
+      # identify the indices of wildcard entries (marked with '*')
+      wildcard_pos = [i for i, place in enumerate(places) if '*' in place]
+      
+      # remove the '*' symbol from each wildcard entry
+      places = [place.replace('*', '-') for place in places]
+      
+      # generate all combinations of '+' and '-' for wildcard entries
+      combinations = product(['+', '-'], repeat=len(wildcard_pos))
+      
+      # create the expanded markings by applying each combination
+      for combi in combinations:
+        modified_places = places[:]  # make a copy of the original places list
+        for idx, sign in zip(wildcard_pos, combi):
+          modified_places[idx] = modified_places[idx].replace('-', sign)
+        exp_mrk.append(','.join(modified_places))
     
     return exp_mrk
   
@@ -355,8 +356,8 @@ def minF0(prefix_asp, bad_aspfile, badmrks=1):
         tobads += f" not ncut(P), bad{i}(P)."
       else:
         tobads += f"not ncut(P), bad{i}(P);"
-    sat.add("base", [], "#include \"configuration.asp\"."
-              "#include \"cut.asp\".")
+    sat.add("base", [], f"#include \"{script_path("configuration.asp")}\"."
+             f"#include \"{script_path("cut.asp")}\".")
     sat.add("base", [], tobads)
     sat.add("base", [], "#show e/1.")
   else:
@@ -409,7 +410,9 @@ if __name__ == "__main__":
     with open(bad_marking, "r") as qm:
       for l in qm:
         expnd_query_markings = model.expand_markings(l)
-    bad_markings = model.get_badmarkings(expnd_query_markings)
+    bad_markings = model.get_badmarkings(
+        expnd_query_markings if expnd_query_markings != [] else
+        bad_marking)
 
     with open(bad_marking, 'w') as newmks:
       for l in bad_markings:
@@ -437,7 +440,7 @@ if __name__ == "__main__":
     os.makedirs(out_d)
 
     bad_aspfile = os.path.join(out_d, "bad.asp")
-
+    #print(bad_markings)
     with open(bad_aspfile, "w") as fp:
       if len(bad_markings) > 1:
         curm = 1
