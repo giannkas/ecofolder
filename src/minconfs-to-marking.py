@@ -20,7 +20,7 @@ def minconfs(prefix_asp, markings, shortest=0, clingo_opts=""):
       "--enum-mode=domRec", "--dom-mod=5,16"]+clingo_opts)
   sat.add("base", [], prefix_asp)
   for i, m in enumerate(markings):
-    #print("".join(["q({},\"{}\").".format(i,p) for p in m]))
+    print("".join(["q({},\"{}\").".format(i,p) for p in m]))
     sat.add("base", [], "".join(["q({},\"{}\").".format(i,p) for p in m]))
   sat.add("base", [],
       "conflict(E,F) :- edge(C,E),edge(C,F),E != F."
@@ -43,6 +43,8 @@ def minconfs(prefix_asp, markings, shortest=0, clingo_opts=""):
       "ncut(A) :- cut(C), h(C,P), name(P,A)."
       "hcut(C,P) :- cut(C), h(C,P).")
   sat.add("base", [],
+      "produced_marking(C, P) :- hcut(C, P), c(C), ncut(P)."
+      ":- event(E), event(F), E != F, edge(E,C1), edge(C1,F), edge(F,C2), hcut(C1,P1), hcut(C1,P2), P1 != P2."
       "bad(I) :- q(I,_), ncut(P), not q(I,P)."
       "bad(I) :- not ncut(P), q(I,P)."
       "ok :- q(I,_), not bad(I)."
