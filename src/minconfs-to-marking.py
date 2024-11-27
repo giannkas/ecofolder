@@ -47,6 +47,9 @@ def minconfs(prefix_asp, markings, shortest=0, clingo_opts=""):
       "bad(I) :- not ncut(P), q(I,P)."
       "ok :- q(I,_), not bad(I)."
       ":- not ok.")
+  sat.add("base", [],
+      "redundant(P) :- e(E), e(F), edge(E,C1), edge(C1,F), edge(F,C2), ncut(P), hcut(C1, P), hcut(C2, P)."
+      ":- redundant(P).")
   
   #"redundant(P) :- event(E), event(F), E != F, edge(E,C1), edge(C1,F), edge(F,C2), C1 != C2, hcut(C1, P), hcut(C2, P)."
   #"redundant(I) :- q(I,P), q(I+1,P), q(I-1,P), ncut(P)."
