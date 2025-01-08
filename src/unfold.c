@@ -530,7 +530,7 @@ void unfold ()
   }
 
   if (verbose || interactive){
-    printf("Initial marking:");
+    printf("Initial marking:\n");
     print_marking_pl(list);
     printf("\n");
   }
@@ -560,7 +560,7 @@ void unfold ()
   
   if(verbose)
   {
-    printf("Unfolding initial marking plus resets\n");
+    printf("Unfolding initial marking plus resets:\n");
     print_marking_co(nodelist_concatenate(unf->m0, unf->m0_unmarked));
     printf("\n");
   }

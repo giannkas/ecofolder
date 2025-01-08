@@ -1,0 +1,53 @@
+digraph test {
+  e1 -> e4;
+  e1 -> e5;
+  e4 -> e8;
+  e5 -> e10;
+  e8 -> e19;
+  e8 -> e21;
+  e10 -> e22;
+  e19 -> e44;
+  e22 -> e47;
+  e21 -> e50;
+  e22 -> e51;
+  e44 -> e80;
+  e47 -> e82;
+  e50 -> e88;
+  e51 -> e90;
+  e80 -> e114;
+  e82 -> e115;
+  e88 -> e124;
+  e90 -> e125;
+  e115 -> e166;
+  e125 -> e170;
+  e0 -> e1;
+
+//conflicts
+  e4 -> e5 [arrowhead=none color=gray60 style=dashed constraint=false];
+  e19 -> e21 [arrowhead=none color=gray60 style=dashed constraint=false];
+  e47 -> e51 [arrowhead=none color=gray60 style=dashed constraint=false];
+
+  e1 [color="black" fillcolor="orange:orange" label="R2 (e1)" shape=box style=filled];
+  e4 [color="black" fillcolor="orange:orange" label="R6 (e4)" shape=box style=filled];
+  e5 [color="black" fillcolor="orange:orange" label="R30 (e5)" shape=box style=filled];
+  e8 [color="black" fillcolor="orange:orange" label="R8 (e8)" shape=box style=filled];
+  e10 [color="black" fillcolor="orange:orange" label="R6 (e10)" shape=box style=filled];
+  e19 [color="black" fillcolor="orange:orange" label="R17 (e19)" shape=box style=filled];
+  e21 [color="black" fillcolor="orange:orange" label="R19 (e21)" shape=box style=filled];
+  e22 [color="black" fillcolor="orange:orange" label="R8 (e22)" shape=box style=filled];
+  e44 [color="black" fillcolor="orange:orange" label="R20 (e44)" shape=box style=filled];
+  e47 [color="black" fillcolor="orange:orange" label="R17 (e47)" shape=box style=filled];
+  e50 [color="black" fillcolor="orange:orange" label="R20 (e50)" shape=box style=filled];
+  e51 [color="black" fillcolor="orange:orange" label="R19 (e51)" shape=box style=filled];
+  e80 [color="black" fillcolor="orange:orange" label="R21 (e80)" shape=box style=filled];
+  e82 [color="black" fillcolor="orange:orange" label="R20 (e82)" shape=box style=filled];
+  e88 [color="black" fillcolor="orange:orange" label="R21 (e88)" shape=box style=filled];
+  e90 [color="black" fillcolor="orange:orange" label="R20 (e90)" shape=box style=filled];
+  e114 [color="black" fillcolor="orange:orange" label="R26 (e114)" shape=box style=filled];
+  e115 [color="black" fillcolor="orange:orange" label="R21 (e115)" shape=box style=filled];
+  e124 [color="black" fillcolor="orange:orange" label="R26 (e124)" shape=box style=filled];
+  e125 [color="black" fillcolor="orange:orange" label="R21 (e125)" shape=box style=filled];
+  e166 [color="black" fillcolor="orange:orange" label="R26 (e166)" shape=box style=filled];
+  e170 [color="black" fillcolor="orange:orange" label="R26 (e170)" shape=box style=filled];
+  e0 [fillcolor="white" label="⊥" shape=box style=filled];
+}

@@ -16,7 +16,7 @@ void read_mci_file (char *filename, int m_repeat, int compressed)
 {
   #define read_int(x) fread(&(x),sizeof(int),1,file_in)
 
-  FILE *file_in, *file_nodes, *file_edges;
+  FILE *file_in, *file_nodes, *file_ends;
   char fullfilename[LINE_SIZE], *fname;
   int nqure, nqure_, nquszcut, nquszevscut, szcuts, 
     numco, numev, numpl, numtr, idpl, idtr, sz, i, j;
@@ -42,14 +42,14 @@ void read_mci_file (char *filename, int m_repeat, int compressed)
   }
   fprintf(file_nodes, "id,type,name,tokens,cutoff\n");
 
-  sprintf(fullfilename,"%s_edges.csv",fname);
-  if (!(file_edges = fopen(fullfilename,"w")))
+  sprintf(fullfilename,"%s_ends.csv",fname);
+  if (!(file_ends = fopen(fullfilename,"w")))
   {
     fprintf(stderr,
       "cannot write file_in %s\n",fullfilename);
     exit(1);
   }
-  fprintf(file_edges,"src,dst\n");
+  fprintf(file_ends,"type,src,dst\n");
 
   read_int(numco);
   read_int(numev);
@@ -113,11 +113,11 @@ void read_mci_file (char *filename, int m_repeat, int compressed)
     }
     read_int(pre_ev);
     if (pre_ev)
-        fprintf(file_edges,"\"e%d\",\"c%d\"\n",pre_ev, i);
+        fprintf(file_ends,"\"edge\",\"e%d\",\"c%d\"\n",pre_ev, i);
     do {
       read_int(post_ev);
       if (post_ev)
-        fprintf(file_edges,"\"c%d\",\"e%d\"\n",i,post_ev);
+        fprintf(file_ends,"\"edge\",\"c%d\",\"e%d\"\n",i,post_ev);
     } while (post_ev);
   }
 
@@ -211,16 +211,12 @@ void read_mci_file (char *filename, int m_repeat, int compressed)
   }
 
   for (i = 1; i <= numev; i++)
-    if (i == cutoffs[i]){
-      fprintf(file_nodes,"\"e%d\",\"event\",\"%s\",,\"%d\"\n",i,trname[ev2tr[i]],1);
-    }
-    else{
-      fprintf(file_nodes,"\"e%d\",\"event\",\"%s\",,\"%d\"\n",i,trname[ev2tr[i]],0);
-    }
+    if (i == cutoffs[i])
+      fprintf(file_nodes,"\"e%d\",\"event\",\"%s\",,\"%d\"\n",i,trname[ev2tr[i]],i == cutoffs[i] ? 1 : 0);
 
   fclose(file_in);
   fclose(file_nodes);
-  fclose(file_edges);
+  fclose(file_ends);
 }
 
 int main (int argc, char **argv)

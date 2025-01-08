@@ -2,6 +2,9 @@
 #include <stdio.h>
 #include <stdlib.h>
 
+#define LINE_SIZE 100
+
+
 typedef struct cut_t
 {
   int repeat;
@@ -216,7 +219,7 @@ void display_matrix(int rows, int cols, int (*matrix)[cols]){
  * 
  * @param mcifile string that corresponds to the needed mcifile.
  */
-void read_mci_file_ev (char *mcifile, char* evevfile, int m_repeat, int cutout, char* conf, int pathway)
+void read_mci_file_ev (char *mcifile, char* evevfile, int m_repeat, int cutout, char* conf, int pathway, int csv)
 {
   #define read_int(x) fread(&(x),sizeof(int),1,mcif)
   /* define a micro substitution to read_int.
@@ -228,13 +231,14 @@ void read_mci_file_ev (char *mcifile, char* evevfile, int m_repeat, int cutout, 
     file - is the pointer to a FILE object that specifies an input stream.
   */
 
-  FILE *mcif, *evevf;
+  FILE *mcif, *evevf, *file_nodes, *file_ends;
   int nqure, nqure_, nquszcut, nquszevscut, szcuts, qnumcutoff = 0, qnumconfl = 0,
     numco, numev, numpl, numtr, idpl, idtr, sz, i, j, value, ev1, ev2;
   int pre_ev, post_ev, cutoff, harmful, dummy = 0, tmp = 0, count_mrk = 1, seq_size = 0;
   int *co2pl, *ev2tr, *tokens, *queries_co,
     *queries_ev, *cutoffs, *harmfuls, *confl_evs, *leaves_evs;
   char **plname, **trname, *c;
+  char fullfilename[LINE_SIZE], *fname;
   cut_t **cuts;
   evprepost **evprps;
 
@@ -252,6 +256,28 @@ void read_mci_file_ev (char *mcifile, char* evevfile, int m_repeat, int cutout, 
       fprintf(stderr,"cannot read file %s\n",evevfile);
       exit(1);
     }
+  }
+
+  if (csv)
+  {  
+    fname = strtok(mcifile, ".");
+    sprintf(fullfilename,"%s_nodes.csv",fname);
+    if (!(file_nodes = fopen(fullfilename,"w")))
+    {
+      fprintf(stderr,
+        "cannot write file_in %s\n",fullfilename);
+      exit(1);
+    }
+    fprintf(file_nodes, "id,type,name,tokens,cutoff\n");
+
+    sprintf(fullfilename,"%s_ends.csv",fname);
+    if (!(file_ends = fopen(fullfilename,"w")))
+    {
+      fprintf(stderr,
+        "cannot write file_in %s\n",fullfilename);
+      exit(1);
+    }
+    fprintf(file_ends,"type,src,dst\n");
   }
 
   printf("digraph test {\n"); // start to creating the output 
@@ -457,9 +483,15 @@ void read_mci_file_ev (char *mcifile, char* evevfile, int m_repeat, int cutout, 
         if (ev_predc_copy[i][j] > 0)
         {
           if (cutout && queries_ev[i] && queries_ev[j])
+          {
             printf("  e%d -> e%d;\n",j,i); // write the connection.
+            if(csv) fprintf(file_ends,"\"edge\",\"e%d\",\"e%d\"\n",j, i);
+          }
           else if (!cutout)
+          {
             printf("  e%d -> e%d;\n",j,i); // write the connection.
+            if(csv) fprintf(file_ends,"\"edge\",\"e%d\",\"e%d\"\n",j, i);
+          }
         }
       }
     }
@@ -571,9 +603,16 @@ void read_mci_file_ev (char *mcifile, char* evevfile, int m_repeat, int cutout, 
   if (!pathway)
   {
     for (int i = 1; i <= numev; i++){
-      if (!cutout && ev_succs[0][i] == 0) printf("  e0 -> e%d;\n", i);
-      else if (cutout && ev_succs[0][i] == 0 && queries_ev[i])
+      if (!cutout && ev_succs[0][i] == 0) 
+      {
         printf("  e0 -> e%d;\n", i);
+        if(csv) fprintf(file_ends,"\"edge\",\"e0\",\"e%d\"\n", i);
+      }
+      else if (cutout && ev_succs[0][i] == 0 && queries_ev[i])
+      {
+        printf("  e0 -> e%d;\n", i);
+        if(csv) fprintf(file_ends,"\"edge\",\"e0\",\"e%d\"\n", i);
+      }
     }
   }
 
@@ -593,9 +632,13 @@ void read_mci_file_ev (char *mcifile, char* evevfile, int m_repeat, int cutout, 
           confl_evs[j] = i;
           qnumconfl += 2;
           printf("  e%d -> e%d [arrowhead=none color=gray60 style=dashed constraint=false];\n",i,ev_confl_copy[i][j]);
+          if(csv) fprintf(file_ends,"\"conflict\",\"e%d\",\"e%d\"\n", i,ev_confl_copy[i][j]);
         }
         else if (!cutout && ev_confl_copy[i][j])
+        {
           printf("  e%d -> e%d [arrowhead=none color=gray60 style=dashed constraint=false];\n",i,ev_confl_copy[i][j]);
+          if(csv) fprintf(file_ends,"\"conflict\",\"e%d\",\"e%d\"\n", i,ev_confl_copy[i][j]);
+        }
       }
     }
     printf("\n");
@@ -659,6 +702,7 @@ void read_mci_file_ev (char *mcifile, char* evevfile, int m_repeat, int cutout, 
       if (path_evs[i][0] && !dummy)
       {
         printf("  e0 -> e%d [minlen=%d];\n", path_evs[i][0], compute_cone_height(numev+1,ev_predc_copy,path_evs[i][0],1));
+        if(csv) fprintf(file_ends,"\"edge\",\"e0\",\"e%d\"\n", path_evs[i][0]);
         path_seq[0] = path_evs[i][0];
         dummy++;
       }
@@ -671,7 +715,10 @@ void read_mci_file_ev (char *mcifile, char* evevfile, int m_repeat, int cutout, 
               dummy2 = 1;
         }
         if (!dummy2) 
+        {
           printf("  e0 -> e%d [minlen=%d];\n", path_evs[i][0], compute_cone_height(numev+1,ev_predc_copy,path_evs[i][0],1));
+          if(csv) fprintf(file_ends,"\"edge\",\"e0\",\"e%d\"\n", path_evs[i][0]);
+        }
         path_seq[dummy] = path_evs[i][0];
         dummy++;
         dummy2 = 0;
@@ -769,6 +816,9 @@ void read_mci_file_ev (char *mcifile, char* evevfile, int m_repeat, int cutout, 
 
       printf("  e%d [color=\"%s\" fillcolor=\"%s:%s\" label=\"%s (e%d)\" shape=box style=filled];\n",
             i, color, fillcolor, queries_ev[i] ? color3 : fillcolor, trname[ev2tr[i]], i);
+      if (csv) 
+        fprintf(file_nodes,"\"e%d\",\"event\",\"%s\",,\"%d\"\n",i,trname[ev2tr[i]],i == cutoffs[i] ? 1 : 0);
+      
     }
     else if (cutout && !pathway && queries_ev[i])
     {
@@ -783,6 +833,8 @@ void read_mci_file_ev (char *mcifile, char* evevfile, int m_repeat, int cutout, 
 
       printf("  e%d [color=\"%s\" fillcolor=\"%s:%s\" label=\"%s (e%d)\" shape=box style=filled];\n",
             i, color, fillcolor, queries_ev[i] ? color3 : fillcolor, trname[ev2tr[i]], i);
+      if (csv) 
+        fprintf(file_nodes,"\"e%d\",\"event\",\"%s\",,\"%d\"\n",i,trname[ev2tr[i]],i == cutoffs[i] ? 1 : 0);
     }
     else if (!cutout)
     {
@@ -798,6 +850,8 @@ void read_mci_file_ev (char *mcifile, char* evevfile, int m_repeat, int cutout, 
 
       printf("  e%d [color=\"%s\" fillcolor=\"%s:%s\" label=\"%s (e%d)\" shape=box style=filled];\n",
           i, color, fillcolor, queries_ev_or_frsq ? color3 : fillcolor, trname[ev2tr[i]], i);
+      if (csv) 
+        fprintf(file_nodes,"\"e%d\",\"event\",\"%s\",,\"%d\"\n",i,trname[ev2tr[i]],i == cutoffs[i] ? 1 : 0);
     }
   }
   printf("  e0 [fillcolor=\"white\" label=\"⊥\" shape=box style=filled];\n");
@@ -815,7 +869,8 @@ void usage ()
     "      -c --cutout  if a marking is queried or \n                  part of a reachability check then\n                  it will show a cutout of\n                  the whole unfolding\n"
     "      -p --pathway   display pathway structure instead of event structure."
     "      -r <instance>  highlight <instance> of a repeated marking - <0> will show all instances. \n"
-    "      -cf <confg>:   used to return the marking led \n by the configuration <confg>(string type).\n You cannot enable cutouts and this \n flag at the same time.\n\n"
+    "      -cf <confg>:   used to return the marking led \n by the configuration <confg>(string type).\n You cannot enable cutouts and this \n flag at the same time.\n"
+    "      -csv           create csv files to include the event struture, and its corresponding conflict file.\n\n"
 
     "<evevfile> is an optional file whose lines contain\n"
     "the IDs of firing sequences of events, each line ends with a 0\n"
@@ -826,7 +881,7 @@ void usage ()
 
 int main (int argc, char **argv)
 {
-  int i, m_repeat = -1, cutout = 0, pathway = 0;
+  int i, m_repeat = -1, cutout = 0, pathway = 0, csv = 0;
   char *mcifile = NULL, *evevfile = NULL;
   char *configuration = NULL;
 
@@ -845,12 +900,14 @@ int main (int argc, char **argv)
       cutout = 1;
     else if (!strcmp(argv[i],"-p") || !strcmp(argv[i],"--pathway"))
       pathway = 1 ;
+    else if (!strcmp(argv[i],"-csv"))
+      csv = 1 ;
     else if (!mcifile)
       mcifile = argv[i];
     else
       evevfile = argv[i];
 
   if (!mcifile || (cutout && configuration)) usage();
-  read_mci_file_ev(mcifile, evevfile, m_repeat, cutout, configuration, pathway);
+  read_mci_file_ev(mcifile, evevfile, m_repeat, cutout, configuration, pathway, csv);
   exit(0);
 }
