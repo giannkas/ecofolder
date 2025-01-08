@@ -16,11 +16,16 @@ You can run and see one of the examples as follows:
 dot -T pdf < examples/termites_pr_eg.dot > examples/termites_pr_eg.pdf
 evince termites_pr_eg.pdf
 ```
+Or use you can use the workflow script `ecofold` (which contains the commands above):
+
+```console
+./ecofold examples/termites/termites_pr_eg
+```
 
 ## Overview
 
-This program implements the Esparza/Römer/Vogler unfolding algorithm for
-low-level Petri nets (see [ERV02](#erv02)). It is designed to be compatible with
+This program implements by default the Esparza/Römer/Vogler unfolding algorithm for
+low-level Petri nets (see [ERV02](#erv02)), but also one can specify to unfold according to McMillan's cutoff criterion (see ). It is designed to be compatible with
 the tools in the PEP project [STE01](#ste01) and with the Model-Checking Kit [SSE03](#sse03)
 . Its input is a low level Petri net in PEP's .ll_net format, and its output
 is the resulting unfolding in the .mci format also used in the PEP tools.
@@ -141,6 +146,8 @@ Related publications:
 <a id=chjps14>[CHJPS14]</a> 
   Thomas Chatain, Stefan Haar, Loïg Jezequel, Loïc Paulevé, and Stefan Schwoon. Characterization of reachable attractors using Petri net unfoldings. In Pedro Mendes, Joseph Dada, and Kieran Smallbone, editors, Computational Methods in Systems Biology, volume 8859 of Lecture Notes in Computer Science, pages 129–142. Springer Berlin Heidelberg, Cham, 2014. doi: http://dx.doi.org/10.1007/978-3-319-12982-2_10
 
+<a id=chjps14>[MCK93]</a> 
+  Ken McMillan. Using unfoldings to avoid the state explosion problem in the verification of asynchronous circuits. In Gregor von Bochmann and David Karl Probst, editors, Computer Aided Verification. CAV 1992. Pages 164-177. Lecture Notes in Computer Science, vol 663. Springer, Berlin, Heidelberg. https://doi.org/10.1007/3-540-56496-9_14
 
 ## License
 

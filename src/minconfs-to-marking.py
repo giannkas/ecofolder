@@ -16,7 +16,7 @@ parent_dir = os.path.dirname(script_dir)
 
 def cfg_from_atoms(atoms):
   return h({get_eid(py_of_symbol(a.arguments[0])) for a in atoms
-              if a.name == "display_e"})
+              if a.name == "e"})
 
 def minconfs(prefix_asp, markings, shortest=0, clingo_opts=""):
 
@@ -54,25 +54,10 @@ def minconfs(prefix_asp, markings, shortest=0, clingo_opts=""):
   sat.add("base", [],
       "in_h_edge(P,E) :- edge(C,E), h(C,P)."
       "out_h_edge(P,E) :- edge(E,C), h(C,P)."
-      "redundant(E) :- e(E); in_h_edge(P,E) : out_h_edge(P,E); out_h_edge(P,E) : in_h_edge(P,E)."
-      "#show."
-      "#show display_e(E) : e(E), not redundant(E).")
+      "redundant(E) :- e(E); in_h_edge(P,E) : out_h_edge(P,E); out_h_edge(P,E) : in_h_edge(P,E).")
+  sat.add("base", [],
+      "e_non_redundant(E) :- e(E), not redundant(E).")
       
-
-
-      
-  
-  #":- e(E), edge(C1, E), edge(E, C2), h(C1, P1), h(C2, P2), P1 == P2."
-      
-  # sat.add("base", [],
-  #     "redundant(P) :- e(E), edge(C1,E), edge(E,C2), h(C1, P), h(C2, P)."
-  #     "redundancy(Cr) :- Cr = #count{P: redundant(P)}."
-  #     "ncuts(Cc) :- Cc = #count{P: ncut(P)}."
-  #     ":- redundancy(Cr), ncuts(Cc), Cr >= Cc.")
-  
-  #"redundant(P) :- event(E), event(F), E != F, edge(E,C1), edge(C1,F), edge(F,C2), C1 != C2, hcut(C1, P), hcut(C2, P)."
-  #"redundant(I) :- q(I,P), q(I+1,P), q(I-1,P), ncut(P)."
-  #"ok :- q(I,_), not bad(I), 1{not redundant(I)}."
 
   sat.ground([("base",())])
   
