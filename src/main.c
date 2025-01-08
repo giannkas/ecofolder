@@ -22,7 +22,7 @@ void usage(char *myname)
   "      -c               compressed view\n"
   "      -mcmillan        unfolds with mcmillan criterion.\n"
   "      -confmax         when used, it will enable interactive mode to display maximal configurations only.\n"
-  "      -freechk         used to check freeness. When used, you should enable -badchk <badunf> to\n                       do a proper freeness check, otherwise you will have the initial prefix.\n                       The parameter will enable -mcmillan flag as well.\n                       It cannot be used with -T <name> option."
+  "      -freechk         used to check freeness. When used, you should enable -badchk <badunf> to\n                       do a proper freeness check, otherwise you will have the initial prefix.\n                       The parameter will enable -mcmillan flag as well.\n                       It cannot be used with -T <name> option.\n"
   "      -badchk <badunf> used to check badness <badunf> is a mci file containing an unfolding\n                       prefix of the corresponding bad net.\n"
   "      -verbose         if used, Ecofolder will print information concerning the prefix produced.\n"
   "      -q --query <marking>    query a marking in the prefix given by <marking>.\n"
