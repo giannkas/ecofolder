@@ -16,7 +16,7 @@ parent_dir = os.path.dirname(script_dir)
 
 def cfg_from_atoms(atoms):
   return h({get_eid(py_of_symbol(a.arguments[0])) for a in atoms
-              if a.name == "e"})
+              if a.name == "e_non_redundant"})
 
 def minconfs(prefix_asp, markings, shortest=0, clingo_opts=""):
 
