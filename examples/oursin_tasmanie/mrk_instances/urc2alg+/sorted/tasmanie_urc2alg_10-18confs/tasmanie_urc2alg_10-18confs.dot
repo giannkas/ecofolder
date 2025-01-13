@@ -1,0 +1,56 @@
+digraph test {
+  e32 -> e40;
+  e31 -> e47;
+  e31 -> e49;
+  e47 -> e74;
+  e49 -> e79;
+  e47 -> e99;
+  e49 -> e99;
+  e99 -> e216;
+  e99 -> e217;
+  e99 -> e282;
+  e74 -> e335;
+  e74 -> e336;
+  e74 -> e414;
+  e47 -> e427;
+  e49 -> e427;
+  e40 -> e524;
+  e47 -> e552;
+  e0 -> e1;
+  e0 -> e2;
+
+//conflicts
+  e31 -> e40 [arrowhead=none color=gray60 style=dashed constraint=false];
+  e32 -> e49 [arrowhead=none color=gray60 style=dashed constraint=false];
+  e32 -> e74 [arrowhead=none color=gray60 style=dashed constraint=false];
+  e32 -> e552 [arrowhead=none color=gray60 style=dashed constraint=false];
+  e49 -> e74 [arrowhead=none color=gray60 style=dashed constraint=false];
+  e49 -> e552 [arrowhead=none color=gray60 style=dashed constraint=false];
+  e74 -> e552 [arrowhead=none color=gray60 style=dashed constraint=false];
+  e79 -> e99 [arrowhead=none color=gray60 style=dashed constraint=false];
+  e79 -> e427 [arrowhead=none color=gray60 style=dashed constraint=false];
+  e99 -> e427 [arrowhead=none color=gray60 style=dashed constraint=false];
+  e216 -> e282 [arrowhead=none color=gray60 style=dashed constraint=false];
+  e335 -> e414 [arrowhead=none color=gray60 style=dashed constraint=false];
+
+  e1 [color="black" fillcolor="orange:orange" label="R11 (e1)" shape=box style=filled];
+  e2 [color="black" fillcolor="orange:orange" label="R19 (e2)" shape=box style=filled];
+  e31 [color="black" fillcolor="orange:orange" label="R21 (e31)" shape=box style=filled];
+  e32 [color="black" fillcolor="orange:orange" label="R22 (e32)" shape=box style=filled];
+  e40 [color="black" fillcolor="orange:orange" label="R3 (e40)" shape=box style=filled];
+  e47 [color="black" fillcolor="orange:orange" label="R9 (e47)" shape=box style=filled];
+  e49 [color="black" fillcolor="orange:orange" label="R10 (e49)" shape=box style=filled];
+  e74 [color="black" fillcolor="orange:orange" label="R12 (e74)" shape=box style=filled];
+  e79 [color="black" fillcolor="orange:orange" label="R22 (e79)" shape=box style=filled];
+  e99 [color="black" fillcolor="orange:orange" label="R12 (e99)" shape=box style=filled];
+  e216 [color="black" fillcolor="cornflowerblue:orange" label="R22 (e216)" shape=box style=filled];
+  e217 [color="black" fillcolor="cornflowerblue:orange" label="R21 (e217)" shape=box style=filled];
+  e282 [color="black" fillcolor="cornflowerblue:orange" label="R1 (e282)" shape=box style=filled];
+  e335 [color="black" fillcolor="cornflowerblue:orange" label="R22 (e335)" shape=box style=filled];
+  e336 [color="black" fillcolor="cornflowerblue:orange" label="R21 (e336)" shape=box style=filled];
+  e414 [color="black" fillcolor="cornflowerblue:orange" label="R1 (e414)" shape=box style=filled];
+  e427 [color="black" fillcolor="cornflowerblue:orange" label="R1 (e427)" shape=box style=filled];
+  e524 [color="black" fillcolor="cornflowerblue:orange" label="R9 (e524)" shape=box style=filled];
+  e552 [color="black" fillcolor="cornflowerblue:orange" label="R1 (e552)" shape=box style=filled];
+  e0 [fillcolor="white" label="⊥" shape=box style=filled];
+}

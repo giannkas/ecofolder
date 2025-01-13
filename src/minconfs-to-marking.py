@@ -62,13 +62,13 @@ def minconfs(prefix_asp, markings, shortest=0, clingo_opts=""):
   sat.ground([("base",())])
   
   # Print all grounded atoms and rules
-  print("=== Grounded Atoms ===")
-  for symbol in sat.symbolic_atoms:
-    print(symbol.symbol)
+  # print("=== Grounded Atoms ===")
+  # for symbol in sat.symbolic_atoms:
+  #   print(symbol.symbol)
 
-  print("=== Grounded Rules ===")
-  for rule in sat.theory_atoms:
-    print(rule)
+  # print("=== Grounded Rules ===")
+  # for rule in sat.theory_atoms:
+  #   print(rule)
 
   for sol in sat.solve(yield_=True):
     atoms = sol.symbols(atoms=True)
