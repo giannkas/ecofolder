@@ -158,6 +158,8 @@ class Model:
         for idx, sign in zip(wildcard_pos, combi):
           modified_places[idx] = modified_places[idx].replace('-', sign)
         exp_mrk.append(','.join(modified_places))
+    else:
+      exp_mrk.append(marking)
     
     return exp_mrk
   

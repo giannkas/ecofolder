@@ -238,6 +238,7 @@ void read_mci_file_ev (char *mcifile, char* evevfile, int m_repeat, int cutout, 
   int *co2pl, *ev2tr, *tokens, *queries_co,
     *queries_ev, *cutoffs, *harmfuls, *confl_evs, *leaves_evs;
   char **plname, **trname, *c;
+  char valuech[12] = "", valuechtmp[12] = "";
   char fullfilename[LINE_SIZE], *fname;
   cut_t **cuts;
   evprepost **evprps;
@@ -351,25 +352,63 @@ void read_mci_file_ev (char *mcifile, char* evevfile, int m_repeat, int cutout, 
   {
     if (!m_repeat)
     { 
-      while (fscanf(evevf," %d",&value) != EOF)
-        if (value > 0 && !queries_ev[value])
-          queries_ev[value] = 1;
+      while (fscanf(evevf," %s", valuech) != EOF)
+        if (strstr(valuech, "+")) // in case of reading redundant events
+          strcpy(valuechtmp, valuech);
+        else
+        {
+          value = strtoint(valuech);
+          if (tmp && strcmp(valuechtmp, ""))
+          {
+            ev_predc_copy[value][tmp] = tmp;
+            strcpy(valuechtmp, "");
+          }
+          tmp = value;
+          if (value > 0 && !queries_ev[value])
+            queries_ev[value] = 1;
+        }
     }
     else if (m_repeat > 0)
-      while (fscanf(evevf," %d",&value) != EOF && count_mrk <= m_repeat)
+      while (fscanf(evevf," %s", valuech) != EOF && count_mrk <= m_repeat)
       {
-        if (value > 0 && !queries_ev[value] && count_mrk == m_repeat)
-          queries_ev[value] = 1;
-        else if (!value)
-          count_mrk++;
+        if (strstr(valuech, "+")) // in case of reading redundant events
+          strcpy(valuechtmp, valuech);
+        else
+        {
+          value = strtoint(valuech);
+          if (tmp && strcmp(valuechtmp, ""))
+          {
+            ev_predc_copy[value][tmp] = tmp;
+            strcpy(valuechtmp, "");
+          }
+          tmp = value;
+          if (value > 0 && !queries_ev[value] && count_mrk == m_repeat)
+            queries_ev[value] = 1;
+          else if (!value)
+            count_mrk++;
+        }
       }
     else
     {
-      while (fscanf(evevf," %d",&value) != EOF)
-        if (value > 0 && !queries_ev[value])
-          queries_ev[value] = 1;
-        else if (!value && strstr(evevfile, ".evco"))
-          break;
+      while (fscanf(evevf," %s", valuech) != EOF)
+      {
+        if (strstr(valuech, "+")) // in case of reading redundant events
+          strcpy(valuechtmp, valuech);
+        else
+        {
+          value = strtoint(valuech);
+          if (tmp && strcmp(valuechtmp, ""))
+          {
+            ev_predc_copy[value][tmp] = tmp;
+            strcpy(valuechtmp, "");
+          }
+          tmp = value;
+          if (value > 0 && !queries_ev[value])
+            queries_ev[value] = 1;
+          else if (!value && strstr(evevfile, ".evco"))
+            break;
+        }
+      }
     }
   }
   else if (m_repeat > 0 && cuts[m_repeat] && cuts[m_repeat]->repeat < 0)

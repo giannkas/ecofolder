@@ -16,7 +16,11 @@ parent_dir = os.path.dirname(script_dir)
 
 def cfg_from_atoms(atoms):
   return h({get_eid(py_of_symbol(a.arguments[0])) for a in atoms
-              if a.name == "e_non_redundant"})
+              if a.name == "e"})
+
+def rdn_from_atoms(atoms):
+  return h({get_eid(py_of_symbol(a.arguments[0])) for a in atoms
+              if a.name == "redundant"})
 
 def minconfs(prefix_asp, markings, shortest=0, clingo_opts=""):
 
@@ -73,13 +77,20 @@ def minconfs(prefix_asp, markings, shortest=0, clingo_opts=""):
   for sol in sat.solve(yield_=True):
     atoms = sol.symbols(atoms=True)
     cfg = cfg_from_atoms(atoms)
+    rdn = rdn_from_atoms(atoms)
+    if rdn and rdn[0] in cfg:
+      cfg_lst = list(cfg)
+      cfg_lst[cfg.index(rdn[0])] = rdn[0][:-1] + "+" + rdn[0][-1:]
+      cfg = tuple(cfg_lst)
     if shortest and sol.optimality_proven:
       yield cfg
     elif not shortest:
       yield cfg
 
 def sort_by_number(string):
-  number = int(string.split(',')[-1][1:].strip(')'))
+  number_str = string.split(',')[-1][1:].strip(')')
+  number_str = number_str.rstrip('+')
+  number = int(number_str)
   return number
 
 def str_conf(C):
@@ -88,7 +99,6 @@ def str_conf(C):
     Cstr = Cstr + "".join(s[s.find('e')+1:s.find(')')]) + ","
   Cstr = Cstr[:-1]
   Clist = Cstr.split(',')
-  if not '' in Clist: Clist.sort(key=int)
   Cstr = ' '.join(Clist) + ' 0'
   return Cstr
 
