@@ -2,7 +2,37 @@
 
 ## General info
 
-Ecofolder is a software for unfolding Petri nets with reset arcs, its architecture is quite similar to [**Mole - A Petri Net Unfolder**](http://www.lsv.fr/~schwoon/tools/mole/). It provides a data structure for a net's unfolding and a way to visualize it in a .pdf file using the [**DOT language**](https://graphviz.org/doc/info/lang.html). Ecofolder aims to deliver means for analyzing ecosystem dynamics in nature, but its usage is not restricted to those particular systems, i.e. one can also work with for example, gene regulatory networks..
+Ecofolder is a software for unfolding Petri nets with reset arcs, its architecture is quite similar to [**Mole - A Petri Net Unfolder**](http://www.lsv.fr/~schwoon/tools/mole/). It provides a data structure for a net's unfolding and a way to visualize it in a .pdf file using the [**DOT language**](https://graphviz.org/doc/info/lang.html). Ecofolder aims to deliver means for analyzing ecosystem dynamics in nature, but its usage is not restricted to those particular systems, i.e. one can also work with for example, gene regulatory networks.
+
+## Requirements
+
+* [Python](https://www.python.org/) ≥3.8
+* [MiniSat](http://minisat.se/)
+* [clingo](potassco.org/clingo/), with Python module
+
+Clingo can be installed with conda (`conda install -c conda-forge -c colomoto clingo`). MiniSat can be installed using the GNU standar locations, for example:
+
+```
+apt install minisat
+```
+
+Or you can try from [niklasso's GitHub repository](https://github.com/niklasso/minisat)
+
+```
+git clone https://github.com/niklasso/minisat.git
+cd minisat
+make
+./minisat
+```
+
+You can move MiniSat into an executable path. For example:
+
+```
+mkdir -p $HOME/.local/bin/
+mv minisat $HOME/.local/bin/
+```
+
+Ensure the directory `$HOME/.local/bin/` is included in your `PATH` variable. Other option is to move the `minisat` executable to a directory already in your `PATH`.
 
 ## Installation
 
@@ -88,18 +118,6 @@ Here is a more detailed explanation:
   unfolding will be written to some.mci. This option allows the
   result to be written to some other file.
 
-
-The distribution contains an additional utility
-called `mci2dot`. The input of this tool is an .mci file (as produced
-by ecofolder), and its output can be processed by the [**DOT language**](https://graphviz.org/doc/info/lang.html) in
-order to visualise the unfolding. Calling
-
-```console
-mci2dot some.mci
-```
-
-will cause `mci2dot` to read the file some.mci and print the results
-to standard output.
 
 ### Representing a net in ll_net format
 
