@@ -1,4 +1,4 @@
-# Ecofolder and utilities tutorial
+# Ecofolder features and utilities tutorial
 
 The next tutorial is conceived as a starting point to use all the features included in Ecofolder and postprocessing of the computed prefix.
 
@@ -47,6 +47,130 @@ r9. Ac+, Sd- >> Wk-, Rp-, Ac+, Sd-
 In a few words, workers are responsible for creating wood, termitomyces, fungal gardens and egg chambers (r3). Reproductives also create egg chambers (r1), and both groups produce workers (r2). Workers and wood produce soldiers and reproductives (r4). From r5 onwards, there begins to be consumption of resources, reduction of inhabitants, and destruction of structures. Thus, once ants are present and soldiers are absent, there is no return to ecosystem stabilization because workers will be annihilated, and so will reproductives (r9).
 
 In `examples/termites` folder you will find `termites.ll_net` and `termites_pr.ll_net` files. Both files correspond to the aforementioned example, the second one is after applying the place-replication encoding (see [Efficient unfolding of contextual Petri nets](https://www.sciencedirect.com/science/article/pii/S0304397512004318?via%3Dihub))
+
+### Displaying nets
+
+You can visualize both nets with the next command (use `ecofolder` as parent folder):
+
+Original net:
+`./shownet examples/termites/tutorial/termites`
+
+After PR-encoding (`./prencoding examples/termites/tutorial/termites.ll_net`)
+`./shownet examples/termites/tutorial/termites_pr`
+
+Where blue arcs represent read arcs (see [Efficient unfolding of contextual Petri nets](https://www.sciencedirect.com/science/article/pii/S0304397512004318?via%3Dihub))
+
+### Unfolding nets
+
+Let's unfold the termites example (`termites_pr.ll_net`). The reason why we use the example after the place-replication encoding is because we need to represent the dynamics of a contextual-reset net in an ordinary occurrence net through an unfolding procedure that accounts for read (and reset) arcs (see [Ecosystem causal analysis using Petri net unfoldings](https://theses.hal.science/tel-04556225/document)).
+
+```bash
+./src/ecofolder examples/termites/tutorial/termites_pr.ll_net
+./src/mci2dot examples/termites/tutorial/termites_pr_unf.mci > examples/termites/tutorial/termites_pr_unf.dot
+dot -T pdf examples/termites/tutorial/termites_pr_unf.dot > examples/termites/tutorial/termites_pr_unf.pdf
+evince examples/termites/tutorial/termites_pr_unf.pdf
+```
+
+Or you can collate the four commands and run the script:
+
+```bash
+./ecofold examples/termites/tutorial/termites_pr
+```
+
+The ouput will display a big prefix of the unfolding which is stopped by a cutoff criterion, here we refer as the _Esparza criterion_ (see [An improvement of McMillan's unfolding algorithm](https://link.springer.com/content/pdf/10.1023/A:1014746130920.pdf)). However, you can also run with another one, which we refer as the _McMillan criterion_ (see [Using unfoldings to avoid the state explosion problem
+in the verification of asynchronous circuits](https://link.springer.com/chapter/10.1007/3-540-56496-9_14)).
+
+```bash
+./src/ecofolder -mcmillan examples/termites/tutorial/termites_pr.ll_net
+```
+### Compressing or merging conditions in the prefix
+
+All of the prefixes generated so far are big enough that makes it difficult to see in detail. One can try to merge conditions (circles) according to their pre- postsets. The next commands achieve a more compact view:
+
+```bash
+./src/ecofolder -c examples/termites/tutorial/termites_pr.ll_net
+./src/mci2dot_cpr examples/termites/tutorial/termites_pr_unf.mci > examples/termites/tutorial/termites_pr_unf.dot
+dot -T pdf examples/termites/tutorial/termites_pr_unf.dot > examples/termites/tutorial/termites_pr_unf.pdf
+evince examples/termites/tutorial/termites_pr_unf.pdf
+```
+### Stopping unfolding process
+
+You can also decide where to stop the unfolding process _before_ all cutoff events have truncated all branching processes either by:
+
+1. Stopping when a transition is inserted, for instance:
+
+```bash
+./src/ecofolder -T "R5" examples/termites/tutorial/termites_pr.ll_net
+./src/mci2dot examples/termites/tutorial/termites_pr_unf.mci > examples/termites/tutorial/termites_pr_unf.dot
+dot ...
+evince ...
+```
+
+2. Or halting according to a certain depth, with respect to the number of times a triple of cond-event (first level) (cond-event (second level), cond-event (third level), and so forth)  has been added.
+
+```bash
+./src/ecofolder -d 5 examples/termites/tutorial/termites_pr.ll_net
+./src/mci2dot examples/termites/tutorial/termites_pr_unf.mci > examples/termites/tutorial/termites_pr_unf.dot
+dot ...
+evince ...
+```
+### Interactive and maximal configurations mode
+
+If one want to manipulate the unfolding process and see how it goes step by step, an _interactive mode_ can be enabled:
+
+```bash
+./src/ecofolder -i examples/termites/tutorial/termites_pr.ll_net
+./src/mci2dot ...
+dot ...
+evince ...
+```
+
+Moreover, one can enable a mode where an individual branching process is unfolded until it's stopped by a cutoff event (note that in this case both Esparza and McMillan criteria produce the same output since we only consider a branching process and not all). In other words, we unfold until we find a marking already visited (or a _loop_ 🙂).
+
+```bash
+./src/ecofolder -confmax examples/termites/tutorial/termites_pr.ll_net
+./src/mci2dot ...
+dot ...
+evince ...
+```
+
+### Querying markings in the prefix
+
+One can also query a marking that appear in the prefix to be highlighted. The marking must have been used in the cutoff procedure to be found, otherwise it will not be highlighted (note that it's not a _reachability check_).
+
+Say that we want to highlight this marking:
+
+`Ac+,Ec-,Fg-,Rp-,Sd-,Te-,Wd+,Wk-`
+
+So we proceed as follows (`-q` is to add a marking to be queried and `-r` is to say that we want to highlight certain instance, eg. `-r 1` is the first instance, and `-r 0` is to highlight all instances):
+
+```bash
+./src/ecofolder -q Ac+,Ec-,Fg-,Rp-,Sd-,Te-,Wd+,Wk- examples/termites/tutorial/termites_pr.ll_net
+./src/mci2dot -r 0 examples/termites/tutorial/termites_pr_unf.mci > examples/termites/tutorial/termites_pr_unf.dot
+dot ...
+evince ...
+```
+
+### Restricting places and blocking transitions
+
+One can restrict a place to appear (say you don't want a place to be used, i.e. to receive tokens):
+
+```bash
+./src/ecofolder -rst Wd-,Wk- examples/termites/tutorial/termites_pr.ll_net
+./src/mci2dot examples/termites/tutorial/termites_pr_unf.mci > examples/termites/tutorial/termites_pr_unf.dot
+dot ...
+evince ...
+```
+
+In this case, the absence of wood and workers cannot have tokens, so only rules (or transitions) that do not put tokens in those places can be used. Similarly, one can block transitions to be fired:
+
+```bash
+./src/ecofolder -blc R1,R2,R3,R4,R5 examples/termites/tutorial/termites_pr.ll_net
+./src/mci2dot examples/termites/tutorial/termites_pr_unf.mci > examples/termites/tutorial/termites_pr_unf.dot
+dot ...
+evince ...
+```
+
 
 ## Installation
 
