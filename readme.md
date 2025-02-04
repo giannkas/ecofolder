@@ -7,10 +7,11 @@ Ecofolder is a software for unfolding Petri nets with reset arcs, its architectu
 ## Requirements
 
 * [Python](https://www.python.org/) ≥3.8
+* [Graphviz](https://graphviz.org/download/)
 * [MiniSat](http://minisat.se/)
 * [clingo](potassco.org/clingo/), with Python module
 
-Clingo can be installed with conda (`conda install -c conda-forge -c colomoto clingo`). MiniSat can be installed using the GNU standar locations, for example:
+You can follow the instructions to install Graphviz at their website. Clingo can be installed with conda (`conda install -c conda-forge -c colomoto clingo`). MiniSat can be installed using the GNU standar locations, for example:
 
 ```
 apt install minisat

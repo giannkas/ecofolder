@@ -1,4 +1,4 @@
-# Ecofolder features and utilities tutorial
+# Ecofolder features and tools tutorial
 
 The next tutorial is conceived as a starting point to use all the features included in Ecofolder and postprocessing of the computed prefix.
 
@@ -6,13 +6,13 @@ The next tutorial is conceived as a starting point to use all the features inclu
 
 - Prerequisites (See `readme` file)
 - Installation (See `readme` file)
-- [Usage](#usage)
 - [Features](#features)
+- [Tools](#tools)
 - [Contributing](#contributing)
 - [License](#license)
 - [Contact](#contact)
 
-## Usage
+## Features
 
 In this tutorial, we will use a toy model of a termites colony: 
 
@@ -46,7 +46,7 @@ r9. Ac+, Sd- >> Wk-, Rp-, Ac+, Sd-
 
 In a few words, workers are responsible for creating wood, termitomyces, fungal gardens and egg chambers (r3). Reproductives also create egg chambers (r1), and both groups produce workers (r2). Workers and wood produce soldiers and reproductives (r4). From r5 onwards, there begins to be consumption of resources, reduction of inhabitants, and destruction of structures. Thus, once ants are present and soldiers are absent, there is no return to ecosystem stabilization because workers will be annihilated, and so will reproductives (r9).
 
-In `examples/termites` folder you will find `termites.ll_net` and `termites_pr.ll_net` files. Both files correspond to the aforementioned example, the second one is after applying the place-replication encoding (see [Efficient unfolding of contextual Petri nets](https://www.sciencedirect.com/science/article/pii/S0304397512004318?via%3Dihub)) 
+In `examples/termites/tutorial` folder you will find `termites.ll_net` and `termites_pr.ll_net` files. Both files correspond to the aforementioned example, the second one is after applying the place-replication encoding (see [Efficient unfolding of contextual Petri nets](https://www.sciencedirect.com/science/article/pii/S0304397512004318?via%3Dihub)) 
 
 ### Displaying nets
 
@@ -171,6 +171,17 @@ dot ...
 evince ...
 ```
 
+### Event structure extraction
+
+One can extract an event structure from a prefix. An event structure is basically a graph with only a type of node where conditions have been removed and events are interconnected. Since conditions are not present, we need to consider conflicts, and they are represented with dashed lines in the output. The next commands allow you to extract an event structure:
+
+```bash
+./src/ecofolder examples/termites/tutorial/termites_pr.ll_net
+./src/mci2dot_ev examples/termites/tutorial/termites_pr_unf.mci > examples/termites/tutorial/termites_pr_unf.dot
+dot ...
+evince ...
+```
+
 ### Export to CSV format
 
 One can export the prefix structure to be expressed in comma-separated values as follows:
@@ -235,9 +246,10 @@ id,type,name,tokens,cutoff
 
 The output with multiple conditions on the same line should be interpreted as follows: each condition feature is listed in the order they appear, e.g., `"c1,c2","condition","Wk-_1,Wk-_2","0,0",`. The label for `c1` is `Wk-_1` and it has `0` tokens. Both nodes are of `condition` type.
 
-In addition, CSV files can be generated from an event structure created by `mci2dot_ev` module, the following command do this task from a `.mci` file (note that the prefix saved as binary in `mci` has to be generated without merging conditions: `./src/ecofolder examples/termites/tutorial/termites_pr.ll_net`):
+In addition, CSV files can be generated from an event structure created by `mci2dot_ev` module, the following command do this task from a `.mci` file (note that the prefix saved as binary in `mci` has to be generated without merging conditions, so do not use `c` option):
 
 ```bash
+./src/ecofolder examples/termites/tutorial/termites_pr.ll_net
 ./src/mci2dot_ev -csv examples/termites/tutorial/termites_pr_unf.mci
 ```
 
@@ -269,6 +281,9 @@ type,src,dst
 "conflict","e2","e68"
 ```
 
+## Tools
+
+Ecofolder comes with some python modules/tools to make computations based on unfoldings, for instance: computing attractors (see [Characterization of reachable attractors using Petri net unfoldings](https://hal.science/hal-01060450/file/unfolding_for_attractors.pdf)) and their basins (or also minimally doomed configurations) (see [Attractor basins in concurrent systems](https://arxiv.org/pdf/2409.01079)). Loosely speaking, attractors are equivalent to the _terminal_ strongly connected components of a system, so it's interesting to characterize them and identify where our system may loop forever. _Partial_ attractor basins or minimally doomed configurations, on the other hand, refer to sequences of events that may lead into an attractor, but if the last event of this sequence is removed, then we can "steer" away from the attractor, potentially avoiding a fatal outcome for the system.
 
 <!-- ## Installation
 
