@@ -285,6 +285,12 @@ type,src,dst
 
 Ecofolder comes with some python modules/tools to make computations based on unfoldings, for instance: computing attractors (see [Characterization of reachable attractors using Petri net unfoldings](https://hal.science/hal-01060450/file/unfolding_for_attractors.pdf)) and their basins (or also minimally doomed configurations) (see [Attractor basins in concurrent systems](https://arxiv.org/pdf/2409.01079)). Loosely speaking, attractors are equivalent to the _terminal_ strongly connected components of a system, so it's interesting to characterize them and identify where our system may loop forever. _Partial_ attractor basins or minimally doomed configurations, on the other hand, refer to sequences of events that may lead into an attractor, but if the last event of this sequence is removed, then we can "steer" away from the attractor, potentially avoiding a fatal outcome for the system.
 
+## Contact
+
+If you have bugs or problems to run this tutorial or any other example, you can contact me by email:
+
+(λx.λy.λz. x@y.z) giannkas1 gmail com [hint](https://en.wikipedia.org/wiki/Lambda_calculus)
+
 <!-- ## Installation
 
 Follow these steps to install the project:
