@@ -46,7 +46,7 @@ r9. Ac+, Sd- >> Wk-, Rp-, Ac+, Sd-
 
 In a few words, workers are responsible for creating wood, termitomyces, fungal gardens and egg chambers (r3). Reproductives also create egg chambers (r1), and both groups produce workers (r2). Workers and wood produce soldiers and reproductives (r4). From r5 onwards, there begins to be consumption of resources, reduction of inhabitants, and destruction of structures. Thus, once ants are present and soldiers are absent, there is no return to ecosystem stabilization because workers will be annihilated, and so will reproductives (r9).
 
-In `examples/termites` folder you will find `termites.ll_net` and `termites_pr.ll_net` files. Both files correspond to the aforementioned example, the second one is after applying the place-replication encoding (see [Efficient unfolding of contextual Petri nets](https://www.sciencedirect.com/science/article/pii/S0304397512004318?via%3Dihub))
+In `examples/termites` folder you will find `termites.ll_net` and `termites_pr.ll_net` files. Both files correspond to the aforementioned example, the second one is after applying the place-replication encoding (see [Efficient unfolding of contextual Petri nets](https://www.sciencedirect.com/science/article/pii/S0304397512004318?via%3Dihub)) 
 
 ### Displaying nets
 
@@ -169,6 +169,104 @@ In this case, the absence of wood and workers cannot have tokens, so only rules 
 ./src/mci2dot examples/termites/tutorial/termites_pr_unf.mci > examples/termites/tutorial/termites_pr_unf.dot
 dot ...
 evince ...
+```
+
+### Export to CSV format
+
+One can export the prefix structure to be expressed in comma-separated values as follows:
+
+```bash
+./src/mci2csv examples/termites/tutorial/termites_pr_unf.mci
+```
+
+This command will output two files: `termites_pr_unf_nodes.csv` and `termites_pr_unf_ends.csv`.
+
+**`termites_pr_unf_nodes.csv`**
+
+A file formatted with five columns containing the node id, its type, its name or label, number of tokens (if any) and whether the node is a cutoff event (empty field for conditions). For example:
+
+```csv
+id,type,name,tokens,cutoff
+"c1","condition","Wk-_2","0",
+"c2","condition","Rp+_2","0",
+"c3","condition","Wd+","0",
+"e21","event","R6",,"0"
+"e22","event","R2",,"0"
+"e23","event","R9",,"1"
+```
+
+**`termites_pr_unf_ends.csv`**
+
+A file formatted with three columns containing edge type, id node source and id node destination. For example:
+
+```csv
+type,src,dst
+"edge","c1","e11"
+"edge","c1","e60"
+"edge","c1","e8"
+"edge","c1","e7"
+"edge","e68","c45"
+"edge","e68","c46"
+"edge","e3","c47"
+"edge","c47","e11"
+"edge","c47","e60"
+```
+
+Alternatively, one can generate a CSV file in case conditions are merged (compressed) in `.mci` file. The next command achieves that:
+
+```bash
+./src/mci2csv -c examples/termites/tutorial/termites_pr_unf.mci
+```
+
+Which will generate the same files as before but changing some fields in `termites_pr_unf_nodes.csv` when conditions are packed in the same entry. For example,
+
+```csv
+id,type,name,tokens,cutoff
+"c1,c2","condition","Wk-_1,Wk-_2","0,0",
+"c3,c4","condition","Rp+_1,Rp+_2","0,0",
+"c5","condition","Wd+","0",
+"c6,c7","condition","Fg-,Fg+","1,0",
+"c175,c176,c177","condition","Fg+,Sd+,Fg-","0,0,1",
+"e1","event","R3",,"0"
+"e2","event","R6",,"0"
+"e3","event","R4",,"0"
+"e4","event","R5",,"0"
+```
+
+The output with multiple conditions on the same line should be interpreted as follows: each condition feature is listed in the order they appear, e.g., `"c1,c2","condition","Wk-_1,Wk-_2","0,0",`. The label for `c1` is `Wk-_1` and it has `0` tokens. Both nodes are of `condition` type.
+
+In addition, CSV files can be generated from an event structure created by `mci2dot_ev` module, the following command do this task from a `.mci` file (note that the prefix saved as binary in `mci` has to be generated without merging conditions: `./src/ecofolder examples/termites/tutorial/termites_pr.ll_net`):
+
+```bash
+./src/mci2dot_ev -csv examples/termites/tutorial/termites_pr_unf.mci
+```
+
+The command creates the two files, but with a slight modification to include conflicts but no conditions:
+
+**`termites_pr_unf_nodes.csv`**
+
+```csv
+id,type,name,tokens,cutoff
+"e20","event","R5",,"0"
+"e21","event","R6",,"0"
+"e22","event","R2",,"0"
+"e23","event","R9",,"1"
+"e24","event","R6",,"1"
+"e25","event","R3",,"1"
+```
+
+**`termites_pr_unf_ends.csv`**
+
+```csv
+type,src,dst
+"edge","e1","e3"
+"edge","e1","e4"
+"edge","e1","e5"
+"edge","e0","e2"
+"edge","e0","e68"
+"conflict","e1","e2"
+"conflict","e1","e68"
+"conflict","e2","e68"
 ```
 
 

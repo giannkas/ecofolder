@@ -2,10 +2,10 @@ PEP
 PetriBox
 FORMAT_N2
 PL
-"Rp+"M1
-"Rp-"
-"Wk+"
-"Wk-"M1
+"Rp+"
+"Rp-"M1
+"Wk+"M1
+"Wk-"
 "Sd+"
 "Sd-"M1
 "Te+"

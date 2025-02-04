@@ -211,8 +211,7 @@ void read_mci_file (char *filename, int m_repeat, int compressed)
   }
 
   for (i = 1; i <= numev; i++)
-    if (i == cutoffs[i])
-      fprintf(file_nodes,"\"e%d\",\"event\",\"%s\",,\"%d\"\n",i,trname[ev2tr[i]],i == cutoffs[i] ? 1 : 0);
+    fprintf(file_nodes,"\"e%d\",\"event\",\"%s\",,\"%d\"\n",i,trname[ev2tr[i]],i == cutoffs[i] ? 1 : 0);
 
   fclose(file_in);
   fclose(file_nodes);
