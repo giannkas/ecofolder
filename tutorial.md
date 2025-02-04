@@ -270,7 +270,7 @@ type,src,dst
 ```
 
 
-## Installation
+<!-- ## Installation
 
 Follow these steps to install the project:
 
@@ -289,4 +289,4 @@ mci2dot some.mci
 ```
 
 will cause `mci2dot` to read the file some.mci and print the results
-to standard output.
+to standard output. -->
