@@ -9,9 +9,11 @@ Ecofolder is a software for unfolding Petri nets with reset arcs, its architectu
 * [Python](https://www.python.org/) ≥3.8
 * [Graphviz](https://graphviz.org/download/)
 * [MiniSat](http://minisat.se/)
-* [clingo](potassco.org/clingo/), with Python module
+* [clingo](potassco.org/clingo/)
+* [tqdm](https://pypi.org/project/tqdm/)
+* [networkx](https://networkx.org/)
 
-You can follow the instructions to install Graphviz at their website. Clingo can be installed with conda (`conda install -c conda-forge -c colomoto clingo`). MiniSat can be installed using the GNU standar locations, for example:
+You can follow the instructions to install **Graphviz** at their website. **MiniSat** can be installed using the GNU standar locations, for example:
 
 ```
 apt install minisat
@@ -35,6 +37,13 @@ mv minisat $HOME/.local/bin/
 
 Ensure the directory `$HOME/.local/bin/` is included in your `PATH` variable. Other option is to move the `minisat` executable to a directory already in your `PATH`.
 
+**For all the remaining requirements**, one can use `conda`, assume we create an environment called _ecofolder_
+
+```bash
+conda create -n ecofolder python tqdm networkx
+conda activate ecofolder
+conda install -c conda-forge clingo
+```
 ## Installation
 
 Typing `make` in the directory with the sources should do the trick. You can place the resulting executable in whichever directory you want.

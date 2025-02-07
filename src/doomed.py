@@ -411,7 +411,7 @@ if __name__ == "__main__":
     # Process bad markings - expand wildcards '*' if used in the markings
     with open(bad_marking, "r") as qm:
       for l in qm:
-        expnd_query_markings = model.expand_markings(l)
+        expnd_query_markings += model.expand_markings(l)
     bad_markings = model.get_badmarkings(
         expnd_query_markings if expnd_query_markings != [] else
         bad_marking)
@@ -599,7 +599,8 @@ if __name__ == "__main__":
         i += 1
         d = time.time() - t0
         etime = time.strftime("%Mm%Ss", time.gmtime(d))
-        print(f"{etime} [MINDOO {i}]\t", sorted([e2tr[e] for e in C]), sorted(C, key=sort_by_number), flush=True)
+        sorted_C = sorted(C, key=sort_by_number)
+        print(f"{etime} [MINDOO {i}]\t", [e2tr[e] for e in sorted_C], sorted_C, flush=True)
         #print(str_conf(C))
         print("Marking: ", idpl2plnames(subprocess.check_output([script_path("mci2asp"), "-cf", str_conf(C), mci]).decode()))
         print(f"   free checks: {stats['freechk']}", flush=True, file=sys.stderr)
