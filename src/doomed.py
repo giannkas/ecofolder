@@ -413,8 +413,7 @@ if __name__ == "__main__":
       for l in qm:
         expnd_query_markings += model.expand_markings(l)
     bad_markings = model.get_badmarkings(
-        expnd_query_markings if expnd_query_markings != [] else
-        bad_marking)
+        expnd_query_markings)
 
     with open(bad_marking, 'w') as newmks:
       for l in bad_markings:

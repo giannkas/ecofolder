@@ -184,7 +184,7 @@ def compute_minconfs():
   # Process bad markings - expand wildcards '*' if used in the markings
   with open(query_marking, "r") as qm:
     for l in qm:
-      expnd_query_markings = model.expand_markings(l)
+      expnd_query_markings += model.expand_markings(l)
   extd_badmarkings = model.get_badmarkings(expnd_query_markings)
 
   if len(model_unf) < 1:
