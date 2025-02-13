@@ -10,8 +10,8 @@ def ids_labels():
     -i, --ids   Print IDs instead of rule names. By default, rule names are printed.
 
   Example:
-    python3 ids_labels.py examples/oursin_tasmanie/tasmanian_perturb_final.rr examples/oursin_tasmanie/tasmanian_perturb_final_pr_unf.dot
-    python3 ids_labels.py -i examples/oursin_tasmanie/tasmanian_perturb_final.rr examples/oursin_tasmanie/tasmanian_perturb_final_pr_unf.dot
+    python ids_labels.py examples/oursin_tasmanie/tasmanian_perturb_final.rr examples/oursin_tasmanie/tasmanian_perturb_final_pr_unf.dot
+    python ids_labels.py -i examples/oursin_tasmanie/tasmanian_perturb_final.rr examples/oursin_tasmanie/tasmanian_perturb_final_pr_unf.dot
   """
 
   # Setting up the argument parser

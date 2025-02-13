@@ -1,0 +1,37 @@
+digraph test {
+  e1 -> e4;
+  e1 -> e5;
+  e4 -> e7;
+  e4 -> e8;
+  e5 -> e9;
+  e5 -> e10;
+  e7 -> e12;
+  e7 -> e13;
+  e8 -> e14;
+  e8 -> e56;
+  e0 -> e1;
+  e0 -> e2;
+  e0 -> e68;
+
+//conflicts
+  e1 -> e2 [arrowhead=none color=gray60 style=dashed constraint=false];
+  e1 -> e68 [arrowhead=none color=gray60 style=dashed constraint=false];
+  e2 -> e68 [arrowhead=none color=gray60 style=dashed constraint=false];
+  e4 -> e5 [arrowhead=none color=gray60 style=dashed constraint=false];
+  e7 -> e8 [arrowhead=none color=gray60 style=dashed constraint=false];
+
+  e1 [color="black" fillcolor="#1a9850:#1a9850" label="R3 (e1)" shape=box style=filled];
+  e2 [color="black" fillcolor="#fee08b:orange" label="R6 (e2)" shape=box style=filled];
+  e4 [color="black" fillcolor="#d73027:#d73027" label="R5 (e4)" shape=box style=filled];
+  e5 [color="black" fillcolor="#8c510a:#8c510a" label="R9 (e5)" shape=box style=filled];
+  e7 [color="black" fillcolor="#fee08b:#fee08b" label="R6 (e7)" shape=box style=filled];
+  e8 [color="black" fillcolor="#8c510a:#8c510a" label="R9 (e8)" shape=box style=filled];
+  e9 [color="black" fillcolor="#fee08b:#fee08b" label="R7 (e9)" shape=box style=filled];
+  e10 [color="black" fillcolor="#8c510a:orange" label="R8 (e10)" shape=box style=filled];
+  e12 [color="black" fillcolor="#fee08b:#fee08b" label="R7 (e12)" shape=box style=filled];
+  e13 [color="black" fillcolor="#8c510a:orange" label="R8 (e13)" shape=box style=filled];
+  e14 [color="black" fillcolor="#8c510a:#8c510a" label="R8 (e14)" shape=box style=filled];
+  e56 [color="black" fillcolor="#fee08b:orange" label="R7 (e56)" shape=box style=filled];
+  e68 [color="black" fillcolor="#8c510a:orange" label="R9 (e68)" shape=box style=filled];
+  e0 [fillcolor="white" label="⊥" shape=box style=filled];
+}

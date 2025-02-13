@@ -1,0 +1,28 @@
+inhabitants:
+  Rp+: reproductives   # the queen, the king, the eggs and the nymphs
+  Wk-: workers         # all termites able to work: the larvaes,
+                        # workers, pseudo-workers
+  Sd-: soldiers        # the termite soldiers
+  Te-: termitomyces    # the fungus cultivated by the termites
+
+structures:
+  Ec-: egg chambers    # all egg chambers plus the royal chamber
+  Fg-: fungal gardens  # all the gardens in which the fungus is grown
+
+resources:
+  Wd-: wood            # the wood stored inside the colony
+
+competitors:
+  Ac+: ant competitors # all the ant species in competition with the
+                        # termites
+
+rules:            
+  Rp+ >> Ec+, Rp+
+  Rp+, Ec+ >> Wk+, Rp+, Ec+
+  Wk+ >> Wd+, Te+, Fg+, Ec+, Wk+
+  Wk+, Wd+ >> Sd+, Rp+, Wk+, Wd+
+  Wk+, Te+ >> Wd-, Wk+, Te+
+  Wd- >> Wk-, Te-, Wd-
+  Wk- >> Fg-, Sd-, Te-, Wk-
+  Wk-, Rp- >> Ec-, Wk-, Rp-
+  Ac+, Sd- >> Wk-, Rp-, Ac+, Sd-

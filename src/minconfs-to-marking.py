@@ -1,5 +1,4 @@
 #!/usr/bin/env python
-# same result as in all_confs-to-marking.py but using Clingo/ASP.
 
 import os
 import sys
@@ -22,7 +21,11 @@ def rdn_from_atoms(atoms):
   return h({get_eid(py_of_symbol(a.arguments[0])) for a in atoms
               if a.name == "redundant"})
 
-def minconfs(prefix_asp, markings, shortest=0, clingo_opts=""):
+def nrdn_from_atoms(atoms):
+  return h({get_eid(py_of_symbol(a.arguments[0])) for a in atoms
+              if a.name == "e_non_redundant"})
+
+def minconfs(prefix_asp, markings, shortest=0, redundant=1, clingo_opts=""):
 
   sat = clingo.Control(["--models=0", "--opt-mode=optN", "--heuristic=Domain",
       "--enum-mode=domRec", "--dom-mod=5,16"]+clingo_opts)
@@ -78,14 +81,19 @@ def minconfs(prefix_asp, markings, shortest=0, clingo_opts=""):
     atoms = sol.symbols(atoms=True)
     cfg = cfg_from_atoms(atoms)
     rdn = rdn_from_atoms(atoms)
+    nrdn = nrdn_from_atoms(atoms)
     if rdn and rdn[0] in cfg:
       cfg_lst = list(cfg)
       cfg_lst[cfg.index(rdn[0])] = rdn[0][:-1] + "+" + rdn[0][-1:]
       cfg = tuple(cfg_lst)
-    if shortest and sol.optimality_proven:
+    if redundant and shortest and sol.optimality_proven:
       yield cfg
-    elif not shortest:
+    elif redundant and not shortest:
       yield cfg
+    elif not redundant and shortest and sol.optimality_proven:
+      yield nrdn
+    else:
+      yield nrdn
 
 def sort_by_number(string):
   number_str = string.split(',')[-1][1:].strip(')')
@@ -115,6 +123,7 @@ def compute_minconfs():
 
     Options:
       -sht --shortest   mode to select the configurations that contain the least number of events.
+      -nrdn --no-redundant   mode to select the configurations that contain no redundant events, redundant events are marked with '+' sign.
       -p --pathway display pathway structure instead of event structure.
       -r --repeat    <conf_number>   produce a cutout showing only the configuration selected by <conf_number>.
       -pdf    mode to render a PDF file to display the configurations.\n
@@ -123,6 +132,7 @@ def compute_minconfs():
   """
   
   shortest = 0
+  redundant = 1
   outpdf = 0
   repeat = 0
   pathway = 0
@@ -156,6 +166,8 @@ def compute_minconfs():
       out_fname = sys.argv[i]
     elif sys.argv[i] == "-sht" or sys.argv[i] == "--shortest":
       shortest = 1
+    elif sys.argv[i] == "-nrdn" or sys.argv[i] == "--no-redundant":
+      redundant = 0
     elif sys.argv[i] == "-p" or sys.argv[i] == "--pathway":
       pathway = 1
     elif sys.argv[i] == "-r" or sys.argv[i] == "--repeat":
@@ -210,7 +222,7 @@ def compute_minconfs():
   outf = f"{os.path.dirname(model_ll)}/minconfs-to-marking_{base_output}.evev" if out_fname == "" else out_fname + ".evev" if "/" in out_fname and len(out_fname) > 1 else f"{os.path.dirname(model_ll)}/{out_fname}.evev"
 
   with open(outf, "w") as fout:
-    for C in tqdm(minconfs(prefix, extd_badmarkings, shortest, clingo_opts), desc="Computing minimal configurations"):
+    for C in tqdm(minconfs(prefix, extd_badmarkings, shortest, redundant, clingo_opts), desc="Computing minimal configurations"):
       #print(sorted(C, key=sort_by_number))
       print(str_conf(sorted(C, key=sort_by_number)), file=fout)
 

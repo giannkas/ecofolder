@@ -42,17 +42,18 @@ int strtoint(char *num) {
   return result;
 }
 
-int read_mci_file (char *mcifile, char *evcofile, int m_repeat, char* evname, int cutout, char* conf)
+int read_mci_file (char *mcifile, char *evev_cofile, int m_repeat, char* evname, int cutout, char* conf)
 {
   #define read_int(x) fread(&(x),sizeof(int),1,mcif)
 
-  FILE *mcif, *evcof;
+  FILE *mcif, *ev_cof;
   int nqure, nqure_, nquszcut, nquszevscut, szcuts, 
     numco, numev, numpl, idpl, idtr, numtr, sz, i, j, value;
-  int pre_ev, post_ev, cutoff, harmful, dummy = 0;
+  int pre_ev, post_ev, cutoff, harmful, dummy = 0, tmp = 0;
   int *co2pl, *ev2tr, *tokens, *cut0, *queries_co,
    *queries_ev, *cutoffs, *harmfuls, *queries_coset;
   char **plname, **trname, *c;
+  char valuech[12] = "", valuechtmp[12] = "";
   cut_t **cuts;
   evprepost **evprps;
 
@@ -63,11 +64,11 @@ int read_mci_file (char *mcifile, char *evcofile, int m_repeat, char* evname, in
     exit(1);
   }
 
-  if (evcofile)
+  if (evev_cofile)
   {
-    if (!(evcof = fopen(evcofile, "r")))
+    if (!(ev_cof = fopen(evev_cofile, "r")))
     {
-      fprintf(stderr,"cannot read file %s\n",evcofile);
+      fprintf(stderr,"cannot read file %s\n",evev_cofile);
       exit(1);
     }
   }
@@ -94,6 +95,8 @@ int read_mci_file (char *mcifile, char *evcofile, int m_repeat, char* evname, in
     evprps[i]->preset = NULL;
     evprps[i]->postset = NULL;
   }
+  int (*ev_predc)[numev+1] = calloc(numev+1, sizeof *ev_predc); // matrix to record events' predecesors.
+
 
   read_int(nqure);
   nqure_ = abs(nqure);
@@ -120,18 +123,37 @@ int read_mci_file (char *mcifile, char *evcofile, int m_repeat, char* evname, in
     nqure_ = abs(nqure);
   }
 
-  if(evcofile)
+  if(evev_cofile)
   {  
     dummy = 0;
-    while (fscanf(evcof," %d",&value) != EOF)
-    {
-      if (value != 0 && !dummy)
-        queries_ev[value] = 1;
-      else
+    if (strstr(evev_cofile, ".evco"))
+      while (fscanf(ev_cof," %d",&value) != EOF)
       {
-        queries_co[value] = 1; 
-        dummy = 1;
+        if (value != 0 && !dummy)
+          queries_ev[value] = 1;
+        else
+        {
+          queries_co[value] = 1; 
+          dummy = 1;
+        }
       }
+    else
+    {
+      while (fscanf(ev_cof," %s", valuech) != EOF)
+        if (strstr(valuech, "+")) // in case of reading redundant events
+          strcpy(valuechtmp, valuech);
+        else
+        {
+          value = strtoint(valuech);
+          if (tmp && strcmp(valuechtmp, ""))
+          {
+            ev_predc[value][tmp] = tmp;
+            strcpy(valuechtmp, "");
+          }
+          tmp = value;
+          if (value > 0 && !queries_ev[value])
+            queries_ev[value] = 1;
+        }
     }
   }
   else if (m_repeat > 0 && cuts[m_repeat] && cuts[m_repeat]->repeat < 0)
@@ -155,7 +177,7 @@ int read_mci_file (char *mcifile, char *evcofile, int m_repeat, char* evname, in
   for (i = 1; i <= numev; i++){
     read_int(ev2tr[i]);
     read_int(dummy);
-    if (!evcofile && m_repeat > 0 && cuts[m_repeat] && cuts[m_repeat]->repeat > 0) 
+    if (!evev_cofile && m_repeat > 0 && cuts[m_repeat] && cuts[m_repeat]->repeat > 0) 
       queries_ev[i] = dummy;
   }
 
@@ -164,7 +186,7 @@ int read_mci_file (char *mcifile, char *evcofile, int m_repeat, char* evname, in
     read_int(co2pl[i]);
     read_int(tokens[i]);
     read_int(dummy);
-    if (!evcofile && m_repeat > 0 && cuts[m_repeat] && cuts[m_repeat]->repeat > 0) 
+    if (!evev_cofile && m_repeat > 0 && cuts[m_repeat] && cuts[m_repeat]->repeat > 0) 
       queries_co[i] = dummy;
     read_int(pre_ev);
     if (cutout && pre_ev && !evname && (queries_ev[pre_ev] || queries_co[i]) && !conf)
@@ -350,13 +372,13 @@ int read_mci_file (char *mcifile, char *evcofile, int m_repeat, char* evname, in
   }
 
   fclose(mcif);
-  if (evcofile) fclose(evcof);
+  if (evev_cofile) fclose(ev_cof);
   return found;
 }
 
 void usage ()
 {
-  fprintf(stderr,"usage: mci2dot [options] <mcifile> <evcofile>\n\n"
+  fprintf(stderr,"usage: mci2dot [options] <mcifile> <evev_cofile>\n\n"
 
     "     Options:\n"
     "      -c --cutout  if a marking is queried or \n                  part of a reachability check then\n                  it will show a cutout of\n                  the whole unfolding\n"
@@ -364,9 +386,9 @@ void usage ()
     "      -cf <confg>:   used to return the marking led \n by the configuration <confg>(string type).\n You cannot enable cutouts and this \n flag at the same time.\n"
     "      -reach <evname>  if used, it will look for\n                  an event related to an attractor\n                  to return whether such event was found\n\n"
 
-    "<evcofile> is an optional file whose first line contains\n"
+    "<evev_cofile> is an optional file which can be formatted as .evco file or .evev file (important to keep the extension)\n. The former's first line contains\n"
     "the IDs of a firing sequence of events and the second line\n"
-    "represents IDs of conditions in the cut.\n"
+    "represents IDs of conditions in the cut.\n While the latter is similar \n but mainly used in <mci2dot_ev>"
     "-r and -reach are mutually exclusive.\n\n");
     exit(1);
 }
@@ -374,7 +396,7 @@ void usage ()
 int main (int argc, char **argv)
 {
   int i, m_repeat = -1, cutout = 0;
-  char *mcifile = NULL, *evcofile = NULL, *evname = NULL;
+  char *mcifile = NULL, *evev_cofile = NULL, *evname = NULL;
   char *configuration = NULL;
 
   for (i = 1; i < argc; i++)
@@ -400,10 +422,10 @@ int main (int argc, char **argv)
     else if(!mcifile)
       mcifile = argv[i];
     else
-      evcofile = argv[i];
+      evev_cofile = argv[i];
 
   if (!mcifile || (evname && m_repeat >= 0) || (cutout && configuration)) 
     usage();
 
-  exit(!read_mci_file(mcifile, evcofile, m_repeat, evname, cutout, configuration));
+  exit(!read_mci_file(mcifile, evev_cofile, m_repeat, evname, cutout, configuration));
 }

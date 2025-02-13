@@ -19,7 +19,7 @@ Ac+ Ec- Fg- Rp- Sd- Te- Wd+ Wk-_1 Wk-_2
 Ac+ Ec- Fg- Rp- Sd- Te- Wd- Wk-_1 Wk-_2
 ```
 
-This means that there are two attractors in the net for the initial marking we used (Ac+, Ec-, Fg-, Rp-, Sd-, Te-, Wd-, Wk+). The fact that we only show a marking for each attractor does not imply there is one marking within the attractor; it may contain more. You can check the unfolding prefix of each attractor with the already known routine:
+This means that there are two attractors in the net for the initial marking we used (Ac+, Ec-, Fg-, Rp-, Sd-, Te-, Wd-, Wk+). Note that `Wk-` has two 'copies' due to the place-replication encoding. The fact that we only show a marking for each attractor does not imply there is one marking within the attractor; it may contain more. You can check the unfolding prefix of each attractor with the already known routine:
 
 ```bash
 ./src/mci2dot examples/termites/tutorial/termites_pr-a0.mci > examples/termites/tutorial/termites_pr-a0_unf.dot
@@ -98,7 +98,7 @@ Marking:  ('Rp-', 'Wk-_1', 'Sd-', 'Te+', 'Ec+', 'Fg+', 'Wd+', 'Ac+', 'Wk-_2')
 total free checks: 44
 ```
 
-A noteworthy configuration is the 4th because it is empty. An empty doomed configuration means that the initial marking can lead you to the collapse, besides of being minimal, it suggests that you may not have option to prevent the ecosystem downfall, and then yo should change the initial state/marking.
+The 4th configuration is particularly noteworthy because it is empty. An empty doomed configuration indicates that the initial marking can lead to the collapse of the system, even if it is minimal. This suggests that there may be no way to prevent the ecosystem's downfall, and therefore, it may be necessary to change the initial state or marking.
 
 (On another software release, we plan to provide illustrations of these minimally doomed configurations).
 
@@ -127,5 +127,62 @@ Producing the pdf...
 Displaying the pdf...
 ```
 
-And a PDF file is displayed. These reachability checks are precisely for checking whether a marking (from the initial marking) is reachable in the net. The output only verifies for a unique event sequence that reaches the target marking, however, there could be more.
+A PDF file is displayed, which shows the results of the reachability checks. These checks determine whether a marking (starting from the initial marking) is reachable in the net. The output confirms a unique event sequence that reaches the target marking, but there may be others. At the moment of writing this tutorial, the author did not find one single marking with multiple event sequences that could be illustrated. 
+
+We can use the module `minconfs-to-marking` to compute all the _minimal_ configurations (event sequences) that lead to specific marking(s). Minimality in this context means the least number of events in each sequence (configuration) needed to reach my desired marking(s).  Therefore, let us modify the marking in `termites_pr.bad` file to include more target markings before using `minconfs-to-marking` module. The next marking query will be used to test this module (which corresponds to attractors' markings we computed before):
+
+```bash
+Ac+,Ec-,Fg-,Rp-,Sd-,Te-,Wd*,Wk-
+```
+
+The command to launch this module and visualize the output in a PDF file is:
+
+```bash
+./minconfs-to-marking -mdl examples/termites/tutorial/termites_pr.ll_net -mrk examples/termites/tutorial/termites_pr.bad -pdf
+```
+
+The command will generate a file named `examples/termites/tutorial/minconfs-to-marking_termites_pr.evev`. This file will contain the printed configurations (one per line), five configurations in total. You can disregard the trailing `0`, which simply indicates the end of each configuration. In case you one wants to see the full unfolding structure with input and output conditions for each event, proceed as follows:
+
+```bash
+./src/mci2dot -c examples/termites/tutorial/termites_pr_unf.mci examples/termites/tutorial/minconfs-to-marking_termites_pr.evev > examples/termites/tutorial/termites_pr_unf.dot
+dot -T pdf examples/termites/tutorial/termites_pr_unf.dot > examples/termites/tutorial/termites_pr_unf.pdf
+evince examples/termites/tutorial/termites_pr_unf.pdf
+```
+
+We basically use the already created prefix to include the conditions in the chart, but we restrict the events to show by adding the previous list of configurations, i.e., `minconfs-to-marking_termites_pr.evev`.
+
+### General tools
+
+There are some scripts with specific functions to change the visual of PDF outputs.
+
+#### Change color in dot files
+
+Say that one wants to modify colors displayed from a `dot` file, eg., `termites_pr_unf_colored.dot`. If you have included conditions in the prefix, then you can launch:
+
+```bash
+./color_in_dot -pl "Wk-" -co "#1a9850" -dotfile examples/termites/tutorial/termites_pr_unf.dot -out examples/termites/tutorial/termites_pr_unf_colored.dot
+dot -T pdf examples/termites/tutorial/termites_pr_unf_colored.dot > examples/termites/tutorial/termites_pr_unf_colored.pdf
+evince examples/termites/tutorial/termites_pr_unf_colored.pdf
+```
+
+Similarly, in case you only have an event structure, you can use the next command: 
+
+```bash
+./color_in_dot -ru "R1,R2,R3,R4;R5;R6,R7;R8,R9" -co "#1a9850;#d73027;#fee08b;#8c510a" -cotips "orange" -dotfile examples/termites/tutorial/termites_pr_unf.dot -evevfile examples/termites/tutorial/minconfs-to-marking_termites_pr.evev -out examples/termites/tutorial/termites_pr_unf_colored.dot
+...
+```
+
+In this last command, we use `-cotips` parameter to color configuration endings (tips) in `orange` and we provide a `.evev` file to indentify these endings.
+
+#### Replace rule ids by their labels
+
+Say that instead of showing the rule number, we would like to see the full label of a rule, where antecedent and consequence places are described. You can do this with the next command:
+
+```bash
+./ids-labels_rules examples/termites/tutorial/termites.rr examples/termites/tutorial/termites_pr_unf_colored.dot > examples/termites/tutorial/termites_pr_unf_colored_labels.dot
+dot -T pdf examples/termites/tutorial/termites_pr_unf_colored_labels.dot > examples/termites/tutorial/termites_pr_unf_colored_labels.pdf
+evince examples/termites/tutorial/termites_pr_unf_colored_labels.pdf
+```
+
+Note the `>` (redirection operator) to redirect the output of this Python script to a `termites_pr_unf_colored_labels.dot` file instead of displaying it on the screen.
 

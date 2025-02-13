@@ -59,7 +59,7 @@ for line_number, line in enumerate(evev_lines, start=1):
   outdot = f"{outdir}{outfile}_ins{line_number}.dot"
 
   with open(dot_file, 'r') as source_dot, open(outdot, 'w') as out_dot:
-    subprocess.check_call(["python3", script_path("color_in_dot.py"), "-e", "-b",
+    subprocess.check_call(["python", script_path("color_in_dot.py"), "-e", "-b",
                            "-ru", ru_value, "-co", color_list, "-cocs", "none" ],
                           stdin=source_dot, stdout=out_dot)
 
