@@ -1,0 +1,75 @@
+\documentclass{article}
+\usepackage[x11names, svgnames, rgb]{xcolor}
+\usepackage[utf8]{inputenc}
+\usepackage{tikz}
+\usetikzlibrary{snakes,arrows,shapes}
+\usepackage{amsmath}
+%
+%
+
+%
+
+%
+
+\begin{document}
+\pagestyle{empty}
+%
+%
+%
+
+\enlargethispage{100cm}
+% Start of code
+\begin{tikzpicture}[>=latex',line join=bevel,]
+%%
+\node (p4) at (208.0bp,389.19bp) [draw,circle] {};
+  \definecolor{fillcolor}{rgb}{0.8,0.8,0.8};
+  \node (t1) at (129.0bp,317.19bp) [draw,fill=fillcolor,rectangle] {R1};
+  \definecolor{fillcolor}{rgb}{0.8,0.8,0.8};
+  \node (t2) at (27.0bp,167.6bp) [draw,fill=fillcolor,rectangle] {R2};
+  \definecolor{fillcolor}{rgb}{0.8,0.8,0.8};
+  \node (t5) at (321.0bp,18.0bp) [draw,fill=fillcolor,rectangle] {R5};
+  \definecolor{fillcolor}{rgb}{0.8,0.8,0.8};
+  \node (t6) at (248.0bp,317.19bp) [draw,fill=fillcolor,rectangle] {R6};
+  \node (p1) at (84.0bp,242.39bp) [draw,circle] {⬤};
+  \definecolor{fillcolor}{rgb}{0.8,0.8,0.8};
+  \node (t3) at (138.0bp,167.6bp) [draw,fill=fillcolor,rectangle] {R3};
+  \node (p3) at (144.0bp,242.39bp) [draw,circle] {⬤};
+  \definecolor{fillcolor}{rgb}{0.8,0.8,0.8};
+  \node (t4) at (248.0bp,167.6bp) [draw,fill=fillcolor,rectangle] {R4};
+  \node (p2) at (138.0bp,92.798bp) [draw,circle] {};
+  \node (p5) at (270.0bp,92.798bp) [draw,circle] {⬤};
+  \node (p6) at (248.0bp,242.39bp) [draw,circle] {};
+  \draw [blue,] (p4) ..controls (182.25bp,365.37bp) and (162.77bp,348.12bp)  .. (t1);
+  \draw [-o] (p4) ..controls (163.57bp,379.28bp) and (114.63bp,363.91bp)  .. (84.0bp,335.19bp) .. controls (43.131bp,296.88bp) and (27.102bp,230.04bp)  .. (t2);
+  \draw [-o] (p4) ..controls (258.19bp,360.38bp) and (341.0bp,312.23bp)  .. (341.0bp,243.39bp) .. controls (341.0bp,243.39bp) and (341.0bp,243.39bp)  .. (341.0bp,166.6bp) .. controls (341.0bp,122.86bp) and (328.59bp,73.185bp)  .. (t5);
+  \draw [blue,] (p4) ..controls (223.02bp,361.91bp) and (231.63bp,346.85bp)  .. (t6);
+  \draw [->] (t1) ..controls (106.57bp,290.74bp) and (100.13bp,280.73bp)  .. (p1);
+  \draw [-o] (p1) ..controls (105.54bp,267.3bp) and (113.96bp,280.42bp)  .. (t1);
+  \draw [blue,] (p1) ..controls (62.398bp,213.81bp) and (49.797bp,197.71bp)  .. (t2);
+  \draw [-o] (p1) ..controls (103.19bp,215.53bp) and (112.49bp,202.99bp)  .. (t3);
+  \draw [->] (t2) ..controls (42.692bp,219.14bp) and (57.855bp,293.81bp)  .. (102.0bp,335.19bp) .. controls (125.05bp,356.8bp) and (158.47bp,370.85bp)  .. (p4);
+  \draw [-o] (p3) ..controls (122.73bp,227.21bp) and (118.22bp,224.27bp)  .. (114.0bp,221.6bp) .. controls (96.774bp,210.67bp) and (77.411bp,198.83bp)  .. (t2);
+  \draw [blue,] (p3) ..controls (141.44bp,210.39bp) and (140.31bp,196.67bp)  .. (t3);
+  \draw [blue,] (p3) ..controls (177.71bp,217.8bp) and (204.22bp,199.24bp)  .. (t4);
+  \draw [-o] (p3) ..controls (119.44bp,216.87bp) and (107.38bp,201.7bp)  .. (102.0bp,185.6bp) .. controls (93.532bp,160.27bp) and (106.47bp,77.171bp)  .. (111.0bp,72.0bp) .. controls (133.76bp,46.028bp) and (231.96bp,30.042bp)  .. (t5);
+  \draw [->] (t3) ..controls (131.24bp,140.58bp) and (131.02bp,129.73bp)  .. (p2);
+  \draw [->] (t4) ..controls (249.09bp,140.67bp) and (252.09bp,129.97bp)  .. (p5);
+  \draw [-o] (p5) ..controls (268.19bp,122.38bp) and (265.23bp,132.57bp)  .. (t4);
+  \draw [blue,] (p5) ..controls (289.74bp,63.617bp) and (300.66bp,48.027bp)  .. (t5);
+  \draw [-o] (p5) ..controls (279.1bp,123.61bp) and (282.47bp,137.21bp)  .. (284.0bp,149.6bp) .. controls (290.21bp,199.86bp) and (289.64bp,214.71bp)  .. (275.0bp,263.19bp) .. controls (272.01bp,273.08bp) and (267.24bp,283.33bp)  .. (t6);
+  \draw [->] (t5) ..controls (344.02bp,63.32bp) and (359.0bp,118.55bp)  .. (359.0bp,166.6bp) .. controls (359.0bp,243.39bp) and (359.0bp,243.39bp)  .. (359.0bp,243.39bp) .. controls (359.0bp,311.5bp) and (277.93bp,359.35bp)  .. (p4);
+  \draw [->] (t6) ..controls (241.24bp,290.17bp) and (241.02bp,279.33bp)  .. (p6);
+  \draw [-o] (p2) ..controls (158.2bp,117.57bp) and (169.24bp,133.45bp)  .. (174.0bp,149.6bp) .. controls (188.27bp,198.03bp) and (191.41bp,215.8bp)  .. (174.0bp,263.19bp) .. controls (170.02bp,274.03bp) and (162.74bp,284.16bp)  .. (t1);
+  \draw [-o] (p2) ..controls (144.77bp,119.15bp) and (145.02bp,130.93bp)  .. (t3);
+  \draw [-o] (p6) ..controls (248.0bp,215.08bp) and (248.0bp,203.79bp)  .. (t4);
+  \draw [-o] (p6) ..controls (254.77bp,268.75bp) and (255.02bp,280.52bp)  .. (t6);
+%
+\end{tikzpicture}
+% End of code
+
+%
+\end{document}
+%
+
+
+

@@ -1,28 +1,15 @@
-#### Model test lana Serbie date 02/09/2024, 
+#### Toy Model - urchin / lobster / fishers ### 
 
 variables: 
- Urc-: Urchin '+' High densities facilitating destructing grazing, '-' marginal densities  
- Lob-: Lobster '+' High densities of large predatory individuals, '-' marginal densities of such predators  
- Fis-: Fishing activity is likely to decline once lobster stocks decline but urchin barren states can also be reached under 
+ Urc+: Urchin '+' High densities facilitating destructing grazing, '-' marginal densities  
+ Lob+: Lobster '+' High densities of large predatory individuals, '-' marginal densities of such predators  
+ Fis+: Fishing activity is likely to decline once lobster stocks decline but urchin barren states can also be reached under 
 
-#constraints:
-# F- >> M-
 
 rules:   ### second test: 
- Lob- >> Urc+       # 
- Urc+ >> Lob+       # 
- Lob+ >> Urc-       # 
- Fis-, Lob+ >> Fis+ # 
- Fis+ >> Lob-       # 
- Lob- >> Fis-       # 
-
-##### Early test: 
-# Urc+ >> Lob-       # Lobster recruitment relies on the presence of macroalgae (settlement of lobster puerulus), which declines when urchin population builds up and destructively graze macro-algae. [the rule Urc+ >> Alg- is only explicit in the full model.]
-# Lob+ >> Urc-       # Lobster predation can maintain low sea urchin densities.
-# Lob- >> Urc+       # When lobster predation pressure is low, urchin population can build up. 
-# Fis+ >> Lob-       # Southern rock lobster decline when fished beyond sustainable levels.
-# Urc- >> Urc+       # Climate-drive increase in sea urchin population. 
-# Fis- >> Fis+       # Without effective fishery management, fishing effort can increase beyond sustainable levels 
-# Fis+ >> Fis-       # Effective fishery management can control fishing effort and reduce it down to sustainable levels 
-# Fis+ >> Urc-       # ???? Sea urchin harvesting can reduce urchin densities 
-# Urc+ >> Lob+       # Urchin preys can significantly increase the lobster population 
+ Lob- >> Urc+       # low densities (or absence) of lobster may increase (or restore) urchin densities.
+ Urc+ >> Lob-       # high densities of urchins can reduce lobster densities.
+ Lob+ >> Urc-       # high densities of lobsters can reduce urchin densities.
+ Lob+ >> Fis+       # high densities of lobsters can increase fishing activity.
+ Fis+ >> Lob-       # too much fishing activity can reduce lobster densities.
+ Lob- >> Fis-       # low lobster densities can reduce fishing activities.
