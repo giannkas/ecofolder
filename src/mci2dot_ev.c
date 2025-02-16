@@ -128,7 +128,7 @@ void check_cone(int numev, int (*ev_predc)[numev], char cone_ev[], int confl_evs
       check_cone(numev, ev_predc, cone_ev, confl_evs, ev_predc[srcev][i]);
 }
 
-void print_pathway(int numev, int (*ev_predc)[numev], int (*path_evs)[numev], char cone_ev[], char cone_ev2[], int minlen, int confl_evs[numev], int pre_ev, int link_ev)
+void print_pathway(int numev, int (*ev_predc)[numev], int(*ev_succs)[numev], int (*path_evs)[numev], char cone_ev[], char cone_ev2[], int minlen, int confl_evs[numev], int pre_ev, int link_ev)
 {
   /* if (pre_ev == 56){
     printf("pre_ev: %d\n", pre_ev);
@@ -141,17 +141,19 @@ void print_pathway(int numev, int (*ev_predc)[numev], int (*path_evs)[numev], ch
       printf("  e%d -> e%d [minlen=%d];\n", j, link_ev, pre_ev == link_ev ? 1 : minlen); // write the connection.
       path_evs[j][0] = j;
       path_evs[j][link_ev] = link_ev;
-      print_pathway(numev, ev_predc, path_evs, cone_ev, cone_ev2, 1, confl_evs, ev_predc[pre_ev][j], ev_predc[pre_ev][j]);
+      print_pathway(numev, ev_predc, ev_succs, path_evs, cone_ev, cone_ev2, 1, confl_evs, ev_predc[pre_ev][j], ev_predc[pre_ev][j]);
     }
     else if (ev_predc[pre_ev][j] && !confl_evs[j] && !path_evs[j][link_ev])
     {
       cone_ev[0] = '\0';
       cone_ev2[0] = '\0';
-      int k = j+1;
+      int k = j;
+      int chk_confl = 0, conct = 0;
       while (k <= numev && k)
       {
         if (ev_predc[pre_ev][k] && confl_evs[k])
         {
+          chk_confl = 1;
           check_cone(numev, ev_predc, cone_ev, confl_evs, j);
           check_cone(numev, ev_predc, cone_ev2, confl_evs, k);
           int m = 0;
@@ -160,13 +162,14 @@ void print_pathway(int numev, int (*ev_predc)[numev], int (*path_evs)[numev], ch
             tmp = ftokstr(cone_ev, ++m, ',');
           if(tmp) k = -1;
         }
-        else if (ev_predc[pre_ev][k] && !confl_evs[k])
-        {
-        }
+        else if (ev_predc[pre_ev][k] && !confl_evs[k] && !ev_succs[0][k] && !chk_confl)
+          conct = pre_ev;
         k++;
       }
+      if (k > numev && !chk_confl && conct && confl_evs[conct])
+        path_evs[conct][0] = conct;
       if (k)
-        print_pathway(numev, ev_predc, path_evs, cone_ev, cone_ev2, ++minlen, confl_evs, ev_predc[pre_ev][j], link_ev);
+        print_pathway(numev, ev_predc, ev_succs, path_evs, cone_ev, cone_ev2, ++minlen, confl_evs, ev_predc[pre_ev][j], link_ev);
     }
 }
 
@@ -725,6 +728,7 @@ void read_mci_file_ev (char *mcifile, char* evevfile, int m_repeat, int cutout, 
         if (tmp && !leaves_evs[i] && !path_seq[dummy])
         {
           path_seq[dummy] = i;
+          //printf("path_seq[%d]: %d\n", dummy, i);
           leaves_evs[i] = 1;
           dummy++;
         }
@@ -734,7 +738,7 @@ void read_mci_file_ev (char *mcifile, char* evevfile, int m_repeat, int cutout, 
     dummy = 0;
     for (i = 0; i < seq_size; i++)
       if (path_seq[i])
-        print_pathway(numev+1, ev_predc_copy, path_evs, cone_ev, cone_ev2, 1, confl_evs, path_seq[i], path_seq[i]);
+        print_pathway(numev+1, ev_predc_copy, ev_succs, path_evs, cone_ev, cone_ev2, 1, confl_evs, path_seq[i], path_seq[i]);
     
     memset(path_seq, 0, sizeof(path_seq));
     for (i = 1; i <= numev; i++)
