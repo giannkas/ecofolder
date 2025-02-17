@@ -131,6 +131,7 @@ void check_cone(int numev, int (*ev_predc)[numev], char cone_ev[], int confl_evs
 void print_pathway(int numev, int (*ev_predc)[numev], int(*ev_succs)[numev], int (*path_evs)[numev], char cone_ev[], char cone_ev2[], int minlen, int confl_evs[numev], int pre_ev, int link_ev)
 {
   for (int j = 1; j <= numev; j++)
+    // If conflict event, then make connection and continue
     if (ev_predc[pre_ev][j] && confl_evs[j] && !path_evs[j][link_ev])
     {
       printf("  e%d -> e%d [minlen=%d];\n", j, link_ev, pre_ev == link_ev ? 1 : minlen); // write the connection.
@@ -146,8 +147,8 @@ void print_pathway(int numev, int (*ev_predc)[numev], int(*ev_succs)[numev], int
       int chk_confl = 0, conct = 0;
       while (k <= numev && k)
       {
-        // check traingular (redundant) arcs
-        // no conflict event, save it for later
+        // Check traingular (redundant) arcs.
+        // If no conflict event, save it for later,
         // possible direct connection to the root.
         if (ev_predc[pre_ev][k] && confl_evs[k])
         {
@@ -164,6 +165,7 @@ void print_pathway(int numev, int (*ev_predc)[numev], int(*ev_succs)[numev], int
           conct = link_ev;
         k++;
       }
+      // connection to the root
       if (k > numev && !chk_confl && conct)
         path_evs[conct][0] = conct;
       if (k)
