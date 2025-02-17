@@ -20,7 +20,9 @@ digraph test {
   e12 -> e24;
   e13 -> e25;
   e14 -> e27;
+ev_predc_copy[29][6]: 6
   e6 -> e29;
+ev_predc_copy[29][18]: 18
   e2 -> e31;
   e2 -> e32;
   e6 -> e33;

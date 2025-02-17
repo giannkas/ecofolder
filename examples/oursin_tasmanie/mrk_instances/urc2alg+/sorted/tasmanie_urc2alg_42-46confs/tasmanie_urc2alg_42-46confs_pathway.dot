@@ -1,26 +1,4 @@
 digraph test {
-  e3 -> e6;
-  e3 -> e7;
-  e7 -> e16;
-  e6 -> e22;
-  e7 -> e22;
-  e2 -> e35;
-  e6 -> e35;
-  e7 -> e35;
-  e2 -> e55;
-  e16 -> e55;
-  e2 -> e60;
-  e22 -> e60;
-  e55 -> e80;
-  e80 -> e102;
-  e80 -> e105;
-  e102 -> e178;
-  e105 -> e178;
-  e102 -> e275;
-  e60 -> e446;
-  e22 -> e598;
-  e0 -> e2;
-  e0 -> e3;
 
 //conflicts
   e6 -> e80 [arrowhead=none color=gray60 style=dashed constraint=false];
@@ -30,17 +8,22 @@ digraph test {
   e105 -> e275 [arrowhead=none color=gray60 style=dashed constraint=false];
   e446 -> e598 [arrowhead=none color=gray60 style=dashed constraint=false];
 
-  e2 [color="black" fillcolor="orange:orange" label="R19 (e2)" shape=box style=filled];
-  e3 [color="black" fillcolor="orange:orange" label="R21 (e3)" shape=box style=filled];
+  e6 -> e35 [minlen=1];
+  e105 -> e178 [minlen=1];
+  e80 -> e105 [minlen=1];
+  e16 -> e80 [minlen=3];
+  e80 -> e275 [minlen=2];
+  e22 -> e446 [minlen=2];
+  e6 -> e22 [minlen=1];
+  e22 -> e598 [minlen=1];
+  e0 -> e6 [minlen=2];
+  e0 -> e16 [minlen=3];
+
   e6 [color="black" fillcolor="orange:orange" label="R9 (e6)" shape=box style=filled];
-  e7 [color="black" fillcolor="orange:orange" label="R10 (e7)" shape=box style=filled];
   e16 [color="black" fillcolor="orange:orange" label="R22 (e16)" shape=box style=filled];
   e22 [color="black" fillcolor="orange:orange" label="R12 (e22)" shape=box style=filled];
   e35 [color="black" fillcolor="orange:orange" label="R1 (e35)" shape=box style=filled];
-  e55 [color="black" fillcolor="orange:orange" label="R18 (e55)" shape=box style=filled];
-  e60 [color="black" fillcolor="orange:orange" label="R1 (e60)" shape=box style=filled];
   e80 [color="black" fillcolor="orange:orange" label="R11 (e80)" shape=box style=filled];
-  e102 [color="black" fillcolor="orange:orange" label="R9 (e102)" shape=box style=filled];
   e105 [color="black" fillcolor="orange:orange" label="R10 (e105)" shape=box style=filled];
   e178 [color="black" fillcolor="cornflowerblue:orange" label="R1 (e178)" shape=box style=filled];
   e275 [color="black" fillcolor="cornflowerblue:orange" label="R1 (e275)" shape=box style=filled];

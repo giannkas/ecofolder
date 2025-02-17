@@ -130,11 +130,6 @@ void check_cone(int numev, int (*ev_predc)[numev], char cone_ev[], int confl_evs
 
 void print_pathway(int numev, int (*ev_predc)[numev], int(*ev_succs)[numev], int (*path_evs)[numev], char cone_ev[], char cone_ev2[], int minlen, int confl_evs[numev], int pre_ev, int link_ev)
 {
-  /* if (pre_ev == 56){
-    printf("pre_ev: %d\n", pre_ev);
-    // printf("ev_predc[pre_ev][k]: %d\n", ev_predc[pre_ev][k]);
-    // printf("confl_evs[k]: %d\n", confl_evs[k]);
-  } */
   for (int j = 1; j <= numev; j++)
     if (ev_predc[pre_ev][j] && confl_evs[j] && !path_evs[j][link_ev])
     {
@@ -151,6 +146,9 @@ void print_pathway(int numev, int (*ev_predc)[numev], int(*ev_succs)[numev], int
       int chk_confl = 0, conct = 0;
       while (k <= numev && k)
       {
+        // check traingular (redundant) arcs
+        // no conflict event, save it for later
+        // possible direct connection to the root.
         if (ev_predc[pre_ev][k] && confl_evs[k])
         {
           chk_confl = 1;
@@ -163,10 +161,10 @@ void print_pathway(int numev, int (*ev_predc)[numev], int(*ev_succs)[numev], int
           if(tmp) k = -1;
         }
         else if (ev_predc[pre_ev][k] && !confl_evs[k] && !ev_succs[0][k] && !chk_confl)
-          conct = pre_ev;
+          conct = link_ev;
         k++;
       }
-      if (k > numev && !chk_confl && conct && confl_evs[conct])
+      if (k > numev && !chk_confl && conct)
         path_evs[conct][0] = conct;
       if (k)
         print_pathway(numev, ev_predc, ev_succs, path_evs, cone_ev, cone_ev2, ++minlen, confl_evs, ev_predc[pre_ev][j], link_ev);
