@@ -305,8 +305,8 @@ void read_mci_file_ev (char *mcifile, char* evevfile, int m_repeat, int cutout, 
 
   cutoffs = calloc(numev+1, sizeof(int));
   harmfuls = calloc(numev+1, sizeof(int));
-  leaves_evs = calloc(numev+1, sizeof(int)); // collect events with no successors
-                                          // which are not cutoff events. Used when evev file is given.
+  leaves_evs = calloc(numev+1, sizeof(int)); // collect events with no successors in a evev file
+                                          // which are not cutoff events.
   evprps = calloc(numev+1, sizeof(evprepost*));
   for (i = 0; i <= numev; i++) {
     evprps[i] = malloc(sizeof(evprepost));
@@ -366,9 +366,11 @@ void read_mci_file_ev (char *mcifile, char* evevfile, int m_repeat, int cutout, 
             ev_predc_copy[value][tmp] = tmp;
             strcpy(valuechtmp, "");
           }
-          tmp = value;
           if (value > 0 && !queries_ev[value])
             queries_ev[value] = 1;
+          else if (!value)
+            leaves_evs[tmp] = 1;
+          tmp = value;
         }
     }
     else if (m_repeat > 0)
@@ -569,7 +571,7 @@ void read_mci_file_ev (char *mcifile, char* evevfile, int m_repeat, int cutout, 
       }
     }
     // A loop over ev_confl matrix to find two pairwise conflict between events, eg.,
-    // e2->e3 and e3->e4, thereafter with find_successor we use ev_confl_succs to check 
+    // e2->e3 and e3->e4, thereafter with find_successor we use ev_succs to check 
     // if e4 is a successor of e2, if yes we remove the conflict between e4 and e3
     // because the conflict is inherited from e2 and e3, so we leave only immediate
     // conflicts. Finally, we use the matrix ev_confl_copy to remove those "redundant
@@ -717,23 +719,32 @@ void read_mci_file_ev (char *mcifile, char* evevfile, int m_repeat, int cutout, 
       if (queries_ev[i] && cutoffs[i])
       {
         path_seq[dummy] = i;
-        //printf("path_seq[%d]: %d\n", dummy, i);
+        // printf("1. path_seq[%d]: %d\n", dummy, i);
         dummy++;
       }
-      else if(queries_ev[i] && !cutoffs[i])
+      else if (queries_ev[i] && !leaves_evs[i] && !cutoffs[i])
       {
-        for (j = 1; j <= numev && tmp; j++)
+        for (j = i+1; j <= numev && tmp; j++)
           if (ev_succs[i][j] && queries_ev[j])
             tmp = 0;
         if (tmp && !leaves_evs[i] && !path_seq[dummy])
         {
           path_seq[dummy] = i;
-          //printf("path_seq[%d]: %d\n", dummy, i);
+          // printf("2. path_seq[%d]: %d\n", dummy, i);
           leaves_evs[i] = 1;
           dummy++;
         }
         else 
           tmp = 1;
+      }
+      // if evev file is given then leaves have been already retrieved.
+      // And they will be the starting point regardless whether
+      // they are cutoffs.
+      else if (queries_ev[i] && leaves_evs[i])
+      {
+        path_seq[dummy] = i;
+        // printf("3. path_seq[%d]: %d\n", dummy, i);
+        dummy++;
       }
     dummy = 0;
     for (i = 0; i < seq_size; i++)

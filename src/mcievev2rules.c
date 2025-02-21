@@ -99,17 +99,23 @@ void read_mci_file_ev (char *mcifile, char* evevfile)
 
   if(evevfile)
   {
-    while (fscanf(evevf," %d",&value) != EOF)
-      if (value > 0 && !queries_ev[nconfs][value])
+    int result;
+    while ((result = fscanf(evevf," %d",&value)) != EOF)
+      if (result == 1)
       {
-        queries_ev[nconfs][value] = value;
-        prevalue = value;
+        if (value > 0 && !queries_ev[nconfs][value])
+        {
+          queries_ev[nconfs][value] = value;
+          prevalue = value;
+        }
+        else if(value == 0)
+        {
+          queries_ev[nconfs][prevalue+1] = -1;
+          nconfs++;
+        }
       }
-      else if(value == 0)
-      {
-        queries_ev[nconfs][prevalue+1] = -1;
-        nconfs++;
-      }
+      else
+        fscanf(evevf, "%*s");
     nconfs--;
   }
   
@@ -182,11 +188,11 @@ void read_mci_file_ev (char *mcifile, char* evevfile)
     {
       if (queries_ev[i][j] > 0 && !dummy)
       {
-        printf("%s", trname[ev2tr[j]]);
+        printf("%s (e%d)", trname[ev2tr[j]], j);
         dummy = 1;
       }
       else if (queries_ev[i][j] > 0)
-        printf(" %s", trname[ev2tr[j]]);
+        printf(" %s (e%d)", trname[ev2tr[j]], j);
     }
     printf("\n");
   }

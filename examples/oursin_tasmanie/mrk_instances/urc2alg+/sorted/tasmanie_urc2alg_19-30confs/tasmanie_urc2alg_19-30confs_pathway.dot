@@ -31,11 +31,13 @@ digraph test {
   e24 -> e46 [minlen=1];
   e24 -> e595 [minlen=1];
   e0 -> e8 [minlen=2];
+  e0 -> e12 [minlen=2];
   e0 -> e14 [minlen=2];
   e0 -> e24 [minlen=3];
   e0 -> e36 [minlen=2];
 
   e8 [color="black" fillcolor="orange:orange" label="R22 (e8)" shape=box style=filled];
+  e12 [color="black" fillcolor="orange:orange" label="R9 (e12)" shape=box style=filled];
   e14 [color="black" fillcolor="orange:orange" label="R10 (e14)" shape=box style=filled];
   e24 [color="black" fillcolor="orange:orange" label="R12 (e24)" shape=box style=filled];
   e27 [color="black" fillcolor="orange:orange" label="R22 (e27)" shape=box style=filled];

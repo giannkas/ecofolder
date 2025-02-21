@@ -1,0 +1,53 @@
+digraph test {
+
+//conflicts
+e31 -> e40 [arrowhead=none color=gray60 style=dashed constraint=false];
+e32 -> e49 [arrowhead=none color=gray60 style=dashed constraint=false];
+e32 -> e74 [arrowhead=none color=gray60 style=dashed constraint=false];
+e32 -> e552 [arrowhead=none color=gray60 style=dashed constraint=false];
+e49 -> e74 [arrowhead=none color=gray60 style=dashed constraint=false];
+e49 -> e552 [arrowhead=none color=gray60 style=dashed constraint=false];
+e74 -> e552 [arrowhead=none color=gray60 style=dashed constraint=false];
+e79 -> e99 [arrowhead=none color=gray60 style=dashed constraint=false];
+e79 -> e427 [arrowhead=none color=gray60 style=dashed constraint=false];
+e99 -> e427 [arrowhead=none color=gray60 style=dashed constraint=false];
+e216 -> e282 [arrowhead=none color=gray60 style=dashed constraint=false];
+e335 -> e414 [arrowhead=none color=gray60 style=dashed constraint=false];
+
+e31 -> e47 [minlen=1];
+e49 -> e79 [minlen=1];
+e31 -> e49 [minlen=1];
+e99 -> e216 [minlen=1];
+e49 -> e99 [minlen=1];
+e99 -> e217 [minlen=1];
+e99 -> e282 [minlen=1];
+e74 -> e335 [minlen=1];
+e31 -> e74 [minlen=2];
+e74 -> e336 [minlen=1];
+e74 -> e414 [minlen=1];
+e49 -> e427 [minlen=1];
+e40 -> e524 [minlen=1];
+e32 -> e40 [minlen=1];
+e31 -> e552 [minlen=2];
+e0 -> e31 [minlen=2];
+e0 -> e32 [minlen=2];
+
+e31 [color="black" fillcolor="#8c510a:#8c510a" label="Mgt+ >> Urc-" shape=box style=filled];
+e32 [color="black" fillcolor="#8c510a:#8c510a" label="Mgt+ >> Lob+" shape=box style=filled];
+e40 [color="black" fillcolor="#1a9850:#1a9850" label="Lob+ >> Urc-" shape=box style=filled];
+e47 [color="black" fillcolor="#1a9850:orange" label="Urc- >> Alg+" shape=box style=filled];
+e49 [color="black" fillcolor="#1a9850:#1a9850" label="Lob-, Urc- >> Aba+" shape=box style=filled];
+e74 [color="black" fillcolor="#d73027:#d73027" label="Lob- >> Urc+" shape=box style=filled];
+e79 [color="black" fillcolor="#8c510a:orange" label="Mgt+ >> Lob+" shape=box style=filled];
+e99 [color="black" fillcolor="#d73027:#d73027" label="Lob- >> Urc+" shape=box style=filled];
+e216 [color="black" fillcolor="#8c510a:#8c510a" label="Mgt+ >> Lob+" shape=box style=filled];
+e217 [color="black" fillcolor="#8c510a:orange" label="Mgt+ >> Urc-" shape=box style=filled];
+e282 [color="black" fillcolor="#1a9850:orange" label="Alg+, Fis- >> Lob+" shape=box style=filled];
+e335 [color="black" fillcolor="#8c510a:#8c510a" label="Mgt+ >> Lob+" shape=box style=filled];
+e336 [color="black" fillcolor="#8c510a:orange" label="Mgt+ >> Urc-" shape=box style=filled];
+e414 [color="black" fillcolor="#1a9850:orange" label="Alg+, Fis- >> Lob+" shape=box style=filled];
+e427 [color="black" fillcolor="#1a9850:orange" label="Alg+, Fis- >> Lob+" shape=box style=filled];
+e524 [color="black" fillcolor="#1a9850:orange" label="Urc- >> Alg+" shape=box style=filled];
+e552 [color="black" fillcolor="#1a9850:orange" label="Alg+, Fis- >> Lob+" shape=box style=filled];
+e0 [fillcolor="white" label="⊥" shape=box style=filled];
+}
