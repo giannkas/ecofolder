@@ -34,6 +34,7 @@ digraph test {
   e0 -> e12 [minlen=2];
   e0 -> e14 [minlen=2];
   e0 -> e24 [minlen=3];
+  e0 -> e36 [minlen=2];
 
   e8 [color="black" fillcolor="#8c510a:#8c510a" label="R22 (e8)" shape=box style=filled];
   e12 [color="black" fillcolor="#1a9850:orange" label="R9 (e12)" shape=box style=filled];
