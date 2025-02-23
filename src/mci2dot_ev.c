@@ -437,13 +437,17 @@ void read_mci_file_ev (char *mcifile, char* evevfile, int m_repeat, int cutout, 
             strcpy(valuechtmp, "");
             chk = 0;
           }
-          tmp = value;
-          _++;
-          if (value > 0 && !queries_ev[value])
+          
+          if (value > 0)
+          {
             queries_ev[value] = 1;
+            tmp = value;
+            _++;
+          }
           else if (!value)
           {
             leaves_evs[tmp] = 1;
+            //printf("tmp = %d\n", tmp);
             memset(evs_conf, 0,(numev)*sizeof(int));
             _ = 0, tmp = 0;
           }
@@ -756,7 +760,7 @@ void read_mci_file_ev (char *mcifile, char* evevfile, int m_repeat, int cutout, 
       if (queries_ev[i] && cutoffs[i])
       {
         path_seq[dummy] = i;
-        // printf("1. path_seq[%d]: %d\n", dummy, i);
+        //printf("1. path_seq[%d]: %d\n", dummy, i);
         dummy++;
       }
       else if (queries_ev[i] && !leaves_evs[i] && !cutoffs[i])
@@ -767,7 +771,7 @@ void read_mci_file_ev (char *mcifile, char* evevfile, int m_repeat, int cutout, 
         if (tmp && !leaves_evs[i] && !path_seq[dummy])
         {
           path_seq[dummy] = i;
-          // printf("2. path_seq[%d]: %d\n", dummy, i);
+          //printf("2. path_seq[%d]: %d\n", dummy, i);
           leaves_evs[i] = 1;
           dummy++;
         }
@@ -780,7 +784,7 @@ void read_mci_file_ev (char *mcifile, char* evevfile, int m_repeat, int cutout, 
       else if (queries_ev[i] && leaves_evs[i])
       {
         path_seq[dummy] = i;
-        // printf("3. path_seq[%d]: %d\n", dummy, i);
+        //printf("3. path_seq[%d]: %d\n", dummy, i);
         dummy++;
       }
     dummy = 0;

@@ -1,0 +1,51 @@
+digraph test {
+
+//conflicts
+  e4 -> e6 [arrowhead=none color=gray60 style=dashed constraint=false];
+  e5 -> e7 [arrowhead=none color=gray60 style=dashed constraint=false];
+  e30 -> e604 [arrowhead=none color=gray60 style=dashed constraint=false];
+  e30 -> e661 [arrowhead=none color=gray60 style=dashed constraint=false];
+  e30 -> e667 [arrowhead=none color=gray60 style=dashed constraint=false];
+  e435 -> e531 [arrowhead=none color=gray60 style=dashed constraint=false];
+  e586 -> e649 [arrowhead=none color=gray60 style=dashed constraint=false];
+  e604 -> e667 [arrowhead=none color=gray60 style=dashed constraint=false];
+
+  e4 -> e13 [minlen=2];
+  e6 -> e14 [minlen=2];
+  e30 -> e435 [minlen=1];
+  e4 -> e30 [minlen=3];
+  e7 -> e527 [minlen=1];
+  e5 -> e531 [minlen=1];
+  e6 -> e586 [minlen=1];
+  e4 -> e604 [minlen=1];
+  e5 -> e649 [minlen=1];
+  e6 -> e649 [minlen=1];
+  e4 -> e661 [minlen=1];
+  e7 -> e661 [minlen=1];
+  e4 -> e667 [minlen=1];
+  e5 -> e667 [minlen=1];
+  e6 -> e686 [minlen=1];
+  e7 -> e686 [minlen=1];
+  e0 -> e4 [minlen=2];
+  e0 -> e5 [minlen=2];
+  e0 -> e6 [minlen=2];
+  e0 -> e7 [minlen=2];
+
+  e4 [color="black" fillcolor="#1a9850:#1a9850" label="R5 (e4)" shape=box style=filled];
+  e5 [color="black" fillcolor="#1a9850:#1a9850" label="R8 (e5)" shape=box style=filled];
+  e6 [color="black" fillcolor="#fee08b:#fee08b" label="R15 (e6)" shape=box style=filled];
+  e7 [color="black" fillcolor="#fee08b:#fee08b" label="R16 (e7)" shape=box style=filled];
+  e13 [color="black" fillcolor="#1a9850:#1a9850" label="R4 (e13)" shape=box style=filled];
+  e14 [color="black" fillcolor="#1a9850:#1a9850" label="R4 (e14)" shape=box style=filled];
+  e30 [color="black" fillcolor="#fee08b:#fee08b" label="R15 (e30)" shape=box style=filled];
+  e435 [color="black" fillcolor="#8c510a:orange" label="R17 (e435)" shape=box style=filled];
+  e527 [color="black" fillcolor="#8c510a:orange" label="R17 (e527)" shape=box style=filled];
+  e531 [color="black" fillcolor="#8c510a:orange" label="R17 (e531)" shape=box style=filled];
+  e586 [color="black" fillcolor="#8c510a:orange" label="R17 (e586)" shape=box style=filled];
+  e604 [color="black" fillcolor="#8c510a:orange" label="R17 (e604)" shape=box style=filled];
+  e649 [color="black" fillcolor="#8c510a:orange" label="R17 (e649)" shape=box style=filled];
+  e661 [color="black" fillcolor="#8c510a:orange" label="R17 (e661)" shape=box style=filled];
+  e667 [color="black" fillcolor="#8c510a:orange" label="R17 (e667)" shape=box style=filled];
+  e686 [color="black" fillcolor="#8c510a:orange" label="R17 (e686)" shape=box style=filled];
+  e0 [fillcolor="white" label="⊥" shape=box style=filled];
+}

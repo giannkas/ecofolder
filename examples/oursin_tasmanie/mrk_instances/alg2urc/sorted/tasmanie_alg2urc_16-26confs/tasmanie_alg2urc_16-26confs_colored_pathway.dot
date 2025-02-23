@@ -1,0 +1,74 @@
+digraph test {
+
+//conflicts
+  e2 -> e104 [arrowhead=none color=gray60 style=dashed constraint=false];
+  e8 -> e10 [arrowhead=none color=gray60 style=dashed constraint=false];
+  e15 -> e40 [arrowhead=none color=gray60 style=dashed constraint=false];
+  e18 -> e31 [arrowhead=none color=gray60 style=dashed constraint=false];
+  e29 -> e539 [arrowhead=none color=gray60 style=dashed constraint=false];
+  e84 -> e519 [arrowhead=none color=gray60 style=dashed constraint=false];
+  e84 -> e524 [arrowhead=none color=gray60 style=dashed constraint=false];
+  e84 -> e595 [arrowhead=none color=gray60 style=dashed constraint=false];
+  e93 -> e524 [arrowhead=none color=gray60 style=dashed constraint=false];
+  e444 -> e543 [arrowhead=none color=gray60 style=dashed constraint=false];
+  e444 -> e546 [arrowhead=none color=gray60 style=dashed constraint=false];
+  e519 -> e524 [arrowhead=none color=gray60 style=dashed constraint=false];
+  e519 -> e595 [arrowhead=none color=gray60 style=dashed constraint=false];
+  e524 -> e595 [arrowhead=none color=gray60 style=dashed constraint=false];
+  e543 -> e546 [arrowhead=none color=gray60 style=dashed constraint=false];
+
+  e15 -> e26 [minlen=1];
+  e8 -> e15 [minlen=1];
+  e2 -> e8 [minlen=1];
+  e18 -> e27 [minlen=1];
+  e10 -> e18 [minlen=1];
+  e8 -> e29 [minlen=1];
+  e40 -> e76 [minlen=2];
+  e29 -> e40 [minlen=1];
+  e18 -> e80 [minlen=2];
+  e104 -> e167 [minlen=1];
+  e84 -> e104 [minlen=1];
+  e31 -> e84 [minlen=3];
+  e10 -> e31 [minlen=2];
+  e93 -> e104 [minlen=1];
+  e31 -> e93 [minlen=3];
+  e104 -> e171 [minlen=1];
+  e104 -> e172 [minlen=1];
+  e40 -> e444 [minlen=2];
+  e2 -> e519 [minlen=1];
+  e31 -> e519 [minlen=1];
+  e31 -> e524 [minlen=2];
+  e15 -> e539 [minlen=2];
+  e40 -> e543 [minlen=1];
+  e40 -> e546 [minlen=1];
+  e31 -> e595 [minlen=1];
+  e0 -> e2 [minlen=1];
+  e0 -> e10 [minlen=2];
+
+  e2 [color="black" fillcolor="#d73027:#d73027" label="R13 (e2)" shape=box style=filled];
+  e8 [color="black" fillcolor="#1a9850:#1a9850" label="R5 (e8)" shape=box style=filled];
+  e10 [color="black" fillcolor="#fee08b:#fee08b" label="R15 (e10)" shape=box style=filled];
+  e15 [color="black" fillcolor="#d73027:#d73027" label="R12 (e15)" shape=box style=filled];
+  e18 [color="black" fillcolor="#d73027:#d73027" label="R12 (e18)" shape=box style=filled];
+  e26 [color="black" fillcolor="#1a9850:#1a9850" label="R4 (e26)" shape=box style=filled];
+  e27 [color="black" fillcolor="#1a9850:orange" label="R4 (e27)" shape=box style=filled];
+  e29 [color="black" fillcolor="#8c510a:orange" label="R17 (e29)" shape=box style=filled];
+  e31 [color="black" fillcolor="#1a9850:#1a9850" label="R10 (e31)" shape=box style=filled];
+  e40 [color="black" fillcolor="#1a9850:#1a9850" label="R10 (e40)" shape=box style=filled];
+  e76 [color="black" fillcolor="#1a9850:#1a9850" label="R4 (e76)" shape=box style=filled];
+  e80 [color="black" fillcolor="#d73027:orange" label="R13 (e80)" shape=box style=filled];
+  e84 [color="black" fillcolor="#8c510a:#8c510a" label="R18 (e84)" shape=box style=filled];
+  e93 [color="black" fillcolor="#1a9850:#1a9850" label="R3 (e93)" shape=box style=filled];
+  e104 [color="black" fillcolor="#1a9850:#1a9850" label="R11 (e104)" shape=box style=filled];
+  e167 [color="black" fillcolor="#8c510a:#8c510a" label="R17 (e167)" shape=box style=filled];
+  e171 [color="black" fillcolor="#d73027:#d73027" label="R13 (e171)" shape=box style=filled];
+  e172 [color="black" fillcolor="#d73027:orange" label="R12 (e172)" shape=box style=filled];
+  e444 [color="black" fillcolor="#1a9850:orange" label="R7 (e444)" shape=box style=filled];
+  e519 [color="black" fillcolor="#1a9850:orange" label="R8 (e519)" shape=box style=filled];
+  e524 [color="black" fillcolor="#1a9850:orange" label="R7 (e524)" shape=box style=filled];
+  e539 [color="black" fillcolor="#8c510a:orange" label="R17 (e539)" shape=box style=filled];
+  e543 [color="black" fillcolor="#fee08b:orange" label="R16 (e543)" shape=box style=filled];
+  e546 [color="black" fillcolor="#1a9850:orange" label="R8 (e546)" shape=box style=filled];
+  e595 [color="black" fillcolor="#fee08b:orange" label="R16 (e595)" shape=box style=filled];
+  e0 [fillcolor="white" label="⊥" shape=box style=filled];
+}
