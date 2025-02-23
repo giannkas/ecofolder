@@ -2,6 +2,8 @@
 #include <stdio.h>
 #include <stdlib.h>
 
+#include "common.h"
+
 #define LINE_SIZE 100
 
 
@@ -32,17 +34,6 @@ clist_t* clist_add(clist_t** list, int idpl)
   newco->idcond = idpl;
   newco->next = *list;
   return *list = newco;
-}
-
-int strtoint(char *num) {
-  int  i, len;
-  int result = 0;
-
-  len = strlen(num);
-
-  for(i=0; i<len; i++)
-    result = result * 10 + ( num[i] - '0' );
-  return result;
 }
 
 /**
@@ -85,28 +76,6 @@ int find_predecessor(int rows, int cols, int (*ev_predc)[cols], int pre_ev, int 
   else
     found = pre_ev;
   return found;
-}
-
-char* ftokstr(char *str, int ins, char delim)
-{    
-  int len = strlen(str), i = 0, c_delim = 0, j;
-  char *tok = malloc(len+1);
-
-  for (j = 0; i < len && c_delim <= ins; i++){
-    if(str[i] == delim && c_delim != ins){
-      *tok = '\0';
-      c_delim++; j = 0;
-    }else if(str[i] == delim){
-      c_delim++; *(tok+j) = '\0';
-    }
-    else{
-      *(tok+j) = str[i];
-      j++;
-    }
-  }
-  if (strchr(tok, '\n') || (i == len && *(tok+j) != '\0')) 
-    ins = c_delim + 1;
-  return i == len && ins >= c_delim ? NULL : tok;
 }
 
 int compute_cone_height(int numev, int (*ev_predc)[numev], int srcev, int height)
@@ -236,12 +205,12 @@ void read_mci_file_ev (char *mcifile, char* evevfile, int m_repeat, int cutout, 
 
   FILE *mcif, *evevf, *file_nodes, *file_ends;
   int nqure, nqure_, nquszcut, nquszevscut, szcuts, qnumcutoff = 0, qnumconfl = 0,
-    numco, numev, numpl, numtr, idpl, idtr, sz, i, j, value, ev1, ev2;
-  int pre_ev, post_ev, cutoff, harmful, dummy = 0, tmp = 0, count_mrk = 1, seq_size = 0;
+    numco, numev, numpl, numtr, idpl, idtr, sz, i, j, value, ev1, ev2, chk = 0, tmp2 = 0;
+  int pre_ev, post_ev, cutoff, harmful, dummy = 0, tmp = 0, _ = 0, count_mrk = 1, seq_size = 0;
   int *co2pl, *ev2tr, *tokens, *queries_co,
-    *queries_ev, *cutoffs, *harmfuls, *confl_evs, *leaves_evs;
+    *queries_ev, *cutoffs, *harmfuls, *confl_evs, *leaves_evs, *evs_conf;
   char **plname, **trname, *c;
-  char valuech[12] = "", valuechtmp[12] = "";
+  char valuech[20] = "", valuechtmp[20] = "";
   char fullfilename[LINE_SIZE], *fname;
   cut_t **cuts;
   evprepost **evprps;
@@ -307,6 +276,8 @@ void read_mci_file_ev (char *mcifile, char* evevfile, int m_repeat, int cutout, 
   harmfuls = calloc(numev+1, sizeof(int));
   leaves_evs = calloc(numev+1, sizeof(int)); // collect events with no successors in a evev file
                                           // which are not cutoff events.
+  evs_conf = calloc(numev+1, sizeof(int)); // collect events in a configuration from a evev file
+                                          
   evprps = calloc(numev+1, sizeof(evprepost*));
   for (i = 0; i <= numev; i++) {
     evprps[i] = malloc(sizeof(evprepost));
@@ -351,99 +322,13 @@ void read_mci_file_ev (char *mcifile, char* evevfile, int m_repeat, int cutout, 
     nqure_ = abs(nqure);
   }
 
-  if(evevfile)
-  {
-    if (!m_repeat)
-    { 
-      while (fscanf(evevf," %s", valuech) != EOF)
-        if (strstr(valuech, "+")) // in case of reading redundant events
-          strcpy(valuechtmp, valuech);
-        else
-        {
-          value = strtoint(valuech);
-          if (tmp && strcmp(valuechtmp, ""))
-          {
-            ev_predc_copy[value][tmp] = tmp;
-            strcpy(valuechtmp, "");
-          }
-          if (value > 0 && !queries_ev[value])
-            queries_ev[value] = 1;
-          else if (!value)
-            leaves_evs[tmp] = 1;
-          tmp = value;
-        }
-    }
-    else if (m_repeat > 0)
-      while (fscanf(evevf," %s", valuech) != EOF && count_mrk <= m_repeat)
-      {
-        if (strstr(valuech, "+")) // in case of reading redundant events
-          strcpy(valuechtmp, valuech);
-        else
-        {
-          value = strtoint(valuech);
-          if (tmp && strcmp(valuechtmp, ""))
-          {
-            ev_predc_copy[value][tmp] = tmp;
-            strcpy(valuechtmp, "");
-          }
-          tmp = value;
-          if (value > 0 && !queries_ev[value] && count_mrk == m_repeat)
-            queries_ev[value] = 1;
-          else if (!value)
-            count_mrk++;
-        }
-      }
-    else
-    {
-      while (fscanf(evevf," %s", valuech) != EOF)
-      {
-        if (strstr(valuech, "+")) // in case of reading redundant events
-          strcpy(valuechtmp, valuech);
-        else
-        {
-          value = strtoint(valuech);
-          if (tmp && strcmp(valuechtmp, ""))
-          {
-            ev_predc_copy[value][tmp] = tmp;
-            strcpy(valuechtmp, "");
-          }
-          tmp = value;
-          if (value > 0 && !queries_ev[value])
-            queries_ev[value] = 1;
-          else if (!value && strstr(evevfile, ".evco"))
-            break;
-        }
-      }
-    }
-  }
-  else if (m_repeat > 0 && cuts[m_repeat] && cuts[m_repeat]->repeat < 0)
-  {
-    for (i = 1; i <= cuts[m_repeat]->szcut; i++)
-      queries_co[cuts[m_repeat]->cut[i]] = 1;
-    for (i = 1; i <= cuts[m_repeat]->szevscut; i++)
-      {queries_ev[cuts[m_repeat]->evscut[i]] = 1;
-      //printf("e%d, ", cuts[m_repeat]->evscut[i]);
-      }
-    //printf("\n");
-  }
-  else if (!m_repeat)
-  {
-    for (j = 1; j <= dummy; j++)
-    {
-      for (i = 1; i <= cuts[j]->szcut; i++)
-        queries_co[cuts[j]->cut[i]] = 1;
-      for (i = 1; i <= cuts[j]->szevscut; i++)
-        queries_ev[cuts[j]->evscut[i]] = 1;
-    }
-  }
-
   for (i = 1; i <= numev; i++){
     read_int(ev2tr[i]); // assign a value to an entry in the array ev2tr for every event
                         // in the unfolding in order to map its respective 
                         // transition, eg., ev1 -> tr3 (ev2tr[1] -> 3)
-    read_int(dummy);
+    read_int(tmp);
     if (!evevfile && m_repeat > 0 && cuts[m_repeat] && cuts[m_repeat]->repeat > 0) 
-      queries_ev[i] = dummy; // assign a value to an entry in the array queries_ev for every event
+      queries_ev[i] = tmp; // assign a value to an entry in the array queries_ev for every event
                         // in the unfolding in order to map its respective
                         // query number, eg., ev1 -> 1 (queries_ev[1] -> 1)
   }
@@ -518,12 +403,164 @@ void read_mci_file_ev (char *mcifile, char* evevfile, int m_repeat, int cutout, 
     }
   }
 
+  if(evevfile)
+  {
+    tmp = 0;
+    if (!m_repeat)
+    { 
+      while (fscanf(evevf," %s", valuech) != EOF)
+        if (strstr(valuech, "+")) // in case of reading redundant events
+          strcpy(valuechtmp, valuech);
+        else
+        {
+          value = strtoint(valuech);
+          evs_conf[_] = value;
+          if (tmp && strcmp(valuechtmp, ""))
+          {
+            for(i = 0; evs_conf[i] && !chk; i++)
+            {
+              // check whether previous events (in causal relation) have connections
+              // with the event which may lose the link with a redundant event.
+              if (ev_predc_copy[value][evs_conf[i]])
+                chk = 1;
+            }
+            if (!chk)
+            {
+              // if there is no connection with previous events, then
+              // connect with the last event before the redundant event.
+              ev_predc_copy[value][tmp] = tmp;
+            }
+            // remove connections of the redundant event.
+            valuechtmp[strlen(valuechtmp)-1] = '\0';
+            tmp2 = strtoint(valuechtmp);
+            ev_predc_copy[value][tmp2] = 0;
+            strcpy(valuechtmp, "");
+            chk = 0;
+          }
+          tmp = value;
+          _++;
+          if (value > 0 && !queries_ev[value])
+            queries_ev[value] = 1;
+          else if (!value)
+          {
+            leaves_evs[tmp] = 1;
+            memset(evs_conf, 0,(numev)*sizeof(int));
+            _ = 0, tmp = 0;
+          }
+        }
+    }
+    else if (m_repeat > 0)
+      while (fscanf(evevf," %s", valuech) != EOF && count_mrk <= m_repeat)
+      {
+        if (strstr(valuech, "+")) // in case of reading redundant events
+          strcpy(valuechtmp, valuech);
+        else
+        {
+          value = strtoint(valuech);
+          evs_conf[_] = value;
+          if (tmp && strcmp(valuechtmp, ""))
+          {
+            for(i = 0; evs_conf[i] && !chk; i++)
+            {
+              // check whether previous events (in causal relation) have connections
+              // with the event which may lose the link with a redundant event.
+              if (ev_predc_copy[value][evs_conf[i]])
+                chk = 1;
+            }
+            if (!chk)
+            {
+              // if there is no connection with previous events, then
+              // connect with the last event before the redundant event.
+              ev_predc_copy[value][tmp] = tmp;
+            }
+            // remove connections of the redundant event.
+            valuechtmp[strlen(valuechtmp)-1] = '\0';
+            tmp2 = strtoint(valuechtmp);
+            ev_predc_copy[value][tmp2] = 0;
+            strcpy(valuechtmp, "");
+            chk = 0;
+          }
+          tmp = value;
+          _++;
+          if (value > 0 && !queries_ev[value] && count_mrk == m_repeat)
+            queries_ev[value] = 1;
+          else if (!value)
+          {
+            leaves_evs[tmp] = 1;
+            memset(evs_conf, 0,(numev)*sizeof(int));
+            _ = 0, tmp = 0;
+            count_mrk++;
+          }
+        }
+      }
+    else
+    {
+      while (fscanf(evevf," %s", valuech) != EOF)
+      {
+        if (strstr(valuech, "+")) // in case of reading redundant events
+          strcpy(valuechtmp, valuech);
+        else
+        {
+          value = strtoint(valuech);
+          evs_conf[_] = value;
+          if (tmp && strcmp(valuechtmp, ""))
+          {
+            for(i = 0; evs_conf[i] && !chk; i++)
+            {
+              // check whether previous events (in causal relation) have connections
+              // with the event which may lose the link with a redundant event.
+              if (ev_predc_copy[value][evs_conf[i]])
+                chk = 1;
+            }
+            if (!chk)
+            {
+              // if there is no connection with previous events, then
+              // connect with the last event before the redundant event.
+              ev_predc_copy[value][tmp] = tmp;
+            }
+            // remove connections of the redundant event.
+            valuechtmp[strlen(valuechtmp)-1] = '\0';
+            tmp2 = strtoint(valuechtmp);
+            ev_predc_copy[value][tmp2] = 0;
+            strcpy(valuechtmp, "");
+            chk = 0;
+          }
+          tmp = value;
+          _++;
+          if (value > 0 && !queries_ev[value])
+            queries_ev[value] = 1;
+          else if (!value && strstr(evevfile, ".evco"))
+            break;
+        }
+      }
+    }
+  }
+  else if (m_repeat > 0 && cuts[m_repeat] && cuts[m_repeat]->repeat < 0)
+  {
+    for (i = 1; i <= cuts[m_repeat]->szcut; i++)
+      queries_co[cuts[m_repeat]->cut[i]] = 1;
+    for (i = 1; i <= cuts[m_repeat]->szevscut; i++)
+      {queries_ev[cuts[m_repeat]->evscut[i]] = 1;
+      //printf("e%d, ", cuts[m_repeat]->evscut[i]);
+      }
+    //printf("\n");
+  }
+  else if (!m_repeat)
+  {
+    for (j = 1; j <= dummy; j++)
+    {
+      for (i = 1; i <= cuts[j]->szcut; i++)
+        queries_co[cuts[j]->cut[i]] = 1;
+      for (i = 1; i <= cuts[j]->szevscut; i++)
+        queries_ev[cuts[j]->evscut[i]] = 1;
+    }
+  }
+
   /* print immediate connections to events */
   if (!pathway)
   {
     for (int i = 1; i <= numev; i++){
       for (int j = 1; j <= i; j++){
-        //if (i == 19) printf("%d,", ev_predc_copy[i][j]);
         if (ev_predc_copy[i][j] > 0)
         {
           if (cutout && queries_ev[i] && queries_ev[j])

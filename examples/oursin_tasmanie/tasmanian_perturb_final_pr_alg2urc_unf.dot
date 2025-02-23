@@ -15,8 +15,6 @@ digraph test {
   e8 -> e15;
   e10 -> e18;
   e10 -> e19;
-  e3 -> e20;
-  e5 -> e20;
   e12 -> e21;
   e12 -> e22;
   e12 -> e24;
@@ -30,13 +28,9 @@ digraph test {
   e21 -> e34;
   e24 -> e36;
   e29 -> e40;
-  e3 -> e41;
-  e15 -> e41;
   e31 -> e44;
   e34 -> e48;
   e44 -> e55;
-  e19 -> e56;
-  e27 -> e56;
   e40 -> e59;
   e44 -> e62;
   e22 -> e65;
@@ -44,7 +38,7 @@ digraph test {
   e24 -> e67;
   e34 -> e67;
   e59 -> e76;
-  e56 -> e80;
+  e27 -> e80;
   e62 -> e84;
   e22 -> e88;
   e24 -> e88;
@@ -71,7 +65,6 @@ digraph test {
   e65 -> e303;
   e67 -> e410;
   e65 -> e421;
-  e20 -> e435;
   e30 -> e435;
   e59 -> e444;
   e48 -> e501;
@@ -79,17 +72,13 @@ digraph test {
   e31 -> e519;
   e44 -> e524;
   e7 -> e527;
-  e30 -> e527;
   e5 -> e531;
-  e30 -> e531;
-  e41 -> e539;
+  e26 -> e539;
   e40 -> e543;
   e40 -> e546;
   e6 -> e586;
-  e20 -> e586;
   e31 -> e595;
   e4 -> e604;
-  e20 -> e604;
   e5 -> e649;
   e6 -> e649;
   e4 -> e661;
@@ -108,7 +97,6 @@ digraph test {
   e1 -> e5 [arrowhead=none color=gray60 style=dashed constraint=false];
   e1 -> e6 [arrowhead=none color=gray60 style=dashed constraint=false];
   e1 -> e7 [arrowhead=none color=gray60 style=dashed constraint=false];
-  e2 -> e56 [arrowhead=none color=gray60 style=dashed constraint=false];
   e2 -> e104 [arrowhead=none color=gray60 style=dashed constraint=false];
   e3 -> e12 [arrowhead=none color=gray60 style=dashed constraint=false];
   e4 -> e6 [arrowhead=none color=gray60 style=dashed constraint=false];
@@ -119,13 +107,10 @@ digraph test {
   e12 -> e13 [arrowhead=none color=gray60 style=dashed constraint=false];
   e15 -> e40 [arrowhead=none color=gray60 style=dashed constraint=false];
   e18 -> e31 [arrowhead=none color=gray60 style=dashed constraint=false];
-  e20 -> e531 [arrowhead=none color=gray60 style=dashed constraint=false];
-  e20 -> e649 [arrowhead=none color=gray60 style=dashed constraint=false];
-  e20 -> e667 [arrowhead=none color=gray60 style=dashed constraint=false];
   e22 -> e36 [arrowhead=none color=gray60 style=dashed constraint=false];
   e22 -> e48 [arrowhead=none color=gray60 style=dashed constraint=false];
   e22 -> e67 [arrowhead=none color=gray60 style=dashed constraint=false];
-  e29 -> e41 [arrowhead=none color=gray60 style=dashed constraint=false];
+  e29 -> e539 [arrowhead=none color=gray60 style=dashed constraint=false];
   e30 -> e604 [arrowhead=none color=gray60 style=dashed constraint=false];
   e30 -> e661 [arrowhead=none color=gray60 style=dashed constraint=false];
   e30 -> e667 [arrowhead=none color=gray60 style=dashed constraint=false];
@@ -135,12 +120,15 @@ digraph test {
   e84 -> e524 [arrowhead=none color=gray60 style=dashed constraint=false];
   e84 -> e595 [arrowhead=none color=gray60 style=dashed constraint=false];
   e93 -> e524 [arrowhead=none color=gray60 style=dashed constraint=false];
+  e435 -> e531 [arrowhead=none color=gray60 style=dashed constraint=false];
   e444 -> e543 [arrowhead=none color=gray60 style=dashed constraint=false];
   e444 -> e546 [arrowhead=none color=gray60 style=dashed constraint=false];
   e519 -> e524 [arrowhead=none color=gray60 style=dashed constraint=false];
   e519 -> e595 [arrowhead=none color=gray60 style=dashed constraint=false];
   e524 -> e595 [arrowhead=none color=gray60 style=dashed constraint=false];
   e543 -> e546 [arrowhead=none color=gray60 style=dashed constraint=false];
+  e586 -> e649 [arrowhead=none color=gray60 style=dashed constraint=false];
+  e604 -> e667 [arrowhead=none color=gray60 style=dashed constraint=false];
 
   e1 [color="black" fillcolor="orange:orange" label="R6 (e1)" shape=box style=filled];
   e2 [color="black" fillcolor="orange:orange" label="R13 (e2)" shape=box style=filled];
@@ -159,7 +147,6 @@ digraph test {
   e15 [color="black" fillcolor="orange:orange" label="R12 (e15)" shape=box style=filled];
   e18 [color="black" fillcolor="orange:orange" label="R12 (e18)" shape=box style=filled];
   e19 [color="black" fillcolor="orange:orange" label="R17 (e19)" shape=box style=filled];
-  e20 [color="black" fillcolor="orange:orange" label="R16 (e20)" shape=box style=filled];
   e21 [color="black" fillcolor="orange:orange" label="R4 (e21)" shape=box style=filled];
   e22 [color="black" fillcolor="orange:orange" label="R6 (e22)" shape=box style=filled];
   e24 [color="black" fillcolor="orange:orange" label="R14 (e24)" shape=box style=filled];
@@ -171,11 +158,9 @@ digraph test {
   e34 [color="black" fillcolor="orange:orange" label="R3 (e34)" shape=box style=filled];
   e36 [color="black" fillcolor="orange:orange" label="R16 (e36)" shape=box style=filled];
   e40 [color="black" fillcolor="orange:orange" label="R10 (e40)" shape=box style=filled];
-  e41 [color="black" fillcolor="orange:orange" label="R15 (e41)" shape=box style=filled];
   e44 [color="black" fillcolor="orange:orange" label="R12 (e44)" shape=box style=filled];
   e48 [color="black" fillcolor="orange:orange" label="R5 (e48)" shape=box style=filled];
   e55 [color="black" fillcolor="orange:orange" label="R4 (e55)" shape=box style=filled];
-  e56 [color="black" fillcolor="orange:orange" label="R11 (e56)" shape=box style=filled];
   e59 [color="black" fillcolor="orange:orange" label="R12 (e59)" shape=box style=filled];
   e62 [color="black" fillcolor="orange:orange" label="R22 (e62)" shape=box style=filled];
   e65 [color="black" fillcolor="orange:orange" label="R5 (e65)" shape=box style=filled];

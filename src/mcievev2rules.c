@@ -2,6 +2,8 @@
 #include <stdio.h>
 #include <stdlib.h>
 
+#include "common.h"
+
 typedef struct cut_t
 {
   int repeat;
@@ -33,6 +35,7 @@ void read_mci_file_ev (char *mcifile, char* evevfile)
   int pre_ev, post_ev, cutoff, harmful, dummy = 0, m_repeat = 0;
   int *co2pl, *ev2tr, *tokens, *queries_co, *harmfuls;
   char **plname, **trname, *c;
+  char valuech[20] = "";
   cut_t **cuts;
 
 
@@ -100,9 +103,10 @@ void read_mci_file_ev (char *mcifile, char* evevfile)
   if(evevfile)
   {
     int result;
-    while ((result = fscanf(evevf," %d",&value)) != EOF)
-      if (result == 1)
+    while ((result = fscanf(evevf," %s",valuech)) != EOF)
+      if (!strstr(valuech, "+")) // in case of reading redundant events
       {
+        value = strtoint(valuech);
         if (value > 0 && !queries_ev[nconfs][value])
         {
           queries_ev[nconfs][value] = value;
@@ -114,8 +118,6 @@ void read_mci_file_ev (char *mcifile, char* evevfile)
           nconfs++;
         }
       }
-      else
-        fscanf(evevf, "%*s");
     nconfs--;
   }
   

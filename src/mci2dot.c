@@ -2,6 +2,8 @@
 #include <stdio.h>
 #include <stdlib.h>
 
+#include "common.h"
+
 typedef struct cut_t
 {
   int repeat;
@@ -29,17 +31,6 @@ clist_t* clist_add(clist_t** list, int idpl)
   newco->idcond = idpl;
   newco->next = *list;
   return *list = newco;
-}
-
-int strtoint(char *num) {
-  int  i, len;
-  int result = 0;
-
-  len = strlen(num);
-
-  for(i=0; i<len; i++)
-    result = result * 10 + ( num[i] - '0' );
-  return result;
 }
 
 int read_mci_file (char *mcifile, char *evev_cofile, int m_repeat, char* evname, int cutout, char* conf)
