@@ -17,15 +17,13 @@ digraph test {
   e524 -> e595 [arrowhead=none color=gray60 style=dashed constraint=false];
   e543 -> e546 [arrowhead=none color=gray60 style=dashed constraint=false];
 
-  e15 -> e26 [minlen=1];
-  e8 -> e15 [minlen=1];
-  e2 -> e8 [minlen=1];
   e18 -> e27 [minlen=1];
   e10 -> e18 [minlen=1];
   e8 -> e29 [minlen=1];
+  e2 -> e8 [minlen=1];
   e40 -> e76 [minlen=2];
   e29 -> e40 [minlen=1];
-  e18 -> e80 [minlen=2];
+  e27 -> e80 [minlen=1];
   e104 -> e167 [minlen=1];
   e84 -> e104 [minlen=1];
   e31 -> e84 [minlen=3];
@@ -39,6 +37,7 @@ digraph test {
   e31 -> e519 [minlen=1];
   e31 -> e524 [minlen=2];
   e15 -> e539 [minlen=2];
+  e8 -> e15 [minlen=1];
   e40 -> e543 [minlen=1];
   e40 -> e546 [minlen=1];
   e31 -> e595 [minlen=1];
@@ -50,7 +49,6 @@ digraph test {
   e10 [color="black" fillcolor="orange:orange" label="R15 (e10)" shape=box style=filled];
   e15 [color="black" fillcolor="orange:orange" label="R12 (e15)" shape=box style=filled];
   e18 [color="black" fillcolor="orange:orange" label="R12 (e18)" shape=box style=filled];
-  e26 [color="black" fillcolor="orange:orange" label="R4 (e26)" shape=box style=filled];
   e27 [color="black" fillcolor="orange:orange" label="R4 (e27)" shape=box style=filled];
   e29 [color="black" fillcolor="orange:orange" label="R17 (e29)" shape=box style=filled];
   e31 [color="black" fillcolor="orange:orange" label="R10 (e31)" shape=box style=filled];

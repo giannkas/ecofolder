@@ -18,17 +18,19 @@ digraph test {
   e49 -> e79 [minlen=1];
   e31 -> e49 [minlen=1];
   e99 -> e216 [minlen=1];
+  e47 -> e99 [minlen=1];
   e49 -> e99 [minlen=1];
   e99 -> e217 [minlen=1];
   e99 -> e282 [minlen=1];
   e74 -> e335 [minlen=1];
-  e31 -> e74 [minlen=2];
+  e47 -> e74 [minlen=1];
   e74 -> e336 [minlen=1];
   e74 -> e414 [minlen=1];
+  e47 -> e427 [minlen=1];
   e49 -> e427 [minlen=1];
   e40 -> e524 [minlen=1];
   e32 -> e40 [minlen=1];
-  e31 -> e552 [minlen=2];
+  e47 -> e552 [minlen=1];
   e0 -> e31 [minlen=2];
   e0 -> e32 [minlen=2];
 

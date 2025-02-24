@@ -97,18 +97,41 @@ void check_cone(int numev, int (*ev_predc)[numev], char cone_ev[], int confl_evs
       check_cone(numev, ev_predc, cone_ev, confl_evs, ev_predc[srcev][i]);
 }
 
-void print_pathway(int numev, int (*ev_predc)[numev], int(*ev_succs)[numev], int (*path_evs)[numev], char cone_ev[], char cone_ev2[], int minlen, int confl_evs[numev], int pre_ev, int link_ev)
+void print_pathway(int numev, int (*ev_predc)[numev], 
+  int(*ev_succs)[numev], int (*path_evs)[numev], char cone_ev[], 
+  char cone_ev2[], int minlen, int confl_evs[numev], 
+  int pre_ev, int link_ev, int seq_size, int path_seq[seq_size])
 {
   for (int j = 1; j <= numev; j++)
+  {
+    int chk_inpath = 0;
+    if (ev_predc[pre_ev][j] && !confl_evs[j] && !path_evs[j][link_ev])
+    {
+      for (size_t i = 0; i < seq_size; i++)
+      {
+        if (path_seq[i] == ev_predc[pre_ev][j])
+        {
+          printf("  e%d -> e%d [minlen=%d];\n", j, link_ev, pre_ev == link_ev ? 1 : minlen); // write the connection.
+          path_evs[j][0] = j;
+          path_evs[j][link_ev] = link_ev;
+          chk_inpath = 1;
+          print_pathway(numev, ev_predc, ev_succs, path_evs, 
+            cone_ev, cone_ev2, 1, confl_evs, ev_predc[pre_ev][j], 
+            ev_predc[pre_ev][j], seq_size, path_seq);
+        }
+      }      
+    }
     // If conflict event, then make connection and continue
     if (ev_predc[pre_ev][j] && confl_evs[j] && !path_evs[j][link_ev])
     {
       printf("  e%d -> e%d [minlen=%d];\n", j, link_ev, pre_ev == link_ev ? 1 : minlen); // write the connection.
       path_evs[j][0] = j;
       path_evs[j][link_ev] = link_ev;
-      print_pathway(numev, ev_predc, ev_succs, path_evs, cone_ev, cone_ev2, 1, confl_evs, ev_predc[pre_ev][j], ev_predc[pre_ev][j]);
+      print_pathway(numev, ev_predc, ev_succs, path_evs, 
+        cone_ev, cone_ev2, 1, confl_evs, ev_predc[pre_ev][j], 
+        ev_predc[pre_ev][j], seq_size, path_seq);
     }
-    else if (ev_predc[pre_ev][j] && !confl_evs[j] && !path_evs[j][link_ev])
+    else if (ev_predc[pre_ev][j] && !confl_evs[j] && !path_evs[j][link_ev] && !chk_inpath)
     {
       cone_ev[0] = '\0';
       cone_ev2[0] = '\0';
@@ -116,7 +139,7 @@ void print_pathway(int numev, int (*ev_predc)[numev], int(*ev_succs)[numev], int
       int chk_confl = 0, conct = 0;
       while (k <= numev && k)
       {
-        // Check traingular (redundant) arcs.
+        // Check triangular (redundant) arcs.
         // If no conflict event, save it for later,
         // possible direct connection to the root.
         if (ev_predc[pre_ev][k] && confl_evs[k])
@@ -138,8 +161,11 @@ void print_pathway(int numev, int (*ev_predc)[numev], int(*ev_succs)[numev], int
       if (k > numev && !chk_confl && conct)
         path_evs[conct][0] = conct;
       if (k)
-        print_pathway(numev, ev_predc, ev_succs, path_evs, cone_ev, cone_ev2, ++minlen, confl_evs, ev_predc[pre_ev][j], link_ev);
+        print_pathway(numev, ev_predc, ev_succs, path_evs, 
+          cone_ev, cone_ev2, ++minlen, confl_evs, 
+          ev_predc[pre_ev][j], link_ev, seq_size, path_seq);
     }
+  }
 }
 
 int find_conflict(int rows, int cols, int (*ev_confl)[cols],
@@ -429,6 +455,7 @@ void read_mci_file_ev (char *mcifile, char* evevfile, int m_repeat, int cutout, 
               // if there is no connection with previous events, then
               // connect with the last event before the redundant event.
               ev_predc_copy[value][tmp] = tmp;
+              ev_succs[tmp][value] = value;
             }
             // remove connections of the redundant event.
             valuechtmp[strlen(valuechtmp)-1] = '\0';
@@ -476,6 +503,7 @@ void read_mci_file_ev (char *mcifile, char* evevfile, int m_repeat, int cutout, 
               // if there is no connection with previous events, then
               // connect with the last event before the redundant event.
               ev_predc_copy[value][tmp] = tmp;
+              ev_succs[tmp][value] = value;
             }
             // remove connections of the redundant event.
             valuechtmp[strlen(valuechtmp)-1] = '\0';
@@ -521,6 +549,7 @@ void read_mci_file_ev (char *mcifile, char* evevfile, int m_repeat, int cutout, 
               // if there is no connection with previous events, then
               // connect with the last event before the redundant event.
               ev_predc_copy[value][tmp] = tmp;
+              ev_succs[tmp][value] = value;
             }
             // remove connections of the redundant event.
             valuechtmp[strlen(valuechtmp)-1] = '\0';
@@ -760,7 +789,7 @@ void read_mci_file_ev (char *mcifile, char* evevfile, int m_repeat, int cutout, 
       if (queries_ev[i] && cutoffs[i])
       {
         path_seq[dummy] = i;
-        //printf("1. path_seq[%d]: %d\n", dummy, i);
+        // printf("1. path_seq[%d]: %d\n", dummy, i);
         dummy++;
       }
       else if (queries_ev[i] && !leaves_evs[i] && !cutoffs[i])
@@ -771,7 +800,7 @@ void read_mci_file_ev (char *mcifile, char* evevfile, int m_repeat, int cutout, 
         if (tmp && !leaves_evs[i] && !path_seq[dummy])
         {
           path_seq[dummy] = i;
-          //printf("2. path_seq[%d]: %d\n", dummy, i);
+          // printf("2. path_seq[%d]: %d\n", dummy, i);
           leaves_evs[i] = 1;
           dummy++;
         }
@@ -784,13 +813,15 @@ void read_mci_file_ev (char *mcifile, char* evevfile, int m_repeat, int cutout, 
       else if (queries_ev[i] && leaves_evs[i])
       {
         path_seq[dummy] = i;
-        //printf("3. path_seq[%d]: %d\n", dummy, i);
+        // printf("3. path_seq[%d]: %d\n", dummy, i);
         dummy++;
       }
     dummy = 0;
     for (i = 0; i < seq_size; i++)
       if (path_seq[i])
-        print_pathway(numev+1, ev_predc_copy, ev_succs, path_evs, cone_ev, cone_ev2, 1, confl_evs, path_seq[i], path_seq[i]);
+        print_pathway(numev+1, ev_predc_copy, ev_succs, 
+          path_evs, cone_ev, cone_ev2, 1, confl_evs, 
+          path_seq[i], path_seq[i], seq_size, path_seq);
     
     memset(path_seq, 0, sizeof(path_seq));
     for (i = 1; i <= numev; i++)

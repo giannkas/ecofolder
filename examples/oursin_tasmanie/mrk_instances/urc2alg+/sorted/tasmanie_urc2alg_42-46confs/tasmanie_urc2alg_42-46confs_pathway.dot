@@ -11,7 +11,7 @@ digraph test {
   e6 -> e35 [minlen=1];
   e105 -> e178 [minlen=1];
   e80 -> e105 [minlen=1];
-  e16 -> e80 [minlen=3];
+  e16 -> e80 [minlen=2];
   e80 -> e275 [minlen=2];
   e22 -> e446 [minlen=2];
   e6 -> e22 [minlen=1];

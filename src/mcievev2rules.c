@@ -190,11 +190,11 @@ void read_mci_file_ev (char *mcifile, char* evevfile)
     {
       if (queries_ev[i][j] > 0 && !dummy)
       {
-        printf("%s (e%d)", trname[ev2tr[j]], j);
+        printf("%s", trname[ev2tr[j]]);
         dummy = 1;
       }
       else if (queries_ev[i][j] > 0)
-        printf(" %s (e%d)", trname[ev2tr[j]], j);
+        printf(" %s", trname[ev2tr[j]]);
     }
     printf("\n");
   }
