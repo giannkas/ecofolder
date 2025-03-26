@@ -83,7 +83,11 @@ int compute_cone_height(int numev, int (*ev_predc)[numev], int srcev, int height
   int i;
   for (i = 1; i <= numev && !ev_predc[srcev][i]; i++) {}
   if (ev_predc[srcev][i])
+  {
+    if (srcev == 2)
+      printf("ev_predc[srcev][%d] = %d\n", i, ev_predc[srcev][i]);
     height = compute_cone_height(numev, ev_predc, ev_predc[srcev][i], ++height);
+  }
   return height;
 }
 
@@ -102,11 +106,13 @@ void print_pathway(int numev, int (*ev_predc)[numev],
   char cone_ev2[], int minlen, int confl_evs[numev], 
   int pre_ev, int link_ev, int seq_size, int path_seq[seq_size])
 {
+  int chk_predc = 0;
   for (int j = 1; j <= numev; j++)
   {
     int chk_inpath = 0;
     if (ev_predc[pre_ev][j] && !confl_evs[j] && !path_evs[j][link_ev])
     {
+      chk_predc = 1;
       for (size_t i = 0; i < seq_size; i++)
       {
         if (path_seq[i] == ev_predc[pre_ev][j])
@@ -124,6 +130,7 @@ void print_pathway(int numev, int (*ev_predc)[numev],
     // If conflict event, then make connection and continue
     if (ev_predc[pre_ev][j] && confl_evs[j] && !path_evs[j][link_ev])
     {
+      chk_predc = 1;
       printf("  e%d -> e%d [minlen=%d];\n", j, link_ev, pre_ev == link_ev ? 1 : minlen); // write the connection.
       path_evs[j][0] = j;
       path_evs[j][link_ev] = link_ev;
@@ -133,6 +140,7 @@ void print_pathway(int numev, int (*ev_predc)[numev],
     }
     else if (ev_predc[pre_ev][j] && !confl_evs[j] && !path_evs[j][link_ev] && !chk_inpath)
     {
+      chk_predc = 1;
       cone_ev[0] = '\0';
       cone_ev2[0] = '\0';
       int k = j;
@@ -166,6 +174,8 @@ void print_pathway(int numev, int (*ev_predc)[numev],
           ev_predc[pre_ev][j], link_ev, seq_size, path_seq);
     }
   }
+  if (!chk_predc)
+    path_evs[pre_ev][0] = pre_ev;
 }
 
 int find_conflict(int rows, int cols, int (*ev_confl)[cols],
@@ -391,6 +401,8 @@ void read_mci_file_ev (char *mcifile, char* evevfile, int m_repeat, int cutout, 
         clist_add(&evprps[post_ev]->preset, i);
       if(pre_ev && post_ev && ev_succs[pre_ev][post_ev] == 0 && tokens[i]){ 
         ev_predc[post_ev][pre_ev] = pre_ev; // matrix of predeccesors to only print
+        if (post_ev == 2)
+          printf("ev_predc[srcev][%d] = %d\n", pre_ev, ev_predc[post_ev][pre_ev]);
         ev_predc_copy[post_ev][pre_ev] = pre_ev; // matrix of predeccesors to only print
                                             // immediate predecessors. Comment out if
                                             // you want all dependencies. 
@@ -750,6 +762,12 @@ void read_mci_file_ev (char *mcifile, char* evevfile, int m_repeat, int cutout, 
         }
         else if (!cutout && ev_confl_copy[i][j])
         {
+          if (!evevfile && pathway)
+          {
+            confl_evs[i] = j;
+            confl_evs[j] = i;
+            qnumconfl += 2;
+          }
           printf("  e%d -> e%d [arrowhead=none color=gray60 style=dashed constraint=false];\n",i,ev_confl_copy[i][j]);
           if(csv) fprintf(file_ends,"\"conflict\",\"e%d\",\"e%d\"\n", i,ev_confl_copy[i][j]);
         }
@@ -763,6 +781,7 @@ void read_mci_file_ev (char *mcifile, char* evevfile, int m_repeat, int cutout, 
     if (!cutoff) break;
     cutoffs[cutoff] = cutoff;
     if (queries_ev[cutoff]) qnumcutoff++;
+    else if (!evevfile && pathway) qnumcutoff++;
 #ifdef CUTOFF
     printf("  e%d [style=filled];\n",cutoff);
 #endif
@@ -786,17 +805,25 @@ void read_mci_file_ev (char *mcifile, char* evevfile, int m_repeat, int cutout, 
     tmp = 1;
     int k, dummy2 = 0;
     for (i = 1; i <= numev; i++)
-      if (queries_ev[i] && cutoffs[i])
+      if ((queries_ev[i] && cutoffs[i]) || (!evevfile && cutoffs[i]))
       {
         path_seq[dummy] = i;
         // printf("1. path_seq[%d]: %d\n", dummy, i);
         dummy++;
       }
-      else if (queries_ev[i] && !leaves_evs[i] && !cutoffs[i])
+      else if ((queries_ev[i] && !leaves_evs[i] && !cutoffs[i]) ||
+      (!evevfile && !cutoffs[i]))
       {
         for (j = i+1; j <= numev && tmp; j++)
-          if (ev_succs[i][j] && queries_ev[j])
+        {
+          if ((ev_succs[i][j] && queries_ev[j]) || 
+              (!evevfile && ev_succs[i][j]))
             tmp = 0;
+          /* if (i == 5)
+            printf("ev_succs[%d][%d]: %d\n", i, j, ev_succs[i][j]); */
+        }
+        /* if (i == 5)
+          printf("tmp = %d, leaves_evs[i] = %d, path_seq[%d] = %d\n", tmp, leaves_evs[i], dummy, path_seq[dummy]); */
         if (tmp && !leaves_evs[i] && !path_seq[dummy])
         {
           path_seq[dummy] = i;

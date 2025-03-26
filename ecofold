@@ -15,7 +15,7 @@ fi
 #echo $free
 
 echo "Converting to dot..."
-src/mci2dot_ev $1_unf.mci > $1_unf.dot
+src/mci2dot_ev -p $1_unf.mci > $1_unf.dot
 #src/mci2dot_ev -r 10 -c $1_unf.mci > $1_unf.dot
 #src/mci2dot_ev -r 1 -c $1_unf.mci $2.evev > $1_unf.dot
 
@@ -26,11 +26,11 @@ src/mci2dot_ev $1_unf.mci > $1_unf.dot
 # if the event structure is needed, you should run:
 #src/mci2dot_ev $1_unf.mci > $1_unf.dot
 
-echo "Producing the pdf..."
-dot -T pdf $1_unf.dot > $1_unf.pdf
+# echo "Producing the pdf..."
+# dot -T pdf $1_unf.dot > $1_unf.pdf
 
-echo "Displaying the pdf..."
-evince $1_unf.pdf
+# echo "Displaying the pdf..."
+# evince $1_unf.pdf
 
 # Deleting files...
 #rm -f $1.ll_net $1.dot $1.pdf $1.mci
