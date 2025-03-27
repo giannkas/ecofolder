@@ -1,4 +1,15 @@
 digraph test {
+  e1 -> e3;
+  e2 -> e4;
+  e4 -> e5;
+  e3 -> e6;
+  e4 -> e7;
+  e1 -> e8;
+  e1 -> e9;
+  e0 -> e1;
+  e0 -> e2;
+  e0 -> e10;
+  e0 -> e11;
 
 //conflicts
   e1 -> e2 [arrowhead=none color=gray60 style=dashed constraint=false];
@@ -11,19 +22,6 @@ digraph test {
   e8 -> e9 [arrowhead=none color=gray60 style=dashed constraint=false];
   e10 -> e11 [arrowhead=none color=gray60 style=dashed constraint=false];
 
-  e4 -> e5 [minlen=1];
-  e2 -> e4 [minlen=1];
-  e3 -> e6 [minlen=1];
-  e1 -> e3 [minlen=1];
-  e4 -> e7 [minlen=1];
-  e1 -> e8 [minlen=1];
-  e1 -> e9 [minlen=1];
-  e0 -> e1 [minlen=1];
-Second minlen
-ev_predc[2][13] = 1
-  e0 -> e2 [minlen=2];
-  e0 -> e10 [minlen=1];
-  e0 -> e11 [minlen=1];
   e1 [color="#409f40" fillcolor="#cce6cc:#cce6cc" label="R2 (e1)" shape=box style=filled];
   e2 [color="#409f40" fillcolor="#cce6cc:#cce6cc" label="R3 (e2)" shape=box style=filled];
   e3 [color="#409f40" fillcolor="#cce6cc:#cce6cc" label="R6 (e3)" shape=box style=filled];

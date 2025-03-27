@@ -83,11 +83,7 @@ int compute_cone_height(int numev, int (*ev_predc)[numev], int srcev, int height
   int i;
   for (i = 1; i <= numev && !ev_predc[srcev][i]; i++) {}
   if (ev_predc[srcev][i])
-  {
-    if (srcev == 2)
-      printf("ev_predc[%d][%d] = %d\n", srcev, i, ev_predc[srcev][i]);
     height = compute_cone_height(numev, ev_predc, ev_predc[srcev][i], ++height);
-  }
   return height;
 }
 
@@ -402,8 +398,6 @@ void read_mci_file_ev (char *mcifile, char* evevfile, int m_repeat, int cutout, 
       if(pre_ev && post_ev && ev_succs[pre_ev][post_ev] == 0 && tokens[i]){ 
         ev_predc[post_ev][pre_ev] = pre_ev; // matrix of predeccesors to only print
         ev_predc_copy[post_ev][pre_ev] = pre_ev; // matrix of predeccesors to only print
-        // if (post_ev == 2 || pre_ev == 2)
-        //   printf("ev_predc_copy[%d][%d] = %d\n", post_ev, pre_ev, ev_predc_copy[post_ev][pre_ev]);
                                             // immediate predecessors. Comment out if
                                             // you want all dependencies. 
         ev_succs[pre_ev][post_ev] = post_ev; 
@@ -438,8 +432,6 @@ void read_mci_file_ev (char *mcifile, char* evevfile, int m_repeat, int cutout, 
             ev_predc_copy[i][j] = 
             find_predecessor(numev+1, numev+1, ev_predc, 
               ev_predc[i][j], ev_predc[i][k]) ? 0 : ev_predc[i][j]; 
-            if (i == 2)
-              printf("ev_predc_copy[%d][%d] = %d\n", i, j, ev_predc_copy[i][j]);
           }
         }
     }
@@ -490,7 +482,6 @@ void read_mci_file_ev (char *mcifile, char* evevfile, int m_repeat, int cutout, 
           else if (!value)
           {
             leaves_evs[tmp] = 1;
-            //printf("tmp = %d\n", tmp);
             memset(evs_conf, 0,(numev)*sizeof(int));
             _ = 0, tmp = 0;
           }
@@ -819,15 +810,9 @@ void read_mci_file_ev (char *mcifile, char* evevfile, int m_repeat, int cutout, 
       (!evevfile && !cutoffs[i]))
       {
         for (j = i+1; j <= numev && tmp; j++)
-        {
           if ((ev_succs[i][j] && queries_ev[j]) || 
               (!evevfile && ev_succs[i][j]))
             tmp = 0;
-          /* if (i == 5)
-            printf("ev_succs[%d][%d]: %d\n", i, j, ev_succs[i][j]); */
-        }
-        /* if (i == 5)
-          printf("tmp = %d, leaves_evs[i] = %d, path_seq[%d] = %d\n", tmp, leaves_evs[i], dummy, path_seq[dummy]); */
         if (tmp && !leaves_evs[i] && !path_seq[dummy])
         {
           path_seq[dummy] = i;
@@ -858,8 +843,7 @@ void read_mci_file_ev (char *mcifile, char* evevfile, int m_repeat, int cutout, 
     for (i = 1; i <= numev; i++)
       if (path_evs[i][0] && !dummy)
       {
-        if (path_evs[i][0] == 2) printf("First minlen\n");
-        printf("  e0 -> e%d [minlen=%d];\n", path_evs[i][0], compute_cone_height(numev+1,ev_predc_copy,path_evs[i][0],1));
+        printf("  e0 -> e%d [minlen=%d];\n", path_evs[i][0], compute_cone_height(numev,ev_predc_copy,path_evs[i][0],1));
         if(csv) fprintf(file_ends,"\"edge\",\"e0\",\"e%d\"\n", path_evs[i][0]);
         path_seq[0] = path_evs[i][0];
         dummy++;
@@ -874,8 +858,7 @@ void read_mci_file_ev (char *mcifile, char* evevfile, int m_repeat, int cutout, 
         }
         if (!dummy2) 
         {
-          if (path_evs[i][0] == 2) printf("Second minlen\n");
-          printf("  e0 -> e%d [minlen=%d];\n", path_evs[i][0], compute_cone_height(numev+1,ev_predc_copy,path_evs[i][0],1));
+          printf("  e0 -> e%d [minlen=%d];\n", path_evs[i][0], compute_cone_height(numev,ev_predc_copy,path_evs[i][0],1));
           if(csv) fprintf(file_ends,"\"edge\",\"e0\",\"e%d\"\n", path_evs[i][0]);
         }
         path_seq[dummy] = path_evs[i][0];
