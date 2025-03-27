@@ -19,7 +19,8 @@ digraph test {
   e1 -> e8 [minlen=1];
   e1 -> e9 [minlen=1];
   e0 -> e1 [minlen=1];
-ev_predc[srcev][13] = 1
+Second minlen
+ev_predc[2][13] = 1
   e0 -> e2 [minlen=2];
   e0 -> e10 [minlen=1];
   e0 -> e11 [minlen=1];
