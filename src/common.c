@@ -112,6 +112,78 @@ char* ltokstr(char *str, int ins, char delim){
   return tok;
 }
 
+int compare(const void *a, const void *b) {
+  return strcmp(*(const char **)a, *(const char **)b);
+}
+
+int compare_str_mrks(char *a, char *b) {
+  int comparison = 1;
+  // Make modifiable copies of the input strings
+  char *a_copy = strdup(a);
+  char *b_copy = strdup(b);
+  if (!a_copy || !b_copy) comparison = 0;
+
+  // Count tokens in both strings
+  int max_tokens = 0;
+  for (int i = 0; a[i]; i++) if (a[i] == ',') max_tokens++;
+  for (int i = 0; b[i]; i++) if (b[i] == ',') max_tokens++;
+  max_tokens++; // one more than number of commas
+
+  char **tokens_a = malloc(max_tokens * sizeof(char *));
+  char **tokens_b = malloc(max_tokens * sizeof(char *));
+  if (!tokens_a || !tokens_b) comparison = 0;
+
+  int count_a = 0, count_b = 0;
+  char *token = strtok(a_copy, ",");
+  while (token != NULL) 
+  {
+    tokens_a[count_a++] = strdup(token);
+    token = strtok(NULL, ",");
+  }
+
+  token = strtok(b_copy, ",");
+  while (token != NULL) 
+  {
+    tokens_b[count_b++] = strdup(token);
+    token = strtok(NULL, ",");
+  }
+
+  if (count_a != count_b) 
+  {
+    // Clean up
+    for (int i = 0; i < count_a; i++) free(tokens_a[i]);
+    for (int i = 0; i < count_b; i++) free(tokens_b[i]);
+    free(tokens_a); free(tokens_b);
+      free(a_copy); free(b_copy);
+      comparison = 0;
+  }
+    
+  qsort(tokens_a, count_a, sizeof(char *), compare);
+  printf("hola\n");
+  qsort(tokens_b, count_b, sizeof(char *), compare);
+    
+  for (int i = 0; i < count_a && comparison; i++) {
+    if (strcmp(tokens_a[i], tokens_b[i])) {
+      // Clean up
+      for (int j = 0; j < count_a; j++) free(tokens_a[j]);
+      for (int j = 0; j < count_b; j++) free(tokens_b[j]);
+      free(tokens_a); free(tokens_b);
+      free(a_copy); free(b_copy);
+      comparison = 0;
+    }
+  }
+
+  // Clean up
+  for (int i = 0; i < count_a; i++) {
+      free(tokens_a[i]);
+      free(tokens_b[i]);
+  }
+  free(tokens_a); free(tokens_b);
+  free(a_copy); free(b_copy);
+
+  return comparison;
+}
+
 /****************************************************************************/
 /* Wrapper functions for memory allocation.				    */
 

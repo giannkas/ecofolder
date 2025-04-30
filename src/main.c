@@ -23,7 +23,7 @@ void usage(char *myname)
   "      -mcmillan        unfolds with mcmillan criterion.\n"
   "      -confmax         when used, it will enable interactive mode to display maximal configurations only.\n"
   "      -freechk         used to check freeness. When used, you should enable -badchk <badunf> to\n                       do a proper freeness check, otherwise you will have the initial prefix.\n                       The parameter will enable -mcmillan flag as well.\n                       It cannot be used with -T <name> option.\n"
-  "      -badchk <badunf> used to check badness <badunf> is a mci file containing an unfolding\n                       prefix of the corresponding bad net.\n"
+  "      -badchk <badunf> used to check badness <badunf> is a mci file containing an unfolding\n                       prefix of the corresponding bad net OR a bad file containing on each line a marking considered as bad.\n"
   "      -verbose         if used, Ecofolder will print information concerning the prefix produced.\n"
   "      -q --query <marking>    query a marking in the prefix given by <marking>.\n"
   "      -rst --restriction <places>    restrict <places> from appearing in the unfolding, they must be comma-separated.\n"

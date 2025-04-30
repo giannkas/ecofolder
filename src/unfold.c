@@ -640,12 +640,52 @@ void unfold ()
       }
     if (badunf)
     {
-      sprintf(command, "./badness_check \"%s\" \"%s\"", badunf, mrk2str(qu->marking));
-      harmful_check = system(command)/256;
-      harmful_marking = qu->marking;
+      if (strstr(".mci", badunf))
+      {  
+        sprintf(command, "./badness_check \"%s\" \"%s\"", badunf, mrk2str(qu->marking));
+        harmful_check = system(command)/256;
+        harmful_marking = qu->marking;
+      }
+      else
+      {
+        FILE *bad_mrks;
+        char *lines[100]; // Assuming a maximum of 100 lines
+        int numLines = 0;
+        char buffer[CO_ALLOC_STEP];
+
+        bad_mrks = fopen(badunf, "r");
+        if (bad_mrks == NULL) {
+          printf("Error opening %s file.\n", badunf);
+          return;
+        }
+
+        // Read the lines and store them in the array
+        while (fgets(buffer, CO_ALLOC_STEP, bad_mrks)) 
+        {
+          // Remove the newline character
+          buffer[strcspn(buffer, "\n")] = '\0';
+
+          // Allocate memory for the line and copy it
+          lines[numLines] = malloc(strlen(buffer) + 1);
+          strcpy(lines[numLines], buffer);
+          numLines++;
+        }
+        char *cur_mrk = mrk2str(qu->marking);
+        // Comparing markings
+        for (int i = 0; i < numLines; i++) {
+          printf("Comparing %s with %s\n", lines[i], cur_mrk);
+          // return;
+          harmful_check = !compare_str_mrks(lines[i], cur_mrk);
+          if (harmful_check) {
+            printf("Harmful marking found: %s\n", lines[i]);
+            harmful_marking = qu->marking;
+            break;
+          }
+        }
+        fclose(bad_mrks);
+      }
       //harmful_marking = NULL;
     }
-
     if(!check_query)
     {
       repeat = find_marking(mark_qr, 1);

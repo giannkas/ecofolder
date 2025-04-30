@@ -23,6 +23,8 @@ int strtoint(char*);
 char* ftokstr(char *, int, char);
 char* ltokstr(char *, int, char);
 char* bltokstr(char *, int, char);
+extern int compare(const void *, const void *);
+extern int compare_str_mrks(char *, char *);
 
 //#define MALLOC_CHECK_ = 2;
 

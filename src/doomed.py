@@ -10,6 +10,7 @@ import tempfile
 import time
 import re
 from itertools import product
+import argparse
 
 
 from tqdm import tqdm
@@ -118,23 +119,31 @@ class Model:
     with open(llfile, "w") as fp:
         self.write(fp)
     mcifile = os.path.join(out_d, mcifile)
-    args = [script_path("ecofolder"), "-useids", llfile, "-m", mcifile]
-    subprocess.check_call(args,
+    prmpt = [script_path("ecofolder"), "-useids", llfile, "-m", mcifile]
+    subprocess.check_call(prmpt,
             stderr=subprocess.DEVNULL if not verbose else None)
     return mcifile
   
-  def freecheck(self, mcifile="working.mci", badfile="working_bad.mci", mrk = ""):
+  def freecheck(self, mcifile="working.mci", badfile="working_bad.mci", mrk = "", bad_markings = []):
     llfile = os.path.join(out_d, "working.ll")
     with open(llfile, "w") as fp:
       self.write(fp)
     mcifile = os.path.join(out_d, mcifile)
-    args_bad = [f"{parent_dir}/badness_check", badfile, mrk]
-    bad_mrk = subprocess.run(args_bad,capture_output=True, text=True).returncode
+    bad_mrk = 0
+    if len(bad_markings) > 0:
+      for i in bad_markings:
+        if mrk in ",".join(i):
+          bad_mrk = 1
+          break
+    else:
+      prmpt_bad = [f"{parent_dir}/badness_check", badfile, mrk]
+      bad_mrk = subprocess.run(prmpt_bad,capture_output=True, text=True).returncode
+  
     if bad_mrk:
       free_mrk = str(bad_mrk*0)
     else:
-      args = [script_path("ecofolder"), "-useids", "-freechk", "-badchk", badfile, llfile, "-m", mcifile]
-      free_mrk = subprocess.check_output(args).decode()
+      prmpt = [script_path("ecofolder"), "-useids", "-freechk", "-badchk", badfile, llfile, "-m", mcifile]
+      free_mrk = subprocess.check_output(prmpt).decode()
     
     return free_mrk
   
@@ -226,15 +235,15 @@ def names_from_atoms(atoms):
               if a.name == "resolved"}
 
 def asp_of_mci(mcifile, ns=None):
-  args = [script_path("mci2asp"), mcifile, "-p"]
+  prmpt = [script_path("mci2asp"), mcifile, "-p"]
   if ns:
-    args.append(str(ns))
-  return subprocess.check_output(args).decode()
+    prmpt.append(str(ns))
+  return subprocess.check_output(prmpt).decode()
 
 #to review
 def evstump_of_mci(mcifile : str) -> dict:
-  args = [script_path("mci2evstump"), mcifile]
-  result = subprocess.check_output(args).decode()
+  prmpt = [script_path("mci2evstump"), mcifile]
+  result = subprocess.check_output(prmpt).decode()
   lresult = result.split()
   dicevents = {}
   for i in lresult:
@@ -400,11 +409,18 @@ def str_conf(C):
   return Cstr
 
 if __name__ == "__main__":
+  parser = argparse.ArgumentParser(description="Execution of MinDoo algorithm.")
+  parser.add_argument("--model", type=str, required=True, help="Path to the model file, excluding the .ll or .ll_net extension")
+  parser.add_argument("--badmarkings", type=str, required=True, help="Path to the bad markings file, it should be a .bad file")
+  parser.add_argument("--notbadnet", action='store_true', help="If set, the bad net will not be created")
+  args = parser.parse_args()
+  
   if len(sys.argv) < 3:
     print("Usage: ./doomed <model> <badmarkings>")
   else:
-    model_ll = sys.argv[1]
-    bad_marking = sys.argv[2]
+    model_ll = args.model
+    bad_marking = args.badmarkings
+
     model = Model(model_ll)
     expnd_query_markings = []
 
@@ -419,20 +435,21 @@ if __name__ == "__main__":
       for l in bad_markings:
         newmks.write(",".join(l) + "\n")
 
-    # creating the corresponding bad net of the model
-    args_bad_net = [script_path("bad_net"), model.filename, bad_marking]
-    subprocess.run(args_bad_net)
-
-    # # preparing badnet's filename to unfold next
     base_output = os.path.basename(model_ll.replace(".ll", ""))
-    bad_ll = os.path.dirname(model_ll) + f"/{base_output}_bad.ll_net"
+    if not args.notbadnet:
+      # creating the corresponding bad net of the model
+      prmpt_bad_net = [script_path("bad_net"), model.filename, bad_marking]
+      subprocess.run(prmpt_bad_net)
 
-    # # unfolding the badnet model
-    args_bad_unf = [script_path("ecofolder"), bad_ll]
-    subprocess.run(args_bad_unf)
+      # # preparing badnet's filename to unfold next
+      bad_ll = os.path.dirname(model_ll) + f"/{base_output}_bad.ll_net"
 
-    # # preparing badnet's prefix filename to use in the algorithm
-    bad_unf = bad_ll.replace(".ll_net", "") + "_unf"
+      # # unfolding the badnet model
+      prmpt_bad_unf = [script_path("ecofolder"), bad_ll]
+      subprocess.run(prmpt_bad_unf)
+
+      # # preparing badnet's prefix filename to use in the algorithm
+      bad_unf = bad_ll.replace(".ll_net", "") + "_unf"
 
     out_d = f"gen/{base_output}"
 
@@ -559,11 +576,14 @@ if __name__ == "__main__":
     def is_free(C_e):
       stats['freechk'] += 1
       Cstr_ = str_conf(C_e)
-      args = [script_path("mci2asp"), "-cf", Cstr_, mci]
-      markidC_e = subprocess.check_output(args).decode()
+      prmpt = [script_path("mci2asp"), "-cf", Cstr_, mci]
+      markidC_e = subprocess.check_output(prmpt).decode()
       tupleC_e = idpl2plnames(markidC_e)
       model.set_marking(tupleC_e)
-      freeC_e = int(model.freecheck(badfile=bad_unf, mrk=",".join([i for i in tupleC_e])).strip())
+      if args.notbadnet:
+        freeC_e = int(model.freecheck(badfile=bad_marking, mrk=",".join([i for i in tupleC_e]), bad_markings=bad_markings).strip())
+      else:
+        freeC_e = int(model.freecheck(badfile=bad_unf, mrk=",".join([i for i in tupleC_e])).strip())
       return freeC_e
 
     def handle(C_e):
