@@ -2,8 +2,8 @@ PEP
 PTNet
 FORMAT_N
 PL
-3"cro_3"M0
-2"cro_2"M1
+3"cro_3"M1
+2"cro_2"M0
 6"cro_1"M0
 7"cro_0"M0
 11"cII_1"M1

@@ -640,8 +640,8 @@ void unfold ()
       }
     if (badunf)
     {
-      if (strstr(".mci", badunf))
-      {  
+      if (!strstr(badunf, ".bad"))
+      { 
         sprintf(command, "./badness_check \"%s\" \"%s\"", badunf, mrk2str(qu->marking));
         harmful_check = system(command)/256;
         harmful_marking = qu->marking;
@@ -649,7 +649,7 @@ void unfold ()
       else
       {
         FILE *bad_mrks;
-        char *lines[100]; // Assuming a maximum of 100 lines
+        char *lines[1000]; // assuming a maximum of 1000 lines (markings)
         int numLines = 0;
         char buffer[CO_ALLOC_STEP];
 
@@ -673,18 +673,14 @@ void unfold ()
         char *cur_mrk = mrk2str(qu->marking);
         // Comparing markings
         for (int i = 0; i < numLines; i++) {
-          printf("Comparing %s with %s\n", lines[i], cur_mrk);
-          // return;
-          harmful_check = !compare_str_mrks(lines[i], cur_mrk);
+          harmful_check = compare_str_mrks(lines[i], cur_mrk);
           if (harmful_check) {
-            printf("Harmful marking found: %s\n", lines[i]);
             harmful_marking = qu->marking;
             break;
           }
         }
         fclose(bad_mrks);
       }
-      //harmful_marking = NULL;
     }
     if(!check_query)
     {
