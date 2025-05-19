@@ -1009,7 +1009,7 @@ void usage ()
 
     "     Options:\n"
     "      -c --cutout  if a marking is queried or \n                  part of a reachability check then\n                  it will show a cutout of\n                  the whole unfolding\n"
-    "      -p --pathway   display pathway structure instead of event structure."
+    "      -p --pathway   display pathway structure instead of event structure.\n"
     "      -r <instance>  highlight <instance> of a repeated marking - <0> will show all instances. \n"
     "      -cf <confg>:   used to return the marking led \n by the configuration <confg>(string type).\n You cannot enable cutouts and this \n flag at the same time.\n"
     "      -csv           create csv files to include the event struture, and its corresponding conflict file.\n\n"

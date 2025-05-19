@@ -1,0 +1,23 @@
+digraph test {
+  e1 -> e8;
+  e2 -> e8;
+  e3 -> e29;
+  e8 -> e29;
+  e29 -> e40;
+  e40 -> e59;
+  e59 -> e76;
+  e40 -> e546;
+  e0 -> e1;
+  e0 -> e2;
+  e0 -> e3;
+  e1 [color="black" fillcolor="#1a9850:#1a9850" label="R6 (e1)" shape=box style=filled];
+  e2 [color="black" fillcolor="#d73027:#d73027" label="R13 (e2)" shape=box style=filled];
+  e3 [color="black" fillcolor="#fee08b:#fee08b" label="R14 (e3)" shape=box style=filled];
+  e8 [color="black" fillcolor="#1a9850:#1a9850" label="R5 (e8)" shape=box style=filled];
+  e29 [color="black" fillcolor="#8c510a:#8c510a" label="R17 (e29)" shape=box style=filled];
+  e40 [color="black" fillcolor="#1a9850:#1a9850" label="R10 (e40)" shape=box style=filled];
+  e59 [color="black" fillcolor="#d73027:#d73027" label="R12 (e59)" shape=box style=filled];
+  e76 [color="black" fillcolor="#1a9850:#1a9850" label="R4 (e76)" shape=box style=filled];
+  e546 [color="black" fillcolor="#1a9850:#1a9850" label="R8 (e546)" shape=box style=filled];
+  e0 [fillcolor="white" label="⊥" shape=box style=filled];
+}

@@ -1,0 +1,27 @@
+digraph test {
+  e2 -> e4;
+  e2 -> e5;
+  e4 -> e9;
+  e9 -> e12;
+  e12 -> e21;
+  e12 -> e24;
+  e21 -> e34;
+  e34 -> e48;
+  e5 -> e302;
+  e24 -> e302;
+  e48 -> e302;
+  e48 -> e501;
+  e0 -> e2;
+  e2 [color="black" fillcolor="#d73027:#d73027" label="R13 (e2)" shape=box style=filled];
+  e4 [color="black" fillcolor="#1a9850:#1a9850" label="R5 (e4)" shape=box style=filled];
+  e5 [color="black" fillcolor="#1a9850:#1a9850" label="R8 (e5)" shape=box style=filled];
+  e9 [color="black" fillcolor="#d73027:#d73027" label="R12 (e9)" shape=box style=filled];
+  e12 [color="black" fillcolor="#1a9850:#1a9850" label="R1 (e12)" shape=box style=filled];
+  e21 [color="black" fillcolor="#1a9850:#1a9850" label="R4 (e21)" shape=box style=filled];
+  e24 [color="black" fillcolor="#fee08b:#fee08b" label="R14 (e24)" shape=box style=filled];
+  e34 [color="black" fillcolor="#1a9850:#1a9850" label="R3 (e34)" shape=box style=filled];
+  e48 [color="black" fillcolor="#1a9850:#1a9850" label="R5 (e48)" shape=box style=filled];
+  e302 [color="black" fillcolor="#8c510a:#8c510a" label="R17 (e302)" shape=box style=filled];
+  e501 [color="black" fillcolor="#d73027:#d73027" label="R12 (e501)" shape=box style=filled];
+  e0 [fillcolor="white" label="⊥" shape=box style=filled];
+}

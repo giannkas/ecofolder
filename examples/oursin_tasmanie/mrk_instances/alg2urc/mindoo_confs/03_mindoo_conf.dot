@@ -6,11 +6,11 @@ digraph test {
   e12 -> e22;
   e12 -> e24;
   e21 -> e34;
-  e22 -> e88;
-  e24 -> e88;
-  e34 -> e88;
-  e88 -> e296;
-  e88 -> e298;
+  e22 -> e65;
+  e34 -> e65;
+  e24 -> e303;
+  e65 -> e303;
+  e65 -> e421;
   e0 -> e2;
   e2 [color="black" fillcolor="orange:orange" label="R13 (e2)" shape=box style=filled];
   e4 [color="black" fillcolor="orange:orange" label="R5 (e4)" shape=box style=filled];
@@ -20,8 +20,8 @@ digraph test {
   e22 [color="black" fillcolor="orange:orange" label="R6 (e22)" shape=box style=filled];
   e24 [color="black" fillcolor="orange:orange" label="R14 (e24)" shape=box style=filled];
   e34 [color="black" fillcolor="orange:orange" label="R3 (e34)" shape=box style=filled];
-  e88 [color="black" fillcolor="orange:orange" label="R15 (e88)" shape=box style=filled];
-  e296 [color="black" fillcolor="cornflowerblue:orange" label="R17 (e296)" shape=box style=filled];
-  e298 [color="black" fillcolor="cornflowerblue:orange" label="R12 (e298)" shape=box style=filled];
+  e65 [color="black" fillcolor="orange:orange" label="R5 (e65)" shape=box style=filled];
+  e303 [color="black" fillcolor="cornflowerblue:orange" label="R17 (e303)" shape=box style=filled];
+  e421 [color="black" fillcolor="cornflowerblue:orange" label="R12 (e421)" shape=box style=filled];
   e0 [fillcolor="white" label="⊥" shape=box style=filled];
 }
