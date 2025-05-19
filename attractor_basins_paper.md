@@ -1,4 +1,4 @@
-# Attractor basins in concurrent systems
+# Attractor basin in concurrent systems
 
 This file is to guide the reproducibility of results informed in _Attractor Basins in Concurrent Systems_. After you have installed `ecofolder` and its prerequisites, from the parent folder (`ecofolder`), you can continue as follows:
 
