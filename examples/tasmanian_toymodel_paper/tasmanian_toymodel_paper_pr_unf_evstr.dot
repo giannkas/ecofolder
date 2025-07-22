@@ -22,16 +22,16 @@ digraph test {
   e0 -> e2 [minlen=1];
   e0 -> e10 [minlen=1];
   e0 -> e11 [minlen=1];
-  e1 [color="#409f40" fillcolor="#cce6cc:#cce6cc" label="R2 (e1)" shape=box style=filled];
-  e2 [color="#409f40" fillcolor="#cce6cc:#cce6cc" label="R3 (e2)" shape=box style=filled];
-  e3 [color="#409f40" fillcolor="#cce6cc:#cce6cc" label="R6 (e3)" shape=box style=filled];
-  e4 [color="#409f40" fillcolor="#cce6cc:#cce6cc" label="R5 (e4)" shape=box style=filled];
-  e5 [color="#409f40" fillcolor="#cce6cc:#cce6cc" label="R6 (e5)" shape=box style=filled];
-  e6 [color="black" fillcolor="cornflowerblue:cornflowerblue" label="R2 (e6)" shape=box style=filled];
-  e7 [color="black" fillcolor="cornflowerblue:cornflowerblue" label="R1 (e7)" shape=box style=filled];
-  e8 [color="black" fillcolor="cornflowerblue:cornflowerblue" label="R5 (e8)" shape=box style=filled];
-  e9 [color="black" fillcolor="cornflowerblue:cornflowerblue" label="R1 (e9)" shape=box style=filled];
-  e10 [color="black" fillcolor="cornflowerblue:cornflowerblue" label="R5 (e10)" shape=box style=filled];
-  e11 [color="black" fillcolor="cornflowerblue:cornflowerblue" label="R4 (e11)" shape=box style=filled];
+  e1 [color="black" fillcolor="#1a9850:#1a9850" label="R2 (e1)" shape=box style=filled];
+  e2 [color="black" fillcolor="#1a9850:#1a9850" label="R3 (e2)" shape=box style=filled];
+  e3 [color="black" fillcolor="#fee08b:#fee08b" label="R6 (e3)" shape=box style=filled];
+  e4 [color="black" fillcolor="#fee08b:#fee08b" label="R5 (e4)" shape=box style=filled];
+  e5 [color="black" fillcolor="#fee08b:#fee08b" label="R6 (e5)" shape=box style=filled];
+  e6 [color="black" fillcolor="#1a9850:cornflowerblue" label="R2 (e6)" shape=box style=filled];
+  e7 [color="black" fillcolor="#d73027:cornflowerblue" label="R1 (e7)" shape=box style=filled];
+  e8 [color="black" fillcolor="#fee08b:cornflowerblue" label="R5 (e8)" shape=box style=filled];
+  e9 [color="black" fillcolor="#d73027:cornflowerblue" label="R1 (e9)" shape=box style=filled];
+  e10 [color="black" fillcolor="#fee08b:cornflowerblue" label="R5 (e10)" shape=box style=filled];
+  e11 [color="black" fillcolor="#fee08b:cornflowerblue" label="R4 (e11)" shape=box style=filled];
   e0 [fillcolor="white" label="⊥" shape=box style=filled];
 }

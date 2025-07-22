@@ -1,3 +1,0 @@
-#!/bin/bash
-export PATH=$PWD:$PATH
-python3 src/minconfs-to-marking.py $*

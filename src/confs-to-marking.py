@@ -95,6 +95,53 @@ def minconfs(prefix_asp, markings, shortest=0, redundant=1, clingo_opts=""):
     else:
       yield nrdn
 
+def maxconfs(prefix_asp, bad_aspfile, badmrks=1, redundant=1, clingo_opts=""):
+  sat = clingo.Control(["0", "--heuristic=Domain",
+      "--enum-mode=domRec", "--dom-mod=3,16"]+clingo_opts)
+  sat.add("base", [], prefix_asp)
+  sat.load(bad_aspfile)
+  sat.load(script_path("configuration.asp"))
+  #sat.load(script_path("anycfg.asp"))
+  if badmrks > 1:
+    tobads = ":- "
+    for i in range(1,badmrks+1):
+      if i == badmrks:
+        tobads += f" not ncut(P), bad{i}(P)."
+      else:
+        tobads += f"not ncut(P), bad{i}(P);"
+    sat.add("base", [], f"#include \"{script_path("configuration.asp")}\"."
+             f"#include \"{script_path("cut.asp")}\".")
+    sat.add("base", [], tobads)
+    sat.add("base", [], "#show e/1.")
+  else:
+    sat.load(script_path("f0.asp"))
+
+  sat.add("base", [],
+      "in_h_edge(P,E) :- edge(C,E), h(C,P)."
+      "out_h_edge(P,E) :- edge(E,C), h(C,P)."
+      "redundant(E) :- e(E); in_h_edge(P,E) : out_h_edge(P,E); out_h_edge(P,E) : in_h_edge(P,E).")
+  sat.add("base", [],
+      "e_non_redundant(E) :- e(E), not redundant(E).")
+  
+  sat.ground([("base",())])
+  # for sol in sat.solve(yield_=True):
+  #   atoms = sol.symbols(atoms=True)
+  #   cfg = cfg_from_atoms(atoms)
+  #   yield cfg
+  for sol in sat.solve(yield_=True):
+    atoms = sol.symbols(atoms=True)
+    cfg = cfg_from_atoms(atoms)
+    rdn = rdn_from_atoms(atoms)
+    nrdn = nrdn_from_atoms(atoms)
+    if rdn and rdn[0] in cfg:
+      cfg_lst = list(cfg)
+      cfg_lst[cfg.index(rdn[0])] = rdn[0][:-1] + "+" + rdn[0][-1:]
+      cfg = tuple(cfg_lst)
+    if redundant:
+      yield cfg
+    else:
+      yield nrdn
+
 def sort_by_number(string):
   number_str = string.split(',')[-1][1:].strip(')')
   number_str = number_str.rstrip('+')
@@ -124,6 +171,8 @@ def compute_minconfs():
     Options:
       -sht --shortest   mode to select the configurations that contain the least number of events.
       -nrdn --no-redundant   mode to select the configurations that contain no redundant events, redundant events are marked with '+' sign.
+      -mcmillan    collate the mcmillan criterion to unfold the net in ecofolder.
+      -maxconf   produce the maximal configurations instead of minimal ones to the specified marking. 
       -p --pathway display pathway structure instead of event structure.
       -r --repeat    <conf_number>   produce a cutout showing only the configuration selected by <conf_number>.
       -pdf    mode to render a PDF file to display the configurations.\n
@@ -140,6 +189,8 @@ def compute_minconfs():
   model_unf = ""
   out_fname = ""
   query_marking = ""
+  mcmillan = 0
+  maxconf = 0
 
   params = len(sys.argv)
 
@@ -168,6 +219,10 @@ def compute_minconfs():
       shortest = 1
     elif sys.argv[i] == "-nrdn" or sys.argv[i] == "--no-redundant":
       redundant = 0
+    elif sys.argv[i] == "-mcmillan":
+      mcmillan = 1
+    elif sys.argv[i] == "-maxconf":
+      maxconf = 1
     elif sys.argv[i] == "-p" or sys.argv[i] == "--pathway":
       pathway = 1
     elif sys.argv[i] == "-r" or sys.argv[i] == "--repeat":
@@ -201,9 +256,10 @@ def compute_minconfs():
 
   if len(model_unf) < 1:
     if out_fname == "":
-      args_unf = [script_path("ecofolder"), model.filename]
+      args_unf = [script_path("ecofolder"), "-mcmillan" if mcmillan else None, model.filename]
     else:
-      args_unf = [script_path("ecofolder"), model.filename, "-m", out_fname + "_unf.mci"]
+      args_unf = [script_path("ecofolder"), model.filename, "-mcmillan" if mcmillan else None, "-m", out_fname + "_unf.mci"]
+    args_unf = [arg for arg in args_unf if arg is not None]
     subprocess.run(args_unf)
 
     model_unf = model_ll + "_unf.mci" if out_fname == "" else out_fname + "_unf.mci" if "/" in out_fname and len(out_fname) > 1 else f"{os.path.dirname(model_ll)}/{out_fname}_unf.mci"
@@ -216,15 +272,35 @@ def compute_minconfs():
     with open(f"{out_d}/{base_output}.asp", "w") as fp:
       fp.write(prefix)
 
+  if maxconf:
+    bad_aspfile = os.path.join(out_d, "bad.asp")
+    with open(bad_aspfile, "w") as fp:
+      if len(extd_badmarkings) > 1:
+        curm = 1
+        for m in extd_badmarkings:
+          for p in m:
+            fp.write(f"{clingo.Function(f'bad{curm}', (clingo.String(p),))}.\n")
+          curm += 1
+      else:
+        for m in extd_badmarkings:
+          for p in m:
+            fp.write(f"{clingo.Function('bad', (clingo.String(p),))}.\n")
+
   clingo_opts = ["-W", "none"]
   t0 = time.time()
 
-  outf = f"{os.path.dirname(model_ll)}/minconfs-to-marking_{base_output}.evev" if out_fname == "" else out_fname + ".evev" if "/" in out_fname and len(out_fname) > 1 else f"{os.path.dirname(model_ll)}/{out_fname}.evev"
+  operation = "maxconfs-to-marking_" if maxconf else "minconfs-to-marking_"
+
+  outf = f"{os.path.dirname(model_ll)}/{operation}{base_output}.evev" if out_fname == "" else out_fname + ".evev" if "/" in out_fname and len(out_fname) > 1 else f"{os.path.dirname(model_ll)}/{out_fname}.evev"
 
   with open(outf, "w") as fout:
-    for C in tqdm(minconfs(prefix, extd_badmarkings, shortest, redundant, clingo_opts), desc="Computing minimal configurations"):
-      #print(sorted(C, key=sort_by_number))
-      print(str_conf(sorted(C, key=sort_by_number)), file=fout)
+    if maxconf:
+      for C in tqdm(maxconfs(prefix, bad_aspfile, len(extd_badmarkings), redundant, clingo_opts), desc="Computing maximal configurations"):
+        print(str_conf(sorted(C, key=sort_by_number)), file=fout)
+    else:
+      for C in tqdm(minconfs(prefix, extd_badmarkings, shortest, redundant, clingo_opts), desc="Computing minimal configurations"):
+        #print(sorted(C, key=sort_by_number))
+        print(str_conf(sorted(C, key=sort_by_number)), file=fout)
 
   if outpdf:
     print("Converting to dot...")

@@ -129,7 +129,7 @@ Displaying the pdf...
 
 A PDF file is displayed, which shows the results of the reachability checks. These checks determine whether a marking (starting from the initial marking) is reachable in the net. The output confirms a unique event sequence that reaches the target marking, but there may be others. At the moment of writing this tutorial, the author did not find one single marking with multiple event sequences that could be illustrated. 
 
-We can use the module `minconfs-to-marking` to compute all the _minimal_ configurations (event sequences) that lead to specific marking(s). Minimality in this context means the least number of events in each sequence (configuration) needed to reach my desired marking(s).  Therefore, let us modify the marking in `termites_pr.bad` file to include more target markings before using `minconfs-to-marking` module. The next marking query will be used to test this module (which corresponds to attractors' markings we computed before):
+We can use the module `confs-to-marking` to compute all the _minimal_ (by default, use `-maxconf` flag to compute _maximal_ configurations instead) configurations (event sequences) that lead to specific marking(s). Minimality in this context means the least number of events in each sequence (configuration) needed to reach my desired marking(s).  Therefore, let us modify the marking in `termites_pr.bad` file to include more target markings before using `confs-to-marking` module. The next marking query will be used to test this module (which corresponds to attractors' markings we computed before):
 
 ```bash
 Ac+,Ec-,Fg-,Rp-,Sd-,Te-,Wd*,Wk-
@@ -138,18 +138,18 @@ Ac+,Ec-,Fg-,Rp-,Sd-,Te-,Wd*,Wk-
 The command to launch this module and visualize the output in a PDF file is:
 
 ```bash
-./minconfs-to-marking -mdl examples/termites/tutorial/termites_pr.ll_net -mrk examples/termites/tutorial/termites_pr.bad -pdf
+./confs-to-marking -mdl examples/termites/tutorial/termites_pr.ll_net -mrk examples/termites/tutorial/termites_pr.bad -pdf
 ```
 
-The command will generate a file named `examples/termites/tutorial/minconfs-to-marking_termites_pr.evev`. This file will contain the printed configurations (one per line), five configurations in total. You can disregard the trailing `0`, which simply indicates the end of each configuration. In case you one wants to see the full unfolding structure with input and output conditions for each event, proceed as follows:
+The command will generate a file named `examples/termites/tutorial/confs-to-marking_termites_pr.evev`. This file will contain the printed configurations (one per line), five configurations in total. You can disregard the trailing `0`, which simply indicates the end of each configuration. In case you one wants to see the full unfolding structure with input and output conditions for each event, proceed as follows:
 
 ```bash
-./src/mci2dot -c examples/termites/tutorial/termites_pr_unf.mci examples/termites/tutorial/minconfs-to-marking_termites_pr.evev > examples/termites/tutorial/termites_pr_unf.dot
+./src/mci2dot -c examples/termites/tutorial/termites_pr_unf.mci examples/termites/tutorial/confs-to-marking_termites_pr.evev > examples/termites/tutorial/termites_pr_unf.dot
 dot -T pdf examples/termites/tutorial/termites_pr_unf.dot > examples/termites/tutorial/termites_pr_unf.pdf
 evince examples/termites/tutorial/termites_pr_unf.pdf
 ```
 
-We basically use the already created prefix to include the conditions in the chart, but we restrict the events to show by adding the previous list of configurations, i.e., `minconfs-to-marking_termites_pr.evev`.
+We basically use the already created prefix to include the conditions in the chart, but we restrict the events to show by adding the previous list of configurations, i.e., `confs-to-marking_termites_pr.evev`.
 
 ### General tools
 
@@ -168,7 +168,7 @@ evince examples/termites/tutorial/termites_pr_unf_colored.pdf
 Similarly, in case you only have an event structure, you can use the next command: 
 
 ```bash
-./color_in_dot -ru "R1,R2,R3,R4;R5;R6,R7;R8,R9" -co "#1a9850;#d73027;#fee08b;#8c510a" -cotips "orange" -dotfile examples/termites/tutorial/termites_pr_unf.dot -evevfile examples/termites/tutorial/minconfs-to-marking_termites_pr.evev -out examples/termites/tutorial/termites_pr_unf_colored.dot
+./color_in_dot -ru "R1,R2,R3,R4;R5;R6,R7;R8,R9" -co "#1a9850;#d73027;#fee08b;#8c510a" -cotips "orange" -dotfile examples/termites/tutorial/termites_pr_unf.dot -evevfile examples/termites/tutorial/confs-to-marking_termites_pr.evev -out examples/termites/tutorial/termites_pr_unf_colored.dot
 ...
 ```
 

@@ -7,9 +7,9 @@ variables:
 
 
 rules:   ### second test: 
- Lob- >> Urc+       # low densities (or absence) of lobster may increase (or restore) urchin densities.
- Urc+ >> Lob-       # high densities of urchins can reduce lobster densities.
- Lob+ >> Urc-       # high densities of lobsters can reduce urchin densities.
- Lob+ >> Fis+       # high densities of lobsters can increase fishing activity.
- Fis+ >> Lob-       # too much fishing activity can reduce lobster densities.
- Lob- >> Fis-       # low lobster densities can reduce fishing activities.
+ Lob- >> Urc+       # low densities (or absence) of lobster may increase (or restore) urchin densities (coloured in red #d73027).
+ Urc+ >> Lob-       # high densities of urchins can reduce lobster densities (coloured in green #1a9850).
+ Lob+ >> Urc-       # high densities of lobsters can reduce urchin densities (coloured in green #1a9850).
+ Lob+ >> Fis+       # high densities of lobsters can increase fishing activity (coloured in light orange #fee08b).
+ Fis+ >> Lob-       # too much fishing activity can reduce lobster densities (coloured in light orange #fee08b).
+ Lob- >> Fis-       # low lobster densities can reduce fishing activities (coloured in light orange #fee08b).

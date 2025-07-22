@@ -441,7 +441,8 @@ void read_mci_file_ev (char *mcifile, char* evevfile, int m_repeat, int cutout, 
   {
     tmp = 0;
     if (!m_repeat)
-    { 
+    {
+      // Handling when the queried instance marking is the first one. 
       while (fscanf(evevf," %s", valuech) != EOF)
         if (strstr(valuech, "+")) // in case of reading redundant events
           strcpy(valuechtmp, valuech);
@@ -451,6 +452,11 @@ void read_mci_file_ev (char *mcifile, char* evevfile, int m_repeat, int cutout, 
           evs_conf[_] = value;
           if (tmp && strcmp(valuechtmp, ""))
           {
+            if (valuechtmp[strlen(valuechtmp)-1] == '+')
+            {
+              valuechtmp[strlen(valuechtmp)-1] = '\0';
+              tmp2 = strtoint(valuechtmp);
+            }            
             for(i = 0; evs_conf[i] && !chk; i++)
             {
               // check whether previous events (in causal relation) have connections
@@ -461,15 +467,22 @@ void read_mci_file_ev (char *mcifile, char* evevfile, int m_repeat, int cutout, 
             if (!chk)
             {
               // if there is no connection with previous events, then
+              // connect with all precedent events of the redundant event (which will be excluded).            
+              for(i = 1; i <= numev; i++)
+              {
+                if (tmp2 && ev_predc_copy[tmp2][i])
+                {
+                  // connect with all precedent events of the redundant event (which will be excluded).
+                  ev_predc_copy[value][i] = i;
+                  ev_succs[i][value] = value;
+                }
+              }
               // connect with the last event before the redundant event.
-              ev_predc_copy[value][tmp] = tmp;
-              ev_succs[tmp][value] = value;
+              // ev_predc_copy[value][tmp] = tmp;
+              // ev_succs[tmp][value] = value;
             }
-            // remove connections of the redundant event.
-            valuechtmp[strlen(valuechtmp)-1] = '\0';
-            tmp2 = strtoint(valuechtmp);
+            // remove connection to the redundant event.
             ev_predc_copy[value][tmp2] = 0;
-            strcpy(valuechtmp, "");
             chk = 0;
           }
           
@@ -483,11 +496,13 @@ void read_mci_file_ev (char *mcifile, char* evevfile, int m_repeat, int cutout, 
           {
             leaves_evs[tmp] = 1;
             memset(evs_conf, 0,(numev)*sizeof(int));
-            _ = 0, tmp = 0;
+            _ = 0, tmp = 0, tmp2 = 0;
+            strcpy(valuechtmp, "");
           }
         }
     }
     else if (m_repeat > 0)
+      // Handling when the queried instance marking is greater than 0.
       while (fscanf(evevf," %s", valuech) != EOF && count_mrk <= m_repeat)
       {
         if (strstr(valuech, "+")) // in case of reading redundant events
@@ -498,6 +513,11 @@ void read_mci_file_ev (char *mcifile, char* evevfile, int m_repeat, int cutout, 
           evs_conf[_] = value;
           if (tmp && strcmp(valuechtmp, ""))
           {
+            if (valuechtmp[strlen(valuechtmp)-1] == '+')
+            {
+              valuechtmp[strlen(valuechtmp)-1] = '\0';
+              tmp2 = strtoint(valuechtmp);
+            }            
             for(i = 0; evs_conf[i] && !chk; i++)
             {
               // check whether previous events (in causal relation) have connections
@@ -508,15 +528,22 @@ void read_mci_file_ev (char *mcifile, char* evevfile, int m_repeat, int cutout, 
             if (!chk)
             {
               // if there is no connection with previous events, then
+              // connect with all precedent events of the redundant event (which will be excluded).            
+              for(i = 1; i <= numev; i++)
+              {
+                if (tmp2 && ev_predc_copy[tmp2][i])
+                {
+                  // connect with all precedent events of the redundant event (which will be excluded).
+                  ev_predc_copy[value][i] = i;
+                  ev_succs[i][value] = value;
+                }
+              }
               // connect with the last event before the redundant event.
-              ev_predc_copy[value][tmp] = tmp;
-              ev_succs[tmp][value] = value;
+              // ev_predc_copy[value][tmp] = tmp;
+              // ev_succs[tmp][value] = value;
             }
-            // remove connections of the redundant event.
-            valuechtmp[strlen(valuechtmp)-1] = '\0';
-            tmp2 = strtoint(valuechtmp);
+            // remove connection to the redundant event.
             ev_predc_copy[value][tmp2] = 0;
-            strcpy(valuechtmp, "");
             chk = 0;
           }
           tmp = value;
@@ -527,13 +554,15 @@ void read_mci_file_ev (char *mcifile, char* evevfile, int m_repeat, int cutout, 
           {
             leaves_evs[tmp] = 1;
             memset(evs_conf, 0,(numev)*sizeof(int));
-            _ = 0, tmp = 0;
+            _ = 0, tmp = 0, tmp2 = 0;
             count_mrk++;
+            strcpy(valuechtmp, "");
           }
         }
       }
     else
     {
+      // Handling .evco files with redundant events.
       while (fscanf(evevf," %s", valuech) != EOF)
       {
         if (strstr(valuech, "+")) // in case of reading redundant events
@@ -544,6 +573,11 @@ void read_mci_file_ev (char *mcifile, char* evevfile, int m_repeat, int cutout, 
           evs_conf[_] = value;
           if (tmp && strcmp(valuechtmp, ""))
           {
+            if (valuechtmp[strlen(valuechtmp)-1] == '+')
+            {
+              valuechtmp[strlen(valuechtmp)-1] = '\0';
+              tmp2 = strtoint(valuechtmp);
+            }            
             for(i = 0; evs_conf[i] && !chk; i++)
             {
               // check whether previous events (in causal relation) have connections
@@ -554,15 +588,22 @@ void read_mci_file_ev (char *mcifile, char* evevfile, int m_repeat, int cutout, 
             if (!chk)
             {
               // if there is no connection with previous events, then
+              // connect with all precedent events of the redundant event (which will be excluded).            
+              for(i = 1; i <= numev; i++)
+              {
+                if (tmp2 && ev_predc_copy[tmp2][i])
+                {
+                  // connect with all precedent events of the redundant event (which will be excluded).
+                  ev_predc_copy[value][i] = i;
+                  ev_succs[i][value] = value;
+                }
+              }
               // connect with the last event before the redundant event.
-              ev_predc_copy[value][tmp] = tmp;
-              ev_succs[tmp][value] = value;
+              // ev_predc_copy[value][tmp] = tmp;
+              // ev_succs[tmp][value] = value;
             }
-            // remove connections of the redundant event.
-            valuechtmp[strlen(valuechtmp)-1] = '\0';
-            tmp2 = strtoint(valuechtmp);
+            // remove connection to the redundant event.
             ev_predc_copy[value][tmp2] = 0;
-            strcpy(valuechtmp, "");
             chk = 0;
           }
           tmp = value;

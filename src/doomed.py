@@ -704,21 +704,3 @@ if __name__ == "__main__":
     if i == 0:
       print("EMPTY MINDOO")
     print(f"total free checks: {stats['freechk']}", flush=True, file=sys.stderr)
-
-
-    #marking = []
-    # C_d = prefix_d.subgraph(C_e)
-      # C_crest = get_crest(C_d)
-      # C_creststr = str_conf(C_crest)
-      # sortC_crest = []
-      # print(C_creststr.split(","))
-      # for i in C_creststr.split(","):
-      #   for j in C_e:
-      #     if "e"+i+")" in j:
-      #       sortC_crest.append(j)
-      # print(sortC_crest)
-      # for i in sortC_crest:
-      #   marking += model.posts_TR[e2tr[i]]
-      #   print(e2tr[i])
-      # print(marking)
-      # print(set(marking))
