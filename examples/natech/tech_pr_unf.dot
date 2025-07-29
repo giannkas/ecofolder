@@ -1,0 +1,21 @@
+digraph test {
+  e1 -> e3;
+  e1 -> e4;
+  e3 -> e7;
+  e4 -> e10;
+  e7 -> e10;
+  e4 -> e12;
+  e7 -> e12;
+  e0 -> e1;
+
+//conflicts
+  e10 -> e12 [arrowhead=none color=gray60 style=dashed constraint=false];
+
+  e1 [color="black" fillcolor="orange:orange" label="R1 (e1)" shape=box style=filled];
+  e3 [color="black" fillcolor="orange:orange" label="R4 (e3)" shape=box style=filled];
+  e4 [color="black" fillcolor="orange:orange" label="R7 (e4)" shape=box style=filled];
+  e7 [color="black" fillcolor="orange:orange" label="R6 (e7)" shape=box style=filled];
+  e10 [color="black" fillcolor="orange:orange" label="R2 (e10)" shape=box style=filled];
+  e12 [color="black" fillcolor="cornflowerblue:orange" label="R5 (e12)" shape=box style=filled];
+  e0 [fillcolor="white" label="⊥" shape=box style=filled];
+}
