@@ -4,7 +4,7 @@ import os
 import sys
 import time
 import subprocess
-from doomed import asp_of_mci,h,get_eid,script_path,py_of_symbol,Model
+from doomed import asp_of_mci,h,get_eid,script_path,py_of_symbol,get_event_poset,Model
 
 from tqdm import tqdm
 
@@ -24,6 +24,9 @@ def rdn_from_atoms(atoms):
 def nrdn_from_atoms(atoms):
   return h({get_eid(py_of_symbol(a.arguments[0])) for a in atoms
               if a.name == "e_non_redundant"})
+
+def get_crest(poset):
+  return {e for e, od in poset.out_degree() if od == 0}
 
 def minconfs(prefix_asp, markings, shortest=0, redundant=1, clingo_opts=""):
 
@@ -264,7 +267,10 @@ def compute_minconfs():
 
     model_unf = model_ll + "_unf.mci" if out_fname == "" else out_fname + "_unf.mci" if "/" in out_fname and len(out_fname) > 1 else f"{os.path.dirname(model_ll)}/{out_fname}_unf.mci"
 
+  clingo_opts = ["-W", "none"]
   prefix = asp_of_mci(model_unf)
+  prefix_info = get_event_poset(prefix, clingo_opts)
+  prefix_d = prefix_info["poset"]
 
   out_d = f"{os.path.split(model_ll)[0]}"
 
@@ -286,20 +292,25 @@ def compute_minconfs():
           for p in m:
             fp.write(f"{clingo.Function('bad', (clingo.String(p),))}.\n")
 
-  clingo_opts = ["-W", "none"]
   t0 = time.time()
 
   operation = "maxconfs-to-marking_" if maxconf else "minconfs-to-marking_"
 
   outf = f"{os.path.dirname(model_ll)}/{operation}{base_output}.evev" if out_fname == "" else out_fname + ".evev" if "/" in out_fname and len(out_fname) > 1 else f"{os.path.dirname(model_ll)}/{out_fname}.evev"
+  outf_crest = f"{os.path.dirname(model_ll)}/{operation}{base_output}.crest" if out_fname == "" else out_fname + ".crest" if "/" in out_fname and len(out_fname) > 1 else f"{os.path.dirname(model_ll)}/{out_fname}.crest"
 
-  with open(outf, "w") as fout:
+  with open(outf, "w") as fout, open(outf_crest, "w") as fout_crest:
     if maxconf:
       for C in tqdm(maxconfs(prefix, bad_aspfile, len(extd_badmarkings), redundant, clingo_opts), desc="Computing maximal configurations"):
+        C_d = prefix_d.subgraph(C)
+        C_crest = get_crest(C_d)
+        print(str_conf(sorted(C_crest, key=sort_by_number)), file=fout_crest)
         print(str_conf(sorted(C, key=sort_by_number)), file=fout)
     else:
       for C in tqdm(minconfs(prefix, extd_badmarkings, shortest, redundant, clingo_opts), desc="Computing minimal configurations"):
-        #print(sorted(C, key=sort_by_number))
+        C_d = prefix_d.subgraph(C)
+        C_crest = get_crest(C_d)
+        print(str_conf(sorted(C_crest, key=sort_by_number)), file=fout_crest)
         print(str_conf(sorted(C, key=sort_by_number)), file=fout)
 
   if outpdf:

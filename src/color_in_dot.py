@@ -19,15 +19,16 @@ def parse_arguments():
   parser.add_argument("-ru", "--rules", type=str, help="List of rules separated by semicolons (e.g., 'a,b,c;d;e,f,g,h').")
   parser.add_argument("-pl", "--places", type=str, help="List of places separated by semicolons (e.g., 's,t,u;v;w,x,y,z').")
   parser.add_argument("-co", "--colors", type=str, help="List of colors corresponding to the elements (rules or places), separated by semicolons (e.g., 'red;blue;yellow').")
-  parser.add_argument("-cocfs", "--color_cutoffs", type=str, default="none", help="Color for cutoff events. Default is 'none'. This makes more sense considering the cutoff criterion in the unfolding algorithm, not for finding a specific marking. Use -cotips instead.")
+  parser.add_argument("-cocfs", "--color_cutoffs", type=str, default="none", help="Color for cutoff events. Default is 'none'. This is in line with the cutoff criterion in the unfolding algorithm, not for finding a specific marking. Use -cotips instead.")
   parser.add_argument("-cotips", "--color_endings", type=str, default="none", help="Color for ending events. Default is 'none'. It cannot be used with -cocfs option.")
   parser.add_argument("-dotfile", type=str, help="DOT file from where the colors will be updated.")
   parser.add_argument("-evevfile", type=str, default="", help=".evev file format from where ending events to their corresponding configurations will be found. This file should be provided along with -cotips option (and color), otherwise events will not be distinguishable.")
+  parser.add_argument("-crestfile", type=str, default="", help=".crest file format where events in the configuration crest will be found. This file should be provided along with -cotips option (and color), otherwise events will not be distinguishable or ending events will be colored not the crest.")
   parser.add_argument("-out", type=str, default="", help="DOT file updated with colors changed.")
 
   args = parser.parse_args()
 
-  assert bool(args.rules) ^ bool(args.places), "A list of places xor rules must be povided."
+  assert bool(args.rules) ^ bool(args.places), "A list of 'places' xor 'rules' must be provided."
 
   if args.rules and args.colors:
     groups = args.rules.split(';')
@@ -62,29 +63,24 @@ def build_color_elem_map(groups, color_list):
   return color_elem
 
 def color_in_dot():
-  """
-  Modifies the DOT file read from stdin by changing the fillcolor attribute based on rules and colors provided.
   
-  Example usage:
-    python3 colorindot.py -ru "a,b,c;d;e,f,g,h" -co "red;blue;yellow" < input.dot > output.dot
-    
-    - This command will read the DOT file from `input.dot`, apply the colors "red", "blue", and "yellow" to the respective rule groups
-      ("a,b,c", "d", and "e,f,g,h"), and output the modified DOT content to `output.dot`.
-    - Use the `-b` or `--blank` option to fill unspecified rules or events with white color.
-    - Use the `-e` or `--events` option to treat the list of rules as events.
-    - The `-cocfs` or `--color_cutoffs` option can be used to specify a different color for cutoff events.
-    - The `-cotips` or `--color_endings` option can be used to specify a different color for ending events.
-  """
   args, groups, color_list = parse_arguments()
   color_elem = build_color_elem_map(groups, color_list)
 
   evends = []
-  if args.evevfile != "":
+  if args.evevfile != "" and args.crestfile == "":
     with open(args.evevfile, "r") as evevfile:
       for conf in evevfile:
         conf = conf.strip().split(" ")
         conf = conf[-2] if conf[-1] == '0' else conf[-1]
         evends.append(str(conf))
+  elif args.evevfile != "" and args.crestfile != "":
+    with open(args.crestfile, "r") as crestfile:
+      for conf in crestfile:
+        conf = conf.strip().split(" ")
+        conf = conf[:-1]
+        for ev in conf:
+          evends.append(str(ev))
 
   with open(args.dotfile, "r") as dotfile, open(args.out, "w") as outdot: 
     for line in dotfile:
