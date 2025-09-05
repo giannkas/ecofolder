@@ -2,10 +2,10 @@
 
 echo "Unfolding..."
 if [ -f $1.ll_net ]; then
-  src/ecofolder -mcmillan $1.ll_net
+  src/ecofolder -confmax $1.ll_net
   #src/ecofolder -q $2 -r 0 $1.ll_net
 else
-  src/ecofolder -mcmillan $1.ll
+  src/ecofolder -confmax $1.ll
   #src/ecofolder -q $2 -r 0 $1.ll
 fi
 #.src/ecofolder/ecofolder

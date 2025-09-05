@@ -4,9 +4,11 @@ digraph test {
   e10 -> e19;
   e19 -> e31;
   e31 -> e44;
-  e44 -> e55;
+  e44 -> e55 [arrowhead=none style=dotted];
   e2 -> e519;
   e31 -> e519;
+  e519 -> r21 [color="black" style=dashed];
+  e519 -> r22 [color="black" style=dashed];
   e0 -> e1;
   e0 -> e2;
   e0 -> e3;
@@ -17,7 +19,9 @@ digraph test {
   e19 [color="black" fillcolor="#8c510a:#8c510a" label="R17 (e19)" shape=box style=filled];
   e31 [color="black" fillcolor="#1a9850:#1a9850" label="R10 (e31)" shape=box style=filled];
   e44 [color="black" fillcolor="#d73027:#d73027" label="R12 (e44)" shape=box style=filled];
-  e55 [color="black" fillcolor="#1a9850:#1a9850" label="R4 (e55)" shape=box style=filled];
-  e519 [color="black" fillcolor="#1a9850:#1a9850" label="R8 (e519)" shape=box style=filled];
+  e55 [color="black" fillcolor="#1a98507f:#ff9900b1" label="R4 (e55)" shape=box style="filled,dotted"];
+  e519 [color="black" fillcolor="#1a9850:orange" label="R8 (e519)" shape=box style=filled];
   e0 [fillcolor="white" label="⊥" shape=box style=filled];
+  r21 [fillcolor="transparent" color="#8c510a" label=R21 shape=box style=dashed];
+  r22 [fillcolor="transparent" color="#8c510a" label=R22 shape=box style=dashed];
 }

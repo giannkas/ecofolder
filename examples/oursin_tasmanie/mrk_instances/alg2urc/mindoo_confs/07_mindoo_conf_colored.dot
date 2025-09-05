@@ -2,17 +2,21 @@ digraph test {
   e3 -> e6;
   e3 -> e7;
   e6 -> e11;
-  e11 -> e14;
+  e11 -> e14 [arrowhead=none style=dotted];
   e6 -> e686;
   e7 -> e686;
+  e686 -> r21 [color="black" style=dashed];
+  e686 -> r22 [color="black" style=dashed];
   e0 -> e2;
   e0 -> e3;
-  e2 [color="black" fillcolor="#d73027:#d73027" label="R13 (e2)" shape=box style=filled];
+  e2 [color="black" fillcolor="#d73027:orange" label="R13 (e2)" shape=box style=filled];
   e3 [color="black" fillcolor="#fee08b:#fee08b" label="R14 (e3)" shape=box style=filled];
   e6 [color="black" fillcolor="#fee08b:#fee08b" label="R15 (e6)" shape=box style=filled];
   e7 [color="black" fillcolor="#fee08b:#fee08b" label="R16 (e7)" shape=box style=filled];
   e11 [color="black" fillcolor="#d73027:#d73027" label="R12 (e11)" shape=box style=filled];
-  e14 [color="black" fillcolor="#1a9850:#1a9850" label="R4 (e14)" shape=box style=filled];
-  e686 [color="black" fillcolor="#8c510a:#8c510a" label="R17 (e686)" shape=box style=filled];
+  e14 [color="black" fillcolor="#1a98507f:#ff9900b1" label="R4 (e14)" shape=box style="filled,dotted"];
+  e686 [color="black" fillcolor="#8c510a:orange" label="R17 (e686)" shape=box style=filled];
   e0 [fillcolor="white" label="⊥" shape=box style=filled];
+  r21 [fillcolor="transparent" color="#8c510a" label=R21 shape=box style=dashed];
+  r22 [fillcolor="transparent" color="#8c510a" label=R22 shape=box style=dashed];
 }

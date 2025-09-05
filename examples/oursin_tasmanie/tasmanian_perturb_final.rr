@@ -13,7 +13,7 @@ nodes:
 # Initial and Final states (and vice-versa) to explore transitions
 # Target state = algal-dominated: 	Alg+,Urc-,Lob+,Aba+,Oct-,Fis-,Mgt-  [ productive kelp bed with abundant commercial species, low predation potential by octopus, no overexploitation and no need for management interventions ]
 # State to avoid = urchin barrens: 	Alg-,Urc+,Lob-,Aba-,Oct+,Fis+,Mgt+  [ low diverse low productive barren ground, high predation potential by octopus,  non-sustainable fishing effort, costly management interventions ]
-
+# Algal-dominated states = Alg+,Urc-,Lob+,Aba*,Oct*,Fis*,Mgt*
 
 rules:
 ####### Ecological processes (coloured in green #1a9850) #########

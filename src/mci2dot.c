@@ -258,7 +258,7 @@ int read_mci_file (char *mcifile, char *evev_cofile, int m_repeat, char* evname,
   }
   fread(c,1,1,mcif);
 
-  int *cut = calloc(numco+1, sizeof(int));
+  int *cut = calloc(numpl+1, sizeof(int));
   int *frsq = calloc(numev+1, sizeof(int));
 
   if(conf)
@@ -273,7 +273,7 @@ int read_mci_file (char *mcifile, char *evev_cofile, int m_repeat, char* evname,
     for(list = evprps[0]->postset; list; list = list->next)
     {
       coid = list->idcond;
-      cut[coid] = coid;
+      cut[co2pl[coid]] = co2pl[coid];
     }
 
     sub = strtok(conf_copy, ",");
@@ -285,23 +285,23 @@ int read_mci_file (char *mcifile, char *evev_cofile, int m_repeat, char* evname,
       for(list = evprps[subint]->preset; list; list = list->next)
       {
         coid = list->idcond;
-        cut[coid] = 0;
+        cut[co2pl[coid]] = 0;
       }
       /* Add event's poset */
       for(list = evprps[subint]->postset; list; list = list->next)
       {
         coid = list->idcond;
-        cut[coid] = coid;
+        cut[co2pl[coid]] = co2pl[coid];
       }
       sub = strtok(NULL, ",");
     }
 
-    for(int i = 1; i <= numco; i++)
+    for(int i = 1; i <= numpl; i++)
     {
       if (cut[i] > 0)
       {
         if (strlen(markingstr) > 0) strcat(markingstr,",");
-        strcat(markingstr, plname[co2pl[i]]);
+        strcat(markingstr, plname[i]);
       }
     }
 
