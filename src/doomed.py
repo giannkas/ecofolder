@@ -448,7 +448,7 @@ def maxconfs(prefix_asp, bad_aspfile, badmrks=1):
     cfg = cfg_from_atoms(atoms)
     yield cfg
 
-def get_event_poset(prefix_asp, clingo_opts=""):
+def get_event_poset(prefix_asp, clingo_opts=[]):
   c = clingo.Control(["1"]+clingo_opts)
   c.add("base", [], prefix_asp)
   c.load(script_path("get_event_poset.asp"))

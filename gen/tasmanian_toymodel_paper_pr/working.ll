@@ -6,8 +6,8 @@ PL
 2"Urc-"M0
 3"Lob+_1"M0
 4"Lob-_1"M1
-5"Fis+"M1
-6"Fis-"M0
+5"Fis+"M0
+6"Fis-"M1
 7"Lob+_2"M0
 8"Lob-_2"M1
 TR

@@ -13,7 +13,7 @@ digraph test {
   e2 [color="black" fillcolor="#1a9850:#1a9850" label="R3 (e2)" shape=box style=filled];
   e3 [color="black" fillcolor="#fee08b:orange" label="R6 (e3)" shape=box style=filled];
   e4 [color="black" fillcolor="#fee08b:#fee08b" label="R5 (e4)" shape=box style=filled];
-  e5 [color="black" fillcolor="#fee08b:#fee08b" label="R6 (e5)" shape=box style=filled];
+  e5 [color="black" fillcolor="#fee08b:orange" label="R6 (e5)" shape=box style=filled];
   e7 [color="black" fillcolor="#d73027:orange" label="R1 (e7)" shape=box style=filled];
   e0 [fillcolor="white" label="⊥" shape=box style=filled];
 }
