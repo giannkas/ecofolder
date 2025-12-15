@@ -19,6 +19,6 @@ digraph test {
   e30 [color="black" fillcolor="#fee08b:#fee08b" label="R15 (e30)" shape=box style=filled];
   e435 [color="black" fillcolor="#8c510a:orange" label="R17 (e435)" shape=box style=filled];
   e0 [fillcolor="white" label="⊥" shape=box style=filled];
-  r21 [fillcolor="transparent" color="#8c510a" label=R21 shape=box style=dashed];
-  r22 [fillcolor="transparent" color="#8c510a" label=R22 shape=box style=dashed];
+  r21 [fillcolor="transparent" color="#8c510a" label="R21" shape=box style=dashed];
+  r22 [fillcolor="transparent" color="#8c510a" label="R22" shape=box style=dashed];
 }

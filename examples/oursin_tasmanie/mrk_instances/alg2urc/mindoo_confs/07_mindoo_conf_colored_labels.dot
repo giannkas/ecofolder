@@ -1,0 +1,22 @@
+digraph test {
+e3 -> e6;
+e3 -> e7;
+e6 -> e11;
+e11 -> e14 [arrowhead=none style=dotted];
+e6 -> e686;
+e7 -> e686;
+e686 -> r21 [color="black" style=dashed];
+e686 -> r22 [color="black" style=dashed];
+e0 -> e2;
+e0 -> e3;
+e2 [color="black" fillcolor="#d73027:orange" label="Oct- >> Oct+" shape=box style=filled];
+e3 [color="black" fillcolor="#fee08b:#fee08b" label="Mgt- >> Fis+" shape=box style=filled];
+e6 [color="black" fillcolor="#fee08b:#fee08b" label="Fis+ >> Lob-" shape=box style=filled];
+e7 [color="black" fillcolor="#fee08b:#fee08b" label="Fis+ >> Aba-" shape=box style=filled];
+e11 [color="black" fillcolor="#d73027:#d73027" label="Lob- >> Urc+" shape=box style=filled];
+e14 [color="black" fillcolor="#1a98507f:#ff9900b1" label="Urc+ >> Alg-" shape=box style="filled,dotted"];
+e686 [color="black" fillcolor="#8c510a:orange" label="Aba-, Lob- >> Mgt+" shape=box style=filled];
+e0 [fillcolor="white" label="⊥" shape=box style=filled];
+r21 [fillcolor="transparent" color="#8c510a" label="Mgt+ >> Urc-" shape=box style=dashed];
+r22 [fillcolor="transparent" color="#8c510a" label="Mgt+ >> Lob+" shape=box style=dashed];
+}

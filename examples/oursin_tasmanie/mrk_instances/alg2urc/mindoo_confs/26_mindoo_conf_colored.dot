@@ -13,7 +13,7 @@ digraph test {
   e93 -> e104;
   e104 -> e167;
   e104 -> e171;
-  e104 -> e172 [color="black" style=dashed];
+  e104 -> e172 [arrowhead=none style=dotted];
   e171 -> r9 [color="black" style=dashed];
   e171 -> r22 [color="black" style=dashed];
   e0 -> e1;
@@ -33,6 +33,6 @@ digraph test {
   e171 [color="black" fillcolor="#d73027:orange" label="R13 (e171)" shape=box style=filled];
   e172 [color="black" fillcolor="#d73027b1:#ff9900b1" label="R12 (e172)" shape=box style="filled,dotted"];
   e0 [fillcolor="white" label="⊥" shape=box style=filled];
-  r9 [fillcolor="transparent" color="#1a9850" label=R9 shape=box style=dashed];
-  r22 [fillcolor="transparent" color="#8c510a" label=R22 shape=box style=dashed];
+  r9 [fillcolor="transparent" color="#1a9850" label="R9" shape=box style=dashed];
+  r22 [fillcolor="transparent" color="#8c510a" label="R22" shape=box style=dashed];
 }

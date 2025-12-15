@@ -41,11 +41,12 @@ def ids_labels():
 
   # Function to find and replace rule IDs or names in the DOT file
   def process_line(line):
-    if line.strip().startswith('e') and "label=\"" in line and "⊥" not in line:
+    if (line.strip().startswith('e') or line.strip().startswith('r')) and "label=\"" in line and "⊥" not in line:
       label_pos = line.find("label=\"") + len("label=\"")
       end_label_pos = line[label_pos:].find("\"")
       label_content = line[label_pos:label_pos + end_label_pos]
       rule = label_content.split("(")[0].strip() if "(" in label_content else label_content
+      #print(label_content)
       
       if not args.ids and rule in rule_dict:
         line = line[:label_pos] + rule_dict[rule] + line[label_pos + end_label_pos:]

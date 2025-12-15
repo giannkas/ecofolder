@@ -22,6 +22,6 @@ digraph test {
   e76 [color="black" fillcolor="#1a98507f:#ff9900b1" label="R4 (e76)" shape=box style="filled,dotted"];
   e444 [color="black" fillcolor="#1a9850:orange" label="R7 (e444)" shape=box style=filled];
   e0 [fillcolor="white" label="⊥" shape=box style=filled];
-  r21 [fillcolor="transparent" color="#8c510a" label=R21 shape=box style=dashed];
-  r22 [fillcolor="transparent" color="#8c510a" label=R22 shape=box style=dashed];
+  r21 [fillcolor="transparent" color="#8c510a" label="R21" shape=box style=dashed];
+  r22 [fillcolor="transparent" color="#8c510a" label="R22" shape=box style=dashed];
 }

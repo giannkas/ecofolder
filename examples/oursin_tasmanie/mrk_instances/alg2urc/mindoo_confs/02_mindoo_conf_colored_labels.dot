@@ -1,0 +1,31 @@
+digraph test {
+e2 -> e4;
+e4 -> e9;
+e9 -> e12;
+e12 -> e21;
+e12 -> e24;
+e21 -> e34;
+e24 -> e36;
+e24 -> e67;
+e34 -> e67;
+e36 -> e291;
+e67 -> e291;
+e67 -> e410 [arrowhead=none style=dotted];
+e291 -> r9 [color="black" style=dashed];
+e291 -> r22 [color="black" style=dashed];
+e0 -> e2;
+e2 [color="black" fillcolor="#d73027:#d73027" label="Oct- >> Oct+" shape=box style=filled];
+e4 [color="black" fillcolor="#1a9850:#1a9850" label="Oct+ >> Lob-" shape=box style=filled];
+e9 [color="black" fillcolor="#d73027:#d73027" label="Lob- >> Urc+" shape=box style=filled];
+e12 [color="black" fillcolor="#1a9850:#1a9850" label="Alg+, Fis- >> Lob+" shape=box style=filled];
+e21 [color="black" fillcolor="#1a9850:#1a9850" label="Urc+ >> Alg-" shape=box style=filled];
+e24 [color="black" fillcolor="#fee08b:#fee08b" label="Mgt- >> Fis+" shape=box style=filled];
+e34 [color="black" fillcolor="#1a9850:#1a9850" label="Lob+ >> Urc-" shape=box style=filled];
+e36 [color="black" fillcolor="#fee08b:#fee08b" label="Fis+ >> Aba-" shape=box style=filled];
+e67 [color="black" fillcolor="#fee08b:#fee08b" label="Fis+ >> Lob-" shape=box style=filled];
+e291 [color="black" fillcolor="#8c510a:orange" label="Aba-, Lob- >> Mgt+" shape=box style=filled];
+e410 [color="black" fillcolor="#d73027b2:#ff9900b2" label="Lob- >> Urc+" shape=box style="filled,dotted"];
+e0 [fillcolor="white" label="⊥" shape=box style=filled];
+r9 [fillcolor="transparent" color="#1a9850" label="Urc- >> Alg+" shape=box style=dashed];
+r22 [fillcolor="transparent" color="#8c510a" label="Mgt+ >> Lob+" shape=box style=dashed];
+}
