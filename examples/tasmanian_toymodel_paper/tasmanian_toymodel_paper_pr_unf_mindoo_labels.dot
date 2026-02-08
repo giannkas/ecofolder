@@ -1,0 +1,15 @@
+digraph test {
+e1 -> e3;
+e2 -> e4;
+e0 -> e1;
+e0 -> e2;
+
+//conflicts
+e1 -> e2 [arrowhead=none color=gray60 style=dashed constraint=false];
+
+e1 [color="black" fillcolor="#1a9850:#1a9850" label="Alg+, Fis- >> Aba+" shape=box style=filled];
+e2 [color="black" fillcolor="#1a9850:#1a9850" label="Lob+ >> Urc-" shape=box style=filled];
+e3 [color="black" fillcolor="#fee08b:#fee08b" label="Lob+ >> Aba-" shape=box style=filled];
+e4 [color="black" fillcolor="#fee08b:#fee08b" label="Oct+ >> Lob-" shape=box style=filled];
+e0 [fillcolor="white" label="⊥" shape=box style=filled];
+}
