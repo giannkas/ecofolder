@@ -189,7 +189,6 @@ class Model:
               if j[:len(j)-jpos_-1] == i:
                 newm.append(j)
       bad_markings += [newm] # list of lists to store each bad marking
-    
     return bad_markings
 
 def prefix_nb_events(mcifile):
@@ -500,7 +499,6 @@ if __name__ == "__main__":
         expnd_query_markings += model.expand_markings(l)
     bad_markings = model.get_badmarkings(
         expnd_query_markings)
-
     with open(bad_marking, 'w') as newmks:
       for l in bad_markings:
         newmks.write(",".join(l) + "\n")
