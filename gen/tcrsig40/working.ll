@@ -1,0 +1,669 @@
+PEP
+PTNet
+FORMAT_N
+PL
+1"CD45=0"M1
+2"CD45=1"M0
+3"CD8=0"M1
+4"CD8=1"M0
+5"TCRlig=0"M1
+6"TCRlig=1"M0
+7"TCRbind=0"M1
+8"TCRbind=1"M0
+9"PAGCsk=0"M1
+10"PAGCsk=1"M0
+11"LCK=0"M1
+12"LCK=1"M0
+13"Fyn=0"M1
+14"Fyn=1"M0
+15"cCbl=0"M0
+16"cCbl=1"M1
+17"TCRphos=0"M1
+18"TCRphos=1"M0
+19"Rlk=0"M0
+20"Rlk=1"M1
+21"ZAP70=0"M1
+22"ZAP70=1"M0
+23"LAT=0"M1
+24"LAT=1"M0
+25"Gads=0"M1
+26"Gads=1"M0
+27"Itk=0"M1
+28"Itk=1"M0
+29"IP3=0"M1
+30"IP3=1"M0
+31"Ca=0"M1
+32"Ca=1"M0
+33"Calcin=0"M1
+34"Calcin=1"M0
+35"NFAT=0"M1
+36"NFAT=1"M0
+37"CRE=0"M1
+38"CRE=1"M0
+39"AP1=0"M1
+40"AP1=1"M0
+41"NFkB=0"M1
+42"NFkB=1"M0
+43"CREB=0"M0
+44"CREB=1"M1
+45"Rsk=0"M1
+46"Rsk=1"M0
+47"ERK=0"M1
+48"ERK=1"M0
+49"Fos=0"M1
+50"Fos=1"M0
+51"Jun=0"M1
+52"Jun=1"M0
+53"MEK=0"M0
+54"MEK=1"M1
+55"Raf=0"M0
+56"Raf=1"M1
+57"Ras=0"M1
+58"Ras=1"M0
+59"Grb2Sos=0"M1
+60"Grb2Sos=1"M0
+61"Slp76=0"M1
+62"Slp76=1"M0
+63"PLCg_b=0"M1
+64"PLCg_b=1"M0
+65"PLCg_a=0"M1
+66"PLCg_a=1"M0
+67"DAG=0"M1
+68"DAG=1"M0
+69"PKCth=0"M1
+70"PKCth=1"M0
+71"RasGRP1=0"M1
+72"RasGRP1=1"M0
+73"IkB=0"M1
+74"IkB=1"M0
+75"IKK=0"M1
+76"IKK=1"M0
+77"JNK=0"M1
+78"JNK=1"M0
+79"SEK=0"M1
+80"SEK=1"M0
+TR
+1"IkB=1 -> IkB=0 when IKK=1"
+2"NFAT=1 -> NFAT=0 when Calcin=0"
+3"CREB=0 -> CREB=1 when Rsk=1"
+4"Slp76=1 -> Slp76=0 when Gads=0"
+5"IKK=1 -> IKK=0 when PKCth=0"
+6"LAT=1 -> LAT=0 when ZAP70=0"
+7"cCbl=0 -> cCbl=1 when ZAP70=1"
+8"JNK=1 -> JNK=0 when SEK=0"
+9"PLCg_b=1 -> PLCg_b=0 when LAT=0"
+10"Rlk=0 -> Rlk=1 when LCK=1"
+11"Ras=1 -> Ras=0 when Grb2Sos=0"
+12"Ras=1 -> Ras=0 when Grb2Sos=1 and RasGRP1=0"
+13"Raf=0 -> Raf=1 when Ras=1"
+14"Grb2Sos=1 -> Grb2Sos=0 when LAT=0"
+15"PLCg_b=0 -> PLCg_b=1 when LAT=1"
+16"CRE=1 -> CRE=0 when CREB=0"
+17"JNK=0 -> JNK=1 when SEK=1"
+18"CREB=1 -> CREB=0 when Rsk=0"
+19"Rlk=1 -> Rlk=0 when LCK=0"
+20"Calcin=0 -> Calcin=1 when Ca=1"
+21"NFkB=0 -> NFkB=1 when IkB=0"
+22"DAG=1 -> DAG=0 when PLCg_a=0"
+23"TCRphos=1 -> TCRphos=0 when Fyn=0 and TCRbind=0"
+24"TCRphos=1 -> TCRphos=0 when Fyn=0 and LCK=0 and TCRbind=1"
+25"Raf=1 -> Raf=0 when Ras=0"
+26"Gads=1 -> Gads=0 when LAT=0"
+27"IP3=1 -> IP3=0 when PLCg_a=0"
+28"IP3=0 -> IP3=1 when PLCg_a=1"
+29"PKCth=1 -> PKCth=0 when DAG=0"
+30"LCK=0 -> LCK=1 when CD45=1 and CD8=1 and PAGCsk=0"
+31"Fos=0 -> Fos=1 when ERK=1"
+32"RasGRP1=0 -> RasGRP1=1 when DAG=1 and PKCth=1"
+33"PAGCsk=1 -> PAGCsk=0 when TCRbind=1"
+34"cCbl=1 -> cCbl=0 when ZAP70=0"
+35"Calcin=1 -> Calcin=0 when Ca=0"
+36"PKCth=0 -> PKCth=1 when DAG=1"
+37"Fyn=0 -> Fyn=1 when CD45=1 and LCK=1 and TCRbind=0"
+38"Fyn=0 -> Fyn=1 when CD45=1 and TCRbind=1"
+39"NFAT=0 -> NFAT=1 when Calcin=1"
+40"IkB=0 -> IkB=1 when IKK=0"
+41"ZAP70=0 -> ZAP70=1 when LCK=1 and TCRphos=1 and cCbl=0"
+42"Ca=0 -> Ca=1 when IP3=1"
+43"Itk=0 -> Itk=1 when Slp76=1 and ZAP70=1"
+44"PAGCsk=0 -> PAGCsk=1 when TCRbind=0"
+45"Gads=0 -> Gads=1 when LAT=1"
+46"Rsk=1 -> Rsk=0 when ERK=0"
+47"PLCg_a=0 -> PLCg_a=1 when Itk=1 and PLCg_b=1 and Rlk=0 and Slp76=1 and ZAP70=1"
+48"PLCg_a=0 -> PLCg_a=1 when PLCg_b=1 and Rlk=1 and Slp76=1 and ZAP70=1"
+49"Jun=1 -> Jun=0 when JNK=0"
+50"SEK=1 -> SEK=0 when PKCth=0"
+51"Itk=1 -> Itk=0 when ZAP70=0"
+52"Itk=1 -> Itk=0 when Slp76=0 and ZAP70=1"
+53"MEK=1 -> MEK=0 when Raf=0"
+54"ERK=0 -> ERK=1 when MEK=1"
+55"Slp76=0 -> Slp76=1 when Gads=1"
+56"Ca=1 -> Ca=0 when IP3=0"
+57"ERK=1 -> ERK=0 when MEK=0"
+58"IKK=0 -> IKK=1 when PKCth=1"
+59"TCRphos=0 -> TCRphos=1 when Fyn=1 and TCRbind=0"
+60"TCRphos=0 -> TCRphos=1 when Fyn=1 and LCK=0 and TCRbind=1"
+61"TCRphos=0 -> TCRphos=1 when LCK=1 and TCRbind=1"
+62"LAT=0 -> LAT=1 when ZAP70=1"
+63"DAG=0 -> DAG=1 when PLCg_a=1"
+64"AP1=1 -> AP1=0 when Fos=0"
+65"AP1=1 -> AP1=0 when Fos=1 and Jun=0"
+66"Fos=1 -> Fos=0 when ERK=0"
+67"Rsk=0 -> Rsk=1 when ERK=1"
+68"MEK=0 -> MEK=1 when Raf=1"
+69"PLCg_a=1 -> PLCg_a=0 when ZAP70=0"
+70"PLCg_a=1 -> PLCg_a=0 when Itk=0 and Rlk=0 and ZAP70=1"
+71"PLCg_a=1 -> PLCg_a=0 when Itk=1 and Rlk=0 and Slp76=0 and ZAP70=1"
+72"PLCg_a=1 -> PLCg_a=0 when Itk=1 and PLCg_b=0 and Rlk=0 and Slp76=1 and ZAP70=1"
+73"PLCg_a=1 -> PLCg_a=0 when Rlk=1 and Slp76=0 and ZAP70=1"
+74"PLCg_a=1 -> PLCg_a=0 when PLCg_b=0 and Rlk=1 and Slp76=1 and ZAP70=1"
+75"TCRbind=0 -> TCRbind=1 when TCRlig=1 and cCbl=0"
+76"Jun=0 -> Jun=1 when JNK=1"
+77"Ras=0 -> Ras=1 when Grb2Sos=1 and RasGRP1=1"
+78"LCK=1 -> LCK=0 when CD45=0"
+79"LCK=1 -> LCK=0 when CD45=1 and CD8=0"
+80"LCK=1 -> LCK=0 when CD45=1 and CD8=1 and PAGCsk=1"
+81"SEK=0 -> SEK=1 when PKCth=1"
+82"ZAP70=1 -> ZAP70=0 when LCK=0"
+83"ZAP70=1 -> ZAP70=0 when LCK=1 and TCRphos=0 and cCbl=0"
+84"ZAP70=1 -> ZAP70=0 when LCK=1 and cCbl=1"
+85"CRE=0 -> CRE=1 when CREB=1"
+86"NFkB=1 -> NFkB=0 when IkB=1"
+87"Fyn=1 -> Fyn=0 when CD45=0"
+88"Fyn=1 -> Fyn=0 when CD45=1 and LCK=0 and TCRbind=0"
+89"Grb2Sos=0 -> Grb2Sos=1 when LAT=1"
+90"TCRbind=1 -> TCRbind=0 when TCRlig=0"
+91"TCRbind=1 -> TCRbind=0 when TCRlig=1 and cCbl=1"
+92"AP1=0 -> AP1=1 when Fos=1 and Jun=1"
+93"RasGRP1=1 -> RasGRP1=0 when DAG=0"
+94"RasGRP1=1 -> RasGRP1=0 when DAG=1 and PKCth=0"
+RT
+
+RD
+
+TP
+1<73
+1<76
+2<33
+2<35
+3<44
+3<46
+4<25
+4<61
+5<69
+5<75
+6<21
+6<23
+7<16
+7<22
+8<77
+8<79
+9<23
+9<63
+10<12
+10<20
+11<57
+11<59
+12<57
+12<60
+12<71
+13<56
+13<58
+14<23
+14<59
+15<24
+15<64
+16<37
+16<43
+17<78
+17<80
+18<43
+18<45
+19<11
+19<19
+20<32
+20<34
+21<42
+21<73
+22<65
+22<67
+23<7
+23<13
+23<17
+24<8
+24<11
+24<13
+24<17
+25<55
+25<57
+26<23
+26<25
+27<29
+27<65
+28<30
+28<66
+29<67
+29<69
+30<2
+30<4
+30<9
+30<12
+31<48
+31<50
+32<68
+32<70
+32<72
+33<8
+33<9
+34<15
+34<21
+35<31
+35<33
+36<68
+36<70
+37<2
+37<7
+37<12
+37<14
+38<2
+38<8
+38<14
+39<34
+39<36
+40<74
+40<75
+41<12
+41<15
+41<18
+41<22
+42<30
+42<32
+43<22
+43<28
+43<62
+44<7
+44<10
+45<24
+45<26
+46<45
+46<47
+47<19
+47<22
+47<28
+47<62
+47<64
+47<66
+48<20
+48<22
+48<62
+48<64
+48<66
+49<51
+49<77
+50<69
+50<79
+51<21
+51<27
+52<22
+52<27
+52<61
+53<53
+53<55
+54<48
+54<54
+55<26
+55<62
+56<29
+56<31
+57<47
+57<53
+58<70
+58<76
+59<7
+59<14
+59<18
+60<8
+60<11
+60<14
+60<18
+61<8
+61<12
+61<18
+62<22
+62<24
+63<66
+63<68
+64<39
+64<49
+65<39
+65<50
+65<51
+66<47
+66<49
+67<46
+67<48
+68<54
+68<56
+69<21
+69<65
+70<19
+70<22
+70<27
+70<65
+71<19
+71<22
+71<28
+71<61
+71<65
+72<19
+72<22
+72<28
+72<62
+72<63
+72<65
+73<20
+73<22
+73<61
+73<65
+74<20
+74<22
+74<62
+74<63
+74<65
+75<6
+75<8
+75<15
+76<52
+76<78
+77<58
+77<60
+77<72
+78<1
+78<11
+79<2
+79<3
+79<11
+80<2
+80<4
+80<10
+80<11
+81<70
+81<80
+82<11
+82<21
+83<12
+83<15
+83<17
+83<21
+84<12
+84<16
+84<21
+85<38
+85<44
+86<41
+86<74
+87<1
+87<13
+88<2
+88<7
+88<11
+88<13
+89<24
+89<60
+90<5
+90<7
+91<6
+91<7
+91<16
+92<40
+92<50
+92<52
+93<67
+93<71
+94<68
+94<69
+94<71
+PT
+1>78
+1>87
+2>30
+2>37
+2>38
+2>79
+2>80
+2>88
+3>79
+4>30
+4>80
+5>90
+6>75
+6>91
+7>23
+7>37
+7>44
+7>59
+7>75
+7>88
+8>24
+8>33
+8>38
+8>60
+8>61
+8>90
+8>91
+9>30
+9>44
+10>33
+10>80
+11>19
+11>24
+11>30
+11>60
+11>82
+11>88
+12>10
+12>37
+12>41
+12>61
+12>78
+12>79
+12>80
+12>83
+12>84
+13>23
+13>24
+13>37
+13>38
+14>59
+14>60
+14>87
+14>88
+15>7
+15>41
+15>75
+15>83
+16>34
+16>84
+16>91
+17>59
+17>60
+17>61
+17>83
+18>23
+18>24
+18>41
+19>10
+19>47
+19>70
+19>71
+19>72
+20>19
+20>48
+20>73
+20>74
+21>6
+21>34
+21>41
+21>51
+21>69
+22>7
+22>43
+22>47
+22>48
+22>52
+22>62
+22>70
+22>71
+22>72
+22>73
+22>74
+22>82
+22>83
+22>84
+23>9
+23>14
+23>26
+23>62
+24>6
+24>15
+24>45
+24>89
+25>4
+25>45
+26>26
+26>55
+27>43
+27>70
+28>47
+28>51
+28>52
+28>71
+28>72
+29>28
+29>56
+30>27
+30>42
+31>35
+31>42
+32>20
+32>56
+33>2
+33>20
+34>35
+34>39
+35>39
+36>2
+37>85
+38>16
+39>92
+40>64
+40>65
+41>21
+42>86
+43>3
+43>16
+44>18
+44>85
+45>18
+45>67
+46>3
+46>46
+47>46
+47>54
+47>66
+48>31
+48>57
+48>67
+49>31
+49>64
+50>65
+50>66
+50>92
+51>65
+51>76
+52>49
+52>92
+53>57
+53>68
+54>53
+54>54
+55>13
+55>53
+56>25
+56>68
+57>25
+57>77
+58>11
+58>12
+58>13
+59>11
+59>89
+60>12
+60>14
+60>77
+61>52
+61>55
+61>71
+61>73
+62>4
+62>43
+62>47
+62>48
+62>72
+62>74
+63>15
+63>72
+63>74
+64>9
+64>47
+64>48
+65>22
+65>27
+65>47
+65>48
+66>28
+66>63
+66>69
+66>70
+66>71
+66>72
+66>73
+66>74
+67>29
+67>63
+67>93
+68>22
+68>32
+68>36
+68>94
+69>5
+69>36
+69>50
+69>94
+70>29
+70>32
+70>58
+70>81
+71>12
+71>32
+72>77
+72>93
+72>94
+73>21
+73>40
+74>1
+74>86
+75>40
+75>58
+76>1
+76>5
+77>17
+77>49
+78>8
+78>76
+79>8
+79>81
+80>17
+80>50
+RS
+
